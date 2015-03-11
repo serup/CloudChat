@@ -1,22 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <BrowseTracker_layout_file>
 	<ActiveTarget name="Debug" />
-	<File name="..\..\compression-lib\compression.cpp" open="1" top="0" tabpos="2">
-		<Cursor position="9228" topLine="160" />
-		<BrowseMarks positions="" />
-		<Book_Marks positions="" />
+	<File name="..\..\DataEncoder.h" open="0" top="0" tabpos="1">
+		<Cursor position="18089" topLine="354" />
 	</File>
-	<File name="dataencodertest.cpp" open="1" top="0" tabpos="3">
-		<Cursor position="1814052" topLine="471" />
+	<File name="dataencodertest.cpp" open="0" top="0" tabpos="3">
+		<Cursor position="1814175" topLine="471" />
 		<BrowseMarks positions="" />
 		<Book_Marks positions="103566" />
 	</File>
 	<File name="..\..\DataEncoder.cpp" open="0" top="0" tabpos="0">
 		<Cursor position="14198" topLine="487" />
 	</File>
-	<File name="..\..\DataEncoder.h" open="1" top="0" tabpos="1">
-		<Cursor position="18089" topLine="354" />
-		<BrowseMarks positions="" />
-		<Book_Marks positions="" />
+	<File name="..\..\compression-lib\compression.cpp" open="0" top="0" tabpos="2">
+		<Cursor position="9228" topLine="160" />
 	</File>
 </BrowseTracker_layout_file>
