@@ -1,15 +1,1 @@
---------------
-Test of socketserverAPI
---------------
-OK:   testConnectServer return expected
-OK:   testDED_GET_STRUCT_END return expected
-OK:   testSEND_DATAFRAME response expected
-OK:   testRECEIVE_DATAFRAME return expected
-OK:   testREGISTER_CLIENT return expected
-OK:   testCREATE_PROFILE return expected
---------------
-Tests Complete
---------------
-Passed: 6
-Failed: 0
---------------
+ 

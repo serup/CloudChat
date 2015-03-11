@@ -30,8 +30,10 @@ xtest:
 	@ echo " ---------------------------------------------------------------------------------- "	
 	@ make -f makefile_cygwin_ws.mak runnode 
 servstart:
-	 ../../../codeblocks_projects/serup/websocket_server/bin/Debug/scanvaserver.exe 0.0.0.0 7788 > tmp &
-	 (cd ../../../codeblocks_projects/serup/DFDFunctions/1_1/bin/Debug && pwd && ./DFD_1_1.exe 127.0.0.1 7788) > tmp2 &
+	 #../../../codeblocks_projects/serup/websocket_server/bin/Debug/scanvaserver.exe 0.0.0.0 7788 > tmp &
+	 #(cd ../../../codeblocks_projects/serup/DFDFunctions/1_1/bin/Debug && pwd && ./DFD_1_1.exe 127.0.0.1 7788) > tmp2 &
+	 ../../codeblocks_projects/websocket_server/bin/Debug/scanvaserver.exe 0.0.0.0 7788 > tmp &
+	 (cd ../../codeblocks_projects/DFDFunctions/1_1/bin/Debug && pwd && ./DFD_1_1.exe 127.0.0.1 7788) > tmp2 &
 createtest:
 	@ cat socketserverAPI.js > test/result_index.js
 	@ cat ../DataEncoderDecoder/dataencoderdecoder.js >> test/result_index.js
