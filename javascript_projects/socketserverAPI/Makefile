@@ -6,7 +6,8 @@ CONVERT=xsltproc -o test_results.html ./test/test_results.xslt ./test/test_resul
 # http://sc.tamu.edu/help/general/unix/redirection.html
 # http://www.thegeekstuff.com/2011/10/grep-or-and-not-operators/
 test:
-	@ ../../../codeblocks_projects/serup/websocket_server/bin/Debug/scanvaserver.exe 0.0.0.0 7777 &
+	#@ ../../../codeblocks_projects/serup/websocket_server/bin/Debug/scanvaserver.exe 0.0.0.0 7777 &
+	@ ../../codeblocks_projects/websocket_server/bin/Debug/scanvaserver.exe 0.0.0.0 7777 &
 	@ cat socketserverAPI.js > test/result_index.js
 	@ cat ../DataEncoderDecoder/dataencoderdecoder.js >> test/result_index.js
 	@ cat ../DataEncoderDecoder/compression-lib/compression.js >> test/result_index.js
