@@ -31,8 +31,8 @@ msgbegin:
 	@ echo "------------------------"
 compress: msgbegin compress2 msgend
 compress2: 
-	@ cd DataEncoderDecoder/DataEncoderDecoder/compression-lib/BoostUnitTest;
-	make -f makefile_ubuntu.mak
+	@ cd DataEncoderDecoder/DataEncoderDecoder/compression-lib/BoostUnitTest;\
+	make -f makefile_ubuntu.mak > ../../../../output.txt
 dataencoder: msgbegin dataencoder2 msgend	
 dataencoder2:
 	@ cd DataEncoderDecoder/DataEncoderDecoder/BoostUnitTest/DataEncoderTestSuite;\
