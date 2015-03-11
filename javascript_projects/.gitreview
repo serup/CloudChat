@@ -1,0 +1,5 @@
+[gerrit]
+host=77.75.165.130
+port=29418
+project=serup/javascript.git
+defaultbranch=master

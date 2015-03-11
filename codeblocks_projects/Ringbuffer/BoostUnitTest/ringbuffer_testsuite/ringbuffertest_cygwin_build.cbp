@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="ringbuffer_test" />
+		<Option pch_mode="2" />
+		<Option compiler="cygwin" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/ringbuffer_test" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="cygwin" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-std=gnu++11" />
+					<Add option="-D_WIN32" />
+					<Add option="-D__CYGWIN__" />
+					<Add option="-D__SunOS" />
+					<Add option="-Dnodosfilewarning" />
+					<Add option="-D__MINGW32__" />
+				</Compiler>
+				<Linker>
+					<Add library="boost_system" />
+					<Add directory="/cygdrive/c/cygwin/usr/local/lib/" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/ringbuffer_test" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="" />
+				<Option object_output="obj/Release/" />
+				<Option type="2" />
+				<Option compiler="cygwin" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-std=gnu++11" />
+			<Add option="-D_WIN32_WINNT" />
+			<Add option="-D__CYGWIN__" />
+			<Add option="-D__USE_W32_SOCKETS" />
+			<Add option="-D__MSABI_LONG=long" />
+		</Compiler>
+		<Linker>
+			<Add option="-static" />
+			<Add option="-lws2_32" />
+			<Add library="boost_system" />
+			<Add library="boost_signals" />
+			<Add library="boost_thread" />
+			<Add directory="/cygdrive/c/cygwin/usr/local/lib/" />
+		</Linker>
+		<Unit filename="../../../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.cpp" />
+		<Unit filename="../../../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.h" />
+		<Unit filename="../../../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.cpp" />
+		<Unit filename="../../../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.h" />
+		<Unit filename="../../ringbuffer.hpp" />
+		<Unit filename="ringbuffer_test.cpp" />
+		<Extensions>
+			<code_completion />
+			<envvars set="cygwin" />
+			<debugger />
+			<lib_finder disable_auto="1" />
+			<DoxyBlocks>
+				<comment_style block="0" line="0" />
+				<doxyfile_project />
+				<doxyfile_build />
+				<doxyfile_warnings />
+				<doxyfile_output />
+				<doxyfile_dot />
+				<general />
+			</DoxyBlocks>
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

@@ -1,0 +1,7 @@
+webserver_test.cpp: In function ‘void webservertest::handle_server_response(void*)’:
+webserver_test.cpp:274:156: warning: format ‘%s’ expects argument of type ‘char*’, but argument 2 has type ‘void*’ [-Wformat]
+../../easywsclient/easywsclient.cpp: In member function ‘virtual void easywsclient::_RealWebSocket::send(std::string)’:
+../../easywsclient/easywsclient.cpp:251:44: warning: right shift count >= width of type [enabled by default]
+../../easywsclient/easywsclient.cpp:252:44: warning: right shift count >= width of type [enabled by default]
+../../easywsclient/easywsclient.cpp:253:44: warning: right shift count >= width of type [enabled by default]
+../../easywsclient/easywsclient.cpp:254:44: warning: right shift count >= width of type [enabled by default]

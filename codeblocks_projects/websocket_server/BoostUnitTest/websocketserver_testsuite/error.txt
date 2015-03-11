@@ -1,0 +1,16 @@
+Running 5 test cases...
+webserver_test.cpp(132): error in "InstantiateWebClientObject": check bInstantiated == true failed
+WebServer: started
+
+unknown location(0): fatal error in "easyWebClientCommunicateWithLocalServer": std::length_error: basic_string::_S_create
+webserver_test.cpp(132): last checkpoint
+WebServer: started
+
+WebServer: stopped
+WebServer thread: ended
+WebServer: started
+
+[WebServer][WARNING] dataframe was not send to recipient, because recipient was NOT registered : [  ] 
+[webserver] found participant - now deliver dataframe
+WebServer: stopped
+WebServer thread: ended

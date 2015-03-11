@@ -1,0 +1,205 @@
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<meta name="viewport" content="width=device-width,height=device-height, initial-scale=1, maximum-scale=1, user-scalable=1"/>
+
+<style>
+.sandbox {
+    padding:0px;
+    margin: 0px 0px 0 0;
+    margin-left:0px;
+    width:100%;
+    height:100%;
+}
+#right-pane .box
+{
+    padding:0px;
+    margin: 0px 0 0 0;
+    margin-right: 0px;
+    width:100%;
+    height:100%;
+}
+
+
+</style>
+
+<style>
+.imageoverlap{
+
+    position: fixed;
+    top:0px;
+}
+
+#chatwidget-zone {
+    position: fixed;
+    left:0px;
+    top:0px;
+    height: 100%;
+    width: 100%;
+    /* background: #fccc00; */
+    /*background: #535353;*/
+}
+
+
+</style>
+
+<style>
+
+.chat
+{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.chat li
+{
+    margin-top: 0px;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px dotted #B3A9A9;
+}
+
+.chat li.left .chat-body
+{
+    margin-left: 60px;
+}
+
+.chat li.right .chat-body
+{
+    margin-right: 60px;
+}
+
+
+.chat li .chat-body p
+{
+    margin: 0;
+    color: #777777;
+}
+
+.panel .slidedown .glyphicon, .chat .glyphicon
+{
+    margin-right: 0px;
+    margin-bottom: 0px;
+    margin-top: 0px;
+    margin-left: 0px;
+    background-color: #fff;
+    border-radius: 4px;
+    -webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.05);
+    box-shadow: 0 1px 1px rgba(0,0,0,0.05);
+}
+
+.vcenter {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+}
+
+.verticalCenter {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+}
+
+.bottom {
+    position: fixed;
+    bottom: 0; 
+    left: 0;
+    right: 0;
+}
+
+.atthetop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+
+.inthemiddle {
+    position: fixed;
+    top: 100px;
+    left: 0;
+
+}
+
+.maxv {
+
+    max-height: 100%;
+}
+
+.alwaysontop {
+    z-index: 9999;
+}
+
+.panel-primary
+{
+    margin-right: 0;
+    margin-left: 0;
+    padding: 0;
+    border: 0;
+}
+
+
+.holder {
+    height: 98%;
+    min-height: 98%;
+    max-height: 98%;
+    width: 98%;
+    position:relative;
+}
+
+.panel-body
+{
+    overflow-y: scroll;
+    margin-left: 0px;
+}
+
+::-webkit-scrollbar-track
+{
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar
+{
+    display: none;
+    width: 12px;
+    background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb
+{
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    background-color: #555;
+}
+
+
+/*	input{
+            position:absolute;
+            bottom:-16px;
+            width: 100%;
+            left:0;
+            height: 5%;
+            padding:0;
+            margin:0;
+        }
+*/
+.input-sm-bottom{
+    position:fixed;
+    bottom: 0px;
+    width: 100%;
+    left:0;
+    height: 100%;
+    padding:0;
+    margin:0;
+    margin-bottom: 10px;
+    height: 30px;
+    padding: 5px 10px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px;
+
+}
+
+</style>

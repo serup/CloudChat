@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<EmployeeRequest>
+    <version>1</version>
+    <DDEntry>
+        <DDGuid></DDGuid>
+        <PhysicalDataElementName>CreateCustomer</PhysicalDataElementName>
+        <Location></Location>
+        <Category>MethodName</Category>
+        <DataType>std::string</DataType>
+        <MaxLength></MaxLength>
+        <Description></Description>
+        <characteristics></characteristics>
+        <relationship></relationship>
+        <Mandatory>YES</Mandatory>
+        <accessrights></accessrights>   
+    </DDEntry>
+    <DDEntry>
+        <DDGuid></DDGuid>
+        <PhysicalDataElementName>TransID</PhysicalDataElementName>
+        <Location></Location>
+        <Category>Iterator</Category>
+        <DataType>std::string</DataType>
+        <MaxLength></MaxLength>
+        <Description></Description>
+        <characteristics></characteristics>
+        <relationship></relationship>
+        <Mandatory>YES</Mandatory>
+        <accessrights></accessrights>   
+    </DDEntry>
+    <DDEntry>
+        <DDGuid></DDGuid>
+        <PhysicalDataElementName>protocolTypeID</PhysicalDataElementName>
+        <Location></Location>
+        <Category>protocol</Category>
+        <DataType>std::string</DataType>
+        <MaxLength></MaxLength>
+        <Description></Description>
+        <characteristics></characteristics>
+        <relationship></relationship>
+        <Mandatory>YES</Mandatory>
+        <accessrights></accessrights>   
+    </DDEntry>
+    <DDEntry>
+        <DDGuid></DDGuid>
+        <PhysicalDataElementName>customerName</PhysicalDataElementName>
+        <Location></Location>
+        <Category></Category>
+        <DataType>std::string</DataType>
+        <MaxLength></MaxLength>
+        <Description></Description>
+        <characteristics></characteristics>
+        <relationship></relationship>
+        <Mandatory>YES</Mandatory>
+        <accessrights></accessrights>   
+    </DDEntry>
+     
+</EmployeeRequest>

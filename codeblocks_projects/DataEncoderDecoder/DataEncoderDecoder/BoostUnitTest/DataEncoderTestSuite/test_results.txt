@@ -1,0 +1,22 @@
+-----------------------------------------------
+ Test of DataEncoderDecoder  
+-----------------------------------------------
+ OK:   EncoderInstantiation 
+ OK:   struct_start_encoder 
+ OK:   encoder_put_method 
+ OK:   encoder_put_ushort 
+ OK:   encoder_put_bool 
+ OK:   encoder_struct_end 
+ OK:   get_encoded_data 
+ OK:   put_in_dataencoder 
+ OK:   encoder_get 
+ OK:   data_protocol 
+ OK:   encode_decode_large_toast 
+ OK:   encode_decode_Xlarge_toast 
+ OK:   encode_decode_toast
+--------------
+Tests Complete
+--------------
+Passed: 13
+Failed: 0
+--------------

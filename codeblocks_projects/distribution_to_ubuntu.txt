@@ -1,0 +1,18 @@
+git clone -b serup /home/cloud1scanvacom/Dropbox/SCANVA/Root/8-System/CodeBlocksProjects/DataEncoderDecoder/ /home/cloud1scanvacom/src/codeblocks_project/serup/DataEncoderDecoder
+
+t clone -b serup /home/cloud1scanvacom/Dropbox/SCANVA/Root/8-System/CodeBlocksProjects/DataDictionary/ /home/cloud1scanvacom/src/codeblocks_project/serup/DataDictionary
+
+git clone -b serup /home/cloud1scanvacom/Dropbox/SCANVA/Root/8-System/CodeBlocksProjects/DFDFunctions/ /home/cloud1scanvacom/src/codeblocks_project/serup/DFDFunctions
+
+git clone -b serup /home/cloud1scanvacom/Dropbox/SCANVA/Root/8-System/CodeBlocksProjects/Ringbuffer/ /home/cloud1scanvacom/src/codeblocks_project/serup/Ringbuffer
+
+git clone -b serup /home/cloud1scanvacom/Dropbox/SCANVA/Root/8-System/CodeBlocksProjects/websocket_server/ /home/cloud1scanvacom/src/codeblocks_project/serup/websocket_server
+
+cp /home/cloud1scanvacom/Dropbox/SCANVA/Root/8-System/CodeBlocksProjects/Makefile /home/cloud1scanvacom/src/codeblocks_project/serup/Makefile
+
+cp /home/cloud1scanvacom/Dropbox/SCANVA/Root/8-System/CodeBlocksProjects/pullall /home/cloud1scanvacom/src/codeblocks_project/serup/pullall
+
+***
+git clone -b serup /home/cloud1scanvacom/Dropbox/SCANVA/Root/8-System/JavaScriptProjects /home/cloud1scanvacom/src/javascript_project/serup/
+
+

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="ringbuffer_test" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/ringbuffer_test" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-std=c++0x" />
+					<Add option="-Wall" />
+					<Add option="-g" />
+				</Compiler>
+				<Linker>
+					<Add library="boost_system" />
+					<Add library="boost_thread" />
+					<Add library="boost_signals" />
+					<Add library="pthread" />
+					<Add library="rt" />
+					<Add directory="/home/cloud1scanvacom" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/ringbuffer_test" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="" />
+				<Option object_output="obj/Release/" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-fexceptions" />
+		</Compiler>
+                <Unit filename="../../../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.cpp" />
+                <Unit filename="../../../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.h" />
+                <Unit filename="../../../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.cpp" />
+                <Unit filename="../../../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.h" />
+		<Unit filename="ringbuffer_test.cpp" />
+		<Unit filename="../../ringbuffer.hpp" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

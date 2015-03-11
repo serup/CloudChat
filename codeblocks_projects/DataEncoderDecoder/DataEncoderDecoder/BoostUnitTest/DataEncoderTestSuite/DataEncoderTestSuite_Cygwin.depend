@@ -1,0 +1,39 @@
+# depslib dependency file v1.0
+1409578354 source:c:\cygwin\home\cavdarserup\codeblocks_projects\serup\dataencoderdecoder\dataencoderdecoder\compression-lib\compression.cpp
+	"compression.h"
+	<cstring>
+
+1409578354 c:\cygwin\home\cavdarserup\codeblocks_projects\serup\dataencoderdecoder\dataencoderdecoder\compression-lib\compression.h
+	<cstring>
+
+1415864817 source:c:\cygwin\home\cavdarserup\codeblocks_projects\serup\dataencoderdecoder\dataencoderdecoder\dataencoder.cpp
+	"DataEncoder.h"
+	<fcntl.h>
+	<sys/types.h>
+	<sys/stat.h>
+	<stdio.h>
+	<boost/algorithm/string.hpp>
+
+1416237821 c:\cygwin\home\cavdarserup\codeblocks_projects\serup\dataencoderdecoder\dataencoderdecoder\dataencoder.h
+	<vector>
+	<string>
+	<sys/stat.h>
+	"ASN1.h"
+	"svg_utils\handlesvg.h"
+	"Rpc.h"
+	"objbase.h"
+
+1409578353 c:\cygwin\home\cavdarserup\codeblocks_projects\serup\dataencoderdecoder\dataencoderdecoder\asn1.h
+	<stdarg.h>
+	<memory>
+	<bits/unique_ptr.h>
+	<string.h>
+
+1416235520 source:c:\cygwin\home\cavdarserup\codeblocks_projects\serup\dataencoderdecoder\dataencoderdecoder\boostunittest\dataencodertestsuite\dataencodertest.cpp
+	<boost/test/included/unit_test.hpp>
+	<boost/test/results_reporter.hpp>
+	<boost/algorithm/string.hpp>
+	<boost/foreach.hpp>
+	"../../DataEncoder.h"
+	"../../compression-lib/compression.h"
+

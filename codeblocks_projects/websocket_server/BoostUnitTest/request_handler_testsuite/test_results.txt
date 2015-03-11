@@ -1,0 +1,16 @@
+-----------------------------------------------
+ Test of requesthandler  
+-----------------------------------------------
+ OK:   boostchecktest 
+ OK:   getNumberFromString 
+ OK:   basicMD5test 
+ OK:   md5challengetest 
+ OK:   md5challengetest2 
+ FAIL: md5challengetest3 
+ OK:   md5challengetest4
+--------------
+Tests Complete
+--------------
+Passed: 6
+Failed: 1
+--------------

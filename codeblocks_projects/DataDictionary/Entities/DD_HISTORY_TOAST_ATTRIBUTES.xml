@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<HistoryRealm>
+    <version>2</version>
+    <DDEntry>
+        <DDGuid>96bf4680108343f58f7843d4514770e3</DDGuid>
+        <PhysicalDataElementName>attachedImage</PhysicalDataElementName>
+        <Location></Location>
+        <Category>image</Category>
+        <DataType>RawData</DataType>
+        <MaxLength></MaxLength>
+        <Description></Description>
+        <characteristics></characteristics>
+        <relationship></relationship>
+        <Mandatory>NO</Mandatory>
+        <accessrights></accessrights>      
+    </DDEntry>
+</HistoryRealm>

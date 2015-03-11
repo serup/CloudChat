@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html ng-app="app" class="ng-scope"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style type="text/css">@charset "UTF-8";[ng\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide{display:none !important;}ng\:form{display:block;}.ng-animate-start{border-spacing:1px 1px;-ms-zoom:1.0001;}.ng-animate-active{border-spacing:0px 0px;-ms-zoom:1;}</style>
+        <meta charset="utf-8">
+
+        <title>Model-View-Controller (MVC) with JavaScript - login to scanvaserver</title>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="Test login for scanvaserver based on MVC concepts">
+        <meta name="author" content="Johnny Serup">
+
+        
+	<script src="js/jquery.min.js"></script> 
+	<script src="../DataEncoderDecoder/compression-lib/compression.js"></script>
+	<script src="../DataEncoderDecoder/dataencoderdecoder.js"></script>
+	<script src="../socketserverAPI/socketserverAPI.js"></script>
+	<script src="../Components/scanva-mvc-login-client.js"></script> <!-- Model View Control concept used to handle client UI interaction with data -->
+
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+        <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+        <style>
+            /**
+             * Bootstrap <pre> background is different from highlight <code>
+             * background. This rule fixes it by making highlight transparent.
+             */
+            pre code { background: transparent; }
+        </style>
+
+    </head>
+    <body style="" data-twttr-rendered="true">
+	<div class="container">
+	    <div class="row">
+		<div class="col-md-9">
+<h1 itemprop="name">Model-View-Controller (MVC) with JavaScript - login to scanvaserver</h1>
+<div style="margin-top: 1em;" itemprop="articleBody">
+
+<div class="row">
+    <div class="col-md-8">
+	<button id="connectBtn" class="btn btn-default btn-block" style="width: 5em;"> connect </button>
+    </div>
+</div>
+<div class="wsUri-div" style="position:relative">
+	<label for="wsUri"><strong class="uri-label"></strong></label>
+	<div id='login_box'>
+		<input  id="wsUri" class='input uri' type="email" spellcheck="false" /> REMOTE / LOCAL 
+	</div>
+</div>
+<div class="uniqueId-div" style="position:relative">
+	<label for="uniqueId"><strong class="uniqueId-label"></strong></label>
+	<div id='login_box'>
+		<input  id="uniqueId" class='input uniqueId' type="email" spellcheck="false" /> UNIQUE ID / DEVICE ID
+	</div>
+</div>
+<div class="user-div" style="position:relative">
+	<label for="Username"><strong class="username-label"></strong></label>
+	<div id='login_box'>
+		<!--<input style='width:282px;height:50px' id="username" class='input user' type="email" spellcheck="false" /> -->
+		<input  id="username" class='input user' type="email" spellcheck="false" /> USERNAME 
+	</div>
+</div>
+<div class="passwd-div" style="position:relative">
+	<label for="Passwd"><strong class="passwd-label"></strong></label>
+	<div id='login_box'>
+		<!--<input style='width:282px;height:50px' type="password" name="Passwd" id='password' class='input passcode' />-->
+		<input  type="password" name="Passwd" id='password' class='input passcode' /> PASSWORD
+	</div>
+</div>
+
+</div> <!-- main -->
+</body></html>

@@ -1,0 +1,14 @@
+auxiliary.org-netbeans-modules-web-clientproject-api.js_2e_libs_2e_folder=js
+browser.autorefresh.Chrome.INTEGRATED=true
+browser.highlightselection.Chrome.INTEGRATED=true
+config.folder=${file.reference.CloudChatManager-config}
+file.reference.CloudChatManager-config=config
+file.reference.CloudChatManager-test=test
+file.reference.HTML5CloudChatManager-config=config
+file.reference.HTML5CloudChatManager-public_html=
+file.reference.HTML5CloudChatManager-test=test
+files.encoding=UTF-8
+site.root.folder=${file.reference.HTML5CloudChatManager-public_html}
+start.file=CloudChatManager.htm
+test.folder=${file.reference.CloudChatManager-test}
+web.context.root=../../

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Circle Button</title>
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <!-- Bootstrap -->                                                                             
+    <!--    <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="css/bootstrap.css" rel="stylesheet" media="screen" >
+    <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen">
+    -->
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="http://code.jquery.com/jquery.js"></script>
+<script src="../js/move.min.js"></script>
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css"  rel="stylesheet" media="screen">
+<!-- Optional theme -->
+<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css"  rel="stylesheet" media="screen">
+<!-- Latest compiled and minified JavaScript -->
+<script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"  rel="stylesheet" media="screen"></script>
+
+<style>
+
+.chat
+{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.chat li
+{
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px dotted #B3A9A9;
+}
+
+.chat li.left .chat-body
+{
+    margin-left: 60px;
+}
+
+.chat li.right .chat-body
+{
+    margin-right: 60px;
+}
+
+
+.chat li .chat-body p
+{
+    margin: 0;
+    color: #777777;
+}
+
+.panel .slidedown .glyphicon, .chat .glyphicon
+{
+	margin-right: 0px;
+	margin-bottom: 0px;
+	margin-left: 0px;
+background-color: #fff;
+border-radius: 4px;
+-webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.05);
+box-shadow: 0 1px 1px rgba(0,0,0,0.05);
+}
+
+.vcenter {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+}
+
+.verticalCenter {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+}
+
+.bottom {
+  position: fixed;
+  bottom: 0; 
+  left: 0;
+}
+
+.atthetop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+.inthemiddle {
+  position: fixed;
+  top: 100px;
+  left: 0;
+
+}
+
+.maxv {
+
+  max-height: 100%;
+}
+
+.alwaysontop {
+ z-index: 9999;
+}
+
+.panel-primary
+{
+	margin-right: 0;
+	margin-left: 0;
+	padding: 0;
+	border: 0;
+}
+
+
+.panel-body
+{
+    overflow-y: scroll;
+    margin-left: 0px;
+}
+
+::-webkit-scrollbar-track
+{
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar
+{
+    display: none;
+    width: 12px;
+    background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb
+{
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    background-color: #555;
+}
+
+
+    </style>
+
+   <script type="text/javascript">
+    /* $("#browserInfo").text('Browser (Width : ' + $(window).width() + ' , Height :' + $(window).height() + ' )'); */
+    $(window).resize(function () {
+		    move('#panelheadbar').y(0).end();
+		    /*$('#panelheadbar').setStyle({top: '0px', left:'0px'});*/
+		    $("#panelheadbar").css({ top: '0px' });
+		    /*$(this).scrollTop(0);*/
+		    move('#panelfoot').y($(window).height).end(); 
+		    $('#panelfoot').css({ bottom: '0px' });
+		    /*$('#panelfoot').setStyle({top: '0px', left:'0px'});*/
+    });
+
+$(document).ready(function(){
+    $('input').bind('focus',function() {
+        /*$(window).scrollTop(10);
+        var keyboard_shown = $(window).scrollTop() > 0;
+        $(window).scrollTop(0);
+	*/
+
+	/*$('#test').append(keyboard_shown?'keyboard ':'nokeyboard ');*/
+
+	$(window).resize();
+	});
+   $('#btn-chat').bind('focus',function() {
+	$(window).resize();
+    });
+
+});
+
+	function init()
+	{
+		setInterval('Refresh()', 3000); 
+	}
+
+	function Refresh()
+	{
+
+		$(window).resize();
+	}
+
+  </script>
+
+
+  </head>
+  <body onload="init()">
+    <div class="container">
+    <div class="row">
+        <div >
+            <div class="panel panel-primary">
+                <div id="panelheadbar" class="panel-heading atthetop alwaysontop">
+                    <span class="glyphicon glyphicon-white glyphicon-comment"></span> Chat
+		    <div class="btn-group pull-right">
+			    <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                            <span class="glyphicon glyphicon-chevron-down"></span>
+                        </button>
+                        <ul class="dropdown-menu slidedown">
+                            <li><a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-refresh">
+                            </span>Refresh</a></li>
+                            <li><a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-ok-sign">
+                            </span>Available</a></li>
+                            <li><a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-remove">
+                            </span>Busy</a></li>
+                            <li><a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-time"></span>
+                                Away</a></li>
+                            <li class="divider"></li>
+                            <li><a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-off"></span>
+                                Sign Out</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="panel-body">
+			<ul class="chat">
+
+                        <li class="left clearfix"><span class="pull-left">
+                            <img src="images/empty.png" alt="User Avatar" class="img-circle" />
+                        </span>
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                   
+                                </div>
+                                <p>
+                                    
+				    </p>
+				    <div class="header">
+				    </div>
+                            </div>
+			    </li>
+
+				<!-- start chat left -->	
+                        <li class="left clearfix"><span class="pull-left">
+                            <img src="images/janedoe1.png" alt="User Avatar" class="img-circle" />
+                        </span>
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <strong class="primary-font">Masud</strong> <small class="pull-right text-muted">
+                                        <span class="glyphicon glyphicon-time"></span>12 mins ago</small>
+                                </div>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare
+                                    dolor, quis ullamcorper ligula sodales.
+				    </p>
+				    <div class="header">
+				    </div><small class="text-muted">delivered: Asley</small>
+				    <a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-ok-sign"> </span> </a> <span >
+                            <img src="images/janedoe2.png" alt="Delivered User Avatar" class="img-rounded" height="50" width="45" />
+	    </span>
+                            </div>
+			    </li>
+
+			    <!-- start chat right -->
+                        <li class="right clearfix"><span class="chat-img pull-right">
+                            <img src="images/janedoe3.png" alt="User Avatar" class="img-circle" />
+                        </span>
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <small class=" text-muted"><span class="glyphicon glyphicon-time"></span>13 mins ago</small>
+                                    <strong class="pull-right primary-font">Nicola</strong>
+                                </div>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare
+                                    dolor, quis ullamcorper ligula sodales.
+				    </p>
+				    <div class="header">
+				    </div><small class="text-muted">delivered: Michael</small>
+				    <a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-ok-sign"></span></a>
+				    <span >
+                            <img src="images/1249634790_michael_jackson_faces_-_ghosts.gif" alt="Delivered User Avatar" class="img-rounded" height="50" width="45" />
+	    </span>
+                            </div>
+			    </li>
+
+			    <!-- start chat left -->
+                        <li class="left clearfix"><span class="chat-img pull-left">
+                            <img src="images/janedoe2.png" alt="User Avatar" class="img-circle" />
+                        </span>
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <strong class="primary-font">Asley</strong> <small class="pull-right text-muted">
+                                        <span class="glyphicon glyphicon-time"></span>14 mins ago</small>
+                                </div>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare
+                                    dolor, quis ullamcorper ligula sodales.
+				    </p>
+				    				    <div class="header pull-right">
+				    </div><small class="text-muted">delivered: Masud</small>
+				    <a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-ok-sign"> </span> </a>
+				    <span >
+                            <img src="images/janedoe1.png" alt="Delivered User Avatar" class="img-rounded"  height="50" width="45"  />
+	    </span>
+                            </div>
+			    </li>
+
+			    <!-- start chat right -->
+                        <li class="right clearfix"><span class="chat-img pull-right">
+				<!-- <img src="http://placehold.it/50/FA6F57/fff&text=ME" alt="User Avatar" class="img-circle" /> -->
+                            <img src="images/janedoe5.png" alt="User Avatar" class="img-circle" />
+                        </span>
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <small class="text-muted"><span class="glyphicon glyphicon-time"></span>2014-04-01 10:42:10</small>
+                                    <strong class="pull-right primary-font">Linda</strong>
+                                </div>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare
+                                    dolor, quis ullamcorper ligula sodales.
+				    </p>
+				    <div class="header">
+				    </div><small class="text-muted">delivered: Masud</small>
+				    <a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-ok-sign"> </span> </a> <span >
+                            <img src="images/janedoe1.png" alt="Delivered User Avatar" class="img-rounded" height="50" width="45" />
+	    </span>
+                            </div>
+			    </li>
+
+			    <!-- start empty suffix space chat right -->
+			    <li class="right clearfix">
+			     <P>
+
+
+
+
+
+
+			     </P>
+			    </li>
+			    
+                    </ul>
+                </div>
+                <div id="panelfoot" class="panel-footer bottom">
+                    <div class="input-group">
+                        <input id="btn-input" type="text" class="form-control input-sm" placeholder="Type your message here..." />
+                        <span class="input-group-btn">
+                            <button class="btn btn-warning btn-sm" id="btn-chat" >
+                                Send</button>
+                        </span>
+                    </div>
+	    	</div>
+           </div>
+        </div>
+    </div>
+  </div>
+
+  </body>
+</html>
+

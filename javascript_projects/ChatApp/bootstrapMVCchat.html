@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Circle Button</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->                                                                             
+    <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="css/bootstrap.css" rel="stylesheet" >
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="../../assets/js/html5shiv.js"></script>
+      <script src="../../assets/js/respond.min.js"></script>
+    <![endif]-->
+    <style>
+     .chat
+{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.chat li
+{
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px dotted #B3A9A9;
+}
+
+.chat li.left .chat-body
+{
+    margin-left: 60px;
+}
+
+.chat li.right .chat-body
+{
+    margin-right: 60px;
+}
+
+
+.chat li .chat-body p
+{
+    margin: 0;
+    color: #777777;
+}
+
+.panel .slidedown .glyphicon, .chat .glyphicon
+{
+    margin-right: 5px;
+}
+
+.panel-body
+{
+    overflow-y: scroll;
+    height: 250px;
+}
+
+::-webkit-scrollbar-track
+{
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar
+{
+    width: 12px;
+    background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb
+{
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    background-color: #555;
+}
+    </style>
+  </head>
+  <body>
+<DIV class='imageoverlap' id="right-pane" style="padding:0px;">
+    <div class="container">
+    <div class="row">
+        <div class="col-md-5">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <span class="icon-white icon-comment"></span> Chat
+                    <div class="btn-group pull-right">
+                        <button type="button" class="btn btn-default btn-small dropdown-toggle" data-toggle="dropdown">
+                            <span class="glyphicon icon-chevron-down"></span>
+                        </button>
+                        <ul class="dropdown-menu slidedown">
+                            <li><a href="http://www.jquery2dotnet.com"><span class="icon-refresh">
+                            </span>Refresh</a></li>
+                            <li><a href="http://www.jquery2dotnet.com"><span class="icon-ok-sign">
+                            </span>Available</a></li>
+                            <li><a href="http://www.jquery2dotnet.com"><span class="icon-remove">
+                            </span>Busy</a></li>
+                            <li><a href="http://www.jquery2dotnet.com"><span class="icon-time"></span>
+                                Away</a></li>
+                            <li class="divider"></li>
+                            <li><a href="http://www.jquery2dotnet.com"><span class="icon-off"></span>
+                                Sign Out</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <ul class="chat">
+                        <li class="left clearfix"><span class="pull-left">
+                            <img src="http://77.75.165.130/DOPS/ChatApp/images/janedoe1.png" alt="User Avatar" class="img-circle" />
+                        </span>
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <strong class="primary-font">Masud</strong> <small class="pull-right text-muted">
+                                        <span class="icon-time"></span>12 mins ago</small>
+                                </div>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare
+                                    dolor, quis ullamcorper ligula sodales.
+				    </p>
+				    <div class="header">
+				    </div><small class="text-muted">delivered: Asley</small>
+				    <a href="http://www.jquery2dotnet.com"><span class="icon-ok-sign">
+						    </a>
+                            </span>
+				    <span >
+                            <img src="images/janedoe2.png" alt="Delivered User Avatar" class="img-rounded" height="50" width="45" />
+	    </span>
+                            </div>
+                        </li>
+                        <li class="right clearfix"><span class="chat-img pull-right">
+                            <img src="http://77.75.165.130/DOPS/ChatApp/images/janedoe3.png" alt="User Avatar" class="img-circle" />
+                        </span>
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <small class=" text-muted"><span class="icon-time"></span>13 mins ago</small>
+                                    <strong class="pull-right primary-font">Nicola</strong>
+                                </div>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare
+                                    dolor, quis ullamcorper ligula sodales.
+				    </p>
+				    <div class="header">
+				    </div><small class="text-muted">delivered: Michael</small>
+				    <a href="http://www.jquery2dotnet.com"><span class="icon-ok-sign">
+						    </a>
+                            </span>
+				    <span >
+                            <img src="images/1249634790_michael_jackson_faces_-_ghosts.gif" alt="Delivered User Avatar" class="img-rounded" height="50" width="45" />
+	    </span>
+                            </div>
+                        </li>
+                        <li class="left clearfix"><span class="chat-img pull-left">
+                            <img src="http://77.75.165.130/DOPS/ChatApp/images/janedoe2.png" alt="User Avatar" class="img-circle" />
+                        </span>
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <strong class="primary-font">Asley</strong> <small class="pull-right text-muted">
+                                        <span class="icon-time"></span>14 mins ago</small>
+                                </div>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare
+                                    dolor, quis ullamcorper ligula sodales.
+				    </p>
+				    				    <div class="header pull-right">
+				    </div><small class="text-muted">delivered: Masud</small>
+				    <a href="http://www.jquery2dotnet.com"><span class="icon-ok-sign">
+						    </a>
+                            </span>
+				    <span >
+                            <img src="images/janedoe1.png" alt="Delivered User Avatar" class="img-rounded"  height="50" width="45"  />
+	    </span>
+                            </div>
+                        </li>
+                        <li class="right clearfix"><span class="chat-img pull-right">
+				<!-- <img src="http://placehold.it/50/FA6F57/fff&text=ME" alt="User Avatar" class="img-circle" /> -->
+                            <img src="images/janedoe5.png" alt="User Avatar" class="img-circle" />
+                        </span>
+                            <div class="chat-body clearfix">
+                                <div class="header">
+                                    <small class="text-muted"><span class="icon-time"></span>2014-04-01 10:42:10</small>
+                                    <strong class="pull-right primary-font">Linda</strong>
+                                </div>
+                                <p>
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare
+                                    dolor, quis ullamcorper ligula sodales.
+				    </p>
+				    <div class="header">
+				    </div><small class="text-muted">delivered: Masud</small>
+				    <a href="http://www.jquery2dotnet.com"><span class="icon-ok-sign">
+						    </a>
+                            </span>
+				    <span >
+                            <img src="images/janedoe1.png" alt="Delivered User Avatar" class="img-rounded" height="50" width="45" />
+	    </span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="panel-footer">
+                    <div class="input-group">
+                        <input id="btn-input" type="text" class="form-control input-group" style="height:108%;margin:0px;padding:0px"  placeholder="Type your message here..." />
+                        <span class="input-group-btn">
+                            <button class="btn btn-warning btn-sm" id="btn-chat">
+                                Send</button>
+                        </span>
+                    </div>
+	    	</div>
+           </div>
+        </div>
+    </div>
+  </div>
+</DIV>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="js/jquery.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+  </body>
+</html>
+

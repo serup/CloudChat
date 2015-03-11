@@ -1,0 +1,1 @@
+git checkout master -f; stamp=$(date +"Release_%Y%m%d"); git branch -D $stamp; git branch $stamp; git checkout $stamp; git merge serup -m "merge serup"

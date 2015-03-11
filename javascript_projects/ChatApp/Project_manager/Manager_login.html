@@ -1,0 +1,152 @@
+<html><head>
+    <title>Circle Button</title>
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0">
+    <!-- Bootstrap -->                                                                             
+    <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="css/bootstrap.css" rel="stylesheet" media="screen">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet" media="screen">
+
+    <style>
+
+	    /*	iphone 5 --    @media screen and (device-aspect-ratio: 40/71) { } */
+/* iPhone 5 Retina regardless of IOS version */
+@media (device-height : 568px) 
+   and (device-width : 320px) 
+   and (-webkit-min-device-pixel-ratio: 2)
+   and (max-device-width: 1024px)
+   and (max-device-height: 640px) 
+/* and (orientation : todo: you can add orientation or delete this comment)*/ {
+                 /*IPhone 5 only CSS here*/
+}
+
+.chat
+{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.chat li
+{
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px dotted #B3A9A9;
+}
+
+.chat li.left .chat-body
+{
+    margin-left: 60px;
+}
+
+.chat li.right .chat-body
+{
+    margin-right: 60px;
+}
+
+
+.chat li .chat-body p
+{
+    margin: 0;
+    color: #777777;
+}
+
+.panel .slidedown .glyphicon, .chat .glyphicon
+{
+	margin-right: 0px;
+	margin-bottom: 0px;
+background-color: #fff;
+border: 1px solid transparent;
+border-radius: 4px;
+-webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.05);
+box-shadow: 0 1px 1px rgba(0,0,0,0.05);
+
+}
+
+.panel-primary
+{
+	margin-right: 0;
+	margin-left: 0;
+	padding: 0;
+}
+
+.panel-body
+{
+    overflow-y: scroll;
+    height: 450px;
+    margin-left: 0px;
+}
+
+::-webkit-scrollbar-track
+{
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar
+{
+    width: 12px;
+    background-color: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb
+{
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    background-color: #555;
+}
+
+.container-iphone5,
+.navbar-static-top .container,
+.navbar-fixed-top .container,
+.navbar-fixed-bottom .container {
+	height: 400px;
+	width: 270px;
+	margin-left: 0;
+	margin-right: 0;
+}
+
+
+    </style>
+  </head>
+  <body>
+    <div class="container-iphone5">
+    <div class="row">
+        <div>
+            <div class="panel panel-primary">
+                
+                
+                <div class="panel-footer">
+                    <div class="input-group">
+                        <input id="btn-input" type="text" class="form-control input-group" style="height:108%;margin:0px;padding:0px" placeholder="USERNAME">
+                        
+                    </div>
+	    	</div>
+           </div>
+        </div>
+</div>
+<div class="row">
+        <div>
+            <div class="panel panel-primary">
+                
+                
+                <div class="panel-footer">
+                    <div class="input-group">
+                        <input id="btn-input" type="text" class="form-control input-group" style="height:108%;width:100%;margin:0px;padding:0px" placeholder="PASSWORD">
+                    </div>
+	    	</div>
+           </div>
+        </div>
+    </div>
+
+  </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="js/jquery.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+  
+
+
+
+
+</body></html>
+

@@ -1,0 +1,71 @@
+<html>
+<head>
+	
+<script language="JavaScript">
+	
+function point_it(event){
+	pos_x = event.offsetX?(event.offsetX):event.pageX-document.getElementById("pointer_div").offsetLeft;
+	pos_y = event.offsetY?(event.offsetY):event.pageY-document.getElementById("pointer_div").offsetTop;
+	document.getElementById("cross").style.left = (pos_x-1) ;
+	document.getElementById("cross").style.top = (pos_y-15) ;
+	document.getElementById("cross").style.visibility = "visible" ;
+	document.pointform.form_x.value = pos_x;
+	document.pointform.form_y.value = pos_y;
+}
+
+
+function panUpBtn()
+{
+	document.pointform.form_x.value = "up";
+}
+function panDownBtn()
+{
+	document.pointform.form_x.value = "down";
+}
+function panLeftBtn()
+{
+	document.pointform.form_x.value = "left";
+}
+function panRightBtn()
+{
+	document.pointform.form_x.value = "right";
+}
+
+</script>
+
+<style type="text/css">
+
+div#pointer_div
+{
+  position: absolute;
+  z-index: 10000;
+  top: 100px;
+  left: 100px;
+  cursor: pointer;
+}
+
+
+</style>
+</head>
+<body>
+
+<form name="pointform" method="post" style="cursor:pointer">
+	<div id="pointer_div" >
+		<!-- <img src = "../images/bg.png" style="position:relative;visibility:visible;border-style:none;" usemap="#navigatorbuttons"> -->
+		<img src = "../images/bg.png" style="border-style:none;cursor:pointer" usemap="#navigatorbuttons">
+	</div>
+You pressed = <input type="text" name="form_x" size="4" />
+</form> 
+
+<map name="navigatorbuttons" style="cursor:pointer">
+	<area shape="circle" coords="32,16,8" onclick="panUpBtn()" onmouseover="document.body.style.cursor='pointer';">
+	<area shape="circle" coords="33,46,8" onclick="panDownBtn()">
+	<area shape="circle" coords="17,34,8" onclick="panLeftBtn()">
+	<area shape="circle" coords="49,32,8" onclick="panRightBtn()">
+</map>
+
+
+
+</body>
+</html>
+
