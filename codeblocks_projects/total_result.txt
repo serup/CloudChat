@@ -1,18 +1,5 @@
 -----------------------------------------------
- Test of websocketserver - please wait... 
------------------------------------------------
- Test of websocketserver  
------------------------------------------------
- OK:   InstantiateWebServerObject 
- FAIL: InstantiateWebClientObject 
- FAIL: easyWebClientCommunicateWithLocalServer 
- OK:   NewWebClientClassObject 
- OK:   NewWebClientCommunicateWithLocalServer
---------------
-Passed: 3
-Failed: 2
---------------
 Total
-Passed: 3
-Failed: 2
+Passed: 0
+Failed: 0
 ---------
