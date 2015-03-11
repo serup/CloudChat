@@ -1,1 +1,26 @@
- 
+--------------
+Test of socketserverAPI
+--------------
+OK:   testConnectServer return expected
+<TestCase name="testConnectServer return expected" result="passed" assertions_passed="1" assertions_failed="0" expected_failures="0"></TestCase>
+OK:   testDED_GET_STRUCT_END return expected
+<TestCase name="testDED_GET_STRUCT_END return expected" result="passed" assertions_passed="1" assertions_failed="0" expected_failures="0"></TestCase>
+OK:   testSEND_DATAFRAME response expected
+<TestCase name="testSEND_DATAFRAME response expected" result="passed" assertions_passed="1" assertions_failed="0" expected_failures="0"></TestCase>
+OK:   testRECEIVE_DATAFRAME return expected
+<TestCase name="testRECEIVE_DATAFRAME return expected" result="passed" assertions_passed="1" assertions_failed="0" expected_failures="0"></TestCase>
+OK:   testREGISTER_CLIENT return expected
+<TestCase name="testREGISTER_CLIENT return expected" result="passed" assertions_passed="1" assertions_failed="0" expected_failures="0"></TestCase>
+FAIL: testCREATE_PROFILE return expected
+Expected |1|
+     Got |-1|
+<TestCase name="testCREATE_PROFILE return expected" result="failed" assertions_passed="1" assertions_failed="0" expected_failures="0"></TestCase>
+--------------
+
+Tests Complete
+--------------
+Passed: 5
+Failed: 1
+--------------
+
+

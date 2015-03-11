@@ -1,10 +1,1 @@
-Running 13 test cases...
-[CDataEncoder::DecodeToast] : WARNING ENDtoast ignoring : elements  - this is a temporary fix -- please make proper fix
-STARTtoast -> toast elements -> ENDtoast - read from DED 
-[encode_decode_toast] compare toast element : foto : check : 1
-[CDataEncoder::DecodeToast] : WARNING ENDtoast ignoring : elements  - this is a temporary fix -- please make proper fix
-STARTtoast -> toast elements -> ENDtoast - read from DED 
-[encode_decode_toast] compare toast element : foto : check : 1
-[CDataEncoder::DecodeToast] : WARNING ENDtoast ignoring : elements  - this is a temporary fix -- please make proper fix
-STARTtoast -> toast elements -> ENDtoast - read from DED 
-[encode_decode_toast] compare toast element : foto : check : 1
+ 
