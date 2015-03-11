@@ -8,6 +8,7 @@ CC=g++ -g -o bin/Debug/compressiontest compressionTest.cpp ../compression.h ../c
 TEST=./bin/Debug/compressiontest.exe 
 TESTFLAGS= --report_format=XML --report_level=detailed
 CONVERT=xsltproc -o test_results.html ../test_results.xslt test_results.xml 
+CONVERT2=xsltproc -o test_results.txt ../test_results_text.xslt test_results.xml
 
 all: compile test
 
@@ -17,5 +18,6 @@ compile:
 	@ echo "Build finished"
 	
 test:
+	@ $(TEST)$(TESTFLAGS) > error.txt; $(CONVERT2) 
 	@ $(TEST)$(TESTFLAGS) > error.txt; $(CONVERT) 2>&1; cat error.txt; echo "Test completed"
- 
+
