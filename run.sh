@@ -1,2 +1,2 @@
 cd codeblocks_projects
-sudo make -f makefile_ubuntu.mak dataencoder
+sudo make -f makefile_ubuntu.mak dataencoder 
