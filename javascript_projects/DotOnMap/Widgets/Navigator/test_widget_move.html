@@ -1,0 +1,154 @@
+
+<html>
+  <head>
+    <title>Animating Curtain Widget</title>
+    <script src="move.min.js"></script>
+    <script>
+      
+      curtain="off";
+
+      function $(selector) {
+        return document.querySelectorAll(selector)[0];
+      }
+
+      function play(example, fn) {
+        $('#example-' + example + ' .play').addEventListener('click', function(e){
+          e.preventDefault();
+          fn();
+        }, false);
+      }
+
+      addEventListener('DOMContentLoaded', function(){
+        // example 1
+	play(1, function(){
+	  if(curtain!="on"){
+	          	move('#example-1 .box')
+         		.add('margin-left', 200)
+			.end();
+			curtain="on";
+	  }
+	  else {
+	          	move('#example-1 .box')
+         		.sub('margin-left', 200)
+			.end();
+			curtain="off";
+	  }
+        });
+
+      }, false);
+    </script>
+
+    <style>
+      body {
+        padding: 50px;
+        font: 14px/1.5 "helvetica neue", helvetica, arial, sans-serif;
+        color: #8b8b8b;
+      }
+      h1, h2, h3 {
+        font-size: 33px;
+        font-weight: normal;
+        color: #333;
+        -webkit-font-smoothing: antialiased;
+      }
+      h2 {
+        display: none;
+        font-size: 33px;
+      }
+      h3 {
+        padding: 5px 0;
+        font-size: 18px;
+        border-bottom: 3px solid #eee;
+      }
+      .box {
+        margin: 5px;
+        border: 1px solid #888;
+        font-size: 11px;
+        text-align: center;
+        line-height: 50px;
+      }
+      .small {
+        width: 50px;
+        height: 50px;
+      }
+      a {
+        color: #00B5E2;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      .sandbox {
+        margin: 10px 0;
+        padding: 5px;
+        border: 1px solid #eee;
+      }
+      .source {
+        font-family: monaco, monospace;
+        font-size: 12px;
+        color: #999;
+      }
+      .example p {
+        color: #333;
+      }
+      .example p code {
+        color: #999;
+        padding: 2px 5px;
+        border: 1px solid #eee;
+        -webkit-border-radius: 3px;
+      }
+      #example-1 .box
+      {
+        margin-left: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Animate Curtain Widget</h1>
+    <p>This is an example of how a widget can be moved using JavaScript move.min.js, extremely simple and elegant.</p>
+
+    <h2>Examples</h2>
+
+    <div id="examples">
+      <div id="example-1" class="example">
+        <h3>Move#add/sub(prop, val)</h3>
+        <p>Set <em>prop</em> to <em>val</em>.</p>
+        <a href="#" class="play">Play</a>
+        <div class="sandbox">
+	  <div class="box small" style="border:none">
+
+<!--Widget Code Starts-->
+<script type='text/javascript'>
+    wWidth = "260px"; 
+    wHeight = "195px";
+    wFColor = "#627ea6";
+    wTitle = "Hello";
+    wURL= "http://widgets-gadgets.com";
+    document.write('<div id="NavigatorWidget"></div>');
+    document.write('<scr'+'ipt type="text/JavaScript" src="bootstrap.js"></scr'+'ipt>');
+</script>
+<!--Widget Code Ends-->
+
+
+
+	  </div>
+        </div>
+        <pre class="source">
+          <code>
+	  if(curtain!="on"){
+	          	move('#example-1 .box')
+         		.add('margin-left', 200)
+			.end();
+			curtain="on";
+	  }
+	  else {
+	          	move('#example-1 .box')
+         		.sub('margin-left', 200)
+			.end();
+			curtain="off";
+	  }
+          </code>
+        </pre>
+      </div>
+    </div>
+  </body>
+</html>

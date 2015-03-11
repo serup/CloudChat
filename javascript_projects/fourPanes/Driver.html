@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head> 
+    <meta http-equiv='cache-control' content='no-cache, must-revalidate'> 
+    <meta http-equiv='expires' content='Sat, 26 Jul 1997 05:00:00 GMT'> 
+    <meta http-equiv='pragma' content='no-cache'> 
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <!--<script src="http://api.maps.nokia.com/2.2.3/jsl.js" type="text/javascript" charset="utf-8"></script> -->
+    <!--   <script src="http://api.maps.nokia.com/2.0.0/jsl.js" type="text/javascript" charset="utf-8"></script> -->
+    <meta charset="utf-8">
+    <title>Driver</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="This is a basic test project, testing swipe on 4 panes">
+    <meta name="author" content="Johnny Serup @SCANVA.com">
+
+
+<meta content="True" name="HandheldFriendly">
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+<meta name="viewport" content="width=device-width">
+
+    <!-- Le styles -->
+    <link href="./css/bootstrap.css" rel="stylesheet">
+    <link href="./css/bootstrap-responsive.css" rel="stylesheet">
+    <script src="./js/jquery.js"></script> <!-- IMPORTANT it must be version jQuery v1.7.2 jquery.com --> 
+
+    <script src="js/move.min.js"></script>
+    <script type="text/javascript">
+
+	    curtain_size=1; // less than one makes tip of pane smaller 
+	    curtain_left="off";
+	    curtain_right="off";
+	    curtain_upper="off";
+	    curtain_lower="off";
+	    screenwidth=0;
+	    screenheight = 0;
+	    screenwidth  = $(window).width();
+   	    screenheight = $(window).height();
+
+
+ function getDimension() {
+	var window_width = 0, window_height = 0;
+/*
+  if( typeof( window.innerWidth ) == 'number' ) {
+    window_height = window.innerHeight;
+    window_width = window.innerWidth;
+  } else if( document.documentElement && ( document.documentElement.clientWidth || document.documentElement.clientHeight ) ) {
+    window_height = document.documentElement.clientHeight;
+    window_width = document.documentElement.clientWidth;
+  } else if( document.body && ( document.body.clientWidth || document.body.clientHeight ) ) {
+    window_height = document.body.clientHeight;
+    window_width = document.body.clientWidth;
+  }
+	// window.alert( 'Width = ' + width + 'Height = ' + height);*/
+
+}
+
+   </script>
+
+    <style>
+    
+     .sandbox {
+             padding:0px;
+             margin: 0px 0px 0 0;
+	     margin-left:0px;
+	     width:100%;
+	     height:100%;
+      }
+      #right-pane .box
+      {
+              padding:0px;
+              margin: 0px 0 0 0;
+              margin-right: 0px;
+	      width:100%;
+	      height:100%;
+      }
+      
+      #left-pane .box
+      {
+              padding:0px;
+              margin: 0px 0 0 0;
+	      margin-left: 0px;
+	      left:0px;
+	      width:100%;
+	      height:100%;
+      }
+
+      #upper-pane .box
+      {
+              padding:0px;
+	     margin: 0px 0 0 0;
+	     margin-right: 0px;
+	      width:100%;
+	      height:100%;
+      }
+      
+     #lower-pane .box
+     {
+              padding:0px;
+	     margin: 0px 0 0 0;
+	     margin-right: 0px;
+              width:100%;
+              height:100%;
+     }
+
+
+   </style>
+
+   <style type="text/css">
+	      
+/*	body{width:100%;}  adding this will make horrizontal scrollbar visible  */
+table.mystyle
+{
+    float:left;   
+    border-width: 0 0 1px 1px;
+    border-spacing: 0;
+    border-collapse: collapse;
+    border-style: solid;
+    margin-left:0;
+}
+
+.mystyle td, .mystyle th
+{
+     margin-left:0;
+    margin: 0;
+    padding: 0px;
+    border-width: 1px 1px 0 0;
+    border-style: solid;
+}
+
+table.sample {
+        padding:0px;
+        border-width: 0 0 0px 0px;
+	border-spacing: 0;
+	border-collapse: collapse;
+	border-style: solid;
+}
+table.sample th {
+        padding:0px;
+        margin: 0;
+	border-width: 0px 0px 0 0;
+	padding: 0px;
+	border-style: solid;
+	border-color: gray;
+	background-color: ;
+}
+table.sample tr {
+        padding:0px;
+}
+table.sample td {
+        padding:0px;
+        margin: 0;
+	border-width: 0px 0px 0 0;
+	padding: 0px;
+	border-style: solid;
+	border-color: gray;
+	background-color: ;
+}
+
+
+#wrapper {
+        padding:0px;
+        margin-left:auto;
+        margin-right:auto;
+        width:100%;
+        height:100%;
+}
+
+#browserInfo{
+	padding:0px;
+	border:1px solid blue;
+	width:300px;
+}
+
+#tbl {
+     border:1px solid #000;
+ }
+#cell {
+     border:1px solid #000;
+     width:200px;
+     height:36px;
+ }
+#cell div {
+     width:200px;
+     height:36px;
+     overflow:auto;
+ }
+#cell pre {
+     margin:0px;
+ }
+
+</style>
+
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="../ico/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../../../../ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../../../../ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../../../../ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="../../../../ico/apple-touch-icon-57-precomposed.png">
+
+   
+  </head>
+
+  <body style="padding:0px;margin:0px" onload="init()">
+
+ <script type="text/javascript">
+
+
+function getLocation()
+{
+  if (navigator.geolocation)
+  {
+	    watchID = navigator.geolocation.watchPosition(showPosition, showError, {enableHighAccuracy:true, maximumAge:30000, timeout:27000});
+  }
+  else{x.innerHTML="Geolocation is not supported by this browser.";}
+
+}
+
+function showError()
+{
+
+}
+
+function showPosition(position)
+{
+	//$nmea_string ='$GPRMC,113204,V,5538.27978,N,01235.12138,E,15.6,0.0,041102,0.0,E*43';
+	//               $GPRMC,113204,V,5569.3403,N,01258.3046,E,15.6,0.0,041102,0.0,E*43
+	// nb! added file position as first parameter, inorder to use nmea_string in storeInSQLdatabase
+	var nmea_string = "0,$GPRMC,113204,V," + position.coords.latitude*100 + ",N,0" + position.coords.longitude*100 + ",E,15.6,0.0,041102,0.0,E*43";
+	storeInSQLdatabase(nmea_string);
+}
+
+	var running = 0;
+	function StartStop()
+	{
+
+
+  		if (document.getElementById("knap").innerHTML=="Stop")
+  		{
+			document.getElementById("knap").innerHTML="Start";
+			running=0;
+			document.getElementById("knap").className = 'btn btn-success';
+			if(howtoRetrievePosition=="browser")
+				navigator.geolocation.clearWatch(watchID);	
+  		}
+  		else
+  		{
+			document.getElementById("knap").innerHTML="Stop";
+			running=1;
+
+			document.getElementById("knap").className = 'btn btn-danger'; 
+			if(howtoRetrievePosition=="browser")
+			{
+				getLocation();
+			}				
+  		}
+ 	}
+
+	function sqlResult(result)
+		{
+
+		}
+
+		var filepos=0;
+		var $nmea_string="";
+		$res="M1";
+		function storeInSQLdatabase(responseText)
+		{
+
+			// fetch value from input field, to determine which resourse to poll
+			$res = document.getElementById("DeviceIDInput").value;
+			// take the filepos and the nmea part from the response 
+			strToken=responseText.split(","); 
+			filepos = strToken[0];
+			$nmea_string = responseText.substring(strToken[0].length+1,responseText.length-1);
+
+			
+			// store position in the sql database
+			var ajaxRequest;  // The variable that makes Ajax possible!
+			if(window.XMLHttpRequest){
+				ajaxRequest = new XMLHttpRequest();
+			} else if (window.ActiveXObject) {
+				ajaxRequest = new ActiveXObject("Microsoft.XMLHTTP");
+			}
+			var url = "../phpsqlajax_storegpsindatabase.php";	
+			var params = "resource="+$res+"&gps_string="+$nmea_string;
+			ajaxRequest.open("GET", url+"?"+params,true); // http://www.openjs.com/articles/ajax_xmlhttp_using_post.php
+			ajaxRequest.onreadystatechange = function(){
+				if(ajaxRequest.readyState == 4 && ajaxRequest.status == 200){
+					sqlResult(ajaxRequest.responseText);
+				}
+			}
+			ajaxRequest.send(null); 
+		}
+		
+		function moveToNextPosition()
+		{
+			var ajaxRequest;  // The variable that makes Ajax possible!
+
+			if(running==1){
+
+				if(howtoRetrievePosition=="browser")
+				{// use browser gps position
+					
+				}
+				else {  // use the simulated data from the .nmea file
+					if(window.XMLHttpRequest){
+					ajaxRequest = new XMLHttpRequest();
+					} else if (window.ActiveXObject) {
+						ajaxRequest = new ActiveXObject("Microsoft.XMLHTTP");
+					}
+					ajaxRequest.open("GET", "phpsqlajax_fetchgps.php?pos="+filepos, true);
+					ajaxRequest.send(null); 
+					// Create a function that will receive data sent from the server
+					ajaxRequest.onreadystatechange = function(){
+						if(ajaxRequest.readyState == 4 && ajaxRequest.status == 200){
+ 							storeInSQLdatabase(ajaxRequest.responseText);
+						}
+					}
+				}	
+			}
+		}
+
+		function init()
+		{
+			setInterval('moveToNextPosition()', 3000); 
+		 	getDimension();	
+		}
+	
+	</script>
+
+
+	<!--
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	//  SCREEN LAYOUT
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	-->
+	
+
+
+
+<script>
+	function insertWidget(id,src,startfnc)
+	{
+		str1 = "<div id=\""+id+"\"></div>";
+		str2 = "<scri"+"pt type=\"text/JavaScript\" src=\""+src+"\"></scri"+"pt>";
+		str3 = "<scri"+"pt type=\"text/JavaScript\"> "+startfnc+" </scri"+"pt>";
+		document.write(str1);
+		document.write(str2); 
+	    	document.write(str3);
+	}
+
+</script>
+
+ <!--
+/////////////////////////////////////////////////////////////////////
+// WIDGET SECTION
+/////////////////////////////////////////////////////////////////////
+-->
+<!--
+http://stackoverflow.com/questions/5182170/how-to-let-an-html-image-overlap-another
+-->
+<style>
+.imageoverlap{
+
+position: fixed;
+top:0px;
+}
+
+#zone-test {
+	position: fixed;
+	left:0px;
+	top:0px;
+    	height: 100%;
+	width: 100%;
+	background: #fccc00;
+}
+ 
+
+</style>
+<div id="zone-test">
+	         <div  class='imageoverlap' id="left-pane" style="padding:0px;">
+                        <div class="sandbox" >
+                            <div class="left-pane box" id="leftpanebox" style="padding:0px">
+                                <script type='text/javascript'>
+                                        function LeftpaneWidgetCallback(JSONobject) {
+                                                var wLeftpaneJSON = JSONobject[0];
+                                        }
+                                        insertWidget("LeftpaneCurtainWidget","Widgets/LeftPaneWidget/bootstrap_leftpane_widget.js","init_leftpane();");
+                                </script>
+                            </div>
+                        </div>
+                 </div>
+                 <div  class='imageoverlap' id="right-pane" style="padding:0px;" >
+                        <div class="sandbox"  >
+                            <div class="right-pane box" id="rightpanebox" style="padding:0px;">
+			 	<script type='text/javascript'>
+					function RightpaneWidgetCallback(JSONobject) {
+					    var wRightpaneJSON = JSONobject[0];
+				    	}
+					insertWidget("RightpaneCurtainWidget","Widgets/RightPaneWidget/bootstrap_rightpane_widget.js","init_rightpane();");
+				</script>
+			    </div>
+	 		</div>
+        	 </div>
+
+	         <div  class='imageoverlap' id="upper-pane" style="padding:0px;">
+                        <div class="sandbox" >
+                            <div class="upper-pane box" id="upperpanebox" style="padding:0px">
+                                <script type='text/javascript'>
+                                        function UpperpaneWidgetCallback(JSONobject) {
+                                                var wUpperpaneJSON = JSONobject[0];
+                                        }
+                                        insertWidget("UpperpaneCurtainWidget","Widgets/UpperPaneWidget/bootstrap_upperpane_widget.js","init_upperpane();");
+                                </script>
+                            </div>
+                        </div>
+                 </div>
+
+
+		 <div  class='imageoverlap' id="lower-pane" style="padding:0px;">
+                        <div class="sandbox" >
+                            <div class="lower-pane box" id="lowerpanebox" style="padding:0px">
+                                <script type='text/javascript'>
+                                        function LowerpaneWidgetCallback(JSONobject) {
+                                                var wLowerpaneJSON = JSONobject[0];
+                                        }
+                                        insertWidget("LowerpaneCurtainWidget","Widgets/LowerPaneWidget/bootstrap_lowerpane_widget.js","init_lowerpane();");
+                                </script>
+                            </div>
+                        </div>
+                 </div>
+	</div>
+	
+	
+<!-- swipe section begin; put here instead of inside every pane widget - this makes it faster -->
+<script src="js/xui.js" type="application/javascript" charset="utf-8"></script>
+<script src="js/xui.swipe.js" type="application/javascript" charset="utf-8"></script>
+<!--<script src="../../../js/jquery.js"></script>  -->
+<script type="text/javascript" src="jquery-1.4.2.min.js"></script>
+<script type="text/javascript">
+
+function hide_panes(upper, left, right, lower)
+{
+	if(upper==true)	hide_upperpane();
+	if(left==true) hide_leftpane();
+	if(right==true)	hide_rightpane();
+	if(lower==true)	hide_lowerpane();
+}
+
+function unhide_panes()
+{
+	clear_upperpane_position();
+	clear_leftpane_position();
+	clear_rightpane_position();
+	clear_lowerpane_position();
+}
+
+function init_paneswipe()
+{
+    x$("#upper-pane").swipe(
+	function(e, data){
+		panUpperpaneBtn(); 
+    	    }, {
+        swipeCapture: true,
+        longTapCapture: true,
+        doubleTapCapture: true,
+        simpleTapCapture: true,
+        preventDefaultEvents: true	
+    }
+    );
+
+    x$("#lower-pane").swipe(
+	function(e, data){
+		panLowerpaneBtn(); 
+    	    }, {
+        swipeCapture: true,
+        longTapCapture: true,
+        doubleTapCapture: true,
+        simpleTapCapture: true,
+        preventDefaultEvents: true	
+    }
+    );
+
+    x$("#left-pane").swipe(
+    function(e, data){
+	panLeftpaneBtn_rightside();
+   }, {
+    	
+        swipeCapture: true,
+        longTapCapture: true,
+        doubleTapCapture: true,
+        simpleTapCapture: true,
+        preventDefaultEvents: true	
+         
+    }
+    );
+
+    x$("#right-pane").swipe(
+	function(e, data){
+    	panRightpaneBtn_leftside(); 
+    }, {
+    	
+        swipeCapture: true,
+        longTapCapture: true,
+        doubleTapCapture: true,
+        simpleTapCapture: true,
+        preventDefaultEvents: true	
+    }
+    );
+
+
+ 
+    x$("#zone-test").swipe(
+            function(e, data){
+            	 
+   /*             console.log('type:'+data.type+' deltaX:'+data.deltaX+' deltaY:'+data.deltaY+' distance:'+
+                    data.distance+' delay:'+data.delay+' direction:'+data.direction  );
+                    
+                    switch (data.type){
+                   
+                    case ('direction'):
+                       x$("#zone-test").bottom('direction '+data.direction+'<br />');
+                    break;
+                    case ('doubletap'):
+                       x$("#zone-test").bottom('doubletap <br />');
+                    break;
+                    case ('longtap'):
+                       x$("#zone-test").bottom('longtap <br />');
+                    break;
+                    case ('simpletap'):
+                       x$("#zone-test").bottom('simpletap <br />');
+                    break;
+                    	
+                    }	
+		    if (data.direction == 'down') panUpperpaneBtn();
+		    if (data.direction == 'up') panLowerpaneBtn();
+		    if (data.direction == 'left') panRightpaneBtn_leftside(); 
+		    if (data.direction == 'right') panLeftpaneBtn_rightside();
+*/
+                    
+    }, {
+            	
+                swipeCapture: true,
+                longTapCapture: false,
+                doubleTapCapture: false,
+		simpleTapCapture: false,
+		preventDefaultEvents: true
+                 
+    }
+    );
+
+
+
+    /* should work for debugging in pc browser using jquery, so that mouse is emulating by left press and quick right movement
+    // this however does not seem to work in chrome. jquery lib could be used instead of above xui lib
+    $('#right-pane').live('swiperight', function() {
+        panRightpaneBtn_leftside(); 
+    });
+	
+    */
+
+}
+
+var _timer_panes=setInterval(function(){
+   	if(/loaded|complete/.test(document.readyState)){
+                    clearInterval(_timer_panes)
+                    init_paneswipe() // call target function
+	}
+	}, 10);
+
+
+</script>
+	<!-- swipe section end -->
+	
+
+   <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <!-- <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script> -->
+    <script type="text/javascript" src="../../../js/widgets.js"></script>
+    <!-- <script src="../../../js/jquery.js"></script> -->
+    <!-- IMPORTANT it must be version jQuery v1.7.2 jquery.com  -->
+    <script src="../../../js/bootstrap-button.js"></script>
+    <script src="../../../js/bootstrap-typeahead.js"></script>
+    <script src="../../../js/bootstrap-dropdown.js"></script>
+    
+   <script type="text/javascript">
+    $("#browserInfo").text('Browser (Width : ' + $(window).width() + ' , Height :' + $(window).height() + ' )');
+    $(window).resize(function () {
+                $('#browserInfo').text('Browser (Width : ' + $(window).width() + ' , Height :' + $(window).height() + ' )');
+
+
+		img0 = document.getElementById('upperpaneimg');
+                resize_upperpaneimg(img0);
+		//move('#upper-pane').y(-((($(window).height())/8)*7)).end();
+		clear_upperpane_position();
+
+
+		//divelem = document.getElementById('pointer_div_rightpane'); 
+		//resize_rightpaneimg(divelem); // needed when image is NOT loaded, div section is NOT resized unless this is here
+
+
+		img = document.getElementById('rightpaneimg');
+                resize_rightpaneimg(img);
+		//move('#right-pane').x(+((($(window).width())/8)*7)).end();
+		clear_rightpane_position();
+		
+		leftpanewidth = $(window).width();
+		//move('#left-pane').x(-((leftpanewidth/8)*7)).end();
+		clear_leftpane_position();
+                img2 = document.getElementById('leftpaneimg');
+		resize_leftpaneimg(img2);
+
+                img3 = document.getElementById('lowerpaneimg');
+		resize_lowerpaneimg(img3);
+		//move('#lower-pane').y(+((($(window).height())/8)*7)).end();
+		clear_lowerpane_position();
+
+		resizeIcons();
+
+		unhide_panes();
+    });
+
+  </script>
+
+  </body>
+</html>
+

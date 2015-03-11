@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ProfileRealm>
+    <version>1</version>
+    <DDEntry>
+        <DDGuid></DDGuid>
+        <PhysicalDataElementName>profile_chunk_id</PhysicalDataElementName>
+        <Location></Location>
+        <Category>RawData</Category>
+        <DataType>std::string</DataType>
+        <MaxLength>32</MaxLength>
+        <Description>Primary key for profiles toasts</Description>
+        <characteristics></characteristics>
+        <relationship></relationship>
+        <Mandatory>YES</Mandatory>
+        <accessrights></accessrights>      
+    </DDEntry>
+    <DDEntry>
+        <DDGuid></DDGuid>
+        <PhysicalDataElementName>aiid</PhysicalDataElementName>
+        <Location></Location>
+        <Category>RawData</Category>
+        <DataType>std::string</DataType>
+        <MaxLength>32</MaxLength>
+        <Description>auto increment id</Description>
+        <characteristics></characteristics>
+        <relationship></relationship>
+        <Mandatory>YES</Mandatory>
+        <accessrights></accessrights>      
+    </DDEntry>
+    <DDEntry>
+        <DDGuid></DDGuid>
+        <PhysicalDataElementName>profile_chunk_seq</PhysicalDataElementName>
+        <Location></Location>
+        <Category>RawData</Category>
+        <DataType>std::string</DataType>
+        <MaxLength>32</MaxLength>
+        <Description>sequence number of the toast data block</Description>
+        <characteristics></characteristics>
+        <relationship></relationship>
+        <Mandatory>YES</Mandatory>
+        <accessrights></accessrights>      
+    </DDEntry>
+    <DDEntry>
+        <DDGuid></DDGuid>
+        <PhysicalDataElementName>profile_chunk_data</PhysicalDataElementName>
+        <Location></Location>
+        <Category>RawData</Category>
+        <DataType>unsigned char</DataType>
+        <MaxLength>1400</MaxLength>
+        <Description>Data in bytes</Description>
+        <characteristics></characteristics>
+        <relationship></relationship>
+        <Mandatory></Mandatory>
+        <accessrights></accessrights>      
+    </DDEntry>
+</ProfileRealm>

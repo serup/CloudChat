@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<ActiveTarget name="Debug" />
+	<File name="databasecontrol_test.cpp" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="55501" topLine="753" />
+		</Cursor>
+		<Folding>
+			<Collapse line="39" />
+			<Collapse line="41" />
+			<Collapse line="52" />
+			<Collapse line="109" />
+			<Collapse line="112" />
+			<Collapse line="132" />
+			<Collapse line="136" />
+			<Collapse line="146" />
+			<Collapse line="149" />
+			<Collapse line="162" />
+			<Collapse line="166" />
+			<Collapse line="175" />
+			<Collapse line="178" />
+			<Collapse line="226" />
+			<Collapse line="230" />
+			<Collapse line="392" />
+			<Collapse line="396" />
+			<Collapse line="399" />
+			<Collapse line="407" />
+			<Collapse line="436" />
+			<Collapse line="439" />
+			<Collapse line="472" />
+			<Collapse line="481" />
+			<Collapse line="498" />
+			<Collapse line="501" />
+			<Collapse line="676" />
+			<Collapse line="691" />
+			<Collapse line="700" />
+			<Collapse line="715" />
+			<Collapse line="719" />
+			<Collapse line="722" />
+			<Collapse line="926" />
+			<Collapse line="1039" />
+		</Folding>
+	</File>
+	<File name="..\..\databasecontrol.hpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="16623" topLine="475" />
+		</Cursor>
+	</File>
+	<File name="..\..\databasecontrol.cpp" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="56550" topLine="1235" />
+		</Cursor>
+		<Folding>
+			<Collapse line="755" />
+			<Collapse line="1300" />
+		</Folding>
+	</File>
+</CodeBlocks_layout_file>

@@ -1,0 +1,39 @@
+--------------
+Test of DataEncoderDecoder - DED
+--------------
+OK:   testinit return expected
+OK:   CASN1p3() return expected
+OK:   CASN1p1() return expected
+OK:   AppendASN1() return expected
+OK:   FetchNextASN1() return expected
+OK:   WhatIsWriteSize() return expected
+OK:   WhatIsReadSize() return expected
+OK:   FetchTotalASN1() return expected
+OK:   DED_START_ENCODER return expected
+OK:   DED_PUT_STRUCT_START return expected
+OK:   DED_PUT_METHOD return expected
+OK:   DED_PUT_USHORT return expected
+OK:   DED_PUT_BOOL return expected
+OK:   DED_PUT_STDSTRING return expected
+OK:   DED_PUT_ELEMENT return expected
+OK:   DED_PUT_STRUCT_END return expected
+OK:   DED_GET_ENCODED_DATA return expected
+OK:   decompress_lzss decompress success
+OK:   DED_PUT_DATA_IN_DECODER success
+OK:   DED_GET_STRUCT_START success
+OK:   DED_GET_METHOD return expected
+OK:   DED_GET_USHORT return expected
+OK:   DED_GET_BOOL action1 return expected
+OK:   DED_GET_BOOL action2 return expected
+OK:   DED_GET_STDSTRING return expected
+OK:   DED_GET_ELEMENT return expected
+OK:   DED_GET_STRUCT_END return expected
+OK:   testDED_GET_ELEMENT_embed_image return expected
+OK:   testDED_GET_ELEMENT_embed_largeimage return expected
+OK:   testDED_GET_ELEMENT_embed_Xlargeimage return expected
+--------------
+Tests Complete
+--------------
+Passed: 30
+Failed: 0
+--------------

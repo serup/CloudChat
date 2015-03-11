@@ -1,0 +1,81 @@
+# depslib dependency file v1.0
+1409578354 source:c:\cygwin\home\cavdarserup\codeblocks_projects\serup\dataencoderdecoder\dataencoderdecoder\compression-lib\compression.cpp
+	"compression.h"
+	<cstring>
+
+1409578354 c:\cygwin\home\cavdarserup\codeblocks_projects\serup\dataencoderdecoder\dataencoderdecoder\compression-lib\compression.h
+	<cstring>
+
+1410800800 source:c:\cygwin\home\cavdarserup\codeblocks_projects\serup\dataencoderdecoder\dataencoderdecoder\dataencoder.cpp
+	"DataEncoder.h"
+	<fcntl.h>
+	<sys/types.h>
+	<sys/stat.h>
+	<stdio.h>
+	<boost/algorithm/string.hpp>
+
+1409578353 c:\cygwin\home\cavdarserup\codeblocks_projects\serup\dataencoderdecoder\dataencoderdecoder\dataencoder.h
+	<vector>
+	<string>
+	<sys/stat.h>
+	"ASN1.h"
+	"svg_utils\handlesvg.h"
+	"Rpc.h"
+	"objbase.h"
+
+1409578353 c:\cygwin\home\cavdarserup\codeblocks_projects\serup\dataencoderdecoder\dataencoderdecoder\asn1.h
+	<stdarg.h>
+	<memory>
+	<bits/unique_ptr.h>
+	<string.h>
+
+1414484039 source:c:\cygwin\home\cavdarserup\codeblocks_projects\serup\databasecontrol\databasecontrol.cpp
+	"databasecontrol.hpp"
+
+1414482351 c:\cygwin\home\cavdarserup\codeblocks_projects\serup\databasecontrol\databasecontrol.hpp
+	<string>
+	<cctype>
+	<boost/algorithm/string.hpp>
+	<boost/algorithm/hex.hpp>
+	<boost/property_tree/xml_parser.hpp>
+	<boost/property_tree/ptree.hpp>
+	<boost/foreach.hpp>
+	<boost/range.hpp>
+	<boost/filesystem.hpp>
+	"md5.h"
+	<iostream>
+	<fstream>
+	<boost/thread/condition.hpp>
+	<boost/thread/mutex.hpp>
+	"../websocket_server/dataframe.hpp"
+	"../websocket_server/wsclient/wsclient.hpp"
+	"../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.h"
+	"../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.h"
+
+1409578353 c:\cygwin\home\cavdarserup\codeblocks_projects\serup\databasecontrol\md5.h
+	<string>
+	<vector>
+	<string.h>
+
+1409578355 c:\cygwin\home\cavdarserup\codeblocks_projects\serup\websocket_server\dataframe.hpp
+	<vector>
+	<boost/cstdint.hpp>
+	<boost/array.hpp>
+	<boost/asio.hpp>
+
+1409578355 c:\cygwin\home\cavdarserup\codeblocks_projects\serup\websocket_server\wsclient\wsclient.hpp
+	<string>
+	<boost/thread.hpp>
+	<boost/cstdint.hpp>
+	<boost/array.hpp>
+	<boost/asio/buffer.hpp>
+
+1414489757 source:c:\cygwin\home\cavdarserup\codeblocks_projects\serup\databasecontrol\boostunittest\databasecontrol_testsuite\databasecontrol_test.cpp
+	<boost/test/included/unit_test.hpp>
+	<boost/test/results_reporter.hpp>
+	<boost/algorithm/string.hpp>
+	<boost/filesystem/operations.hpp>
+	<iostream>
+	<fstream>
+	"../../databasecontrol.hpp"
+

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="compression_test" />
+		<Option pch_mode="2" />
+		<Option compiler="cygwin" />
+		<Build>
+			<Target title="Debug Win32">
+				<Option output="bin/Debug/compressiontest" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="cygwin" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-std=gnu++11" />
+					<Add option="-D_WIN32" />
+					<Add option="-D__CYGWIN__" />
+					<Add option="-D__SunOS" />
+					<Add option="-Dnodosfilewarning" />
+					<Add option="-D__MINGW32__" />
+				</Compiler>
+			</Target>
+			<Target title="Release Win32">
+				<Option output="Release/compression-lib" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="Release" />
+				<Option type="2" />
+				<Option compiler="cygwin" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-std=gnu++11" />
+					<Add option="-D_WIN32" />
+					<Add option="-D__CYGWIN__" />
+					<Add option="-D__SunOS" />
+					<Add option="-Dnodosfilewarning" />
+					<Add option="-D__MINGW32__" />
+				</Compiler>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-std=gnu++11" />
+			<Add option="-D_WIN32_WINNT" />
+			<Add option="-D__CYGWIN__" />
+			<Add option="-D__USE_W32_SOCKETS" />
+			<Add option="-D__MSABI_LONG=long" />
+		</Compiler>
+		<Linker>
+			<Add option="-static" />
+			<Add option="-lws2_32" />
+			<Add library="boost_system" />
+			<Add library="boost_signals" />
+			<Add library="boost_thread" />
+			<Add directory="/cygdrive/c/cygwin/usr/local/lib/" />
+		</Linker>
+		<Unit filename="../compression.cpp" />
+		<Unit filename="../compression.h" />
+		<Unit filename="compressionTest.cpp" />
+		<Extensions>
+			<code_completion />
+			<envvars set="cygwin" />
+			<debugger />
+			<DoxyBlocks>
+				<comment_style block="0" line="0" />
+				<doxyfile_project />
+				<doxyfile_build />
+				<doxyfile_warnings />
+				<doxyfile_output />
+				<doxyfile_dot />
+				<general />
+			</DoxyBlocks>
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

@@ -1,0 +1,14 @@
+-----------------------------------------------
+ Test of websocketserver  
+-----------------------------------------------
+ OK:   InstantiateWebServerObject 
+ FAIL: InstantiateWebClientObject 
+ FAIL: easyWebClientCommunicateWithLocalServer 
+ OK:   NewWebClientClassObject 
+ OK:   NewWebClientCommunicateWithLocalServer
+--------------
+Tests Complete
+--------------
+Passed: 3
+Failed: 2
+--------------

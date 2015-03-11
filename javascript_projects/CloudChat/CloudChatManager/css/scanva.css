@@ -1,0 +1,111 @@
+
+.chat
+{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    //@include vertical-align;
+}
+
+.chat li
+{
+    padding-left: 4px;
+    padding-right: 4px;
+    margin-top: 0px;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px dotted #B3A9A9;
+
+}
+
+.chat li.left .chat-body
+{
+    margin-left: 60px;
+}
+
+.chat li.right .chat-body
+{
+    margin-right: 60px;
+}
+
+
+.chat li .chat-body p
+{
+    margin: 0;
+    padding-left: 30px;
+    color: #777777;
+}
+
+.bottom {
+    position: fixed;
+    bottom: 0; 
+    alignment-adjust: central;
+}
+
+
+
+.box
+{
+    padding:0px;
+    margin: 0px 0 0 0;
+    margin-right: 0px;
+    margin-bottom: 0;
+    -webkit-transition: all .5s;
+    -webkit_transform: translateX(280px);
+}
+
+.caption { margin: 3px; text-align: center; font-style: italic; font-size: 12px; float: left; }
+
+.glyphicon-refresh-animate {
+    -webkit-animation-name: rotateThis;
+    -webkit-animation-duration: 2s;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: linear;
+}
+
+@-webkit-keyframes "rotateThis" {
+    from { 
+        -webkit-transform: rotate( 0deg );  
+    }
+    to  { 
+        -webkit-transform: rotate( 360deg ); 
+    }
+}
+
+.clear {
+    clear: both;
+}
+
+
+.thumb {
+    height: 75px;
+    border: 1px solid #000;
+    margin: 10px 5px 0 0;
+}
+.outlinetext {
+    color: #fff;
+    text-shadow: 1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000;
+}
+
+@font-face {
+	font-family:'scanva';
+	src:url('../fonts/scanva.ttf');
+	font-weight:normal;
+	font-style:normal
+}
+
+.scnva {
+	display: inline-block;
+	font-family: scanva;
+	font-style: normal;
+	font-weight: normal;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.scnva-group:before{content:"\f0c0"}
+.scnva-user:before{content:"\f0bf"}
+.scnva-stepbackward:before{content:"\f048"}
+.scnva-stepforward:before{content: "\f051"}
+

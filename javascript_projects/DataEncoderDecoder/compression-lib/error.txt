@@ -1,0 +1,18 @@
+--------------
+Test of compression - testing okumura compression aka  LempelZivStorerSzymanski (LZSS) is a lossless data compression algorithm, hoffman coding
+--------------
+OK:   local_adler32 return expected
+OK:   init_state return expected
+OK:   insert_node return expected
+OK:   delete_node return expected
+OK:   compress_lzss return expected
+OK:   compress_lzss return expected
+FAIL: decompress_lzss decompress success
+Expected |I am Sam
+     Got |I am Sam
+--------------
+Tests Complete
+--------------
+Passed: 6
+Failed: 1
+--------------

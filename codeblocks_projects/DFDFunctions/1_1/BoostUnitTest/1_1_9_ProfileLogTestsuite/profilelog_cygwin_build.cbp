@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="1_1_9_ProfileLog_test" />
+		<Option pch_mode="2" />
+		<Option compiler="cygwin" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/1_1_9_test" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="cygwin" />
+				<Option parameters=" --log_level=test_suite --run_test=_1191_AddToLog" />
+				<Compiler>
+					<Add option="-std=c++0x" />
+					<Add option="-Wall" />
+					<Add option="-g" />
+					<Add option="-std=gnu++11" />
+					<Add option="-D_WIN32" />
+					<Add option="-D_WIN32_WINNT" />
+					<Add option="-D__USE_W32_SOCKETS" />
+					<Add option="-D__CYGWIN__" />
+					<Add option="-D__SunOS" />
+					<Add option="-D__MINGW32__" />
+					<Add option="-D__MSABI_LONG=long" />
+					<Add option="-DWIN32_LEAN_AND_MEAN" />
+					<Add option="-Dnodosfilewarning" />
+					<Add option="-D__DEBUG__" />
+					<Add directory="/cygdrive/c/cygwin/usr/include/w32api/" />
+				</Compiler>
+				<Linker>
+					<Add option="-static" />
+					<Add option="-lws2_32" />
+					<Add option="-mthreads" />
+					<Add library="boost_system" />
+					<Add library="boost_signals" />
+					<Add library="boost_thread" />
+					<Add library="pthread" />
+					<Add library="boost_filesystem" />
+					<Add directory="/usr/local/lib" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/createcustomer_test" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="" />
+				<Option object_output="obj/Release/" />
+				<Option type="2" />
+				<Option compiler="cygwin" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-std=gnu++11" />
+			<Add option="-D_WIN32_WINNT" />
+			<Add option="-D__CYGWIN__" />
+			<Add option="-D__USE_W32_SOCKETS" />
+			<Add option="-D__MSABI_LONG=long" />
+		</Compiler>
+		<Linker>
+			<Add option="-static" />
+			<Add option="-lws2_32" />
+			<Add library="boost_system" />
+			<Add library="boost_signals" />
+			<Add library="boost_thread" />
+			<Add directory="/cygdrive/c/Program Files/boost/boost_1_53_0/stage/lib/" />
+		</Linker>
+		<Unit filename="../../../../DataBaseControl/databasecontrol.cpp" />
+		<Unit filename="../../../../DataBaseControl/databasecontrol.hpp" />
+		<Unit filename="../../../../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.cpp" />
+		<Unit filename="../../../../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.h" />
+		<Unit filename="../../../../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.cpp" />
+		<Unit filename="../../../../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.h" />
+		<Unit filename="../../../../websocket_server/dataframe.cpp" />
+		<Unit filename="../../../../websocket_server/dataframe.hpp" />
+		<Unit filename="../../../../websocket_server/dataframe_parser.cpp" />
+		<Unit filename="../../../../websocket_server/dataframe_parser.hpp" />
+		<Unit filename="../../../../websocket_server/header.hpp" />
+		<Unit filename="../../../../websocket_server/participant.hpp" />
+		<Unit filename="../../../../websocket_server/reply.cpp" />
+		<Unit filename="../../../../websocket_server/reply.hpp" />
+		<Unit filename="../../../../websocket_server/request.hpp" />
+		<Unit filename="../../../../websocket_server/request_handler.cpp" />
+		<Unit filename="../../../../websocket_server/request_handler.hpp" />
+		<Unit filename="../../../../websocket_server/request_parser.cpp" />
+		<Unit filename="../../../../websocket_server/request_parser.hpp" />
+		<Unit filename="../../../../websocket_server/room.cpp" />
+		<Unit filename="../../../../websocket_server/room.hpp" />
+		<Unit filename="../../../../websocket_server/server.cpp" />
+		<Unit filename="../../../../websocket_server/server.hpp" />
+		<Unit filename="../../../../websocket_server/session.cpp" />
+		<Unit filename="../../../../websocket_server/session.hpp" />
+		<Unit filename="../../../../websocket_server/wsclient/wsclient.cpp" />
+		<Unit filename="../../../../websocket_server/wsclient/wsclient.hpp" />
+		<Unit filename="../../1_1_Profile.cpp" />
+		<Unit filename="../../1_1_Profile.hpp" />
+		<Unit filename="../../md5.h" />
+		<Unit filename="1_1_9_ProfileLog_test.cpp" />
+		<Extensions>
+			<code_completion />
+			<envvars set="cygwin" />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

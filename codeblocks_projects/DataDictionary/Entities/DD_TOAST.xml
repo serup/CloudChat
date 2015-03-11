@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Entity>
+    <version>1</version>
+    <EntityRecord>
+       <TransGUID></TransGUID> -- each record has a unique transaction id to be used with security, when detecting inconsistencies
+       <Protocol>DED</Protocol>
+       <ProtocolVersion>1.0.0.0</ProtocolVersion>
+       <DataSize></DataSize>
+       <Data></Data> -- here is the pCompressedData from above protocol encoding, compression, encrypting algoritm -- currently DED (dataencoderdecoder)
+       <DataMD5><DataMD5> -- this md5 checksum is used as an extra verification -- Data must be verified with this value before being used.
+    </EntityRecord>
+</Entity>

@@ -1,0 +1,204 @@
+# depslib dependency file v1.0
+1409578354 source:c:\cygwin\home\cavdarserup\codeblocks_projects\serup\dataencoderdecoder\dataencoderdecoder\compression-lib\compression.cpp
+	"compression.h"
+	<cstring>
+
+1409578354 c:\cygwin\home\cavdarserup\codeblocks_projects\serup\dataencoderdecoder\dataencoderdecoder\compression-lib\compression.h
+	<cstring>
+
+1415864817 source:c:\cygwin\home\cavdarserup\codeblocks_projects\serup\dataencoderdecoder\dataencoderdecoder\dataencoder.cpp
+	"DataEncoder.h"
+	<fcntl.h>
+	<sys/types.h>
+	<sys/stat.h>
+	<stdio.h>
+	<boost/algorithm/string.hpp>
+
+1415871743 c:\cygwin\home\cavdarserup\codeblocks_projects\serup\dataencoderdecoder\dataencoderdecoder\dataencoder.h
+	<vector>
+	<string>
+	<sys/stat.h>
+	"ASN1.h"
+	"svg_utils\handlesvg.h"
+	"Rpc.h"
+	"objbase.h"
+
+1409578353 c:\cygwin\home\cavdarserup\codeblocks_projects\serup\dataencoderdecoder\dataencoderdecoder\asn1.h
+	<stdarg.h>
+	<memory>
+	<bits/unique_ptr.h>
+	<string.h>
+
+1415619896 source:c:\cygwin\home\cavdarserup\codeblocks_projects\serup\websocket_server\dataframe.cpp
+	"dataframe.hpp"
+	"dataframe_parser.hpp"
+
+1409578355 c:\cygwin\home\cavdarserup\codeblocks_projects\serup\websocket_server\dataframe.hpp
+	<vector>
+	<boost/cstdint.hpp>
+	<boost/array.hpp>
+	<boost/asio.hpp>
+
+1409578355 c:\cygwin\home\cavdarserup\codeblocks_projects\serup\websocket_server\dataframe_parser.hpp
+	<boost/cstdint.hpp>
+	<boost/logic/tribool.hpp>
+	<boost/tuple/tuple.hpp>
+
+1409578355 source:c:\cygwin\home\cavdarserup\codeblocks_projects\serup\websocket_server\dataframe_parser.cpp
+	"dataframe_parser.hpp"
+	"dataframe.hpp"
+
+1409578355 source:c:\cygwin\home\cavdarserup\codeblocks_projects\serup\websocket_server\main.cpp
+	"./server.hpp"
+	<iostream>
+	<boost/lexical_cast.hpp>
+	<boost/thread.hpp>
+
+1409578355 c:\cygwin\home\cavdarserup\codeblocks_projects\serup\websocket_server\server.hpp
+	<string>
+	<vector>
+	<boost/asio.hpp>
+	<boost/noncopyable.hpp>
+	<boost/shared_ptr.hpp>
+	"room.hpp"
+	"session.hpp"
+	"request_handler.hpp"
+
+1415616778 c:\cygwin\home\cavdarserup\codeblocks_projects\serup\websocket_server\room.hpp
+	<string>
+	<algorithm>
+	<deque>
+	<set>
+	<boost/lexical_cast.hpp>
+	<boost/bind.hpp>
+	"dataframe.hpp"
+	"participant.hpp"
+
+1409578355 c:\cygwin\home\cavdarserup\codeblocks_projects\serup\websocket_server\participant.hpp
+	<string>
+	<boost/shared_ptr.hpp>
+	"dataframe.hpp"
+
+1415640876 c:\cygwin\home\cavdarserup\codeblocks_projects\serup\websocket_server\session.hpp
+	<string>
+	<vector>
+	<boost/cstdint.hpp>
+	<boost/asio.hpp>
+	<boost/array.hpp>
+	<boost/noncopyable.hpp>
+	<boost/shared_ptr.hpp>
+	<boost/enable_shared_from_this.hpp>
+	"reply.hpp"
+	"request.hpp"
+	"request_parser.hpp"
+	"dataframe.hpp"
+	"dataframe_parser.hpp"
+	"participant.hpp"
+	"room.hpp"
+
+1409578355 c:\cygwin\home\cavdarserup\codeblocks_projects\serup\websocket_server\reply.hpp
+	<vector>
+	<boost/asio.hpp>
+	"header.hpp"
+
+1409578355 c:\cygwin\home\cavdarserup\codeblocks_projects\serup\websocket_server\header.hpp
+	<string>
+
+1409578355 c:\cygwin\home\cavdarserup\codeblocks_projects\serup\websocket_server\request.hpp
+	<string>
+	<vector>
+	"header.hpp"
+
+1409578355 c:\cygwin\home\cavdarserup\codeblocks_projects\serup\websocket_server\request_parser.hpp
+	<boost/logic/tribool.hpp>
+	<boost/tuple/tuple.hpp>
+
+1409578355 c:\cygwin\home\cavdarserup\codeblocks_projects\serup\websocket_server\request_handler.hpp
+	<string>
+	<vector>
+	<boost/noncopyable.hpp>
+	<string.h>
+
+1409578355 source:c:\cygwin\home\cavdarserup\codeblocks_projects\serup\websocket_server\reply.cpp
+	"reply.hpp"
+	<string>
+
+1409578355 source:c:\cygwin\home\cavdarserup\codeblocks_projects\serup\websocket_server\request_handler.cpp
+	"request_handler.hpp"
+	<sstream>
+	<boost/lexical_cast.hpp>
+	<boost/uuid/sha1.hpp>
+	<boost/archive/iterators/base64_from_binary.hpp>
+	<boost/archive/iterators/insert_linebreaks.hpp>
+	<boost/archive/iterators/transform_width.hpp>
+	<boost/archive/iterators/ostream_iterator.hpp>
+	"header.hpp"
+	"reply.hpp"
+	"request.hpp"
+
+1409578355 source:c:\cygwin\home\cavdarserup\codeblocks_projects\serup\websocket_server\request_parser.cpp
+	"request_parser.hpp"
+	"request.hpp"
+
+1415639453 source:c:\cygwin\home\cavdarserup\codeblocks_projects\serup\websocket_server\room.cpp
+	"room.hpp"
+	"../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.h"
+	"../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.h"
+	<vector>
+	<iostream>
+	<algorithm>
+	<functional>
+	<boost/bind.hpp>
+	<boost/foreach.hpp>
+
+1409578355 source:c:\cygwin\home\cavdarserup\codeblocks_projects\serup\websocket_server\server.cpp
+	"server.hpp"
+	<iostream>
+	<vector>
+	<boost/bind.hpp>
+	<boost/shared_ptr.hpp>
+
+1415620107 source:c:\cygwin\home\cavdarserup\codeblocks_projects\serup\websocket_server\session.cpp
+	"session.hpp"
+	"reply.hpp"
+	"request.hpp"
+	"request_handler.hpp"
+	<iostream>
+	<sstream>
+	<vector>
+	<boost/lexical_cast.hpp>
+	<boost/bind.hpp>
+	<boost/uuid/sha1.hpp>
+	<boost/archive/iterators/base64_from_binary.hpp>
+	<boost/archive/iterators/insert_linebreaks.hpp>
+	<boost/archive/iterators/transform_width.hpp>
+	<boost/archive/iterators/ostream_iterator.hpp>
+	<boost/property_tree/ptree.hpp>
+	<boost/property_tree/json_parser.hpp>
+	<boost/foreach.hpp>
+	"../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.h"
+	"../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.h"
+
+1415698035 source:c:\cygwin\home\cavdarserup\codeblocks_projects\serup\websocket_server\wsclient\wsclient.cpp
+	"wsclient.hpp"
+	<fcntl.h>
+	<netdb.h>
+	<netinet/tcp.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<sys/socket.h>
+	<sys/time.h>
+	<sys/types.h>
+	<unistd.h>
+	<stdint.h>
+	<vector>
+	<string>
+
+1415113523 c:\cygwin\home\cavdarserup\codeblocks_projects\serup\websocket_server\wsclient\wsclient.hpp
+	<string>
+	<boost/thread.hpp>
+	<boost/cstdint.hpp>
+	<boost/array.hpp>
+	<boost/asio/buffer.hpp>
+

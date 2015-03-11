@@ -1,0 +1,10 @@
+<?
+$username="scanva_com";
+$password="1lobarem2012";
+$database="scanva_com";
+$username="root";
+$server="localhost";
+$alternative_server_01="localhost";
+$alternative_username_01="root";
+$alternative_password_01="1lobarem2012";
+?>

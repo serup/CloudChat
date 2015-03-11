@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <meta name="apple-mobile-web-app-capable" content="yes" /> <!--[iOS fullscreen]-->
+        <link rel="shortcut icon" href="ico/favicon.ico">
+        <title>CloudChatManager</title>
+
+        <link rel="stylesheet" href="css/font-awesome.min.css">
+        <link rel="stylesheet" href="css/scanva.css">
+        <link rel="stylesheet" href="css/bootstrap.min.css" >
+
+        
+        <!-- scanva version 14-10-2014 -->
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <!-- <script src="http://code.jquery.com/jquery.js"></script> -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>  <!-- needed otherwise ReferenceError: $ is not defined -->
+        <!--	<script src="js/jquery.js"></script> --> <!-- IMPORTANT it must be version jQuery v1.7.2 jquery.com -->
+        <script src="js/jquery-ui-1.10.4.js"></script>
+        <!--	<script src="js/move.min.js"></script> -->
+        <script src="js/jquery-ui-1.10.4.min.js"></script>
+        <!-- <script type="text/javascript" src="../../liquid/liquid082.js"></script> -->  <!-- security reason ask for http ; http://odiseo.net/front-end/simple-solution-for-local-cross-origin-requests -->
+        <!-- <script type="text/javascript" src="../../liquid/mod/data.js"></script> --> <!-- THIS LINE IS ONLY FOR DEBUG jsl.require("Data") -- should be used in RELEASE version for security reasons -->
+        <!-- <script type="text/javascript" src="../../liquid/lib/lang.js"></script> --> <!-- THIS LINE IS ONLY FOR DEBUG jsl.require("Data") -- should be used in RELEASE version for security reasons -->
+        <script src="../../DataEncoderDecoder/compression-lib/compression.js"></script>
+        <script src="../../DataEncoderDecoder/dataencoderdecoder.js"></script>
+        <script src="../../socketserverAPI/socketserverAPI.js"></script>
+        <script src="js/mvc_login.js"></script> <!-- Model View Control concept used to handle client UI interaction with data -->
+        <script src="js/mvc_chat.js"></script> <!-- Model View Control concept used to handle client UI interaction with data -->
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <!-- disabled[uid:1234321] due to poor performance, however it did make it possible for avoiding the scrolling bounce on iphone -- TODO: find a better way - suggestion, perhaps detect boundary area and only then preventDefault 
+        <script>
+            var xStart, yStart = 0;
+            document.addEventListener('touchstart',function(e) {
+                xStart = e.touches[0].screenX;
+                yStart = e.touches[0].screenY;
+            });
+            document.addEventListener('touchmove',function(e) {
+                var xMovement = Math.abs(e.touches[0].screenX - xStart);
+                var yMovement = Math.abs(e.touches[0].screenY - yStart);
+                if((yMovement * 3) > xMovement) {
+                    e.preventDefault();
+                }
+            });
+        </script>
+        -->
+    </head>
+
+    <body onload="init();" >
+        <DIV id="main_body" style="width:100%; height:100%;">
+            <div id="topbar" style="position: fixed;clear:both; top: 0; color:lightblue; border: 1px; border-bottom-style: solid;background: white; width: 100%; height: 38px; z-index:100;">
+                <h4 style="margin-left:2%; margin-right:2%; color:lightblue; ">
+                    <table style="width: 100%">
+                        <tr>
+                            <td style="text-align:center;"><i class="fa fa-bolt outlinetext" id="top_1"></i></td> <!-- due to href="" then when press on this - reload of page will happen and reconnect will start -->
+                            <td style="text-align:center;"><i class="fa fa-cloud outlinetext" onclick="TopBar('top_cloud');" id="top_cloud"></i></td> <!-- application.js will handle click event on this - TODO: create mvc_topbar and mvc_navibar -->
+                            <td ><i class='scnva scnva-stepbackward  pull-right' style='display:none; opacity: 0.8; color:graytext;' id="scnva-stepbackward" </i></td>
+                            <td ><i class='scnva scnva-stepforward  pull-right' style='display:none; opacity: 0.8; color:graytext;' id="scnva-stepforward" </i></td>
+                            <td ><i class='fa fa-male pull-right ' id="top_un"></i></td>
+                            <td ><i style="color:orangered" class='fa fa-sign-out pull-right outlinetext' onclick="logout();"></i></td>
+                        </tr>
+                    </table>
+                </h4>
+            </div>
+            <div class="container" id="page_1" style="margin-top: 20px; ">
+             <!--   <DIV id="pagehome" class="page_1 box" style="position: absolute; left: 0px; margin-left: 0px; max-height:500px; width: 100%; display: inline-block; overflow:auto"> -->
+                <DIV id="pagehome" class="page_1 box" style="position: absolute; left: 0px; margin-left: 0px; width: 100%; display: inline-block; overflow:auto;min-height:500px"> <!-- min-height for touch event area - NB! find a better way to set touch area to fullscreen -->
+                    <div class="container"><h1 id="hometitle" style="position: fixed;  z-index:100; color:Orange; text-align:left; font-family:Lucida Sans Unicode">Home</h1></div>
+                    <div class="container"><p style="right: 0px; margin-top:50px;margin-left: 0px;" ></p>
+                        <div class="container" id="homelist" >
+                            <h3 style="text-align:left;">
+                                <span class="glyphicon glyphicon-cloud" style="font-size: 30px;color:lightblue"><span class="scnva scnva-group" style="font-size: 20px; opacity: 0.8; color:graytext ; position: absolute; left:0px; top: 10px;z-index: 0;"></span></span><b style="font-size: 15px;color:Orange; text-align:left; "> Cloud</b><b style="font-size: 14px;color:black">Chat</b><b style="font-size: 15px;color:graytext">Manager</b>
+                            </h3>
+                            <p style="text-align:left;" >Welcome to Cloud-Chat Manager.</p> 
+                            <!-- <p style="text-align:left;" >You are now logged into your profile. If you want to log out, then just press on X in upper right corner.</p> -->
+                            <p style="text-align:left;">Navigate using the bottom panel inorder to manage your workflow and service your clients.</p> 
+
+                            <p style="margin-top: 20px; color:#555555;"><b>Navigationbar</b></p>
+                            <table style="width: 100%; margin-bottom: 80px">
+
+                                <tr>
+                                    <td><h3 style="margin-top: 10px; margin-right: 0px; color:darkgray;"><i class="fa fa-home"></i></h3></td><td><b>Home</b> : This welcome screen.</td>
+                                </tr>
+                                <tr>
+                                    <td><h3 style="margin-top: 10px; margin-right: 0px; color:darkgray;"><i class="scnva scnva-group"></i></h3></td><td><b>Operators</b> : Other cloudmanagers are on this page</td>
+                                </tr>
+                                <tr>
+                                    <td><h3 style="color:darkgray;"><i class="fa fa-cog"></i></h3></td><td><b>Profile</b> : Here you view and configure your personal profile.</td>
+                                </tr>
+                                <tr>
+                                    <td><h3 style="color:darkgray;"><i class="fa fa-tags"></i></h3></td><td><b>Service Overview</b> : Your Service Portfolio. When a customer enters your homepage with a valid client running, then you will beable to see it here as a number on each homepage that you have</td>
+                                </tr>
+                                <tr>
+                                    <td><h3 style="color:darkgray;"><i class="fa fa-sitemap"></i></h3></td><td><b>Selector</b> : Here you select between ongoing and new sessions.<br> The list is sorted with the sessions pending most time in the top.</td>
+                                </tr>
+                                <tr>
+                                    <td><h3 style="color:darkgray;"><i class="fa fa-comment-o"></i></h3></td><td><b>Active Session</b> : Here you communicate directly with the active session in focus.</td>
+                                </tr>
+                                <tr>
+                                    <td><p style="margin-top: 30px; color:#555555;;"><b>Topbar</b></p></td>
+                                </tr>
+                                <tr>
+                                    <td><h4 style="color:lightgray;"><i class="fa fa-bolt"></i></h4></td><td><b style="color:darkgray;">Connection</b> : Indicates connection status</td>
+                                </tr>
+                                <tr>
+                                    <td><h4 style="color:lightgray;"><i class="fa fa-cloud"></i></h4></td><td><b style="color:darkgray;">Cloud Service</b> : Indicates service status</td>
+                                </tr>
+                                <tr>
+                                    <td><h4 style="color:lightgray;"><i class="fa fa-male"></i></h4></td><td><b style="color:darkgray;">User login</b> : Displays active User Profile</td>
+                                </tr>
+                                <tr>
+                                    <td><h4 style="color:lightgray;"><i class="fa fa-sign-out"></i></h4></td><td><b style="color:darkgray;">Sign logout</b> : Logout if pressed</td>
+                                </tr>
+
+                                <!--    -->
+                            </table>
+                        </div>
+                        <ul class="empty" style="height:150px;"></ul> 
+                        <!--                        <div style="position: fixed; top: 80px; right: 0px; clear:both; margin-left: auto; margin-right: auto;"><button type="button" class="btn btn-default btn-danger" onclick="logout();"><b style="text:bold"> X </b></button> -->
+                    </div>
+                    <div class="container"><h1 style="position: fixed; bottom: 60px; color:Orange; text-align:left; font-family:Lucida Sans Unicode">SCAN<b style="color:black">VA</b><b style="color:graytext">.COM</b></h1></div>
+                </div>
+            </div>
+            <div class="container" id="page_2" style="display:none;">
+                <DIV class="page_2 box" style="position: absolute; left: 0px; clear:both; margin-left: 0px; width: 100%; display: inline-block; overflow:auto;min-height:500px"><!-- min-height for touch event area - NB! find a better way to set touch area to fullscreen -->
+                    <a id="update_settings"  style="text-align:center; width: 100%;position: fixed; margin-top: 200px; text-align:center; clear:both; color:Orange; font-family:Lucida Sans Unicode; font-size: 44px;"><i id="update_animate_settings" class="glyphicon glyphicon-refresh"></i></a>
+                    <div class="container"><h1 id="profiletitle" style="position: fixed;  z-index:100; color:Orange; text-align:left; font-family:Lucida Sans Unicode">Profile</h1></div>
+                    <div class="container" id="settingspage" >
+                        <ul class="chat" id="ulsettings" style="text-align:left; clear:both; margin-top: 60px; margin-left: auto; margin-right: auto;">
+                            <!-- dynamic content will be placed here -->                    
+                        </ul> 
+                        <ul class="empty" style="height:150px;"></ul> 
+                    </div>
+                    <div class="container"><h1 style="position: fixed; bottom: 60px; color:Orange; text-align:left; font-family:Lucida Sans Unicode">SCAN<b style="color:black">VA</b><b style="color:graytext">.COM</b></h1></div>
+                </DIV>
+            </div>
+            <div class="container" id="page_3" style="display:none;"><DIV class="page_3 box" style="min-height:500px"> <!-- min-height for touch event area - NB! find a better way to set touch area to fullscreen -->
+                    <a id="update_operators"  style="text-align:center; width: 100%;position: fixed; margin-top: 200px; text-align:center; clear:both; color:Orange; font-family:Lucida Sans Unicode; font-size: 44px;"><i id="update_animate_operators" style="display: none" class="glyphicon glyphicon-refresh"></i></a>
+
+                    <div class="container"><h1 id="operatortitle" style="position: fixed;  z-index:100;color:Orange; text-align:left; font-family:Lucida Sans Unicode">Operators</h1></div>
+                    <div class="col-md-6" style="margin-top: 70px;clear:both;width:100%">    
+                        <div class="panel-group" id="operator_accordion" style="margin-top: 38px; ">
+                        <!-- dynamic content will be placed here -->                    
+                        </div>
+                    </div>
+                    <div class="container"><h1 style="position: fixed; bottom: 60px; color:Orange; text-align:left; font-family:Lucida Sans Unicode">SCAN<b style="color:black">VA</b><b style="color:graytext">.COM</b></h1></div>
+                </DIV>
+            </div>
+            <div class="container" id="page_4" style=" display:none;"><DIV class="page_4 box" style="min-height:500px"><!-- min-height for touch event area - NB! find a better way to set touch area to fullscreen -->
+                    <a id="update_context"  style=" z-index:100;text-align:center; width: 100%;position: fixed; margin-top: 200px; text-align:center; clear:both; color:Orange; font-family:Lucida Sans Unicode; font-size: 44px;"><i id="update_animate_context" class="glyphicon glyphicon-refresh"></i></a>
+                    <!-- <p style="text-align:center;" >Page 4 - Category</p> --->
+                    <div class="container"><h1 id="homepagestitle" style="position: fixed;  z-index:100;color:Orange; text-align:left; font-family:Lucida Sans Unicode">Homepages</h1></div>
+                    <div class="col-md-6" style="margin-top: 70px;clear:both;width:100%">    
+                        <div class="panel-group" id="accordion" style="margin-top: 38px; ">
+                        <!-- dynamic content will be placed here -->                    
+                        </div>
+                    </div>
+                    <div class="container"><h1></h1></div>
+                    <div class="container"><h1></h1></div>
+                    <div class="container"><h1 style="position: fixed; bottom: 60px; color:Orange; text-align:left; font-family:Lucida Sans Unicode">SCAN<b style="color:black">VA</b><b style="color:graytext">.COM</b></h1></div>
+                </DIV>
+            </div>
+            <div class="container" id="page_5" style=" display:none;"><DIV class="page_5 box" style="min-height:500px"><!-- min-height for touch event area - NB! find a better way to set touch area to fullscreen -->
+                    <div class="container"><h1 id="sessiontitle" style="position: fixed;  z-index:100;clear:both;color:Orange; text-align:left; font-family:Lucida Sans Unicode">Sessions</h1><b><h4 id="homepagetitle" style="position: fixed;  z-index:100; margin-top: 50px; clear:both;color:black; text-align:left; font-family:Lucida Sans Unicode"></h4></b></div>
+                    <div  id="selectorarealist">
+                        <!-- <ul class="col-md-6" style="margin-top: 10px;">   --> 
+                        <div class="col-md-6" style="margin-top: 70px;clear:both;width:100%">    
+                            <center>
+                                <span class="glyphicon glyphicon-time" style="color:black;" id="clock"> 00:00:00</span>
+                                <span class="glyphicon glyphicon-user pull-left" style="display:none; color:black;" id="user"> 0</span>
+                                <span class="fa fa-trophy pull-right" style="display:none; color:black;" id="score"> 0</span>
+                            </center>
+                            <div id="selectorarea" style="margin:0px; width: 100%; display: inline-block; overflow:hidden">
+                                <ul class="list-group" id="selectorList"></ul>
+                                <ul id="selector_endoflist" style="height:50px;"></ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="container"><h1></h1></div>
+                    <div class="container"><h1 style="position: fixed; bottom: 60px; color:Orange; text-align:left; font-family:Lucida Sans Unicode">SCAN<b style="color:black">VA</b><b style="color:graytext">.COM</b></h1></div>
+                </DIV>
+            </div>
+            <div class="container" id="page_6" style="display:none;"><DIV class="page_6 box" style="overflow:auto;"><!-- min-height for touch event area - NB! find a better way to set touch area to fullscreen -->
+                 <a id="update"  style="text-align:center; width: 100%;position: fixed; margin-top: 200px; text-align:center; clear:both; color:Orange; font-family:Lucida Sans Unicode; font-size: 44px;"><i id="update_animate_chat" class="glyphicon glyphicon-refresh"></i></a>
+                    <div class="container"><h1 id="sessiontitle" style="position: fixed;  z-index:100;clear:both;color:Orange; text-align:left; font-family:Lucida Sans Unicode">Chat</h1><h4 id="homepageandusertitle" style="position: fixed; margin-top: 50px; clear:both;color:black; text-align:left; font-family:Lucida Sans Unicode;z-index:100"></h4></div>
+                    <div class="container" id="chatlist" style="margin-top: 0px;margin-bottom: 0px;">
+                       <div id="chatarea" style="clear:both; position: fixed; top: 40px; max-height:500px;left:0px; width: 100%; display: inline-block; overflow:auto"> <!-- TODO: when resize then change max-height to window height - 80px -- width is working automatic, its the vertical part that is the problem -->
+                <!--         <div id="chatarea" style="left:0px; width: 100%; display: inline-block; overflow:auto">   --><!-- TODO: when resize then change max-height to window height - 80px -- width is working automatic, its the vertical part that is the problem -->
+                            <ul class="chat" id="topoflist" style="height:68px;"></ul> 
+                            <ul class="chat" id="ullist" style="text-align:left; clear:both; margin-left: 4px; margin-right: 4px;"></ul> 
+                            <ul class="chat" id="endoflist" style="height:250px;"></ul> 
+                        </div>
+                    </div>
+                    <div id="panelfoot" class="panel-footer" style="position: fixed; bottom: 0; margin-bottom: 60px; background: lightgray; width: 100%; height: 60px; text-align:justify;" >
+                        <div class="input-group">
+                            <input id="chat" type="text" class="form-control input-sm-bottom" placeholder="Type your message here..." />
+                            <span class="input-group-btn">
+                                <button class="btn btn-warning btn-sm" id="btn-chat" >Send</button> 
+                            </span>
+                        </div>
+                    </div>
+                    <div id="commercial" class="container"><h1 style="position: fixed; bottom: 120px; color:Orange; font-family:Lucida Sans Unicode">SCAN<b style="color:black">VA</b><b style="color:graytext">.COM</b></h1></div>
+                </DIV>
+            </div>
+        </DIV> <!-- main_body -->
+        <div class="clear"></div>
+        <div id="navigationbar" style="position: fixed; bottom: 0; margin-bottom: 0px; background: lightgray; width: 100%; height: 64px; z-index:2;">
+            <!-- <h1 style="margin-left:2%; margin-right:2%; margin-bottom:50%; color:black; transition:width 2s; "> -->
+            <h1 style="margin-left:2%; margin-right:2%; color:black; transition:width 2s; ">
+                <table style="width: 100%">
+                    <tr>
+                        <td style="text-align:center;"><i class="fa fa-home" onclick="NaviBar('nav_1');" id="nav_1"></i></td>
+                        <td style="text-align:center;"><i class="fa fa-cog" onclick="NaviBar('nav_2');" id="nav_2"></i></td>
+                        <td style="text-align:center;"><i class="scnva scnva-group" onclick="NaviBar('nav_3');" id="nav_3"></i></td>
+                        <td style="text-align:center;"><i class="fa fa-tags" onclick="NaviBar('nav_4');" id="nav_4"></i></td>		
+                        <td style="text-align:center;"><i class="fa fa-sitemap" onclick="NaviBar('nav_5');" id="nav_5"></i></td>
+                        <td style="text-align:center;"><i class="fa fa-comment-o" onclick="NaviBar('nav_6');" id="nav_6"></i></td>
+                    </tr>
+                </table>
+            </h1>
+        </div>
+        <div style="display:none;">
+            <input class="hidden" type="text" size="32" id="destination_address" value="clientapp" /> <!--- this destination value will be changed with managers change in focus -->
+            <button id="connectBtn" class=" hidden btn btn-default btn-block serverconnect" > connected with server </button>
+        </div>
+      
+        <!-- Modal-LogIn -->
+        <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content" style="width:100%; height:100%">
+                    <div class="modal-body ">
+                        <div >
+				<div class="alwaysontop">   
+					<CENTER><h2 ><span class="glyphicon glyphicon-cloud" style="font-size: 30px;color:lightblue"><span class="scnva scnva-group" style="font-size: 20px; opacity: 0.8; color:graytext ; position: absolute; left:0px; top: 10px;z-index: 0;"></span></span><b style="font-size: 15px;color:Orange "> Cloud</b><b style="font-size: 14px;color:black">Chat</b><b style="font-size: 15px;color:graytext">Manager</b></h2></CENTER>
+
+				<br/>
+                                <form role="form">
+                                    <div class="form-group hidden">
+                                        <!-- <input type="text" placeholder="wsUri" class="form-control"  id="wsUri" value="LOCAL"> -->
+                                        <input type="text" placeholder="wsUri" class="form-control"  id="wsUri" value="REMOTE">
+                                    </div>
+                                    <div class="form-group hidden">
+                                        <input type="text" placeholder="urlManagerImg" class="form-control"  id="urlManagerImg" >
+                                    </div>
+                                    <div class="form-group hidden">
+                                        <input type="text" placeholder="uniqueId" class="form-control"  id="uniqueId" >
+                                    </div>                                    
+				    <div class="input-group">
+                                        <span class="input-group-addon">@</span>
+					<input autofocus type="email" maxlength="40" class="form-control" placeholder="Email Address" id="username">
+                                    </div>
+                                    <br/>
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="fa fa-key"></i></span>
+                                        <input type="password" maxlength="16" class="form-control" placeholder="Password" id="password">
+                                    </div>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" onclick="javascript:check();"> Remember me
+                                        </label>
+                                    </div>
+                                    <i style="color:#996600;" data-dismiss="modal" data-toggle="modal" data-target="#ReqPassModal">Forgot your Password?</i><br/>
+                                    <ul> </ul>
+                                    <center>
+                                        <button id="btnLogIn" data-dismiss="modal" type="submit" class="btn-lg btn-warning" > Log-in </button>
+                                        <button id="btnJoinNow" data-dismiss="modal" type="submit" class="btn-lg btn-primary" >Join Now</button>
+                                    </center>
+			        </form>
+				<!-- <center ><h1 style="color:Orange; font-family:Lucida Sans Unicode">SCAN<b style="color:black">VA</b></h1></center> -->
+                                <div id="footer" style="clear:both;text-align:center;">
+					Copyright SCAN<b >VA</b> ApS 2014</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        <!-- Modal - CreateProfile -->
+        <div class="modal fade" id="CreateProfileModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content" style="width:100%; height:100%">
+                    <div class="modal-body ">
+                        <div>
+                            <div class="alwaysontop" style="text-align: center;">
+                                <h2>Join Now it's <i style="color:orange;">free!</i></h2>
+                                <br/>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="fa fa-male"></i></span>
+                                        <input type="text" maxlength="32" required class="form-control" placeholder="Enter your Name" id="NewName">
+                                    </div>
+                                    <br/>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">@</span>
+                                        <input required type="email" maxlength="40" class="form-control" placeholder="Enter your Email Address" id="NewUsername">
+                                    </div>
+                                    <br/>
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="fa fa-key"></i></span>
+                                        <input type="password" required maxlength="16" class="form-control" placeholder="Enter a Password" id="NewPassword">
+                                    </div>
+                                    <div class="checkbox" style="text-align: left;">
+                                        <label >
+                                            <input type="checkbox"  id="checkbox_termsOfUse"> I agree to <a data-toggle="modal" data-target="#TermsModal">Terms of Use</a>
+                                        </label>
+                                    </div>
+                                </div>
+<!--                                <button type="submit" class="btn-lg btn-primary" onclick="javascript:createprofile(1);">Sign Up!</button> -->
+                                <button id="btnSignUp" type="submit" class="btn-lg btn-primary" >Sign Up!</button>
+                                <button data-dismiss="modal" type="submit" class="btn-lg btn-default" data-toggle="modal" data-target="#loginModal" >No Thanks</button>
+                                <div id="footer" style="clear:both;text-align:center;">
+					Copyright SCAN<b >VA</b> ApS 2014</div>
+
+			</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TermsModal -->
+        <div class="modal fade" id="TermsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="myModalLabel">Terms Of Use</h4>
+                    </div>
+                    <div class="modal-body">
+                        <h2>Terms and Conditions</h2>
+                        <h3>In using this website you are deemed to have read and agreed to the following terms and conditions:</h3>
+                        The following terminology applies to these Terms and Conditions, Privacy Statement and Disclaimer Notice and any or all Agreements: "Client", “You” and “Your” refers to you, the person accessing this website and accepting the Company’s terms and conditions. "The Company", “Ourselves”, “We” and "Us", refers to our Company. “Party”, “Parties”, or “Us”, refers to both the Client and ourselves, or either the Client or ourselves. All terms refer to the offer, acceptance and consideration of payment necessary to undertake the process of our assistance to the Client in the most appropriate manner, whether by formal meetings of a fixed duration, or any other means, for the express purpose of meeting the Client’s needs in respect of provision of the Company’s stated services/products, in accordance with and subject to, prevailing English Law. Any use of the above terminology or other words in the singular, plural, capitalisation and/or he/she or they, are taken as interchangeable and therefore as referring to same.
+
+                        <h3>Privacy Statement</h3>
+                        We are committed to protecting your privacy. Authorized employees within the company on a need to know basis only use any information collected from individual customers. We constantly review our systems and data to ensure the best possible service to our customers. Parliament has created specific offences for unauthorised actions against computer systems and data. We will investigate any such actions with a view to prosecuting and/or taking civil proceedings to recover damages against those responsible
+
+                        <h3>Confidentiality</h3>
+                        We will not sell, share, or rent your personal information to any third party or use your e-mail address for unsolicited mail. Any emails sent by this Company will only be in connection with the provision of agreed services and products.
+
+                        <h3>Disclaimer
+                            Exclusions and Limitations </h3>
+                        The information on this web site is provided on an "as is" basis. To the fullest extent permitted by law, this Company:
+                        <ul>
+                            <li>excludes all representations and warranties relating to this website and its contents or which is or may be provided by any affiliates or any other third party, including in relation to any inaccuracies or omissions in this website and/or the Company’s literature; and </li>	
+                            <li>excludes all liability for damages arising out of or in connection with your use of this website. This includes, without limitation, direct loss, loss of business or profits (whether or not the loss of such profits was foreseeable, arose in the normal course of things or you have advised this Company of the possibility of such potential loss), damage caused to your computer, computer software, systems and programs and the data thereon or any other direct or indirect, consequential and incidental damages. </li>
+                        </ul>
+                        This Company does not however exclude liability for death or personal injury caused by its negligence. The above exclusions and limitations apply only to the extent permitted by law. None of your statutory rights as a consumer are affected. 
+
+                        <h3>Cookies</h3>
+                        Like most interactive web sites this Company’s website uses cookies to enable us to retrieve user details for each visit. Cookies are used in some areas of our site to enable the functionality of this area and ease of use for those people visiting.
+
+                        <h3>Copyright Notice </h3>
+                        Copyright and other relevant intellectual property rights exists on all text relating to the Company’s services and the full content of this website. 
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Request Password -->
+        <div id="ReqPassModal" class="modal fade " tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" >Request Your Password</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="input-group">
+                            <span class="input-group-addon">@</span>
+                            <input autofocus type="email" maxlength="40" class="form-control" placeholder="Enter your Email Address" id="RequestEmail">
+                        </div>
+                        <br/>
+                        <center>
+                            <button type="submit" class="btn-lg btn-primary" data-dismiss="modal" onclick="javascript:forgotPassword();">Submit</button>
+                        </center>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Modal - ProfilePhoto -->
+        <div class="modal fade in" id="photoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body ">
+                        <div class="container">
+                            <div class="col-md-6 alwaysontop" style="text-align: center;">
+                                <h2>PROFILE PHOTO</h2>
+
+                                <div id="modalSelection" style="display: inline;">
+                                    <p>Inorder to add an image to your profile, either upload an existing photo from your device, or use the camera to capture a new one now.</p>
+                                    <div>
+                                        <br>
+                                        <ul id="profilephotofetch"></ul>
+<script>
+if( isMobile.any() ){
+    $('#profilephotofetch').html('<button class="btn btn-primary btn-lg" onclick="settings_controller_this.addPhoto(\'upload\')"> Fetch image <span class="glyphicon glyphicon-camera"></span></button>');
+}
+else {
+    $('#profilephotofetch').html('<button class="btn btn-primary btn-lg" onclick="settings_controller_this.addPhoto(\'upload\')"> Upload File <span class="glyphicon glyphicon-folder-open"></span></button><br><b>Or</b><br><button class="btn btn-primary btn-lg" onclick="settings_controller_this.addPhoto(\'capture\')">Create Snapshot <span class="glyphicon glyphicon-camera"></span></button>');
+}
+</script>
+
+                                    </div>
+                                </div>
+                                <div id="selectfile" style="display: none;">
+                                    <h3 style="text-align: left;">Upload Photo</h3>
+                                    <p>- Select an existing image file</p>
+
+                                    <input type="file" accept="image/*" id="files" name="files[]" style="display:none">
+
+                                    <output id="list"></output>
+                                    <br>
+                                    <button class="btn btn-primary btn-lg" onclick="uploadFile()">Upload File <span class="glyphicon glyphicon glyphicon-ok"></span></button>
+
+                                </div>
+                                <div id="capturePhoto" style="display: none;">
+                                    <h3 style="text-align: left;">Smile!</h3>
+
+				    <div id="camflow"> <!-- BUG camera NOT working on desktop  fix it look at : http://www.html5rocks.com/en/tutorials/getusermedia/intro/ -->
+                                        <!-- Camera snapshot foto booth -->
+                                        <div id="camflow_snap" style="display:inline">
+                                            <video class="img-thumbnail" id="video" width="180" height="220" autoplay=""></video>
+                                            <br>
+                                            <button id="snap" class="btn btn-warning btn-lg">
+                                                Snap Photo <span class="glyphicon glyphicon glyphicon-flag"></span>
+                                            </button>
+
+                                            <!--    <p><button id="capture-button">Capture video</button> <button id="stop-button">Stop</button></p> -->
+                                        </div>
+                                        <div id="camflow_validate" style="display:inline">
+                                            <canvas class="img-thumbnail" id="canvas" width="180" height="220"></canvas>
+
+                                            <!-- image upload -->
+                                            <br>
+
+                                            <!-- <button class="btn btn-success btn-lg" onclick="uploadEx()"> -->
+                                            <button id="camflow_validate_upload" class="btn btn-success btn-lg" >
+                                                Upload <span class="glyphicon glyphicon glyphicon-ok"></span>
+                                            </button>
+                                            <button id="camflow_validate_capture" class="btn btn-danger btn-lg" >
+                                                Retry <span class="glyphicon glyphicon glyphicon-remove"></span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <form method="post" accept-charset="utf-8" name="form1">
+                                        <input name="hidden_data" id="hidden_data" type="hidden">
+                                    </form>
+
+
+                                </div>                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <!-- Include all compiled plugins (below), or include individual files as needed -->
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/xui.js" type="application/javascript" charset="utf-8"></script>
+        <script src="js/xui.swipe.js" type="application/javascript" charset="utf-8"></script>
+        <script src="js/paneswipe.js"></script>
+        <script src="js/application.js"></script>
+        <script src="js/mvc_settings.js"></script>
+        <script src="js/categories.js"></script>
+        <script src="js/mvc_categories.js"></script>
+        <script src="js/mvc_context.js"></script>
+        <script src="js/mvc_operator.js"></script>
+        <script src="js/list.js"></script> 
+
+    </body>
+</html>
+
+
+

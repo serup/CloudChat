@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<BrowseTracker_layout_file>
+	<ActiveTarget name="Debug" />
+	<File name="..\DataEncoderDecoder\DataEncoderDecoder\DataEncoder.h" open="0" top="0" tabpos="7">
+		<Cursor position="17155" topLine="344" />
+	</File>
+	<File name="room.cpp" open="0" top="0" tabpos="1">
+		<Cursor position="472" topLine="0" />
+		<Book_Marks positions="54372,1597,6641" />
+	</File>
+	<File name="session.cpp" open="0" top="0" tabpos="5">
+		<Cursor position="8083" topLine="108" />
+		<BrowseMarks positions="11912,12219" />
+	</File>
+	<File name="dataframe.hpp" open="0" top="0" tabpos="3">
+		<Cursor position="249" topLine="0" />
+	</File>
+	<File name="session.hpp" open="0" top="0" tabpos="6">
+		<Cursor position="2397" topLine="59" />
+	</File>
+	<File name="participant.hpp" open="0" top="0" tabpos="4">
+		<Cursor position="287" topLine="0" />
+	</File>
+	<File name="room.hpp" open="0" top="0" tabpos="2">
+		<Cursor position="404" topLine="36" />
+	</File>
+</BrowseTracker_layout_file>

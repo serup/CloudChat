@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html ng-app="app" class="ng-scope"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style type="text/css">@charset "UTF-8";[ng\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide{display:none !important;}ng\:form{display:block;}.ng-animate-start{border-spacing:1px 1px;-ms-zoom:1.0001;}.ng-animate-active{border-spacing:0px 0px;-ms-zoom:1;}</style>
+        <meta charset="utf-8">
+
+	<title>chat</title>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="Test chatview for javascript clients based on MVC concepts">
+        <meta name="author" content="Johnny Serup">
+
+        
+	<script src="js/jquery.min.js"></script> 
+	<script src="../DataEncoderDecoder/compression-lib/compression.js"></script>
+	<script src="../DataEncoderDecoder/dataencoderdecoder.js"></script>
+	<script src="../socketserverAPI/socketserverAPI.js"></script>
+	<script src="../Components/scanva-mvc-login-client.js"></script> <!-- Model View Control concept used to handle client UI interaction with data -->
+	<script src="../Components/scanva-mvc-chat-client.js"></script> <!-- Model View Control concept used to handle client UI interaction with data -->
+
+	<link rel="stylesheet" href="css/bootstrap.css">
+	<link rel="stylesheet" href="css/bootstrap-responsive.css">
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+        <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+        <style>
+            /**
+             * Bootstrap <pre> background is different from highlight <code>
+             * background. This rule fixes it by making highlight transparent.
+             */
+            pre code { background: transparent; }
+        </style>
+
+    </head>
+    <body style="" data-twttr-rendered="true">
+	<div class="container">
+	    <div class="row">
+		<div class="col-md-9">
+<h1 itemprop="name">chat thru scanvaserver</h1>
+<div style="margin-top: 1em;" itemprop="articleBody">
+*** uses : scanva-mvc-login-client
+	<div id='login_box'>
+		<input  id="wsUri" type="text" spellcheck="false" placeholder="REMOTE / LOCAL"/> 
+	</div>
+	<div id='login_box'>
+		<input  id="uniqueId" type="text" spellcheck="false" placeholder="UNIQUE ID / DEVICE ID"/>
+	</div>
+	<div id='login_box'>
+		<input  id="username" type="text" spellcheck="false" placeholder="USERNAME"/> 
+	</div>
+	<div id='login_box'>
+		<!--<input style='width:282px;height:50px' type="password" name="Passwd" id='password' class='input passcode' />-->
+		<input  type="password" name="Passwd" id='password' class='input passcode' placeholder="PASSWORD"/>
+	</div>
+<div class="row">
+    <div class="col-md-8">
+	<button id="connectBtn" class="btn btn-default btn-block" style="width: 5em;"> connect </button>
+    </div>
+</div>
+****
+<BR>
+*** uses : scanva-mvc-chat-client
+
+<!--- http://stackoverflow.com/questions/3898329/creating-two-div-right-next-to-each-other-on-css?rq=1 -->
+<style>
+.float-left
+{
+  float: left;
+  min-width: 300px;
+  display: inline-block;
+}
+
+.float-right
+{
+  float: right;
+  min-width: 300px;
+  width 400px;
+  height: 300px;
+  display: inline-block;
+}
+
+.wrapper
+{
+  width: 500px;
+  overflow: auto;
+}
+</style>
+
+<BR>
+<input type="text" size="32" id="destination_address" placeholder="<deviceid>" />
+
+<DIV id="WrapperDiv" class="Wrapper">
+<div id="LeftDiv" class="float-left">
+<!-- <div class="well" style="position:fixed; height:300px;margin:0px;padding:10px;overflow:auto"> -->
+	<!--  <div style="float: left; overflow:auto;inline-block;"> -->
+		 <div ><ul id="ullist" style="list-style:none none inside;margin:0px;padding:0px;" ></ul></div>
+         	 <input type="text" size="69" id="chat"  style="width: 30em;margin:10px;" placeholder="type and press tab to chat" />
+	<!-- </DIV> -->
+</DIV> <!-- leftdiv -->
+<div id="RigthDiv" class="float-right">
+<div class="well" style="margin:0px; float: right; height:200px;width 400px;display: inline-block; overflow:auto"> 
+<DIV><UL id="ulfriendlist" style="list-style:none none inside;margin:0px;padding:0px;cursor:pointer;">
+</UL></DIV>
+</DIV> <!-- well -->
+</DIV> <!-- rightdiv -->
+<!-- </DIV> well -->
+</DIV> <!-- wrapper -->
+</div> <!-- main -->
+</body></html>

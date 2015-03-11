@@ -1,0 +1,17 @@
+-----------------------------------------------
+ Test of ringbuffer  
+-----------------------------------------------
+ OK:   ringbuffer_instantiated 
+ OK:   WriteBinaryIntoRingBuffer_which_is_too_small 
+ OK:   WriteBinaryIntoRingBuffer_which_has_room_enough 
+ OK:   ReadBinaryFromRingBuffer 
+ OK:   WriteDataframeToRingbuffer 
+ OK:   ReadDataframeFromRingbuffer 
+ OK:   ReadDEDFromDataframeFromRingbuffer 
+ OK:   ReadMultipleDEDFromDataframeFromRingbuffer
+--------------
+Tests Complete
+--------------
+Passed: 8
+Failed: 0
+--------------
