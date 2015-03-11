@@ -12,8 +12,10 @@ test:
 	@ echo " ----------------------------------------------------------- "	
 	@ echo "  Test of socketserverAPI is initializing - please wait... "	
 	@ echo " ----------------------------------------------------------- "	
-	@ (../../../codeblocks_projects/serup/websocket_server/bin/Debug/scanvaserver 0.0.0.0 7788 & echo $$! > running)  > tmp &
-	@ (cd ../../../codeblocks_projects/serup/DFDFunctions/1_1/bin/Debug && pwd && ./1_1 127.0.0.1 7788 & echo $$! >> running) > tmp2 &
+	#@ (../../../codeblocks_projects/serup/websocket_server/bin/Debug/scanvaserver 0.0.0.0 7788 & echo $$! > running)  > tmp &
+	#@ (cd ../../../codeblocks_projects/serup/DFDFunctions/1_1/bin/Debug && pwd && ./1_1 127.0.0.1 7788 & echo $$! >> running) > tmp2 &
+	@ (../../codeblocks_projects/websocket_server/bin/Debug/scanvaserver 0.0.0.0 7788 & echo $$! > running)  > tmp &
+	@ (cd ../../codeblocks_projects/DFDFunctions/1_1/bin/Debug && pwd && ./1_1 127.0.0.1 7788 & echo $$! >> running) > tmp2 &
 	@ echo "var WebSocket = require('ws')" > test/result_index.js
 	@ cat socketserverAPI.js >> test/result_index.js
 	@ cat ../DataEncoderDecoder/dataencoderdecoder.js >> test/result_index.js
