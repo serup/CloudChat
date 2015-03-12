@@ -31,7 +31,7 @@ test:
 	@ $(CONVERT) 2>&1
 	@ cat error.txt
 	@ rm test/test_results.xml
-	@ sudo kill -KILL $$(cat running.pid)
+	@ kill -KILL $$(cat running.pid)
 
 .PHONY: test 
 #
