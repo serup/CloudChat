@@ -1,14 +1,14 @@
 Running 16 test cases...
-[validateReadProfileEntity] : Current path is : "/home/cavdarserup/codeblocks_projects/DataBaseControl/BoostUnitTest/databasecontrol_testsuite"
-[validateReadProfileEntity] : Current path is : "/home/cavdarserup/codeblocks_projects"
+[validateReadProfileEntity] : Current path is : "C:\cygwin\home\cavdarserup\GitHub\CloudChat\codeblocks_projects\DataBaseControl\BoostUnitTest\databasecontrol_testsuite"
+[validateReadProfileEntity] : Current path is : "C:\cygwin\home\cavdarserup\GitHub\CloudChat\codeblocks_projects"
 [WriteEntityFile] WARNING : WriteEntityTOASTFile NO ELEMENTS UPDATED!! : 0
 [WriteEntityFile] WARNING : WriteEntityTOASTFile NO ELEMENTS UPDATED!! : 0
 [WriteEntityFile] WARNING : WriteEntityTOASTFile NO ELEMENTS UPDATED!! : 0
 [WriteEntityFile] WARNING : WriteEntityTOASTFile NO ELEMENTS UPDATED!! : 0
 [WriteEntityFile] WARNING : WriteEntityTOASTFile NO ELEMENTS UPDATED!! : 0
-[ftgt] WARNING: there could not be found a TOAST file, this is not necessary an error, however strange : /home/cavdarserup/codeblocks_projects/DataDictionary/Database/TOASTs/0.xml
+[ftgt] WARNING: there could not be found a TOAST file, this is not necessary an error, however strange : C:\cygwin\home\cavdarserup\GitHub\CloudChat\codeblocks_projects/DataDictionary/Database/TOASTs/0.xml
 [WriteEntityFile] WARNING : WriteEntityTOASTFile NO ELEMENTS UPDATED!! : 22980574
-[ftgt] WARNING: there could not be found a TOAST file, this is not necessary an error, however strange : /home/cavdarserup/codeblocks_projects/DataDictionary/Database/TOASTs/22980574.xml
+[ftgt] WARNING: there could not be found a TOAST file, this is not necessary an error, however strange : C:\cygwin\home\cavdarserup\GitHub\CloudChat\codeblocks_projects/DataDictionary/Database/TOASTs/22980574.xml
 [AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
 [AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
 [AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
@@ -80,7 +80,7 @@ Running 16 test cases...
 [AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
 [AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
 [AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[FetchFileAsVector] Reading file: /home/cavdarserup/codeblocks_projects/DataBaseControl/BoostUnitTest/databasecontrol_testsuite/Hugo1.gif ; amount 3548 characters... 
+[FetchFileAsVector] Reading file: C:\cygwin\home\cavdarserup\GitHub\CloudChat\codeblocks_projects/DataBaseControl/BoostUnitTest/databasecontrol_testsuite/Hugo1.gif ; amount 3548 characters... 
 [FetchFileAsVector] size: 3548
 [FetchFileAsVector] capacity: 3548
 [FetchFileAsVector] max_size: -1
@@ -147,8 +147,6 @@ Running 16 test cases...
 [AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
 [AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
 [AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[ReadEntityFile] File NOT found : /home/cavdarserup/codeblocks_projects/DataDictionary/Database/ENTITIEs/.xml
-[ReadEntityFile] ERROR : File can not be read : /home/cavdarserup/codeblocks_projects/DataDictionary/Database/ENTITIEs/.xml
-[ReadXmlFile] Error: No such node (Profile)
-[ReadEntityFile] ERROR : File can not be read : /home/cavdarserup/codeblocks_projects/DataDictionary/Database/ENTITIEs/20150309_HIST_DADEC3PO6BAA30E8AD733671370FECFC.xml
- realm filename: /home/cavdarserup/codeblocks_projects/DataDictionary/Database/ENTITIEs/355760fb6afaf9c41d17ac5b9397fd45.xml
+[ReadEntityFile] File NOT found : C:\cygwin\home\cavdarserup\GitHub\CloudChat\codeblocks_projects/DataDictionary/Database/ENTITIEs/.xml
+[ReadEntityFile] ERROR : File can not be read : C:\cygwin\home\cavdarserup\GitHub\CloudChat\codeblocks_projects/DataDictionary/Database/ENTITIEs/.xml
+ realm filename: C:\cygwin\home\cavdarserup\GitHub\CloudChat\codeblocks_projects/DataDictionary/Database/ENTITIEs\355760fb6afaf9c41d17ac5b9397fd45.xml
