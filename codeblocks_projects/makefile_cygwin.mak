@@ -20,6 +20,7 @@ all:
 	@ echo "------------------------"
 	@ echo " Build options..."
 	@ echo "------------------------"
+	@ echo "compress        -- builds the compression-lib project"
 	@ echo "dataencoder     -- builds the dataencoderdecoder project"
 	@ echo "database        -- builds the databasecontrol project"
 	@ echo "websocketserver -- builds the scanvaserver"
@@ -32,13 +33,20 @@ all:
 	@ echo " ex. : make -f makefile_cygwin.mak testtotal"
 	@ echo "------------------------"
 
-total:	msgbegin dataencoder2 database2 websocketserver2 ringbuf2 dfdfunc2 dfdfunc3 dfdfunc4 dfdfunc5 req6 msgend 	
-testtotal:	msgbegin dataencoder3 database3 websocketserver3 ringbuf3 dfdfunc7 dfdfunc8 dfdfunc9 req7 msgend 	
+total:	msgbegin compress2 dataencoder2 database2 websocketserver2 ringbuf2 dfdfunc2 dfdfunc3 dfdfunc4 dfdfunc5 req6 msgend 	
+testtotal:	msgbegin compress3 dataencoder3 database3 websocketserver3 ringbuf3 dfdfunc7 dfdfunc8 dfdfunc9 req7 msgend 	
 
 msgbegin:
 	@ echo "------------------------"
 	@ echo "Build started -- please wait..."	
 	@ echo "------------------------"
+compress: msgbegin compress2 msgend
+compress2:
+	@ cd DataEncoderDecoder/DataEncoderDecoder/compression-lib/BoostUnitTest;\
+	make -f makefile_cygwin.mak > ../../../../output.txt
+compress3:
+	@ cd DataEncoderDecoder/DataEncoderDecoder/compression-lib/BoostUnitTest;\
+	make -f makefile_cygwin.mak test > ../../../../output.txt
 dataencoder: msgbegin dataencoder2 msgend	
 dataencoder2:
 	@ cd DataEncoderDecoder/DataEncoderDecoder/BoostUnitTest/DataEncoderTestSuite;\
