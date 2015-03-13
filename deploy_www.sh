@@ -12,3 +12,4 @@ cp -r /var/scanva/release/master/CloudChat/javascript_projects/CloudChat/CloudCh
 cp -r /var/scanva/release/master/CloudChat/javascript_projects/CloudChat/CloudChatClient /var/www/DOPS/CloudChat
 cp -r /var/scanva/release/master/CloudChat/javascript_projects/DataEncoderDecoder /var/www/DOPS
 cp -r /var/scanva/release/master/CloudChat/javascript_projects/socketserverAPI /var/www/DOPS
+cp -r /var/scanva/release/master/CloudChat/codeblocks_projects/DataDictionary /var/www/DOPS
