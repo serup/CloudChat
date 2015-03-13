@@ -8,6 +8,8 @@ cd /var/scanva/release/
 mkdir master
 cd master
 git clone -b master https://github.com/serup/CloudChat.git
+cd CloudChat
+./run.sh
 cp -r /var/scanva/release/master/CloudChat/javascript_projects/CloudChat/CloudChatManager /var/www/DOPS/CloudChat
 cp -r /var/scanva/release/master/CloudChat/javascript_projects/CloudChat/CloudChatClient /var/www/DOPS/CloudChat
 cp -r /var/scanva/release/master/CloudChat/javascript_projects/DataEncoderDecoder /var/www/DOPS
