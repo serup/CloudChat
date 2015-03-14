@@ -1,27 +1,47 @@
+------------------------
+ Test of DFD_1_1_1 is started - please wait... 
 -----------------------------------------------
- Test of databasecontrol  
+ Test of DFD_1_1_1  
 -----------------------------------------------
- OK:   databasecontrol_instantiated 
- OK:   datadictionary_profile 
- OK:   datadictionary_profile_toast 
- OK:   datadictionary_profile_toast_attributes 
- OK:   validateReadProfileEntity 
- OK:   validateWriteProfileEntity 
- OK:   validateUpdateProfileEntity 
- OK:   updateEntityAttribut 
- OK:   no_toast_ftgt 
- OK:   with_empty_toast_ftgt 
- OK:   validateWriteEntityFile_and_ftgt_with_toast 
- OK:   validate_put_and_ftgt_with_toast 
- OK:   validate_put_and_ftgt_with_imagefile_in_toast 
- OK:   validate_put_and_ftgt_with_image_in_toast 
- OK:   validate_put_and_ftgt_with_xlargeimage_in_toast 
- OK:   list_realm_files
+ OK:   ConnectToWebserver 
+ OK:   CreateProfile 
+ OK:   CreateProfile_with_embedded_foto
 --------------
-Passed: 16
+Passed: 3
 Failed: 0
+--------------
+------------------------
+ Test of DFD_1_1_6 is started - please wait... 
+-----------------------------------------------
+ Test of DFD_1_1_6  
+-----------------------------------------------
+ OK:   ConnectToWebserver 
+ OK:   CommunicateWithWebserver 
+ FAIL: LoginAndUpdate 
+ OK:   _1161_Authentication 
+ OK:   _11611_FetchProfile 
+ OK:   _11611_FetchProfile_using_only_username_password 
+ OK:   _11612_MatchPassword 
+ OK:   _1162_AccountValidation 
+ FAIL: _1163_UpdateProfileStatus
+--------------
+Passed: 7
+Failed: 2
+--------------
+------------------------
+ Test of DFD_1_1_9 is started - please wait... 
+-----------------------------------------------
+ Test of DFD_1_1_9  
+-----------------------------------------------
+ OK:   ConnectToWebserver 
+ OK:   CommunicateWithWebserver 
+ FAIL: LoginToProfile 
+ OK:   _1191_AddToLog
+--------------
+Passed: 3
+Failed: 1
 --------------
 Total
-Passed: 16
-Failed: 0
+Passed: 13
+Failed: 3
 ---------
