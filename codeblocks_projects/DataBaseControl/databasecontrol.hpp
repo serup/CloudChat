@@ -30,6 +30,10 @@ using boost::property_tree::ptree;
 #define DATABASECONTROL
 
 
+/// HOWTO REMOVE UNWANTED CRLF
+//sed -i 's/\r\n/\n/' databasecontrol.hpp
+
+
 //#ifndef Elements
 //struct Elements
 //{
