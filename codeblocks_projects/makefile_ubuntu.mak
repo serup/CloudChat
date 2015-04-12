@@ -35,7 +35,7 @@ compress2:
 	make -f makefile_ubuntu.mak > ../../../../output.txt
 compress3:
 	@ cd DataEncoderDecoder/DataEncoderDecoder/compression-lib/BoostUnitTest;\
-	make -f makefile_cygwin.mak test >> ../../../../output.txt
+	make -f makefile_ubuntu.mak test >> ../../../../output.txt
 dataencoder: msgbegin dataencoder2 msgend	
 dataencoder2:
 	@ cd DataEncoderDecoder/DataEncoderDecoder/BoostUnitTest/DataEncoderTestSuite;\
