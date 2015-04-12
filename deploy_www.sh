@@ -5,11 +5,11 @@ mkdir -p /var/www/DOPS/DataEncoderDecoder
 mkdir -p /var/www/DOPS/socketserverAPI
 rm -rf /var/scanva/release/serup/
 cd /var/scanva/release/
-mkdir serup 
+#mkdir serup 
 cd serup 
-git clone -b serup ssh://serup@review.gerrithub.io:29418/serup/CloudChat
+#git clone -b serup ssh://serup@review.gerrithub.io:29418/serup/CloudChat
 cd CloudChat
-./run.sh
+#./run.sh
 cp -r /var/scanva/release/serup/CloudChat/javascript_projects/CloudChat/CloudChatManager /var/www/DOPS/CloudChat
 cp -r /var/scanva/release/serup/CloudChat/javascript_projects/CloudChat/CloudChatClient /var/www/DOPS/CloudChat
 cp -r /var/scanva/release/serup/CloudChat/javascript_projects/DataEncoderDecoder /var/www/DOPS
