@@ -1,1 +1,1 @@
-sudo kill -KILL $(cat /var/scanva/release/serup/runningServerProcessID)
+sudo kill -KILL $(cat /var/tmp/runningServerProcessID)

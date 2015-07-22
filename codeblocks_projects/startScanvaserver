@@ -1,6 +1,6 @@
-cd /var/scanva/release/master/CloudChat/codeblocks_projects/websocket_server/bin/Debug
-./scanvaserver 0.0.0.0 7777 &  echo $! > /var/scanva/release/master/runningServerProcessID
+cd "/var/lib/jenkins/workspace/GerritCloudChat serup branch/codeblocks_projects/websocket_server/bin/Debug"
+./scanvaserver 0.0.0.0 7777 &  echo $! > /var/tmp/runningServerProcessID
 sleep 10
-cd /var/scanva/release/master/CloudChat/codeblocks_projects/DFDFunctions/1_1/bin/Debug 
-./1_1 127.0.0.1 7777 & echo $! >> /var/scanva/release/master/runningServerProcessID
+cd "/var/lib/jenkins/workspace/GerritCloudChat serup branch/codeblocks_projects/DFDFunctions/1_1/bin/Debug"
+./1_1 127.0.0.1 7777 & echo $! >> /var/tmp/runningServerProcessID
 cd -
