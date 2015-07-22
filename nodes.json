@@ -1,0 +1,20 @@
+{
+  "nodes": {
+    "puppet.dops.local": {
+      "nodeOS": "ubuntu/trusty64",
+      "bootstrap": "bootstrap-master.sh",
+      ":ip": "192.168.32.8",
+      "ports": [],
+      ":memory": 512,
+      ":hostname" :  "puppet.dev.dops.scanva.com"
+    },
+    "node01.dops.local": {
+      "nodeOS": "ubuntu/trusty64",
+      "bootstrap": "bootstrap-node.sh",
+      ":ip": "192.168.32.11",
+      "ports": [],
+      ":memory": 1024,
+      ":hostname":  "node01.dev.dops.scanva.com"
+    }
+  }
+}
