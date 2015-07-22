@@ -34,21 +34,3 @@ node /^node01.*/ {
   #Mirror server
   #include mirror
 }
-
-node /^node02.*/ {
-  # Centos node
-  # Test message
-  notify { "Debug output on ${fqdn}": }
-
-  # Add adm group to sudoers with NOPASSWD
-  sudo::conf { 'vagrant':
-    priority => 01,
-    content  => "vagrant ALL=(ALL) NOPASSWD: ALL",
-  }
-  
-  class { dap : }
-  class { dap_network : }
-  class { dap::ntp : }
-  class { dap_puppetagent : }
-  class { dap_yum : }
-}
