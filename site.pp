@@ -33,4 +33,6 @@ node /^node01.*/ {
   
   #Mirror server
   #include mirror
+ 
+  class { dops : }
 }

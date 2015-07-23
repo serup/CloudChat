@@ -6,5 +6,10 @@ git add <file>
 git commit -m "boble : message"
 git push origin HEAD:refs/for/serup
 
-test commit via gerrithub from IDEA intellij... -- not working from inside Intellij, that is it does not create a review - you must
+commit via gerrithub from IDEA intellij... -- not working from inside Intellij, that is it does not create a review - you must
 checkin like above mentioned --  instead of using the IDE's checkin !!!!!
+
+NB!
+inorder to get puppet to work, then put following in .bashrc file:
+export DOPS_PUPPET_PATH=/home/serup/GerritHub/CloudChat/puppet/trunk/environments/
+
