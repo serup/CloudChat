@@ -33,6 +33,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 	end	
 
     config.vm.define node_name do |config|   
+      # Enable provisioning with Puppet stand alone.
+      config.vm.provision :puppet do |puppet|
+	puppet.manifests_path = "puppet/manifests"
+	puppet.manifest_file  = "site.pp"
+	puppet.module_path = "puppet/trunk/environments/devtest/modules"
+	puppet.options = "--verbose --debug"
+      end 
+
       # configures all forwarding ports in JSON array
       ports = node_values['ports']
       ports.each do |port|
