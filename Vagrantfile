@@ -54,8 +54,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         config.vm.synced_folder puppet_source, '/etc/puppet/environments'
       end
 
+
       config.vm.provision :shell, :path => node_values['bootstrap']
+      #   inline: "apt-get update -y"  # https://github.com/mitchellh/vagrant/pull/5860
       config.vm.box = node_values['nodeOS']
+      #config.vm.box = "trusty64"   # vagrant box add precise64 http://files.vagrantup.com/trusty64.box
+      # The current trusty64 image cannot be found in the vagrantup.com server, so use this instead :
+      # vagrant box add trusty64 https://cloud-images.ubuntu.com/vagrant/trusty/current/trusty-server-cloudimg-amd64-vagrant-disk1.box  
       config.vm.hostname = node_values[':hostname']
       config.vm.network :private_network, ip: node_values[':ip']
 
