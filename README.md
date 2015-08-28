@@ -13,4 +13,4 @@ NB!
 inorder to get puppet to work, then put following in .bashrc file:
 export DOPS_PUPPET_PATH=/home/serup/GerritHub/CloudChat/puppet/trunk/environments/
 
-- jenkins should have gerrit build trigger plugin
+-- jenkins should have gerrit build trigger plugin
