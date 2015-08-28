@@ -6,3 +6,4 @@ git add <file>
 git commit -m "boble : message"
 git push origin HEAD:refs/for/serup
 
+jenkins should build trigger on a merge on this branch
