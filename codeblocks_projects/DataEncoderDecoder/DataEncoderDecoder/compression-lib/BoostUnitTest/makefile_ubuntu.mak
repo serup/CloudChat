@@ -18,23 +18,22 @@ $(EXECUTABLE): $(OBJECTS)
 
 
 test:
-        @ echo " Test of compression-lib is started - please wait... "
-        @ echo "***********************************************"
-        @ $(TEST) $(TESTFLAGS) > error.txt;$(CONVERT)
-        @ echo "-----------------------------------------------" > test_txt_result.txt
-        @ echo " Test of compression-lib  " >> test_txt_result.txt
-        @ echo "-----------------------------------------------" >> test_txt_result.txt
-        @ cat test_results.txt | grep 'OK\|FAIL' >> test_txt_result.txt
-        @ echo "--------------" >> test_txt_result.txt
-        @ echo "Tests Complete" >> test_txt_result.txt
-        @ echo "--------------" >> test_txt_result.txt
-        @ printf "Passed: " >> test_txt_result.txt;(cat test_results.txt | grep -c 'OK'; printf "") >> test_txt_result.txt
-        @ printf "Failed: " >> test_txt_result.txt;(cat test_results.txt | grep -c 'FAIL'; printf "") >> test_txt_result.txt
-        @ echo "--------------" >> test_txt_result.txt
-        @ cat test_txt_result.txt
-        @ cat test_txt_result.txt > test_results.txt
-        @ rm test_txt_result.txt
-
+	@ echo " Test of compression-lib is started - please wait... "
+	@ echo "***********************************************"
+	@ $(TEST) $(TESTFLAGS) > error.txt;$(CONVERT)
+	@ echo "-----------------------------------------------" > test_txt_result.txt
+	@ echo " Test of compression-lib  " >> test_txt_result.txt
+	@ echo "-----------------------------------------------" >> test_txt_result.txt
+	@ cat test_results.txt | grep 'OK\|FAIL' >> test_txt_result.txt
+	@ echo "--------------" >> test_txt_result.txt
+	@ echo "Tests Complete" >> test_txt_result.txt
+	@ echo "--------------" >> test_txt_result.txt
+	@ printf "Passed: " >> test_txt_result.txt;(cat test_results.txt | grep -c 'OK'; printf "") >> test_txt_result.txt
+	@ printf "Failed: " >> test_txt_result.txt;(cat test_results.txt | grep -c 'FAIL'; printf "") >> test_txt_result.txt
+	@ echo "--------------" >> test_txt_result.txt
+	@ cat test_txt_result.txt
+	@ cat test_txt_result.txt > test_results.txt
+	@ rm test_txt_result.txt
 
 clean:
 	rm *.o
