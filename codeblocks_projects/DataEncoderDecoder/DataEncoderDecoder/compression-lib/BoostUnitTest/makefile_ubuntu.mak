@@ -7,6 +7,7 @@ EXECUTABLE=bin/Debug/compressiontest
 TEST=./bin/Debug/compressiontest
 TESTFLAGS= --report_format=XML --report_level=detailed
 CONVERT=xsltproc -o test_results.html ../test_results.xslt test_results.xml
+CONVERT2=xsltproc -o test_results.txt ../test_results.xslt test_results.xml
 
 all: $(SOURCES) $(EXECUTABLE) clean test
 
@@ -21,6 +22,7 @@ test:
 	@ echo " Test of compression-lib is started - please wait... "
 	@ echo "***********************************************"
 	@ $(TEST) $(TESTFLAGS) > error.txt;$(CONVERT)
+	@ $(TEST) $(TESTFLAGS) > error.txt;$(CONVERT2)
 	@ echo "-----------------------------------------------" > test_txt_result.txt
 	@ echo " Test of compression-lib  " >> test_txt_result.txt
 	@ echo "-----------------------------------------------" >> test_txt_result.txt
