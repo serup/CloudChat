@@ -31,6 +31,7 @@ test:
 	@ $(CONVERT) 2>&1
 	@ cat error.txt
 	@ rm test/test_results.xml
+	@ echo "try to kill process "
 	@ kill -KILL $$(cat running.pid)
 
 .PHONY: test 
