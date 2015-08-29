@@ -7,7 +7,7 @@ EXECUTABLE=bin/Debug/compressiontest
 TEST=./bin/Debug/compressiontest
 TESTFLAGS= --report_format=XML --report_level=detailed
 CONVERT=xsltproc -o test_results.html ../test_results.xslt test_results.xml
-CONVERT2=xsltproc -o test_results.txt ../test_results.xslt test_results.xml
+CONVERT2=xsltproc -o test_results.txt ../test_results_text.xslt test_results.xml
 
 all: $(SOURCES) $(EXECUTABLE) clean test
 
