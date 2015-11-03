@@ -15,7 +15,7 @@ all:
 	@ echo " ----------------------------------------------------------- "	
 	@ make -f makefile_cygwin_ws.mak test
 test:
-	@ ../../../codeblocks_projects/serup/websocket_server/bin/Debug/scanvaserver.exe 0.0.0.0 7798 > tmp &
+	@ ../../codeblocks_projects/websocket_server/bin/Debug/scanvaserver.exe 0.0.0.0 7798 > tmp &
 	@ echo "var WebSocket = require('ws')" > test/result_index.js
 	@ cat ../socketserverAPI/socketserverAPI.js >> test/result_index.js
 	@ cat ../DataEncoderDecoder/dataencoderdecoder.js >> test/result_index.js
