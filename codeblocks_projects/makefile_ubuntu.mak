@@ -36,7 +36,7 @@ compress2:
 dataencoder: msgbegin dataencoder2 msgend	
 dataencoder2:
 	@ cd DataEncoderDecoder/DataEncoderDecoder/BoostUnitTest/DataEncoderTestSuite;\
-	make -f makefile_ubuntu.mak > ../../../../output.txt
+	make -f makefile_ubuntu.mak >> ../../../../output.txt
 database: msgbegin database2 msgend
 database2:
 	@ cd DataBaseControl/BoostUnitTest/databasecontrol_testsuite;\
