@@ -46,14 +46,14 @@ compress2:
 	make -f makefile_cygwin.mak > ../../../../output.txt
 compress3:
 	@ cd DataEncoderDecoder/DataEncoderDecoder/compression-lib/BoostUnitTest;\
-	make -f makefile_cygwin.mak test > ../../../../output.txt
+	make -f makefile_cygwin.mak test >> ../../../../output.txt
 dataencoder: msgbegin dataencoder2 msgend	
 dataencoder2:
 	@ cd DataEncoderDecoder/DataEncoderDecoder/BoostUnitTest/DataEncoderTestSuite;\
-	make -f makefile_cygwin.mak > ../../../../output.txt
+	make -f makefile_cygwin.mak >> ../../../../output.txt
 dataencoder3:
 	@ cd DataEncoderDecoder/DataEncoderDecoder/BoostUnitTest/DataEncoderTestSuite;\
-	make -f makefile_cygwin.mak test > ../../../../output.txt
+	make -f makefile_cygwin.mak test >> ../../../../output.txt
 database: msgbegin database2 msgend
 database2:
 	@ cd DataBaseControl/BoostUnitTest/databasecontrol_testsuite;\
