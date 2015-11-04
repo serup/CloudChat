@@ -62,14 +62,14 @@ namespace websocket {
         if (*reinterpret_cast<const char*>(&num) == num)
         {
             // Convert to the little-endian.
-            uint64_t host64 =
-                ((net64 & 0x00000000000000FFULL) << 56) | 
-                ((net64 & 0x000000000000FF00ULL) << 40) | 
-                ((net64 & 0x0000000000FF0000ULL) << 24) | 
-                ((net64 & 0x00000000FF000000ULL) <<  8) | 
-                ((net64 & 0x000000FF00000000ULL) >>  8) | 
-                ((net64 & 0x0000FF0000000000ULL) >> 24) | 
-                ((net64 & 0x00FF000000000000ULL) >> 40) | 
+            boost::uint64_t host64 = \
+                ((net64 & 0x00000000000000FFULL) << 56) | \
+                ((net64 & 0x000000000000FF00ULL) << 40) | \
+                ((net64 & 0x0000000000FF0000ULL) << 24) | \
+                ((net64 & 0x00000000FF000000ULL) <<  8) | \
+                ((net64 & 0x000000FF00000000ULL) >>  8) | \
+                ((net64 & 0x0000FF0000000000ULL) >> 24) | \
+                ((net64 & 0x00FF000000000000ULL) >> 40) | \
                 ((net64 & 0xFF00000000000000ULL) >> 56);
 
             return host64;
@@ -87,7 +87,7 @@ namespace websocket {
         if (*reinterpret_cast<const char*>(&num) == num)
         {
             // Convert to the big-endian.
-            uint64_t net64 =
+            boost::uint64_t net64 = \
                 ((host64 & 0x00000000000000FFULL) << 56) | 
                 ((host64 & 0x000000000000FF00ULL) << 40) | 
                 ((host64 & 0x0000000000FF0000ULL) << 24) | 
