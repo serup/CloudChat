@@ -5,6 +5,10 @@ node default {
 }
 
 node /^node01.*/ {
+
+  # howto manually apply this manifest file -- make sure you are sudo
+  # puppet apply /vagrant/puppet/manifests/site.pp --modulepath /vagrant/puppet/trunk/environments/devtest/modules/
+
   # Test message
   notify { "Debug output on ${fqdn}": }
 
@@ -16,35 +20,26 @@ node /^node01.*/ {
   }
   Exec["apt-update"] -> Package <| |>
 
-#  class { apt : 
-#     notify  => Exec['apt_update']
-#  }
-  # By default, Puppet runs `apt-get update` on the first Puppet run after you include the `apt` class, and anytime `notify  => Exec['apt_update']` occurs; i.e., whenever config files get updated or other relevant changes occur. If you set `update['frequency']` to 'always', the update runs on every Puppet run. You can also set `update['frequency']` to 'daily' or 'weekly'
-
+  include sudo
   include 'docker'
-#  include sudo
-#
-#  # Add adm group to sudoers with NOPASSWD
-#  sudo::conf { 'vagrant':
-#    priority => 01,
-#    content  => "vagrant ALL=(ALL) NOPASSWD: ALL",
-#  }
-#
-##  class { dops : }
-#
-  docker::image { 'base':
-   ensure => 'absent',
-#   command => '/bin/sh -c "while true; do echo hello world; sleep 1; done"',
+
+  # Add adm group to sudoers with NOPASSWD
+  sudo::conf { 'vagrant':
+    priority => 01,
+    content  => "vagrant ALL=(ALL) NOPASSWD: ALL",
   }
 
   docker::image { 'ubuntu':
-   ensure  => 'absent',
-   tag     => 'precise'
+   image_tag => 'trusty',
   }
 
-##  docker::run { 'helloworld':
-##        image   => 'ubuntu',
-## 	command => '/bin/sh -c "while true; do echo hello docker world; sleep 1; done"',
-##  }
+  docker::image { 'skeleton':
+   docker_tar => '/vagrant/puppet/trunk/environments/devtest/modules/docker_images_download/docker-image-skeleton.tar' 
+  }
+
+  exec { "docker_run":
+     command => "/usr/bin/sudo docker run -d -t docker-image-skeleton",
+     require => docker::image[skeleton]
+  }
 
 }
