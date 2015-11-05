@@ -89,8 +89,9 @@ if [ "" == "$DOCKER_OK" ]; then
 else
   echo "- garethr/docker puppet module installed"
 fi
-echo "*******************************************************************************************"
-echo "environment is now ready! you may run vagrant up and then vagrant up node01.dops.local"
-echo "*******************************************************************************************"
+echo "******************************************************************************************************************"
+echo "environment is now ready! you may run vagrant up and then vagrant up cloudchatmanager, vagrant up cloudchatclient"
+echo "******************************************************************************************************************"
 vagrant up
-vagrant up node01.dops.local
+vagrant up cloudchatmanager
+vagrant up cloudchatclient

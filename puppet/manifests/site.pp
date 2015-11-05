@@ -43,3 +43,47 @@ node /^node01.*/ {
   }
 
 }
+
+node /^cloudchatmanager.*/ {
+
+  # howto manually apply this manifest file -- make sure you are sudo
+  # puppet apply /vagrant/puppet/manifests/site.pp --modulepath /vagrant/puppet/trunk/environments/devtest/modules/
+
+  class { apache : } 
+
+  # NB! Needed BEFORE docker class, otherwise it will fail during install
+  exec { "apt-update":
+    command => "/usr/bin/apt-get update"
+  }
+  Exec["apt-update"] -> Package <| |>
+
+  include sudo
+  # Add adm group to sudoers with NOPASSWD
+  sudo::conf { 'vagrant':
+    priority => 01,
+    content  => "vagrant ALL=(ALL) NOPASSWD: ALL",
+  }
+
+}
+
+node /^cloudchatclient.*/ {
+
+  # howto manually apply this manifest file -- make sure you are sudo
+  # puppet apply /vagrant/puppet/manifests/site.pp --modulepath /vagrant/puppet/trunk/environments/devtest/modules/
+
+  class { apache : } 
+
+  # NB! Needed BEFORE docker class, otherwise it will fail during install
+  exec { "apt-update":
+    command => "/usr/bin/apt-get update"
+  }
+  Exec["apt-update"] -> Package <| |>
+
+  include sudo
+  # Add adm group to sudoers with NOPASSWD
+  sudo::conf { 'vagrant':
+    priority => 01,
+    content  => "vagrant ALL=(ALL) NOPASSWD: ALL",
+  }
+
+}

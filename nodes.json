@@ -15,6 +15,22 @@
       "ports": [],
       ":memory": 1024,
       ":hostname":  "node01.dev.dops.scanva.com"
+    },
+    "cloudchatmanager": {
+      "nodeOS": "ubuntu/trusty64",
+      "bootstrap": "bootstrap-node-manager.sh",
+      ":ip": "192.168.32.22",
+      "ports": [],
+      ":memory": 1024,
+      ":hostname":  "cloudchatmanager.dev.dops.scanva.com"
+    },
+    "cloudchatclient": {
+      "nodeOS": "ubuntu/trusty64",
+      "bootstrap": "bootstrap-node-client.sh",
+      ":ip": "192.168.32.23",
+      "ports": [],
+      ":memory": 1024,
+      ":hostname":  "cloudchatclient.dev.dops.scanva.com"
     }
   }
 }
