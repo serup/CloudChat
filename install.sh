@@ -89,6 +89,14 @@ if [ "" == "$DOCKER_OK" ]; then
 else
   echo "- garethr/docker puppet module installed"
 fi
+GIT_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep puppetlabs-git)
+if [ "" == "$GIT_OK" ]; then
+  echo -n "- install puppetlabs-git puppet module"
+  puppet module install puppetlabs-git --modulepath ./puppet/trunk/environments/devtest/modules
+  echo " - done."
+else
+  echo "- puppetlabs-git puppet module installed"
+fi
 echo "******************************************************************************************************************"
 echo "environment is now ready! you may run vagrant up and then vagrant up cloudchatmanager, vagrant up cloudchatclient"
 echo "******************************************************************************************************************"
