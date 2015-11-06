@@ -40,4 +40,17 @@ else
 
     sudo cp /vagrant/nodes.rc.local /etc/rc.local
     sudo puppet agent --enable
+
+    echo "Fetch latest version of CloudChat"
+    if [ -d "CloudChat" ]; then
+      echo "CloudChat already installed"
+      echo "updating ..."
+      cd CloudChat
+      git pull
+    else
+      git clone https://review.gerrithub.io/serup/CloudChat
+      echo "CloudChat installed"
+    fi
+    
+    echo "Finish install"
 fi
