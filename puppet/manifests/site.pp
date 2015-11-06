@@ -64,6 +64,16 @@ node /^cloudchatmanager.*/ {
     content  => "vagrant ALL=(ALL) NOPASSWD: ALL",
   }
 
+  include git
+#  git::config { 'user.name':
+#    value => 'John Doe',
+#  }
+
+#  git::config { 'user.email':
+#    value => 'john.doe@example.com',
+#  }
+
+
 }
 
 node /^cloudchatclient.*/ {
@@ -86,4 +96,14 @@ node /^cloudchatclient.*/ {
     content  => "vagrant ALL=(ALL) NOPASSWD: ALL",
   }
 
+  include git
+#  git::config { 'user.name':
+#    value => 'John Doe',
+#  }
+
+#  git::config { 'user.email':
+#    value => 'john.doe@example.com',
+#  }
+
+ 
 }
