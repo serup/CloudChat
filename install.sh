@@ -97,6 +97,22 @@ if [ "" == "$GIT_OK" ]; then
 else
   echo "- puppetlabs-git puppet module installed"
 fi
+NODEJS_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep puppetlabs-nodejs)
+if [ "" == "$NODEJS_OK" ]; then
+  echo -n "- install puppetlabs-nodejs puppet module"
+  puppet module install puppetlabs-nodejs --modulepath ./puppet/trunk/environments/devtest/modules
+  echo " - done."
+else
+  echo "- puppetlabs-nodejs puppet module installed"
+fi
+GCC_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep puppetlabs-gcc)
+if [ "" == "$GCC_OK" ]; then
+  echo -n "- install puppetlabs-gcc puppet module"
+  puppet module install puppetlabs-gcc --modulepath ./puppet/trunk/environments/devtest/modules
+  echo " - done."
+else
+  echo "- puppetlabs-gcc puppet module installed"
+fi
 echo "******************************************************************************************************************"
 echo "environment is now ready! you may run vagrant up and then vagrant up cloudchatmanager, vagrant up cloudchatclient"
 echo "******************************************************************************************************************"
