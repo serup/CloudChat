@@ -3,6 +3,7 @@ echo "********************************************************"
 echo "** Installing vagrant, puppetlabs, virtualbox, docker **"
 echo "********************************************************"
 DIR=$(cd . && pwd)
+export DOPS_PUPPET_PATH="$DIR""/puppet/trunk/environments/"
 export DOCKER_PUPPET_PATH="$DIR""/puppet/trunk/environments/"
 echo "setting DOCKER_PUPPET_PATH=$DOCKER_PUPPET_PATH"
 echo $DOCKER_PUPPET_PATH > env_docker_puppet_path

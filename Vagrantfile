@@ -10,10 +10,9 @@
 # read vm and chef configurations from JSON files
 nodes_config = (JSON.parse(File.read("nodes.json")))['nodes']
 puppet_source = ENV['DOPS_PUPPET_PATH']
-   
-
+  
 if puppet_source == nil
-   puts "NodeOS: " + nodeOS
+#   puts "NodeOS: " + nodeOS
    puts "Please set DOPS_PUPPET_PATH to your checkout of devtest, test and production"
    exit
 end
@@ -56,7 +55,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
 
       config.vm.provision :shell, :path => node_values['bootstrap']
-      #   inline: "apt-get update -y"  # https://github.com/mitchellh/vagrant/pull/5860
+      # inline: "apt-get update -y" # https://github.com/mitchellh/vagrant/pull/5860
       config.vm.box = node_values['nodeOS']
       #config.vm.box = "trusty64"   # vagrant box add precise64 http://files.vagrantup.com/trusty64.box
       # The current trusty64 image cannot be found in the vagrantup.com server, so use this instead :
