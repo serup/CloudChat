@@ -258,10 +258,11 @@ function check-platform
 # ================================================================
 # List of archives
 # The order is important.
+#    http://www.mpfr.org/mpfr-current/mpfr-3.1.2.tar.bz2  -- mirror used - since it is often down
 ARS=(
     http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz
     ftp://ftp.gmplib.org/pub/gmp-5.0.5/gmp-5.0.5.tar.bz2
-    http://www.mpfr.org/mpfr-current/mpfr-3.1.2.tar.bz2
+    http://ftp.gnu.org/gnu/mpfr/mpfr-3.1.2.tar.bz2
     http://www.multiprecision.org/mpc/download/mpc-1.0.tar.gz
     http://bugseng.com/products/ppl/download/ftp/releases/1.0/ppl-1.0.tar.bz2
     http://www.bastoul.net/cloog/pages/download/cloog-0.17.0.tar.gz
