@@ -14,7 +14,8 @@ puppet_source = ENV['DOPS_PUPPET_PATH']
 if puppet_source == nil
 #   puts "NodeOS: " + nodeOS
    puts "Please set DOPS_PUPPET_PATH to your checkout of devtest, test and production"
-   exit
+   puppet_source = "$DIR""/puppet/trunk/environments/"
+   #exit
 end
 
 VAGRANTFILE_API_VERSION = "2"
