@@ -106,6 +106,14 @@ if [ "" == "$NODEJS_OK" ]; then
 else
   echo "- puppetlabs-nodejs puppet module installed"
 fi
+BUILD_ESSENTIAL_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep initforthe-build-essential)
+if [ "" == "$BUILD_ESSENTIAL_OK" ]; then
+  echo -n "- install initforthe-build_essential puppet module"
+  puppet module install initforthe-build_essential --modulepath ./puppet/trunk/environments/devtest/modules
+  echo " - done."
+else
+  echo "- initforthe-build_essential puppet module installed"
+fi
 #gcc will be build by bld.sh inside codeblocks_projects
 #GCC_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep puppetlabs-gcc)
 #if [ "" == "$GCC_OK" ]; then
