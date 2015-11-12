@@ -65,14 +65,10 @@ node /^cloudchatmanager.*/ {
   }
 
   include git
-#  git::config { 'user.name':
-#    value => 'John Doe',
-#  }
-
-#  git::config { 'user.email':
-#    value => 'john.doe@example.com',
-#  }
-
+  # to get compile to work you need a swap file
+  swap_file::files { 'default':
+    ensure   => present,
+  }
 }
 
 node /^cloudchatclient.*/ {
@@ -96,13 +92,5 @@ node /^cloudchatclient.*/ {
   }
 
   include git
-#  git::config { 'user.name':
-#    value => 'John Doe',
-#  }
-
-#  git::config { 'user.email':
-#    value => 'john.doe@example.com',
-#  }
-
  
 }
