@@ -39,7 +39,24 @@ else
     echo "    environment=devtest" | sudo tee --append /etc/puppet/puppet.conf 2> /dev/null
 
     sudo cp /vagrant/nodes.rc.local /etc/rc.local
+
+    # bugfix hostname for ubuntu 15.04 - run this command    
+    sudo bash /etc/init.d/hostname.sh
+
+
     sudo puppet agent --enable
+
+    echo "fetch nodejs"
+    sudo apt-get -f install nodejs-legacy
+
+    echo "fetch boost"
+    sudo apt-get -f install libboost-all-dev
+    
+    echo "fetch xsltproc"
+    sudo apt-get -f install xsltproc
+
+    echo "fetch g++ since somehow gcc default install does not get it"
+    sudo apt-get -f install g++
 
     echo "Fetch latest version of CloudChat"
     if [ -d "CloudChat" ]; then

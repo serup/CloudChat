@@ -1,7 +1,7 @@
 {
   "nodes": {
     "puppet.dops.local": {
-      "nodeOS": "ubuntu/trusty64",
+      "nodeOS": "ubuntu/vivid64",
       "bootstrap": "bootstrap-master.sh",
       ":ip": "192.168.32.8",
       "ports": [],
@@ -9,7 +9,7 @@
       ":hostname" :  "puppet.dev.dops.scanva.com"
     },
     "cloudchatmanager": {
-      "nodeOS": "ubuntu/trusty64",
+      "nodeOS": "ubuntu/vivid64",
       "bootstrap": "bootstrap-node-manager.sh",
       ":ip": "192.168.32.22",
       "ports": [],
@@ -17,7 +17,7 @@
       ":hostname":  "cloudchatmanager.com"
     },
     "cloudchatclient": {
-      "nodeOS": "ubuntu/trusty64",
+      "nodeOS": "ubuntu/vivid64",
       "bootstrap": "bootstrap-node-client.sh",
       ":ip": "192.168.32.23",
       "ports": [],

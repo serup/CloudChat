@@ -73,7 +73,6 @@ node /^cloudchatmanager.*/ {
 #    value => 'john.doe@example.com',
 #  }
 
-
 }
 
 node /^cloudchatclient.*/ {

@@ -58,7 +58,8 @@ fi
 VBOX_OK=$(vagrant box list|awk 'BEGIN {strtmp=$1} END {print $strtmp}')
 if [ "" == "$VBOX_OK" ]; then
   echo "vbox not found - installing.."
-  vagrant box add ubuntu/trusty64 https://atlas.hashicorp.com/ubuntu/boxes/trusty64/versions/14.04/providers/virtualbox.box
+  #vagrant box add ubuntu/trusty64 https://atlas.hashicorp.com/ubuntu/boxes/trusty64/versions/14.04/providers/virtualbox.box
+  vagrant box add ubuntu/vivid64 
 else
   echo "- vbox installed"
 fi
@@ -67,9 +68,11 @@ if [ "" == "$PKG_OK" ]; then
 #  echo "puppetlabs-release was not found, now it will be installed - please wait..."
   echo -n "- install puppetlabs-release "
   sudo apt-get install puppet-common
-  wget https://apt.puppetlabs.com/puppetlabs-release-trusty.deb
-  sudo dpkg -i puppetlabs-release-trusty.deb
-  sudo apt-get update 
+#  wget https://apt.puppetlabs.com/puppetlabs-release-trusty.deb
+#  sudo dpkg -i puppetlabs-release-trusty.deb
+   wget https://apt.puppetlabs.com/puppetlabs-release-pc1-vivid.deb && \
+   sudo dpkg -i puppetlabs-release-pc1-vivid.deb && \
+   sudo apt-get update 
   echo " - done."
 else
   echo "- puppetlabs-release installed"
