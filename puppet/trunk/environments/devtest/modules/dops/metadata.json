@@ -1,0 +1,22 @@
+{
+        "author": "dops",
+        "name": "dops",
+        "version": "1.1.1",
+        "project_page": "https://puppet.dev.dops.scanva.com/dops/",
+        "source": "https://puppet.dev.dops.scanva.com/config/puppet/trunk/environments/devtest/modules/dops/",
+        "summary": "Deployment af dops general module",
+        "tags": [],
+        "dependencies": [{
+                        "name": "puppetlabs/stdlib",
+                        "version_requirement": ">= 4.0.0"
+                }
+        ],
+        "license": "Copyright (C) scanva aps \n   - All Rights Reserved Unauthorized copying of this file, via any medium is strictly prohibited",
+        "operatingsystem_support": [{
+                        "operatingsystem": "Ubuntu",
+                        "operatingsystemrelease": [ "12.04",
+                                "14.04"
+                        ]
+                }
+        ]
+}

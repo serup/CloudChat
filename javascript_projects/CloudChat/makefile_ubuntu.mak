@@ -8,6 +8,13 @@ CONVERT=xsltproc -o test_results.html ./test/test_results.xslt ./test/test_resul
 # Run command line tests
 # http://sc.tamu.edu/help/general/unix/redirection.html
 # http://www.thegeekstuff.com/2011/10/grep-or-and-not-operators/
+#
+# how to fetch process id running task
+# ps aux | grep jenkins | grep 1_1|grep 7788| awk '{print $2}'
+# consider building a safe kill into this batch - pt. it will break if another thread is running
+# one possible way
+# kill -KILL $( ps aux | grep 1_1|grep 127. |awk '{print $2}')
+# - however if process was not there, then this will also break batch - find some other way!
 test:
 	@ echo " ----------------------------------------------------------- "	
 	@ echo "  Test of cloudchat is initializing - please wait... "	
@@ -31,6 +38,7 @@ test:
 	@ $(CONVERT) 2>&1
 	@ cat error.txt
 	@ rm test/test_results.xml
+	@ echo "try to kill process "
 	@ kill -KILL $$(cat running.pid)
 
 .PHONY: test 

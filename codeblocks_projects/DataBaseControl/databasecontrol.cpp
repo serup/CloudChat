@@ -1227,7 +1227,6 @@ bool CDatabaseControl::AppendEntityFile(std::string EntityName, std::string Enti
     if(bResult==false)
         return bResult; /// no need to go further
 
-    ///TODO: howto append to toast area ???  -- setup TOAST and write it
     if(iAmountOfToastElementsUpdated>0)
     {
         //bResult = AppendEntityTOASTFile(EntityName, EntityToastFileName, _TOASTDEDElements);
@@ -1261,7 +1260,6 @@ bool CDatabaseControl::updateEntityAttribut(std::vector<Elements>& DEDElements, 
     return bResult;
 }
 
-///TODO: include toast area !!!!
 bool CDatabaseControl::updateEntityAttribut(std::string EntityName, std::string EntityFileName, std::string strElementID, std::vector<unsigned char> ElementData )
 {
     bool bResult=true;
@@ -1308,37 +1306,6 @@ bool CDatabaseControl::updateEntityAttribut(std::string EntityName, std::string 
     return bResult;
 }
 
-/*TODO: updates wrong, however idea is ok - toast area should be included, just find a better way
-bool CDatabaseControl::updateEntityAttribut(std::string EntityName, std::string EntityFileName, std::string strElementID, std::vector<unsigned char> ElementData )
-{
-    bool bResult=true;
-    /// Fetch all attributes from datadictionary file and create DED elements list
-    std::vector<Elements> _DEDElements;
-    bResult = readDDEntityRealm((std::string)EntityName, _DEDElements); /// Fetch current datadictionary specs for this entity
-    if(bResult==false)
-    {
-        std::cout << "[readDDEntityRealm] ERROR : File can not be read : Entity name : " << EntityName << std::endl;    /// no need to go further, something is wrong with the file
-        return bResult;
-    }
-    bResult = readDDTOASTEntityRealm((std::string)EntityName, _DEDElements); /// Fetch current datadictionary specs for this entity TOAST and add it to list
-    if(bResult==false)
-    {
-        std::cout << "[readDDTOASTEntityRealm] ERROR : File can not be read : Entity name : " << EntityName << std::endl;    /// no need to go further, something is wrong with the file
-        return bResult;
-    }
-    else
-    {
-        /// find same element as in datadictionary definition - only elements existing in datadictionary will be updated in entity database file
-        bResult = update_element_value(_DEDElements, strElementID, ElementData);
-        if(bResult == true)
-        {
-            /// Element was found, now update entity file and toast if element is in toast area
-            bResult = WriteEntityFile((std::string)EntityName,(std::string)EntityFileName,_DEDElements);
-        }
-    }
-    return bResult;
-}
-*/
 
 bool CDatabaseControl::FetchFileAsVector(std::string strfilepath, std::vector<unsigned char> &FileDataBytesInVector)
 {
