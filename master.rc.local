@@ -1,0 +1,6 @@
+#/bin/sh
+
+service puppetmaster stop
+rm -rf /var/lib/puppet/ssl/*
+service puppetmaster start
+exit 0
