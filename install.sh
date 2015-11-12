@@ -126,6 +126,16 @@ fi
 #else
 #  echo "- puppetlabs-gcc puppet module installed"
 #fi
+
+# needed a swap file for compiling inside VM  see info here : http://www.cyberciti.biz/faq/linux-add-a-swap-file-howto/
+SWAPFILE_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep petems-swap_file)
+if [ "" == "$SWAPFILE_OK" ]; then
+  echo -n "- install petems-swap_file puppet module"
+  puppet module install petems-swap_file --modulepath ./puppet/trunk/environments/devtest/modules
+  echo " - done."
+else
+  echo "- petems-swap_file puppet module installed"
+fi
 echo "******************************************************************************************************************"
 echo "environment is now ready! you may run vagrant up and then vagrant up cloudchatmanager, vagrant up cloudchatclient"
 echo "******************************************************************************************************************"

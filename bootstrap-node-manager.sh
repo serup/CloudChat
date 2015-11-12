@@ -47,16 +47,16 @@ else
     sudo puppet agent --enable
 
     echo "fetch nodejs"
-    sudo apt-get -f install nodejs-legacy
+    sudo apt-get install -yq nodejs-legacy
 
     echo "fetch boost"
-    sudo apt-get -f install libboost-all-dev
+    sudo apt-get install -yq  libboost-all-dev
     
     echo "fetch xsltproc"
-    sudo apt-get -f install xsltproc
+    sudo apt-get install -yq xsltproc
 
     echo "fetch g++ since somehow gcc default install does not get it"
-    sudo apt-get -f install g++
+    sudo apt-get install -yq g++
 
     echo "Fetch latest version of CloudChat"
     if [ -d "CloudChat" ]; then
