@@ -69,6 +69,8 @@ node /^cloudchatmanager.*/ {
   swap_file::files { 'default':
      ensure   => present,
      swapfile => '/mnt/swap.55',
+     swapfilesize => '100 MB',
+     add_mount => true,
   }
 
 
