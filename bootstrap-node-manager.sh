@@ -72,5 +72,7 @@ else
       echo "CloudChat installed"
       echo "Set up swapfile"
       sudo bash addswapfile.sh
+      echo "Build CloudChat"
+      sudo ./run.sh
      fi
 fi
