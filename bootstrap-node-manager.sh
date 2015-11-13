@@ -63,16 +63,14 @@ else
       echo "CloudChat already installed"
       echo "updating ..."
       cd CloudChat
+      git checkout serup
       git pull
     else
       git clone https://review.gerrithub.io/serup/CloudChat
+      cd CloudChat
+      git checkout serup
       echo "CloudChat installed"
-    fi
-    
-#    echo "Create softlinks to g++-4.7"
-#    sudo update-alternatives \
-#    --install /usr/bin/gcc gcc /usr/bin/gcc-4.7 40 \
-#    --slave /usr/bin/g++ g++ /usr/bin/g++-4.7 
-
-
+      echo "Set up swapfile"
+      sudo bash addswapfile.sh
+     fi
 fi
