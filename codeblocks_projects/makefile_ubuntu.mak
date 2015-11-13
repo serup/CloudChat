@@ -26,9 +26,9 @@ all:
 total:	msgbegin compress2 dataencoder2 database2 websocketserver2 ringbuf2 dfdfunc2 dfdfunc3 dfdfunc4 dfdfunc5 msgend 	
 
 msgbegin:
-	@ echo "------------------------"
-	@ echo "Build started -- please wait..."	
-	@ echo "------------------------"
+	@ echo "-----------------------------------"
+	@ echo "C++ Build started -- please wait..."	
+	@ echo "-----------------------------------"
 compress: msgbegin compress2 msgend
 compress2: 
 	@ cd DataEncoderDecoder/DataEncoderDecoder/compression-lib/BoostUnitTest;\

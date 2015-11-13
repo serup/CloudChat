@@ -12,8 +12,10 @@ then
 else
     # Install Puppet Master
     sudo cp /vagrant/sources.list /etc/apt/sources.list
-    wget https://apt.puppetlabs.com/puppetlabs-release-trusty.deb && \
-    sudo dpkg -i puppetlabs-release-trusty.deb && \
+    #wget https://apt.puppetlabs.com/puppetlabs-release-trusty.deb && \
+    #sudo dpkg -i puppetlabs-release-trusty.deb && \
+    wget https://apt.puppetlabs.com/puppetlabs-release-pc1-vivid.deb && \
+    sudo dpkg -i puppetlabs-release-pc1-vivid.deb && \
     sudo apt-get update -yq && sudo apt-get upgrade -yq
 
     sudo rm -f /var/run/puppet/master.pid
