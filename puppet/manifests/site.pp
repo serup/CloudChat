@@ -65,14 +65,6 @@ node /^cloudchatmanager.*/ {
   }
 
   include git
-#  git::config { 'user.name':
-#    value => 'John Doe',
-#  }
-
-#  git::config { 'user.email':
-#    value => 'john.doe@example.com',
-#  }
-
 
 }
 
@@ -97,13 +89,5 @@ node /^cloudchatclient.*/ {
   }
 
   include git
-#  git::config { 'user.name':
-#    value => 'John Doe',
-#  }
-
-#  git::config { 'user.email':
-#    value => 'john.doe@example.com',
-#  }
-
  
 }

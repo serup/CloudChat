@@ -39,23 +39,40 @@ else
     echo "    environment=devtest" | sudo tee --append /etc/puppet/puppet.conf 2> /dev/null
 
     sudo cp /vagrant/nodes.rc.local /etc/rc.local
+
+    # bugfix hostname for ubuntu 15.04 - run this command    
+    sudo bash /etc/init.d/hostname.sh
+
+
     sudo puppet agent --enable
+
+    echo "fetch nodejs"
+    sudo apt-get install -yq nodejs-legacy
+
+    echo "fetch boost"
+    sudo apt-get install -yq  libboost-all-dev
+    
+    echo "fetch xsltproc"
+    sudo apt-get install -yq xsltproc
+
+    echo "fetch g++ since somehow gcc default install does not get it"
+    sudo apt-get install -yq g++
 
     echo "Fetch latest version of CloudChat"
     if [ -d "CloudChat" ]; then
       echo "CloudChat already installed"
       echo "updating ..."
       cd CloudChat
+      git checkout serup
       git pull
     else
       git clone https://review.gerrithub.io/serup/CloudChat
+      cd CloudChat
+      git checkout serup
       echo "CloudChat installed"
-    fi
-    
-#    echo "Create softlinks to g++-4.7"
-#    sudo update-alternatives \
-#    --install /usr/bin/gcc gcc /usr/bin/gcc-4.7 40 \
-#    --slave /usr/bin/g++ g++ /usr/bin/g++-4.7 
-
-
+      echo "Set up swapfile"
+      sudo bash addswapfile.sh
+      echo "Build CloudChat"
+      sudo ./run.sh
+     fi
 fi
