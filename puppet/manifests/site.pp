@@ -65,14 +65,6 @@ node /^cloudchatmanager.*/ {
   }
 
   include git
-  # to get compile to work you need a swap file
-  swap_file::files { 'default':
-     ensure   => present,
-     swapfile => '/mnt/swap.55',
-     swapfilesize => '100 MB',
-     add_mount => true,
-  }
-
 
 }
 
