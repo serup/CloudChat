@@ -1,3 +1,4 @@
+var WebSocket = require('ws')
 /* socketserverAPI
  *
  * 
