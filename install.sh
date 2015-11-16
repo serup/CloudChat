@@ -142,6 +142,18 @@ if [ "" == "$SWAPFILE_OK" ]; then
 else
   echo "- petems-swap_file puppet module installed"
 fi
+
+if [ ! -f tmphost ]; then
+    echo "add new hosts to hosts file"    
+    cat /etc/hosts > tmphost
+    # Configure /etc/hosts file
+    echo "# Host config for Puppet Master and Agent Nodes" | sudo tee --append /etc/hosts 2> /dev/null && \
+    echo "192.168.32.8    puppet.dops.local         puppet" | sudo tee --append /etc/hosts 2> /dev/null && \
+    echo "192.168.32.22   cloudchatmanager.com   cloudchatmanager" | sudo tee --append /etc/hosts 2> /dev/null && \
+    echo "192.168.32.23   cloudchatclient.com    cloudchatclient" | sudo tee --append /etc/hosts 2> /dev/null && \
+    echo "192.168.32.20   jenkins.scanva.com     jenkins" | sudo tee --append /etc/hosts 2> /dev/null
+fi
+
 echo "******************************************************************************************************************"
 echo "environment is now ready! you may run vagrant up and then vagrant up cloudchatmanager, vagrant up cloudchatclient"
 echo "******************************************************************************************************************"
