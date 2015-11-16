@@ -76,6 +76,6 @@ else
       echo "Build CloudChat"
       sudo ./run.sh
       echo "Deploy to www"
-      sudo bash deploy.sh
+      sudo bash deploy_www.sh
      fi
 fi
