@@ -160,5 +160,6 @@ echo "environment is now ready! you may run vagrant up and then vagrant up cloud
 echo "******************************************************************************************************************"
 vagrant up
 vagrant up jenkins
+vagrant up backend
 vagrant up cloudchatmanager
 vagrant up cloudchatclient
