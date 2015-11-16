@@ -75,5 +75,7 @@ else
       sudo bash addswapfile.sh
       echo "Build CloudChat"
       sudo ./run.sh
+      echo "Deploy to www"
+      sudo bash deploy.sh
      fi
 fi
