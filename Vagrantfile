@@ -58,8 +58,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       config.vm.provision :shell, :path => node_values['bootstrap']
       # inline: "apt-get update -y" # https://github.com/mitchellh/vagrant/pull/5860
       config.vm.box = node_values['nodeOS']
-      #config.vm.hostname = node_values[':hostname']
-      config.vm.provision :shell, inline: "hostnamectl set-hostname " + node_values[':hostname'] 
+      #config.vm.provision :shell, inline: "hostnamectl set-hostname " + node_values[':hostname'] 
+      config.vm.hostname = node_values[':hostname']
       config.vm.network :private_network, ip: node_values[':ip']
 
       config.vm.provider :virtualbox do |vb|
