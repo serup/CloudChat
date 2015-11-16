@@ -14,7 +14,15 @@
       ":ip": "192.168.32.20",
       "ports": [],
       ":memory": 1024,
-      ":hostname":  "jenkins.dops.com"
+      ":hostname":  "jenkins.scanva.com"
+    },
+    "backend": {
+      "nodeOS": "ubuntu/vivid64",
+      "bootstrap": "bootstrap-node-backend.sh",
+      ":ip": "192.168.32.21",
+      "ports": [],
+      ":memory": 1024,
+      ":hostname":  "backend.scanva.com"
     },
     "cloudchatmanager": {
       "nodeOS": "ubuntu/vivid64",
