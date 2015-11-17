@@ -71,6 +71,8 @@ node /^jenkins.*/ {
 
 node /^backend.*/ {
 
+  class { apache : } 
+
   # NB! Needed BEFORE docker class, otherwise it will fail during install
   exec { "apt-update":
     command => "/usr/bin/apt-get update"
