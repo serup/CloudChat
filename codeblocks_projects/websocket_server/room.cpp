@@ -128,7 +128,8 @@ namespace websocket {
 
             void room::handleIncomming(const dataframe& msg, participant_ptr source)
             {
-                bool bDecoded=false;
+                bool bDecoded;
+                bDecoded=false;
                 std::string strMethod;
                 std::string strProtocolTypeID;
                 std::string strUniqueId;

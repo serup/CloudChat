@@ -5,7 +5,7 @@
 #
 #
 CC=g++ -g -o bin/Debug/webserver_test webserver_test.cpp ../../easywsclient/easywsclient.cpp ../../easywsclient/easywsclient.hpp ../../dataframe.hpp ../../dataframe.cpp ../../dataframe_parser.hpp ../../dataframe_parser.cpp ../../request_parser.hpp ../../request_parser.cpp ../../room.hpp ../../room.cpp ../../server.hpp ../../server.cpp ../../session.hpp ../../session.cpp ../../request_handler.hpp ../../request_handler.cpp ../../reply.hpp ../../reply.cpp ../../wsclient/wsclient.cpp ../../wsclient/wsclient.hpp ../../../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.cpp ../../../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.cpp -L"/usr/local/lib/" -D__MSABI_LONG=long -lboost_system -lboost_signals -lboost_thread -lpthread -lrt -std=gnu++11 
-TEST=./bin/Debug/webserver_test 
+TEST=./bin/Debug/webserver_test 2>/dev/null 
 TESTFLAGS= --report_format=XML --report_level=detailed
 TESTFLAGS2= --report_level=detailed
 TESTFLAGS3= --report_format=XML --report_level=detailed
@@ -24,13 +24,13 @@ compile:
 	@ echo "Finished build"
 	@ echo "-----------------------------------------------" 
 testxml:
-	@ $(TEST)$(TESTFLAGS) > error.txt;$(CONVERT) 
+	@ $(TEST) $(TESTFLAGS) > error.txt;$(CONVERT) 
 	@ cat error.txt
 test:
 	@ echo " Test of websocketserver - please wait... " 
 	@ echo "-----------------------------------------------" 
-	@ $(TEST)$(TESTFLAGS) > error.txt;$(CONVERT) 
-	@ $(TEST)$(TESTFLAGS3) > error2.txt;$(CONVERT2) 
+	@ $(TEST) $(TESTFLAGS) > error.txt;$(CONVERT) 
+	@ $(TEST) $(TESTFLAGS3) > error2.txt;$(CONVERT2) 
 	@ echo "-----------------------------------------------" > test_txt_result.txt 
 	@ echo " Test of websocketserver  " >> test_txt_result.txt  
 	@ echo "-----------------------------------------------" >> test_txt_result.txt 
