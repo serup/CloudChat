@@ -20,7 +20,9 @@
       "nodeOS": "ubuntu/vivid64",
       "bootstrap": "bootstrap-node-backend.sh",
       ":ip": "192.168.32.21",
-      "ports": [],
+      "ports": [
+        {":host": 7777, ":guest": 7777, ":id": "database"}
+      ],
       ":memory": 1024,
       ":hostname":  "backend.scanva.com"
     },
