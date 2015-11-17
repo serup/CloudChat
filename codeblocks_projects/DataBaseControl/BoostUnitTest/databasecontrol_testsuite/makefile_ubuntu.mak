@@ -5,6 +5,7 @@
 #
 #
 CC=g++ -g -o bin/Debug/databasecontrol_test databasecontrol_test.cpp ../../databasecontrol.hpp ../../databasecontrol.cpp ../../../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.cpp  ../../../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.h ../../../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.cpp ../../../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.h -L"/usr/local/lib/" -D__MSABI_LONG=long -lboost_system -lboost_signals -lboost_thread -lpthread -lrt -lboost_filesystem -std=gnu++11 
+CFLAGS= -Wno-unused-but-set-variable
 TEST=./bin/Debug/databasecontrol_test 
 TESTFLAGS= --report_format=XML --report_level=detailed
 TESTFLAGS2= --report_level=detailed
@@ -19,7 +20,7 @@ compile:
 	@ echo " Build started - please wait..." 
 	@ echo " Start building databasecontrol testsuite"
 	@ echo "-----------------------------------------------" 
-	@ $(CC)
+	@ $(CC) $(CFLAGS)
 	@ echo "Finished building"
 	@ echo "-----------------------------------------------" 
 testxml:
