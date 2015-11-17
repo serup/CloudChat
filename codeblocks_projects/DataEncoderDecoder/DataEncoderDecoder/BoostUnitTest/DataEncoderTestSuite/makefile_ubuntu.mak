@@ -4,8 +4,8 @@
 #
 
 CC=g++  
-CFLAGS=-c -lboost_system -std=c++11
-LDFLAGS=
+CFLAGS=-c -lboost_system -std=c++11 
+LDFLAGS= -Wunused-but-set-variable 
 SOURCES=dataencodertest.cpp ../../DataEncoder.cpp ../../compression-lib/compression.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=bin/Debug/dataencodertest
