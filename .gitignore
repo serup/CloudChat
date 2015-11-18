@@ -2,6 +2,12 @@
 ## tmp
 #################
 *.o
+*/tmp
+*.txt
+result_index.js
+puppet/
+*.pid
+env_docker_puppet_path
 
 #################
 ## Eclipse
