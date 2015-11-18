@@ -77,6 +77,9 @@ else
       echo "Build CloudChat"
       sudo ./run.sh > build.log
       echo "done build - see info in file build.log"
-      echo "TODO: deploy backend and start it..."
+      sudo -s
+      cd codeblocks_projects
+      echo "start backend server"
+      ./startScanvaserver
      fi
 fi
