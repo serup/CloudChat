@@ -233,9 +233,10 @@ bool CDatabaseControl::ReadTOASTXmlFile(std::ifstream & is, std::vector<Elements
                 //std::cout << strChild << " database TOAST record entry : " << f.TransGUID << "\n";
 
                 std::string strMD5(CMD5(f.Data.c_str()).GetMD5s());
-                if(strMD5 != f.DataMD5)
+                if(strMD5 != f.DataMD5) {
+                    std::cout << "ERROR: data area in file have changed without having the MD5 checsum changed -- Warning data could be compromised ; " << strChild << "\n";
                     return false;  // data area in file have changed without having the MD5 checsum changed -- Warning data could be compromised
-
+                }
 //TODO: INVESTIGATE byte size here -- size should be smaller after unhex, since hex take 2 bytes per byte
                 // take the hex converted data and unhex it before DED will decode it
                 unsigned int sizeofCompressedDataInHex = (unsigned int)f.DataSize;
@@ -244,7 +245,7 @@ bool CDatabaseControl::ReadTOASTXmlFile(std::ifstream & is, std::vector<Elements
                 ZeroMemory(data_in_unhexed_buf,sizeof_data_in_unhexed_buf); // make sure no garbage is inside the newly allocated space
                 const std::vector<unsigned char> iterator_data_in_hexed_buf(&f.Data[0],&f.Data[sizeofCompressedDataInHex]);
                 boost::algorithm::unhex(iterator_data_in_hexed_buf.begin(),iterator_data_in_hexed_buf.end(), data_in_unhexed_buf);// convert the hex array to an array containing byte values
-                // According to what the protocol prescribes for DED entries in customer TOAST, then a loop of decode, according to specs, of entries is needed
+                // According to what the protocol prescribes for DED entries in TOAST, then a loop of decode, according to specs, of entries is needed
                 // fetch the data area and unpack it with DED to check it
                 EntityChunkDataInfo chunk;
                 DED_PUT_DATA_IN_DECODER(decoder_ptr,data_in_unhexed_buf,sizeof_data_in_unhexed_buf);
