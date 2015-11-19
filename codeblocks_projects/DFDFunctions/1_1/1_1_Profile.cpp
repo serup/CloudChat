@@ -97,23 +97,26 @@ bool C1_1_Profile::ConnectToWebserver(std::string strurl,void (*pt2Function)(voi
         DED_PUT_STDSTRING	( encoder_ptr, "protocolTypeID", (std::string)"DED1.00.00" );
         DED_PUT_STDSTRING	( encoder_ptr, "functionName", (std::string)"DFD_1.1" );
         DED_PUT_STRUCT_END( encoder_ptr, "WSRequest" );
-        DED_GET_ENCODED_DATA(encoder_ptr,data_ptr,iLengthOfTotalData,pCompressedData,sizeofCompressedData); // -----------
+        /// Create a binary dataframe
+        wsclient::dataframe frame;
+        DED_GET_WSCLIENT_DATAFRAME(encoder_ptr,frame)
 
         /// start thread handling response from webserver
         ws->start(pt2Function); // HandleDataframe_Response -- unless user is providing another
 
+/*old way - DED_GET_WSCLIENT_DATAFRAME should do this
+        DED_GET_ENCODED_DATA(encoder_ptr,data_ptr,iLengthOfTotalData,pCompressedData,sizeofCompressedData); // -----------
         /// Create a binary dataframe
         wsclient::dataframe frame;
-        // /* ---------------------------
+        // //+ ---------------------------
         frame.opcode = wsclient::dataframe::operation_code::binary_frame;
         if(sizeofCompressedData==0) sizeofCompressedData = iLengthOfTotalData; // if sizeofcompresseddata is 0 then compression was not possible and size is the same as for uncompressed
         if(data_ptr == 0) return false;
         if(iLengthOfTotalData == 0) return false;
         if(pCompressedData == 0) return false;
         frame.putBinaryInPayload(pCompressedData,sizeofCompressedData); // Put DED structure in dataframe payload
-        // */ ------------------------
-        //DED_GET_ENCODED_DATAFRAME(encoder_ptr, frame)
-
+        // //- ------------------------
+*/
         /// put dataframe in outgoing buffer -- first test with txbuf, then with ringbuffer
         ws->insertDataframeIn_txbuf(frame);
 
@@ -1311,7 +1314,7 @@ bool C1_1_Profile::fn116_LoginProfile(LoginProfileRequest datastream, LoginProfi
     UpdateProfileStatusRequest upreq;
     UpdateProfileStatusResponse upresp;
     WriteLogRequest wlreq;
-    WriteLogResponse wlresp;
+    //WriteLogResponse wlresp;
 
     bResult = fn1161_Authentication(datastream,aresp);
     if(bResult==false)
