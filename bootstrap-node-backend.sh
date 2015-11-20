@@ -85,6 +85,6 @@ else
       sudo -s
       cd codeblocks_projects
       echo "start backend server"
-      ./startScanvaserver
+      sudo ./startScanvaserver
      fi
 fi
