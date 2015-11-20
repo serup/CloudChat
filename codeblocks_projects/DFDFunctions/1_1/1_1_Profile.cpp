@@ -916,7 +916,11 @@ bool C1_1_Profile::fn118_FetchProfile(FetchProfileInfo datastream, FetchProfileR
                 if(bExtracted == true)
                 {
                     std::vector<unsigned char> ElementData;
-                    std::string imageURI = "backend.scanva.com/img/tmp.jpg";// TODO: add ip;  example: backend.scanva.com/img/tmp.jpg
+                    std::string imageURI = "img/" + datastream.strProfileID + "/foto.jpg";// TODO: add ip;  example: backend.scanva.com/img/tmp.jpg
+                    // TODO: scp the foto to cloudchatmanager machine - it should reside in relative img/<profileid>/foto.jpg - NB! This is necessary since no extracted data is allowed on backend.scanva.com server
+
+                    // TODO: remove tmp local stored image - no extracted data is allowed on backend.scanva.com
+
                     // Image is now created in temp area, so update the record_value with the new path
                     std::copy( imageURI.begin(), imageURI.end(), std::back_inserter(ElementData));
                     CDbCtrl.update_element_value(record_value,"foto",ElementData);
