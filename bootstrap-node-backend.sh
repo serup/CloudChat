@@ -60,6 +60,20 @@ else
     echo "fetch g++ since somehow gcc default install does not get it"
     sudo apt-get install -yq g++
 
+    echo "install sshpass to allow automatic transfer of images script to run - consider using ssh keys instead in future"
+    sudo apt-get install -yq sshpass
+
+    echo "install incron to monitor event/changes in transfer folder - new images added, should then start transfer"
+    sudo apt-get install incron
+    sudo echo "root" >> /etc/incron.allow
+    sudo echo "vagrant" >> /etc/incron.allow
+
+    echo "copy cron replication job to /usr/local/bin - the job is started by incron, and it copies from backend to cloudchatmanager"
+    sudo cp replication.sh /usr/logal/bin/.
+
+    echo "setup incron job"
+    incrontab -l | { cat; echo '/var/www/img IN_CLOSE_WRITE /usr/local/bin/replication.sh'; } | incrontab -
+
     echo "Fetch latest version of CloudChat"
     if [ -d "CloudChat" ]; then
       echo "CloudChat already installed"
@@ -86,5 +100,9 @@ else
       cd codeblocks_projects
       echo "start backend server"
       sudo ./startScanvaserver
+      echo "start replication deamon - should copy files every 3 seconds, using sshpass scp"
+      sudo touch /var/www/transferlog.txt
+      sudo bash replication.sh > /var/www/transferlog.txt &
+      echo "- done setup"
      fi
 fi
