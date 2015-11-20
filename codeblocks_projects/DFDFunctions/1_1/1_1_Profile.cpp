@@ -911,14 +911,15 @@ bool C1_1_Profile::fn118_FetchProfile(FetchProfileInfo datastream, FetchProfileR
             bool bFound = CDbCtrl.fetch_element(record_value,(std::string)"foto", fotoelement);
             if(bFound==true) {
                 std::string _strfoto(fotoelement.ElementData.begin(),fotoelement.ElementData.end());
-                std::string filenamepath = "/var/www/img/tmp.jpg"; // TODO: add a guid filename to newly created image -- NB! filepath should be inside /var/www/img/   -- to make sure client can access it
+                std::string filenamepath = "/var/www/img/" + datastream.strProfileID + ".jpg"; // TODO: add a guid filename to newly created image -- NB! filepath should be inside /var/www/img/   -- to make sure client can access it
                 bool bExtracted = extractBase64TojpgImagefile(filenamepath,_strfoto);
                 if(bExtracted == true)
                 {
                     std::vector<unsigned char> ElementData;
-                    std::string imageURI = "img/" + datastream.strProfileID + "/foto.jpg";// TODO: add ip;  example: backend.scanva.com/img/tmp.jpg
-                    // TODO: scp the foto to cloudchatmanager machine - it should reside in relative img/<profileid>/foto.jpg - NB! This is necessary since no extracted data is allowed on backend.scanva.com server
-
+                    std::string imageURI = "img/" + datastream.strProfileID + ".jpg";// TODO: add ip;  example: backend.scanva.com/img/tmp.jpg
+                    // TODO: Automatic replication of extracted images to cloudchatmanager.com
+                    // INFO: fx. scp the foto to cloudchatmanager machine - it should reside in relative img/<profileid>.jpg - NB! This is necessary since no extracted data is allowed on backend.scanva.com server
+                    // sudo scp -r img/ vagrant@cloudchatmanager.com:/home/vagrant/.
                     // TODO: remove tmp local stored image - no extracted data is allowed on backend.scanva.com
 
                     // Image is now created in temp area, so update the record_value with the new path
