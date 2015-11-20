@@ -68,6 +68,10 @@ else
       git checkout serup
       git pull
     else
+      echo "****************"
+      echo "First time build"
+      echo "****************"
+      sudo mkdir /var/www/img
       git clone https://review.gerrithub.io/serup/CloudChat
       cd CloudChat
       git checkout serup
@@ -77,6 +81,7 @@ else
       echo "Build CloudChat"
       sudo ./run.sh > build.log
       echo "done build - see info in file build.log"
+      echo "****************"
       sudo -s
       cd codeblocks_projects
       echo "start backend server"
