@@ -8,6 +8,14 @@
       ":memory": 512,
       ":hostname" :  "puppet.dev.dops.scanva.com"
     },
+    "javaservices": {
+      "nodeOS": "ubuntu/vivid64",
+      "bootstrap": "bootstrap-node-javaservices.sh",
+      ":ip": "192.168.32.19",
+      "ports": [],
+      ":memory": 1024,
+      ":hostname":  "javaservices.scanva.com"
+    },
     "jenkins": {
       "nodeOS": "ubuntu/vivid64",
       "bootstrap": "bootstrap-node-jenkins.sh",
