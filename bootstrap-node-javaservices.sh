@@ -56,13 +56,16 @@ else
     sudo apt-get install -yq unzip
     touch setup.sh
     chmod 777 setup.sh
-    curl -s get.sdkman.io > setup.sh 
+    sudo chown vagrant:vagrant setup.sh
+    echo "su - vagrant" > setup.sh
+    curl -s get.sdkman.io >> setup.sh 
     echo "source \"/root/.sdkman/bin/sdkman-init.sh\"" >> setup.sh
+    #echo "source \"/home/vagrant/.sdkman/bin/sdkman-init.sh\"" >> setup.sh
     echo "echo installing grails" >> setup.sh
     echo "sdk install grails 2>/dev/null " >> setup.sh
-    echo "sudo ln -s /home/vagrant/.sdkman/candidates/grails/current/bin/grails grails" >> setup.sh
+    #echo "sudo ln -s /home/vagrant/.sdkman/candidates/grails/current/bin/grails /usr/bin/grails" >> setup.sh
+    echo "sudo ln -s /root/.sdkman/candidates/grails/current/bin/grails /usr/bin/grails" >> setup.sh
     echo "sudo grails -version" >> setup.sh
-    sudo chown vagrant setup.sh
     bash setup.sh
 
     # Add agent section to /etc/puppet/puppet.conf
