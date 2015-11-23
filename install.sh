@@ -99,6 +99,27 @@ if [ "" == "$DOCKER_OK" ]; then
 else
   echo "- garethr/docker puppet module installed"
 fi
+SPRINGBOOT_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep puppetlabs-java) 
+if [ "" == "$SPRINGBOOT_OK" ]; then
+#  echo -n "- install puppet-springboot puppet module"
+#  puppet module install NERC-CEH/puppet-springboot --modulepath ./puppet/trunk/environments/devtest/modules
+  echo -n "- install java puppet module"
+  puppet module install puppetlabs/java --modulepath ./puppet/trunk/environments/devtest/modules
+  echo -n "- install maven puppet module"
+  puppet module install maestrodev/maven  --modulepath ./puppet/trunk/environments/devtest/modules
+  echo -n "- install curl"
+  sudo apt-get install curl 
+  echo -n "- install sdkman"
+  curl -s http://get.sdkman.io | bash
+  echo -n "- init sdk"
+  source $(pwd)/.sdkman/bin/sdkman-init.sh
+  gvm version
+  echo -n "- install grails"
+  gvm install grails 
+  echo " - done."
+else
+  echo "- puppet-springboot puppet module installed"
+fi
 GIT_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep puppetlabs-git)
 if [ "" == "$GIT_OK" ]; then
   echo -n "- install puppetlabs-git puppet module"
