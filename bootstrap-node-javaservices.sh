@@ -22,51 +22,23 @@ else
     sudo rm -rf /var/lib/puppet/ssl/*
 
     # Configure /etc/hosts file
-#    echo "" | sudo tee --append /etc/hosts 2> /dev/null && \
-#    echo "# Host config for Puppet Master and Agent Nodes" | sudo tee --append /etc/hosts 2> /dev/null && \
-#    echo "192.168.32.8    puppet.dops.local           puppet" | sudo tee --append /etc/hosts 2> /dev/null && \
-#    echo "192.168.32.19   javaservices.scanva.com     javaservices" | sudo tee --append /etc/hosts 2> /dev/null && \
-#    echo "192.168.32.21   backend.scanva.com          backend" | sudo tee --append /etc/hosts 2> /dev/null && \
-#    echo "192.168.32.22   cloudchatmanager.com        cloudchatmanager" | sudo tee --append /etc/hosts 2> /dev/null && \
-#    echo "192.168.32.23   cloudchatclient.com         cloudchatclient" | sudo tee --append /etc/hosts 2> /dev/null && \
-#    echo "192.168.32.20   jenkins.scanva.com          jenkins" | sudo tee --append /etc/hosts 2> /dev/null
     sudo bash /vagrant/confighosts.sh
 
     # Setup java spring boot environment
-#    echo "- install unzip"
-#    sudo apt-get install -yq unzip 
-#    echo "- install curl"
-#    sudo apt-get install -yq curl 
-#    echo "- install sdkman"
-#    touch tmp.sh
-#    sudo chmod 777 tmp.sh
-#    curl -s http://get.sdkman.io > tmp.sh 
-#    echo "echo - init sdkman " >> tmp.sh
-#    echo "source ~/.sdkman/bin/sdkman-init.sh" >> tmp.sh 
-#    echo "echo - init sdk" >> tmp.sh
-#    #source .sdkman/bin/sdkman-init.sh
-#    echo "source \"/home/vagrant/.sdkman/bin/sdkman-init.sh\"" >> tmp.sh
-#    #echo "echo - test gvm" >> tmp.sh
-#    #echo "gvm version" >> tmp.sh
-#    #echo "echo - install grails" >> tmp.sh
-#    sudo bash tmp.sh
-#    gvm install grails
-#    echo " - done."
-
-    sudo apt-get install -yq unzip
-    touch setup.sh
-    chmod 777 setup.sh
-    sudo chown vagrant:vagrant setup.sh
-    echo "su - vagrant" > setup.sh
-    curl -s get.sdkman.io >> setup.sh 
-    echo "source \"/root/.sdkman/bin/sdkman-init.sh\"" >> setup.sh
-    #echo "source \"/home/vagrant/.sdkman/bin/sdkman-init.sh\"" >> setup.sh
-    echo "echo installing grails" >> setup.sh
-    echo "sdk install grails 2>/dev/null " >> setup.sh
-    #echo "sudo ln -s /home/vagrant/.sdkman/candidates/grails/current/bin/grails /usr/bin/grails" >> setup.sh
-    echo "sudo ln -s /root/.sdkman/candidates/grails/current/bin/grails /usr/bin/grails" >> setup.sh
-    echo "sudo grails -version" >> setup.sh
-    bash setup.sh
+#    sudo apt-get install -yq unzip
+#    touch setup.sh
+#    chmod 777 setup.sh
+#    sudo chown vagrant:vagrant setup.sh
+#    echo "su - vagrant" > setup.sh
+#    curl -s get.sdkman.io >> setup.sh 
+#    echo "source \"/root/.sdkman/bin/sdkman-init.sh\"" >> setup.sh
+#    #echo "source \"/home/vagrant/.sdkman/bin/sdkman-init.sh\"" >> setup.sh
+#    echo "echo installing grails" >> setup.sh
+#    echo "sdk install grails 2>/dev/null " >> setup.sh
+#    #echo "sudo ln -s /home/vagrant/.sdkman/candidates/grails/current/bin/grails /usr/bin/grails" >> setup.sh
+#    echo "sudo ln -s /root/.sdkman/candidates/grails/current/bin/grails /usr/bin/grails" >> setup.sh
+#    echo "sudo grails -version" >> setup.sh
+#    bash setup.sh
 
     # Add agent section to /etc/puppet/puppet.conf
     echo "" | sudo tee --append /etc/puppet/puppet.conf 2> /dev/null && \

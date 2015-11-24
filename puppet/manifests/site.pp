@@ -47,7 +47,9 @@ node /^node01.*/ {
 class grails {
     include apt
     apt::ppa { "ppa:webupd8team/java": }
-    apt::ppa { "ppa:groovy-dev/grails": }
+
+# Does NOT work for Ubuntu vivid, thus use "install-grails" exec instead
+#    apt::ppa { "ppa:groovy-dev/grails": }
 
     exec { 'apt-get update':
         command => '/usr/bin/apt-get update',
@@ -56,7 +58,8 @@ class grails {
 
     exec { 'apt-get update 2':
         command => '/usr/bin/apt-get update',
-        require => [ Apt::Ppa["ppa:webupd8team/java"], Apt::Ppa["ppa:groovy-dev/grails"], Package["git-core"] ],
+        #require => [ Apt::Ppa["ppa:webupd8team/java"], Apt::Ppa["ppa:groovy-dev/grails"], Package["git-core"] ],
+        require => [ Apt::Ppa["ppa:webupd8team/java"],  Package["git-core"] ],
     }
 
     package { ["vim",
@@ -83,22 +86,32 @@ class grails {
         logoutput => true,
     }
 
-    package { ["grails-ppa"]:
-        ensure => present,
-        require => Package["oracle-java7-installer"],
-    }
+# Does NOT work for Ubuntu vivid, thus use "install-grails" exec instead
+#    package { ["grails-ppa"]:
+#        ensure => present,
+#        require => Package["oracle-java7-installer"],
+#    }
 
     exec { "add_java_home":
         command => '/bin/echo "export JAVA_HOME=/usr/lib/jvm/java-7-oracle" >> /home/vagrant/.bashrc',
+        require => Package["oracle-java7-installer"],
     }
+
+    exec { "install-grails":
+        command => '/usr/bin/sudo apt-get install -yq unzip; touch setup.sh; chmod 777 setup.sh; sudo chown vagrant:vagrant setup.sh; curl -s get.sdkman.io >> setup.sh; echo "source \"/.sdkman/bin/sdkman-init.sh\"" >> setup.sh; echo "echo installing grails" >> setup.sh; echo "sdk install grails " >> setup.sh; echo "sudo ln -s /.sdkman/candidates/grails/current/bin/grails /usr/bin/grails" >> setup.sh; echo "/usr/bin/sudo grails -version" >> setup.sh; bash setup.sh',
+        require => Exec["add_java_home"],
+    }
+    
+    exec { "cleanup":
+        command => '/bin/rm setup.sh',
+	require => Exec["install-grails"],
+    }
+
 }
 
 node /^javaservices.*/ {
 
-#  include grails
-   include java
-   include maven
-   include git
+   include grails
 
 }
 
