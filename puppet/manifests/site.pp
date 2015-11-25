@@ -77,7 +77,7 @@ class grails_springboot {
         require => Exec["apt-get update"],
     }
 
-    package { ["oracle-java7-installer"]:
+    package { ["oracle-java8-installer"]:
         ensure => present,
         require => Exec["apt-get update 2"],
     }
@@ -88,19 +88,19 @@ class grails_springboot {
         cwd => "/home/vagrant",
         user => "vagrant",
         path => "/usr/bin/:/bin/",
-        before => Package["oracle-java7-installer"],
+        before => Package["oracle-java8-installer"],
         logoutput => true,
     }
 
 # Does NOT work for Ubuntu vivid, thus use "install-grails" exec instead
 #    package { ["grails-ppa"]:
 #        ensure => present,
-#        require => Package["oracle-java7-installer"],
+#        require => Package["oracle-java8-installer"],
 #    }
 
     exec { "add_java_home":
         command => '/bin/echo "export JAVA_HOME=/usr/lib/jvm/java-7-oracle" >> /home/vagrant/.bashrc',
-        require => Package["oracle-java7-installer"],
+        require => Package["oracle-java8-installer"],
     }
 
     exec { "install-grails":
