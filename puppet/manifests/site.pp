@@ -45,6 +45,7 @@ node /^node01.*/ {
 }
 
 class grails_springboot {
+    include maven
     include apt
     apt::ppa { "ppa:webupd8team/java": }
 
@@ -99,7 +100,7 @@ class grails_springboot {
 #    }
 
     exec { "add_java_home":
-        command => '/bin/echo "export JAVA_HOME=/usr/lib/jvm/java-7-oracle" >> /home/vagrant/.bashrc',
+        command => '/bin/echo "export JAVA_HOME=/usr/lib/jvm/java-8-oracle" >> /home/vagrant/.bashrc',
         require => Package["oracle-java8-installer"],
     }
 
