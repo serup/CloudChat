@@ -33,4 +33,13 @@ else
     sudo cp /vagrant/nodes.rc.local /etc/rc.local
     sudo puppet agent --enable
 
+    echo "echo \"---------\" " >> .bashrc
+    echo "echo \"Welcome !\" " >> .bashrc
+    echo "echo \"---------\" " >> .bashrc
+    echo "echo \"\" " >> .bashrc
+    echo "sudo grails --version" >> .bashrc
+    echo "echo -n \"| \"; sudo spring version" >> .bashrc
+    echo "echo \"---------\" " >> .bashrc
+    echo "echo \"\" " >> .bashrc
+
 fi
