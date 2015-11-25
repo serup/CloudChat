@@ -39,12 +39,12 @@ node /^node01.*/ {
 
   exec { "docker_run":
      command => "/usr/bin/sudo docker run -d -t docker-image-skeleton",
-     require => docker::image[skeleton]
+     require => Docker::Image[skeleton],
   }
 
 }
 
-class grails {
+class grails_springboot {
     include apt
     apt::ppa { "ppa:webupd8team/java": }
 
@@ -62,6 +62,7 @@ class grails {
         require => [ Apt::Ppa["ppa:webupd8team/java"],  Package["git-core"] ],
     }
 
+
     package { ["vim",
         "curl",
         "git-core",
@@ -69,6 +70,11 @@ class grails {
         ensure => present,
         require => Exec["apt-get update"],
         before => Apt::Ppa["ppa:webupd8team/java"],
+    }
+
+    package { 'hiera':
+        ensure => '1.3.4-1',      
+        require => Exec["apt-get update"],
     }
 
     package { ["oracle-java7-installer"]:
@@ -98,7 +104,7 @@ class grails {
     }
 
     exec { "install-grails":
-        command => '/usr/bin/sudo apt-get install -yq unzip; touch setup.sh; chmod 777 setup.sh; sudo chown vagrant:vagrant setup.sh; curl -s get.sdkman.io >> setup.sh; echo "source ~/.sdkman/bin/sdkman-init.sh" >> setup.sh; echo "echo installing grails" >> setup.sh; echo "sdk install grails < /dev/null" >> setup.sh; echo "sdk install springboot < /dev/null" >> setup.sh; echo "sudo ln -s ~/.sdkman/canditates/springboot/current/bin/spring /usr/bin/spring" >> setup.sh ; echo "sudo ln -s ~/.sdkman/candidates/grails/current/bin/grails /usr/bin/grails" >> setup.sh; echo "/usr/bin/sudo grails -version" >> setup.sh; sudo bash setup.sh > output.log',
+        command => '/usr/bin/sudo apt-get install -yq unzip; touch setup.sh; chmod 777 setup.sh; sudo chown vagrant:vagrant setup.sh; curl -s get.sdkman.io >> setup.sh; echo "source ~/.sdkman/bin/sdkman-init.sh" >> setup.sh; echo "echo installing grails" >> setup.sh; echo "sdk install grails < /dev/null" >> setup.sh; echo "sdk install springboot < /dev/null" >> setup.sh; echo "ln -s ~/.sdkman/candidates/springboot/current/bin/spring /usr/bin/spring" >> setup.sh ; echo "sudo ln -s ~/.sdkman/candidates/grails/current/bin/grails /usr/bin/grails" >> setup.sh; echo "/usr/bin/sudo grails -version" >> setup.sh; sudo bash setup.sh > output.log',
         require => Exec["add_java_home"],
     }
     
@@ -111,8 +117,7 @@ class grails {
 
 node /^javaservices.*/ {
 
-   include grails
-#   include springboot
+   include grails_springboot
 }
 
 
