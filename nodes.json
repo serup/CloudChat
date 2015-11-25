@@ -1,33 +1,33 @@
 {
   "nodes": {
     "puppet.dops.local": {
-      "nodeOS": "ubuntu/vivid64",
+      "nodeOS": "ubuntu/vivid32",
       "bootstrap": "bootstrap-master.sh",
-      ":ip": "192.168.32.8",
+      ":ip": "192.168.31.8",
       "ports": [],
       ":memory": 512,
       ":hostname" :  "puppet.dev.dops.scanva.com"
     },
     "javaservices": {
-      "nodeOS": "ubuntu/vivid64",
+      "nodeOS": "ubuntu/vivid32",
       "bootstrap": "bootstrap-node-javaservices.sh",
-      ":ip": "192.168.32.19",
+      ":ip": "192.168.31.19",
       "ports": [],
       ":memory": 1024,
       ":hostname":  "javaservices.scanva.com"
     },
     "jenkins": {
-      "nodeOS": "ubuntu/vivid64",
+      "nodeOS": "ubuntu/vivid32",
       "bootstrap": "bootstrap-node-jenkins.sh",
-      ":ip": "192.168.32.20",
+      ":ip": "192.168.31.20",
       "ports": [],
       ":memory": 1024,
       ":hostname":  "jenkins.scanva.com"
     },
     "backend": {
-      "nodeOS": "ubuntu/vivid64",
+      "nodeOS": "ubuntu/vivid32",
       "bootstrap": "bootstrap-node-backend.sh",
-      ":ip": "192.168.32.21",
+      ":ip": "192.168.31.21",
       "ports": [
         {":host": 7777, ":guest": 7777, ":id": "database"}
       ],
@@ -35,17 +35,17 @@
       ":hostname":  "backend.scanva.com"
     },
     "cloudchatmanager": {
-      "nodeOS": "ubuntu/vivid64",
+      "nodeOS": "ubuntu/vivid32",
       "bootstrap": "bootstrap-node-manager.sh",
-      ":ip": "192.168.32.22",
+      ":ip": "192.168.31.22",
       "ports": [],
       ":memory": 1024,
       ":hostname":  "cloudchatmanager.com"
     },
     "cloudchatclient": {
-      "nodeOS": "ubuntu/vivid64",
+      "nodeOS": "ubuntu/vivid32",
       "bootstrap": "bootstrap-node-client.sh",
-      ":ip": "192.168.32.23",
+      ":ip": "192.168.31.23",
       "ports": [],
       ":memory": 1024,
       ":hostname":  "cloudchatclient.com"
