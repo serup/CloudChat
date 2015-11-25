@@ -34,8 +34,6 @@ else
     sudo puppet agent --enable
 
     echo "echo \"---------\" " >> .bashrc
-    echo "echo \"Welcome !\" " >> .bashrc
-    echo "echo \"---------\" " >> .bashrc
     echo "echo \"\" " >> .bashrc
     echo "sudo grails --version" >> .bashrc
     echo "echo -n \"| \"; sudo spring version" >> .bashrc
