@@ -37,6 +37,7 @@ else
     echo "echo \"\" " >> .bashrc
     echo "sudo grails --version" >> .bashrc
     echo "echo -n \"| \"; sudo spring version" >> .bashrc
+    echo "echo -n \"| \"; mvn -version|grep --color=never 'Apache Maven'" >> .bashrc
     echo "echo \"---------\" " >> .bashrc
     echo "echo \"\" " >> .bashrc
 
