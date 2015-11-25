@@ -19,26 +19,27 @@ if puppet_source == nil
 end
 
 VAGRANTFILE_API_VERSION = "2"
-
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   nodes_config.each do |node|
-    node_name   = node[0] # name of node
-    node_values = node[1] # content of node
+   node_name   = node[0] # name of node
+   node_values = node[1] # content of node
 
-	if node_name == "puppet.dops.local"
-		config.vm.define "puppet.dops.local", primary: true
-	else
-		config.vm.define node_name.to_s, autostart: false
-	end	
+   if node_name == "puppet.dops.local"
+	config.vm.define "puppet.dops.local", primary: true
+   else
+	config.vm.define node_name.to_s, autostart: false
+   end	
 
-    config.vm.define node_name do |config|   
+   config.vm.define node_name do |config|   
       # Enable provisioning with Puppet stand alone.
       config.vm.provision :puppet do |puppet|
 	puppet.manifests_path = "puppet/manifests"
 	puppet.manifest_file  = "site.pp"
 	puppet.module_path = "puppet/trunk/environments/devtest/modules"
-	puppet.options = "--verbose --debug"
+	#puppet.options = "--verbose --debug"
+        puppet.hiera_config_path = "puppet/hiera/node_site_config.yaml"
+        puppet.working_directory = "/tmp/vagrant-puppet-3/"
       end 
 
       # configures all forwarding ports in JSON array
@@ -54,6 +55,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         config.vm.synced_folder puppet_source, '/etc/puppet/environments'
       end
 
+      config.vm.synced_folder("puppet/hiera", "/tmp/vagrant-puppet-3/hiera")
 
       config.vm.provision :shell, :path => node_values['bootstrap']
       # inline: "apt-get update -y" # https://github.com/mitchellh/vagrant/pull/5860
