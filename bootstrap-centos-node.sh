@@ -23,8 +23,8 @@ else
     # Configure /etc/hosts file
     echo "" >> /etc/hosts
     echo "# Host config for Puppet Master and Agent Nodes" >> /etc/hosts
-    echo "192.168.31.8    puppet.dops.local  puppet" >> /etc/hosts
-    echo "192.168.31.11   node01.dops.local  node01" >> /etc/hosts
+    echo "192.168.32.8    puppet.dops.local  puppet" >> /etc/hosts
+    echo "192.168.32.11   node01.dops.local  node01" >> /etc/hosts
 
     # Add agent section to /etc/puppet/puppet.conf
     echo "    server=puppet" >> /etc/puppet/puppet.conf

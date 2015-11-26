@@ -65,7 +65,7 @@ VBOX_OK=$(vagrant box list|awk 'BEGIN {strtmp=$1} END {print $strtmp}')
 if [ "" == "$VBOX_OK" ]; then
   echo "vbox not found - installing.."
   #vagrant box add ubuntu/trusty64 https://atlas.hashicorp.com/ubuntu/boxes/trusty64/versions/14.04/providers/virtualbox.box
-  vagrant box add ubuntu/vivid32 
+  vagrant box add ubuntu/vivid64 
 else
   echo "- vbox installed"
 fi
@@ -169,11 +169,11 @@ if [ ! -f tmphost ]; then
     cat /etc/hosts > tmphost
     # Configure /etc/hosts file
     echo "# Host config for Puppet Master and Agent Nodes" | sudo tee --append /etc/hosts 2> /dev/null && \
-    echo "192.168.31.8    puppet.dops.local      puppet" | sudo tee --append /etc/hosts 2> /dev/null && \
-    echo "192.168.31.20   jenkins.scanva.com     jenkins" | sudo tee --append /etc/hosts 2> /dev/null && \
-    echo "192.168.31.21   backend.scanva.com     backend" | sudo tee --append /etc/hosts 2> /dev/null && \
-    echo "192.168.31.22   cloudchatmanager.com   cloudchatmanager" | sudo tee --append /etc/hosts 2> /dev/null && \
-    echo "192.168.31.23   cloudchatclient.com    cloudchatclient" | sudo tee --append /etc/hosts 2> /dev/null
+    echo "192.168.32.8    puppet.dops.local      puppet" | sudo tee --append /etc/hosts 2> /dev/null && \
+    echo "192.168.32.20   jenkins.scanva.com     jenkins" | sudo tee --append /etc/hosts 2> /dev/null && \
+    echo "192.168.32.21   backend.scanva.com     backend" | sudo tee --append /etc/hosts 2> /dev/null && \
+    echo "192.168.32.22   cloudchatmanager.com   cloudchatmanager" | sudo tee --append /etc/hosts 2> /dev/null && \
+    echo "192.168.32.23   cloudchatclient.com    cloudchatclient" | sudo tee --append /etc/hosts 2> /dev/null
 fi
 
 echo "******************************************************************************************************************"
