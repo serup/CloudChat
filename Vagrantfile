@@ -31,9 +31,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 	config.vm.define node_name.to_s, autostart: false
    end	
 
-   # timeout increase needed when nested VM is running
-   config.vm.boot_timeout = 9000
-
    config.vm.define node_name do |config|   
       # Enable provisioning with Puppet stand alone.
       config.vm.provision :puppet do |puppet|
@@ -72,9 +69,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         vb.customize ["modifyvm", :id, "--name", node_name]
         vb.customize ["modifyvm", :id, "--vram", "16"]
         vb.customize ["modifyvm", :id, "--nictype1", "virtio"]
-	vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
-	vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
-        vb.cpus = 1   
+	    vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+	    vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
       end
     end
   end
