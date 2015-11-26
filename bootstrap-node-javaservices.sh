@@ -41,4 +41,39 @@ else
     echo "echo \"---------\" " >> .bashrc
     echo "echo \"\" " >> .bashrc
 
+    # install IntelliJ
+    mkdir -p /usr/local/idea
+    cd /usr/local/idea
+    wget -O /tmp/intellij.tar.gz http://download.jetbrains.com/idea/ideaIC-12.0.4.tar.gz 2> /dev/null 
+    tar xfz /tmp/intellij.tar.gz 
+    # TODO: setup idea to work with port forward if possible - or set gui true 
+    #cd idea-IC-123.169/bin 
+    #./idea.sh < /dev/null 
+    cd -
+
+    echo "fetch nodejs"
+    sudo apt-get install -yq nodejs-legacy
+    echo "fetch boost"
+    sudo apt-get install -yq  libboost-all-dev
+    echo "fetch xsltproc"
+    sudo apt-get install -yq xsltproc
+    echo "fetch g++ since somehow gcc default install does not get it"
+    sudo apt-get install -yq g++
+
+    echo "Fetch latest version of CloudChat"
+    if [ -d "CloudChat" ]; then
+      echo "CloudChat already installed"
+      echo "updating ..."
+      cd CloudChat
+      git checkout serup
+      git pull
+    else
+      git clone https://review.gerrithub.io/serup/CloudChat
+      cd CloudChat
+      git checkout serup
+      echo "CloudChat installed"
+      echo "Set up swapfile"
+      sudo bash addswapfile.sh
+    fi
+
 fi

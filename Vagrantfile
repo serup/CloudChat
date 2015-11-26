@@ -55,6 +55,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         config.vm.synced_folder puppet_source, '/etc/puppet/environments'
       end
 
+      if node_name == "javaservices"
+        config.ssh.forward_x11 = true 
+      end
+      config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
+
       config.vm.synced_folder("puppet/hiera", "/tmp/vagrant-puppet-3/hiera")
 
       config.vm.provision :shell, :path => node_values['bootstrap']
@@ -69,8 +74,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         vb.customize ["modifyvm", :id, "--name", node_name]
         vb.customize ["modifyvm", :id, "--vram", "16"]
         vb.customize ["modifyvm", :id, "--nictype1", "virtio"]
-	    vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
-	    vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+	vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+	vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+        vb.cpus = 1
       end
     end
   end
