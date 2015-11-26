@@ -1,12 +1,12 @@
 {
   "nodes": {
-    "dops.puppet.master": {
+    "puppet.dops.local": {
       "nodeOS": "ubuntu/vivid32",
       "bootstrap": "bootstrap-master.sh",
       ":ip": "192.168.31.8",
       "ports": [],
       ":memory": 512,
-      ":hostname" :  "dops.puppet.master.scanva.com"
+      ":hostname" :  "puppet.dev.dops.scanva.com"
     },
     "javaservices": {
       "nodeOS": "ubuntu/vivid32",
