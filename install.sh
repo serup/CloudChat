@@ -168,12 +168,7 @@ if [ ! -f tmphost ]; then
     echo "add new hosts to hosts file"    
     cat /etc/hosts > tmphost
     # Configure /etc/hosts file
-    echo "# Host config for Puppet Master and Agent Nodes" | sudo tee --append /etc/hosts 2> /dev/null && \
-    echo "192.168.31.8    dops.puppet.master      puppet" | sudo tee --append /etc/hosts 2> /dev/null && \
-    echo "192.168.31.20   jenkins.scanva.com     jenkins" | sudo tee --append /etc/hosts 2> /dev/null && \
-    echo "192.168.31.21   backend.scanva.com     backend" | sudo tee --append /etc/hosts 2> /dev/null && \
-    echo "192.168.31.22   cloudchatmanager.com   cloudchatmanager" | sudo tee --append /etc/hosts 2> /dev/null && \
-    echo "192.168.31.23   cloudchatclient.com    cloudchatclient" | sudo tee --append /etc/hosts 2> /dev/null
+    sudo bash confighosts.sh
 fi
 
 echo "******************************************************************************************************************"

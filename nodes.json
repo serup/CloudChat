@@ -20,7 +20,9 @@
       "nodeOS": "ubuntu/vivid32",
       "bootstrap": "bootstrap-node-jenkins.sh",
       ":ip": "192.168.31.20",
-      "ports": [],
+      "ports": [
+        {":host": 8080, ":guest": 8080, ":id": "jenkins"}
+      ],
       ":memory": 1024,
       ":hostname":  "jenkins.scanva.com"
     },
