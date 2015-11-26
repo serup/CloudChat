@@ -25,8 +25,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
    node_name   = node[0] # name of node
    node_values = node[1] # content of node
 
-   if node_name == "puppet.dops.local"
-	config.vm.define "puppet.dops.local", primary: true
+   if node_name == "dops.puppet.master"
+	config.vm.define "dops.puppet.master", primary: true
    else
 	config.vm.define node_name.to_s, autostart: false
    end	
@@ -51,7 +51,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           id:    port[':id']
       end
 
-      if node_name == "puppet.dops.local"
+      if node_name == "dops.puppet.master"
         config.vm.synced_folder puppet_source, '/etc/puppet/environments'
       end
 
