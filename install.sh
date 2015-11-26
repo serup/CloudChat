@@ -144,15 +144,6 @@ if [ "" == "$BUILD_ESSENTIAL_OK" ]; then
 else
   echo "- initforthe-build_essential puppet module installed"
 fi
-#gcc will be build by bld.sh inside codeblocks_projects
-#GCC_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep puppetlabs-gcc)
-#if [ "" == "$GCC_OK" ]; then
-#  echo -n "- install puppetlabs-gcc puppet module"
-#  puppet module install puppetlabs-gcc --modulepath ./puppet/trunk/environments/devtest/modules
-#  echo " - done."
-#else
-#  echo "- puppetlabs-gcc puppet module installed"
-#fi
 
 # needed a swap file for compiling inside VM  see info here : http://www.cyberciti.biz/faq/linux-add-a-swap-file-howto/
 SWAPFILE_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep petems-swap_file)
@@ -168,12 +159,7 @@ if [ ! -f tmphost ]; then
     echo "add new hosts to hosts file"    
     cat /etc/hosts > tmphost
     # Configure /etc/hosts file
-    echo "# Host config for Puppet Master and Agent Nodes" | sudo tee --append /etc/hosts 2> /dev/null && \
-    echo "192.168.31.8    puppet.dops.local      puppet" | sudo tee --append /etc/hosts 2> /dev/null && \
-    echo "192.168.31.20   jenkins.scanva.com     jenkins" | sudo tee --append /etc/hosts 2> /dev/null && \
-    echo "192.168.31.21   backend.scanva.com     backend" | sudo tee --append /etc/hosts 2> /dev/null && \
-    echo "192.168.31.22   cloudchatmanager.com   cloudchatmanager" | sudo tee --append /etc/hosts 2> /dev/null && \
-    echo "192.168.31.23   cloudchatclient.com    cloudchatclient" | sudo tee --append /etc/hosts 2> /dev/null
+    bash confighosts.sh
 fi
 
 echo "******************************************************************************************************************"
