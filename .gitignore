@@ -9,6 +9,9 @@ puppet/
 *.pid
 env_docker_puppet_path
 .vagrant/
+*.lock
+*.bin
+*.gradle/
 
 #################
 ## Eclipse
