@@ -80,10 +80,9 @@ else
       cd javaspring_projects/gs-messaging-stomp-websocket/initial
       ./gradlew
       echo "********************************************************************************************************************"
-      echo "start intellij idea editor - NB! inorder for x11 forward to work, then start like this: vagrant -XY ssh javaservices"
+      echo "use intellij idea editor - NB! inorder for x11 forward to work, then start like this: vagrant -XY ssh javaservices"
+      echo " start idea when loged in: /usr/bin/idea"
       echo "********************************************************************************************************************"
-      cd /opt/idea-15.0.1/idea-IC-143.382.35/bin/
-      sudo ./idea.sh
     fi
 
 fi
