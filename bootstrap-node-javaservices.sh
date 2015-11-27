@@ -75,6 +75,9 @@ else
       echo "CloudChat installed"
       echo "Set up swapfile"
       sudo bash addswapfile.sh
+      echo "build javaspring project"
+      cd javaspring_projects/gs-messaging-stomp-websocket/initial
+      ./gradlew
     fi
 
 fi
