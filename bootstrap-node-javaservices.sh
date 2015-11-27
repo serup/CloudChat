@@ -83,6 +83,7 @@ else
       echo "use intellij idea editor - NB! inorder for x11 forward to work, then start like this: vagrant -XY ssh javaservices"
       echo " start idea when loged in: /usr/bin/idea"
       echo "********************************************************************************************************************"
+      sudo ln -s /opt/idea-15.0.1/idea-IC-143.382.35/bin/idea.sh /usr/bin/idea
     fi
 
 fi
