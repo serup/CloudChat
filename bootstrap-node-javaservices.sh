@@ -41,15 +41,16 @@ else
     echo "echo \"---------\" " >> .bashrc
     echo "echo \"\" " >> .bashrc
 
-    # install IntelliJ
-    mkdir -p /usr/local/idea
-    cd /usr/local/idea
-    wget -O /tmp/intellij.tar.gz http://download.jetbrains.com/idea/ideaIC-12.0.4.tar.gz 2> /dev/null 
-    tar xfz /tmp/intellij.tar.gz 
-    # TODO: setup idea to work with port forward if possible - or set gui true 
-    #cd idea-IC-123.169/bin 
-    #./idea.sh < /dev/null 
-    cd -
+    # IntelliJ - is installed as class idea in puppet/manifests/site
+    # however the X11 forwarding is pt. not working
+    #mkdir -p /usr/local/idea
+    #cd /usr/local/idea
+    #wget -O /tmp/intellij.tar.gz http://download.jetbrains.com/idea/ideaIC-12.0.4.tar.gz 2> /dev/null 
+    #tar xfz /tmp/intellij.tar.gz 
+    ## TODO: setup idea to work with port forward if possible - or set gui true 
+    ##cd idea-IC-123.169/bin 
+    ##./idea.sh < /dev/null 
+    #cd -
 
     echo "fetch nodejs"
     sudo apt-get install -yq nodejs-legacy

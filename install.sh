@@ -144,15 +144,14 @@ if [ "" == "$BUILD_ESSENTIAL_OK" ]; then
 else
   echo "- initforthe-build_essential puppet module installed"
 fi
-#gcc will be build by bld.sh inside codeblocks_projects
-#GCC_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep puppetlabs-gcc)
-#if [ "" == "$GCC_OK" ]; then
-#  echo -n "- install puppetlabs-gcc puppet module"
-#  puppet module install puppetlabs-gcc --modulepath ./puppet/trunk/environments/devtest/modules
-#  echo " - done."
-#else
-#  echo "- puppetlabs-gcc puppet module installed"
-#fi
+INTELLIJ_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep gini-idea)
+if [ "" == "$INTELLIJ_OK" ]; then
+  echo -n "- install gini-idea puppet module"
+  puppet module install gini-idea --modulepath ./puppet/trunk/environments/devtest/modules
+  echo " - done."
+else
+  echo "- gini-idea puppet module installed"
+fi
 
 # needed a swap file for compiling inside VM  see info here : http://www.cyberciti.biz/faq/linux-add-a-swap-file-howto/
 SWAPFILE_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep petems-swap_file)
@@ -175,7 +174,7 @@ echo "**************************************************************************
 echo "environment is now ready! you may run vagrant up and then vagrant up cloudchatmanager, vagrant up cloudchatclient"
 echo "******************************************************************************************************************"
 vagrant up
-vagrant up jenkins
-vagrant up backend
-vagrant up cloudchatmanager
-vagrant up cloudchatclient
+#vagrant up jenkins
+#vagrant up backend
+#vagrant up cloudchatmanager
+#vagrant up cloudchatclient
