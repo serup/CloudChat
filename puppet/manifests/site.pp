@@ -47,6 +47,7 @@ node /^node01.*/ {
 class grails_springboot {
     include maven
     include apt
+    class { "archive::prerequisites": } -> class { "idea::community": version => "15.0.1" }
     apt::ppa { "ppa:webupd8team/java": }
 
 # Does NOT work for Ubuntu vivid, thus use "install-grails" exec instead
@@ -65,7 +66,8 @@ class grails_springboot {
 
 
     package { ["vim",
-        "curl",
+   # commented out since it is already added via class idea
+   #     "curl",   
         "git-core",
         "bash"]:
         ensure => present,
