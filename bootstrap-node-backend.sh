@@ -25,14 +25,7 @@ else
     sudo rm -rf /var/lib/puppet/ssl/*
 
     # Configure /etc/hosts file
-    echo "" | sudo tee --append /etc/hosts 2> /dev/null && \
-    echo "# Host config for Puppet Master and Agent Nodes" | sudo tee --append /etc/hosts 2> /dev/null && \
-    echo "192.168.31.8    dops.puppet.master      puppet" | sudo tee --append /etc/hosts 2> /dev/null && \
-    echo "192.168.31.21   backend.scanva.com     backend" | sudo tee --append /etc/hosts 2> /dev/null && \
-    echo "192.168.31.22   cloudchatmanager.com   cloudchatmanager" | sudo tee --append /etc/hosts 2> /dev/null && \
-    echo "192.168.31.23   cloudchatclient.com    cloudchatclient" | sudo tee --append /etc/hosts 2> /dev/null && \
-    echo "192.168.31.20   jenkins.scanva.com     jenkins" | sudo tee --append /etc/hosts 2> /dev/null
-
+    sudo bash /vagrant/confighosts.sh
 
     # Add agent section to /etc/puppet/puppet.conf
     echo "" | sudo tee --append /etc/puppet/puppet.conf 2> /dev/null && \
@@ -48,32 +41,6 @@ else
 
     sudo puppet agent --enable
 
-    echo "fetch nodejs"
-    sudo apt-get install -yq nodejs-legacy
-
-    echo "fetch boost"
-    sudo apt-get install -yq  libboost-all-dev
-    
-    echo "fetch xsltproc"
-    sudo apt-get install -yq xsltproc
-
-    echo "fetch g++ since somehow gcc default install does not get it"
-    sudo apt-get install -yq g++
-
-    echo "install sshpass to allow automatic transfer of images script to run - consider using ssh keys instead in future"
-    sudo apt-get install -yq sshpass
-
-    echo "install incron to monitor event/changes in transfer folder - new images added, should then start transfer"
-    sudo apt-get install incron
-    sudo echo "root" >> /etc/incron.allow
-    sudo echo "vagrant" >> /etc/incron.allow
-
-    echo "copy cron replication job to /usr/local/bin - the job is started by incron, and it copies from backend to cloudchatmanager"
-    sudo cp replication.sh /usr/logal/bin/.
-
-    echo "setup incron job"
-    incrontab -l | { cat; echo '/var/www/img IN_CLOSE_WRITE /usr/local/bin/replication.sh'; } | incrontab -
-
     echo "Fetch latest version of CloudChat"
     if [ -d "CloudChat" ]; then
       echo "CloudChat already installed"
@@ -83,26 +50,48 @@ else
       git pull
     else
       echo "****************"
-      echo "First time build"
+      echo "     INIT       "
       echo "****************"
+      echo "fetch nodejs"
+      sudo apt-get install -yq nodejs-legacy
+      echo "fetch boost"
+      sudo apt-get install -yq  libboost-all-dev
+      echo "fetch xsltproc"
+      sudo apt-get install -yq xsltproc
+      echo "fetch g++ since somehow gcc default install does not get it"
+      sudo apt-get install -yq g++
+      echo "install sshpass to allow automatic transfer of images script to run - consider using ssh keys instead in future"
+      sudo apt-get install -yq sshpass
+      echo "install incron to monitor event/changes in transfer folder - new images added, should then start transfer"
+      sudo apt-get install incron
+      sudo echo "root" >> /etc/incron.allow
+      sudo echo "vagrant" >> /etc/incron.allow
       sudo mkdir /var/www/img
+      echo "Clone from GitHub" 
       git clone https://review.gerrithub.io/serup/CloudChat
       cd CloudChat
       git checkout serup
-      echo "CloudChat installed"
+      echo "CloudChat installed - from GitHub"
       echo "Set up swapfile"
       sudo bash addswapfile.sh
-      echo "Build CloudChat"
+      echo "copy cron replication job to /usr/local/bin - the job is started by incron, and it copies from backend to cloudchatmanager"
+      sudo cp ./replication.sh /usr/local/bin/.
+      echo "replication deamon - should copy files using sshpass scp - its setup as a cron job"
+      echo "setup incron job"
+      incrontab -l | { cat; echo '/var/www/img IN_CLOSE_WRITE /usr/local/bin/replication.sh >> /var/log/replication.log 2>&1'; } | incrontab -
+      echo "****************"
+      echo "First time build"
+      echo "****************"
+      echo "Building CloudChat project takes a long time - results are in file build.log - PLEASE WAIT!"
       sudo ./run.sh > build.log
       echo "done build - see info in file build.log"
       echo "****************"
       sudo -s
       cd codeblocks_projects
-      echo "start backend server"
-      sudo ./startScanvaserver
-      echo "start replication deamon - should copy files every 3 seconds, using sshpass scp"
-      sudo touch /var/www/transferlog.txt
-      sudo bash replication.sh > /var/www/transferlog.txt &
-      echo "- done setup"
+      echo "start backend server - as a crontab job"
+      #sudo ./startScanvaserver
+      crontab -l | { cat; echo '@reboot /home/vagrant/CloudChat/cronStartServer.sh >> /var/log/crontab.log 2>&1'; } | crontab -
+      echo "- done setup - now REBOOT, to start cron"
+      reboot
      fi
 fi
