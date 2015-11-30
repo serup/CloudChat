@@ -76,6 +76,7 @@ else
       sudo bash addswapfile.sh
       echo "copy cron replication job to /usr/local/bin - the job is started by incron, and it copies from backend to cloudchatmanager"
       sudo cp ./replication.sh /usr/local/bin/.
+      sudo cp ./cronStartServer.sh /usr/local/bin/.
       echo "replication deamon - should copy files using sshpass scp - its setup as a cron job"
       echo "setup incron job"
       incrontab -l | { cat; echo '/var/www/img IN_CLOSE_WRITE /usr/local/bin/replication.sh >> /var/log/replication.log 2>&1'; } | incrontab -
@@ -87,10 +88,9 @@ else
       echo "done build - see info in file build.log"
       echo "****************"
       sudo -s
-      cd codeblocks_projects
+      #cd codeblocks_projects
       echo "start backend server - as a crontab job"
       #sudo ./startScanvaserver
-      sudo cp ./cronStartServer.sh /usr/local/bin/.
       crontab -l | { cat; echo '@reboot /usr/local/bin/cronStartServer.sh >> /var/log/crontab.log 2>&1'; } | crontab -
       echo "- done setup - now REBOOT, to start cron"
       reboot
