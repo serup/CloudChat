@@ -44,7 +44,6 @@ else
     # bugfix hostname for ubuntu 15.04 - run this command    
     sudo bash /etc/init.d/hostname.sh
 
-
     sudo puppet agent --enable
 
     echo "fetch nodejs"
@@ -77,5 +76,7 @@ else
       sudo ./run.sh
       echo "Deploy to www"
       sudo bash deploy_www.sh
+      mkdir -p /var/www/CloudChatManager/img
+      sudo chown vagrant:vagrant /var/www/CloudChatManager/img
      fi
 fi
