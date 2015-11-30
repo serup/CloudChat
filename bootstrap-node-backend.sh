@@ -76,7 +76,9 @@ else
       sudo bash addswapfile.sh
       echo "copy cron replication job to /usr/local/bin - the job is started by incron, and it copies from backend to cloudchatmanager"
       sudo cp ./replication.sh /usr/local/bin/.
+      sudo chown vagrant:vagrant /usr/local/bin/replication.sh
       sudo cp ./cronStartServer.sh /usr/local/bin/.
+      sudo chown vagrant:vagrant /usr/local/bin/cronStartServer.sh
       echo "replication deamon - should copy files using sshpass scp - its setup as a cron job"
       echo "setup incron job"
       incrontab -l | { cat; echo '/var/www/img IN_CREATE /usr/local/bin/replication.sh >> /var/log/replication.log 2>&1'; } | incrontab -
