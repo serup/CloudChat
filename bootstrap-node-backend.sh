@@ -90,7 +90,8 @@ else
       cd codeblocks_projects
       echo "start backend server - as a crontab job"
       #sudo ./startScanvaserver
-      crontab -l | { cat; echo '@reboot /home/vagrant/CloudChat/cronStartServer.sh >> /var/log/crontab.log 2>&1'; } | crontab -
+      sudo cp ./cronStartServer.sh /usr/local/bin/.
+      crontab -l | { cat; echo '@reboot /usr/local/bin/cronStartServer.sh >> /var/log/crontab.log 2>&1'; } | crontab -
       echo "- done setup - now REBOOT, to start cron"
       reboot
      fi
