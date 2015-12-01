@@ -79,8 +79,10 @@ else
       echo "copy cron replication job to /usr/local/bin - the job is started by incron, and it copies from backend to cloudchatmanager"
       sudo cp ./replication.sh /usr/local/bin/.
       sudo chown vagrant:vagrant /usr/local/bin/replication.sh
+      sudo chmod +x /usr/local/bin/replication.sh
       sudo cp ./cronStartServer.sh /usr/local/bin/.
       sudo chown vagrant:vagrant /usr/local/bin/cronStartServer.sh
+      sudo chmod +x /usr/local/bin/cronStartServer.sh
       echo "replication deamon - should copy files using sshpass scp - its setup as a cron job"
       echo "setup incron job"
       incrontab -l | { cat; echo '/var/www/img IN_CREATE /usr/local/bin/replication.sh >> /var/log/replication.log 2>&1'; } | incrontab -
@@ -96,7 +98,8 @@ else
       echo "start backend server - as a crontab job"
       #sudo ./startScanvaserver
       crontab -l | { cat; echo '@reboot /usr/local/bin/cronStartServer.sh >> /var/log/crontab.log 2>&1'; } | crontab -
-      echo "- done setup - now REBOOT, to start cron"
-      reboot
+      /etc/init.d/cron start
+      #echo "- done setup - now REBOOT, to start cron"
+      #reboot
      fi
 fi
