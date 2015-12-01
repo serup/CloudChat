@@ -98,8 +98,8 @@ else
       echo "start backend server - as a crontab job"
       #sudo ./startScanvaserver
       crontab -l | { cat; echo '@reboot /usr/local/bin/cronStartServer.sh >> /var/log/crontab.log 2>&1'; } | crontab -
-      /etc/init.d/cron start
-      #echo "- done setup - now REBOOT, to start cron"
-      #reboot
+      #/etc/init.d/cron start
+      echo "- done setup - now REBOOT, to start cron"
+      reboot
      fi
 fi
