@@ -11,6 +11,7 @@
 var settings_model_this;
 var settings_view_this;
 var settings_controller_this;
+var timeout_url_foto;
 
 (function () {
     'use strict';
@@ -271,6 +272,25 @@ var settings_controller_this;
                                 
                 
         //    this._elements.ulsettings.context.getElementById('imgfile').addEventListener('change', settings_controller_this.handleFileSelect, false);
+            // Refresh image 
+            clearInterval(timeout_url_foto);
+            timeout_url_foto=setInterval(function(){
+                if(/loaded|complete/.test(document.readyState)){
+                   // refresh the profileimg foto - hack - adding time to ignore cash
+                   //get the src attribute
+                   var source = ulsettings.context.getElementById('profileimg').src;
+                   //source = $('#profileimg').val();
+                   //source = jQuery(".xyro_refresh").attr("src");
+                   //remove previously added timestamps
+                   source = source.split("?", 1);//turns "image.jpg?timestamp=1234" into "image.jpg" avoiding infinitely adding new timestamps
+                   //prep new src attribute by adding a timestamp
+                   var new_source = source + "?timestamp="  + new Date().getTime();
+                   //alert(new_source); //you may want to alert that during developement to see if you're getting what you wanted
+                   //set the new src attribute
+                   $('#profileimgr').attr("src", new_source);
+                }
+            }, 4000);
+
            
        },
        accessNotPossible : function () {
