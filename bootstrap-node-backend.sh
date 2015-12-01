@@ -65,7 +65,9 @@ else
       echo "install incron to monitor event/changes in transfer folder - new images added, should then start transfer"
       sudo apt-get install incron
       sudo echo "root" >> /etc/incron.allow
+      sudo echo "root" >> /etc/cron.allow
       sudo echo "vagrant" >> /etc/incron.allow
+      sudo echo "vagrant" >> /etc/cron.allow
       sudo mkdir /var/www/img
       echo "Clone from GitHub" 
       git clone https://review.gerrithub.io/serup/CloudChat
