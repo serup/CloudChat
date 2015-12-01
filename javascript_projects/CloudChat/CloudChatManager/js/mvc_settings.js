@@ -285,11 +285,11 @@ var timeout_url_foto;
                    source = source.split("?", 1);//turns "image.jpg?timestamp=1234" into "image.jpg" avoiding infinitely adding new timestamps
                    //prep new src attribute by adding a timestamp
                    var new_source = source + "?timestamp="  + new Date().getTime();
-                   //alert(new_source); //you may want to alert that during developement to see if you're getting what you wanted
+                   alert(new_source); //you may want to alert that during developement to see if you're getting what you wanted
                    //set the new src attribute
-                   $('#profileimgr').attr("src", new_source);
+                   $('#profileimgr').removeAttr("src").attr("src", new_source);
                 }
-            }, 4000);
+            }, 8000);
 
            
        },
