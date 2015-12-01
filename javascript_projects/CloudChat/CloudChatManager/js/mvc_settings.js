@@ -287,7 +287,7 @@ var timeout_url_foto;
                    var new_source = source + "?timestamp="  + new Date().getTime();
                    alert(new_source); //you may want to alert that during developement to see if you're getting what you wanted
                    //set the new src attribute
-                   $('#profileimgr').removeAttr("src").attr("src", new_source);
+                   $('#profileimg').removeAttr("src").attr("src", new_source);
                 }
             }, 8000);
 
