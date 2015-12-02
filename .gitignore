@@ -12,6 +12,9 @@ env_docker_puppet_path
 *.lock
 *.bin
 *.gradle/
+*.gcno 
+*.gcda
+*.iml
 
 #################
 ## Eclipse
