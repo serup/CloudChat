@@ -85,7 +85,7 @@ else
       sudo chmod +x /usr/local/bin/cronStartServer.sh
       echo "replication deamon - should copy files using sshpass scp - its setup as a cron job"
       echo "setup incron job"
-      incrontab -l | { cat; echo '/var/www/img IN_CREATE /usr/local/bin/replication.sh >> /var/log/replication.log 2>&1'; } | incrontab -
+      incrontab -l | { cat; echo '/var/www/img IN_ALL_EVENTS /usr/local/bin/replication.sh >> /var/log/replication.log 2>&1'; } | incrontab -
       echo "****************"
       echo "First time build"
       echo "****************"
