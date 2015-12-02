@@ -22,13 +22,7 @@ else
     sudo apt-get install -yq puppetmaster
 
     # Configure /etc/hosts file
-    echo "" | sudo tee --append /etc/hosts 2> /dev/null && \
-    echo "# Host config for Puppet Master and Agent Nodes" | sudo tee --append /etc/hosts 2> /dev/null && \
-    echo "192.168.31.8    dops.puppet.master         puppet" | sudo tee --append /etc/hosts 2> /dev/null && \
-    echo "192.168.31.22   cloudchatmanager.com   cloudchatmanager" | sudo tee --append /etc/hosts 2> /dev/null && \
-    echo "192.168.31.23   cloudchatclient.com    cloudchatclient" | sudo tee --append /etc/hosts 2> /dev/null && \
-    echo "192.168.31.20   jenkins.scanva.com     jenkins" | sudo tee --append /etc/hosts 2> /dev/null
-
+    sudo bash confighosts.sh
 
     # Add optional alternate DNS names to /etc/puppet/puppet.conf
     sudo cp /vagrant/puppet-master.conf /etc/puppet/puppet.conf

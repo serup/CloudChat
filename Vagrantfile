@@ -31,6 +31,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 	config.vm.define node_name.to_s, autostart: false
    end	
 
+   config.vm.boot_timeout = 90000
+
    config.vm.define node_name do |config|   
       # Enable provisioning with Puppet stand alone.
       config.vm.provision :puppet do |puppet|
