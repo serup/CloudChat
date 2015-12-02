@@ -4,7 +4,7 @@
 #
 
 CC=g++  
-CFLAGS=-c -lboost_system -std=c++11 -Wno-unused-but-set-variable --coverage
+CFLAGS= --coverage -c -lboost_system -std=c++11 -Wno-unused-but-set-variable --coverage
 LDFLAGS= --coverage 
 SOURCES=dataencodertest.cpp ../../DataEncoder.cpp ../../compression-lib/compression.cpp
 OBJECTS=$(SOURCES:.cpp=.o)

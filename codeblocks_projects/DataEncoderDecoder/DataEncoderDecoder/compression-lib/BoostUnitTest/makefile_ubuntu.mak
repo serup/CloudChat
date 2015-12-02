@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS=-c -lboost_system -std=c++11
+CFLAGS= --coverage -c -lboost_system -std=c++11
 LDFLAGS=
 SOURCES=compressionTest.cpp ../compression.h ../compression.cpp 
 OBJECTS=$(SOURCES:.cpp=.o)
