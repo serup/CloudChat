@@ -20,10 +20,6 @@
 
 #include "1_1_Profile.hpp"
 
-#include <locale>
-#include <string>
-#include <boost/date_time/posix_time/posix_time_io.hpp>
-
 #include <iostream>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/lexical_cast.hpp>
@@ -914,17 +910,22 @@ bool C1_1_Profile::fn118_FetchProfile(FetchProfileInfo datastream, FetchProfileR
             bool bFound = CDbCtrl.fetch_element(record_value,(std::string)"foto", fotoelement);
             if(bFound==true) {
                 std::string _strfoto(fotoelement.ElementData.begin(),fotoelement.ElementData.end());
-                std::string filenamepath = "/var/www/img/" + datastream.strProfileID + ".jpg"; // TODO: add a guid filename to newly created image -- NB! filepath should be inside /var/www/img/   -- to make sure client can access it
+
+                boost::system_time const systime=boost::get_system_time();
+                std::stringstream sstream;
+                sstream << systime;
+
+                std::string filenamepath = "/var/www/img/" + datastream.strProfileID + sstream.str() + ".jpg"; // TODO: add a guid filename to newly created image -- NB! filepath should be inside /var/www/img/   -- to make sure client can access it
                 bool bExtracted = extractBase64TojpgImagefile(filenamepath,_strfoto);
                 if(bExtracted == true)
                 {
                     std::vector<unsigned char> ElementData;
                     // Add timestamp to image name, this will make sure that the image will be refreshed at receivers browser, however
                     // TODO: add at receivers end Automatic cleanup of old image files
-                    namespace pt = boost::posix_time;
-                    pt::ptime now = pt::second_clock::local_time();
-                    std::stringstream sstream;
-                    sstream << now;
+                    //namespace pt = boost::posix_time;
+                    //pt::ptime now = pt::second_clock::local_time();
+                    //std::stringstream sstream;
+                    //sstream << now;
                     std::string imageURI = "img/" + datastream.strProfileID + sstream.str() + ".jpg";
            //         std::string strTimeNow = pt::to_simple_string(now);
            //         std::string imageURI = "img/" + datastream.strProfileID + "_" + pt::to_iso_string(now) + ".jpg";
@@ -935,6 +936,7 @@ bool C1_1_Profile::fn118_FetchProfile(FetchProfileInfo datastream, FetchProfileR
                     // TODO: remove tmp local stored image - no extracted data is allowed on backend.scanva.com
 
                     // Image is now created in temp area, so update the record_value with the new path
+                    // NB! ONLY the cash record value is updated - NOT the file record value, since that would destroy the embedded profile image
                     std::copy( imageURI.begin(), imageURI.end(), std::back_inserter(ElementData));
                     CDbCtrl.update_element_value(record_value,"foto",ElementData);
                 }
