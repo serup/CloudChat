@@ -52,6 +52,8 @@ else
       echo "****************"
       echo "     INIT       "
       echo "****************"
+      echo "install LCOV for code coverage"
+      sudo apt-get install -yq lcov
       echo "fetch nodejs"
       sudo apt-get install -yq nodejs-legacy
       echo "fetch boost"
@@ -92,6 +94,10 @@ else
       echo "Building CloudChat project takes a long time - results are in file build.log - PLEASE WAIT!"
       sudo ./run.sh > build.log
       echo "done build - see info in file build.log"
+      echo "create lcov code coverage info "
+      sudo lcov --capture --directory . --output-file coverage.info
+      echo "generate html code coverage info in /www/lcov"
+      sudo genhtml coverage.info --output-directory /var/www/lcov > /dev/null
       echo "****************"
       sudo -s
       #cd codeblocks_projects
