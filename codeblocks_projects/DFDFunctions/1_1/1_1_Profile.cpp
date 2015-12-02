@@ -20,6 +20,9 @@
 
 #include "1_1_Profile.hpp"
 
+#include <locale>
+#include <string>
+#include <boost/date_time/posix_time/posix_time_io.hpp>
 
 #include <iostream>
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -916,7 +919,16 @@ bool C1_1_Profile::fn118_FetchProfile(FetchProfileInfo datastream, FetchProfileR
                 if(bExtracted == true)
                 {
                     std::vector<unsigned char> ElementData;
-                    std::string imageURI = "img/" + datastream.strProfileID + ".jpg";// TODO: add ip;  example: backend.scanva.com/img/tmp.jpg
+                    // Add timestamp to image name, this will make sure that the image will be refreshed at receivers browser, however
+                    // TODO: add at receivers end Automatic cleanup of old image files
+                    namespace pt = boost::posix_time;
+                    pt::ptime now = pt::second_clock::local_time();
+                    std::stringstream sstream;
+                    sstream << now;
+                    std::string imageURI = "img/" + datastream.strProfileID + sstream.str() + ".jpg";
+           //         std::string strTimeNow = pt::to_simple_string(now);
+           //         std::string imageURI = "img/" + datastream.strProfileID + "_" + pt::to_iso_string(now) + ".jpg";
+
                     // TODO: Automatic replication of extracted images to cloudchatmanager.com
                     // INFO: fx. scp the foto to cloudchatmanager machine - it should reside in relative img/<profileid>.jpg - NB! This is necessary since no extracted data is allowed on backend.scanva.com server
                     // sudo scp -r img/ vagrant@cloudchatmanager.com:/home/vagrant/.
