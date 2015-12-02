@@ -39,18 +39,6 @@ else
 
     sudo puppet agent --enable
 
-    echo "fetch nodejs"
-    sudo apt-get install -yq nodejs-legacy
-
-    echo "fetch boost"
-    sudo apt-get install -yq  libboost-all-dev
-    
-    echo "fetch xsltproc"
-    sudo apt-get install -yq xsltproc
-
-    echo "fetch g++ since somehow gcc default install does not get it"
-    sudo apt-get install -yq g++
-
     echo "Fetch latest version of CloudChat"
     if [ -d "CloudChat" ]; then
       echo "CloudChat already installed"
@@ -59,19 +47,44 @@ else
       git checkout serup
       git pull
     else
+      echo "*** FIRST time install ***"
+      echo "fetch nodejs"
+      sudo apt-get install -yq nodejs-legacy
+      echo "fetch boost"
+      sudo apt-get install -yq  libboost-all-dev
+      echo "fetch xsltproc"
+      sudo apt-get install -yq xsltproc
+      echo "fetch g++ since somehow gcc default install does not get it"
+      sudo apt-get install -yq g++
+      echo "install incron to monitor event/changes in transfer folder - new images added, should then remove old versions of same image"
+      sudo apt-get install incron
+      sudo echo "root" >> /etc/incron.allow
+      sudo echo "root" >> /etc/cron.allow
+      sudo echo "vagrant" >> /etc/incron.allow
+      sudo echo "vagrant" >> /etc/cron.allow
+      sudo mkdir /var/www/img
+      echo "Clone from GitHub" 
       git clone https://review.gerrithub.io/serup/CloudChat
       cd CloudChat
       git checkout serup
       echo "CloudChat installed"
       echo "Set up swapfile"
       sudo bash addswapfile.sh
-      echo "Build CloudChat"
-      sudo ./run.sh
-      echo "Deploy to www"
-      sudo bash deploy_www.sh
       mkdir -p /var/www/CloudChatManager/img
       sudo chown vagrant:vagrant /var/www/CloudChatManager/img
+      echo "copy cron job; clean old images to /usr/local/bin - the job is started by incron"
+      sudo cp ./cleanoldimages.sh /usr/local/bin/cleanoldimages.sh
+      sudo chmod +x /usr/local/bin/cleanoldimages.sh
+      echo "setup incron job"
+      incrontab -l | { cat; echo '/var/www/img IN_ALL_EVENTS /usr/local/bin/cleanoldimages.sh >> /var/log/cleanoldimages.log 2>&1'; } | incrontab -
+      echo "**************************" 
+      echo "First time build CloudChat"
+      echo "**************************" 
+      echo "Building CloudChat project takes a long time - results are in file build.log - PLEASE WAIT!"
+      sudo ./run.sh > build.log
+      echo "done build - see info in file build.log"
+      echo "Deploy to www"
+      sudo bash deploy_www.sh
+      echo "- done setup - now REBOOT, to start cron"
      fi
-     
-     echo "*** DONE install ***"
 fi

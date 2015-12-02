@@ -915,7 +915,7 @@ bool C1_1_Profile::fn118_FetchProfile(FetchProfileInfo datastream, FetchProfileR
                 std::stringstream sstream;
                 sstream << systime;
 
-                std::string filenamepath = "/var/www/img/" + datastream.strProfileID + sstream.str() + ".jpg"; // TODO: add a guid filename to newly created image -- NB! filepath should be inside /var/www/img/   -- to make sure client can access it
+                std::string filenamepath = "/var/www/img/" + datastream.strProfileID + "_" + sstream.str() + ".jpg"; // TODO: add a guid filename to newly created image -- NB! filepath should be inside /var/www/img/   -- to make sure client can access it
                 bool bExtracted = extractBase64TojpgImagefile(filenamepath,_strfoto);
                 if(bExtracted == true)
                 {
@@ -926,7 +926,7 @@ bool C1_1_Profile::fn118_FetchProfile(FetchProfileInfo datastream, FetchProfileR
                     //pt::ptime now = pt::second_clock::local_time();
                     //std::stringstream sstream;
                     //sstream << now;
-                    std::string imageURI = "img/" + datastream.strProfileID + sstream.str() + ".jpg";
+                    std::string imageURI = "img/" + datastream.strProfileID + "_" + sstream.str() + ".jpg";
            //         std::string strTimeNow = pt::to_simple_string(now);
            //         std::string imageURI = "img/" + datastream.strProfileID + "_" + pt::to_iso_string(now) + ".jpg";
 
