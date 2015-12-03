@@ -15,6 +15,7 @@ env_docker_puppet_path
 *.gcno 
 *.gcda
 *.iml
+*.bin
 
 #################
 ## Eclipse
