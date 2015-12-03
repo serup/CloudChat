@@ -19,5 +19,13 @@ ls -1 ${prefix}??.*
 echo now remove all except last filename
 lastfile=$(ls -1 ${prefix}??.* | sort -V | tail -1)
 echo "lastfile = ${lastfile}"
-echo remove following :
-ls -1 ${prefix}??.* | grep -v ${lastfile}
+#echo remove following :
+#ls -1 ${prefix}??.* | grep -v ${lastfile}
+count="$(ls -1 ${prefix}??.* | grep -v ${lastfile}| wc -l)"
+#echo "count = ${count}"
+if [ $count -gt 0 ]  
+then
+  ls -1 ${prefix}??.* | grep -v ${lastfile}| xargs rm 
+else
+  echo no files to remove
+fi
