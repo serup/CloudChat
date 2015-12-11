@@ -65,29 +65,23 @@ else
       echo "install sshpass to allow automatic transfer of images script to run - consider using ssh keys instead in future"
       sudo apt-get install -yq sshpass
       echo "install incron to monitor event/changes in transfer folder - new images added, should then start transfer"
-      sudo apt-get install incron
+      sudo apt-get install -yq incron
       sudo echo "root" >> /etc/incron.allow
       sudo echo "root" >> /etc/cron.allow
       sudo echo "vagrant" >> /etc/incron.allow
       sudo echo "vagrant" >> /etc/cron.allow
       sudo mkdir /var/www/img
+      echo "****************"
       echo "Clone from GitHub" 
+      echo "****************"
       git clone https://review.gerrithub.io/serup/CloudChat
       cd CloudChat
       git checkout serup
       echo "CloudChat installed - from GitHub"
+      echo "****************"
       echo "Set up swapfile"
+      echo "****************"
       sudo bash addswapfile.sh
-      echo "copy cron replication job to /usr/local/bin - the job is started by incron, and it copies from backend to cloudchatmanager"
-      sudo cp ./replication.sh /usr/local/bin/.
-      sudo chown vagrant:vagrant /usr/local/bin/replication.sh
-      sudo chmod +x /usr/local/bin/replication.sh
-      sudo cp ./cronStartServer.sh /usr/local/bin/.
-      sudo chown vagrant:vagrant /usr/local/bin/cronStartServer.sh
-      sudo chmod +x /usr/local/bin/cronStartServer.sh
-      echo "replication deamon - should copy files using sshpass scp - its setup as a cron job"
-      echo "setup incron job"
-      incrontab -l | { cat; echo '/var/www/img IN_ALL_EVENTS /usr/local/bin/replication.sh >> /var/log/replication.log 2>&1'; } | incrontab -
       echo "****************"
       echo "First time build"
       echo "****************"
@@ -99,12 +93,22 @@ else
       echo "generate html code coverage info in /www/lcov"
       sudo genhtml coverage.info --output-directory /var/www/lcov > /dev/null
       echo "****************"
-      sudo -s
-      #cd codeblocks_projects
+      echo "setup incron job"
+      echo "****************"
+      echo "copy cron replication job to /usr/local/bin - the job is started by incron, and it copies from backend to cloudchatmanager"
+      sudo cp ./replication.sh /usr/local/bin/.
+      sudo chown vagrant:vagrant /usr/local/bin/replication.sh
+      sudo chmod +x /usr/local/bin/replication.sh
+      sudo cp ./cronStartServer.sh /usr/local/bin/.
+      sudo chown vagrant:vagrant /usr/local/bin/cronStartServer.sh
+      sudo chmod +x /usr/local/bin/cronStartServer.sh
+      echo "replication deamon - should copy files using sshpass scp - its setup as a cron job"
+      incrontab -l | { cat; echo '/var/www/img IN_ALL_EVENTS /usr/local/bin/replication.sh >> /var/log/replication.log 2>&1'; } | incrontab -
+      echo "****************"
       echo "start backend server - as a crontab job"
-      #sudo ./startScanvaserver
+      echo "****************"
+      sudo -s
       crontab -l | { cat; echo '@reboot /usr/local/bin/cronStartServer.sh >> /var/log/crontab.log 2>&1'; } | crontab -
-      #/etc/init.d/cron start
       echo "- done setup - now REBOOT, to start cron"
       reboot
      fi
