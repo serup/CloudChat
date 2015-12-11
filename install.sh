@@ -181,6 +181,15 @@ else
   echo "- martasd-mediawiki puppet module installed"
 fi
 
+# install mogrify - to resize extracted profile images, thus making transfer to javascript client performance wice faster
+MOGRIFY_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 imagemagick |grep "install ok installed")
+if [ "" == "$MOGRIFY_OK" ]; then
+  echo -n "- install imagemagick to make use of mogrify "
+  sudo apt-get install -yq imagemagick
+  echo " - done."
+else
+  echo "- mogrify installed"
+fi
 
 echo "******************************************************************************************************************"
 echo "environment is now ready! you may run vagrant up and then vagrant up cloudchatmanager, vagrant up cloudchatclient"
