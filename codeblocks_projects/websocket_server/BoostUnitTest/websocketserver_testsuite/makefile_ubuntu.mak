@@ -11,7 +11,7 @@ TESTFLAGS2= --report_level=detailed
 TESTFLAGS3= --report_format=XML --report_level=detailed
 CONVERT=xsltproc -o test_results.html ../test_results.xslt test_results.xml
 CONVERT2=xsltproc -o test_results.txt ../test_results_text.xslt test_results.xml
-
+CFLAGS= --coverage  -Wno-unused-but-set-variable
 
 all: compile test
 
@@ -20,7 +20,7 @@ compile:
 	@ echo " Build started - please wait..." 
 	@ echo " Start building websocketserver testsuite"
 	@ echo "-----------------------------------------------" 
-	@ $(CC) 2>tmp
+	@ $(CC) $(CFLAGS) 2>tmp
 	@ echo "Finished build"
 	@ echo "-----------------------------------------------" 
 testxml:
