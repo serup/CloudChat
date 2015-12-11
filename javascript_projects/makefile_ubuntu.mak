@@ -41,7 +41,7 @@ compress2:
 	@ cd DataEncoderDecoder/compression-lib; make -f Makefile >> ../../output.txt
 ssapi: msgbegin ssapi2 msgend
 ssapi2:
-	@ cd socketserverAPI; make -f makefile_ubuntu.mak >> ../output.txt
+	@ cd socketserverAPI; sudo make -f makefile_ubuntu.mak >> ../output.txt
 cloudmanager: msgbegin cloudmanager2 msgend
 cloudmanager2:
 	@ cd CloudChat; make -f makefile_ubuntu.mak >> ../output.txt
