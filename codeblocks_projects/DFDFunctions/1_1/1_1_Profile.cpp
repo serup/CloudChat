@@ -939,6 +939,8 @@ bool C1_1_Profile::fn118_FetchProfile(FetchProfileInfo datastream, FetchProfileR
                     // NB! ONLY the cash record value is updated - NOT the file record value, since that would destroy the embedded profile image
                     std::copy( imageURI.begin(), imageURI.end(), std::back_inserter(ElementData));
                     CDbCtrl.update_element_value(record_value,"foto",ElementData);
+                    // Wait a moment, so background automatic replication can transfer image
+                    sleep(1); // wait seconds
                 }
             }
         }
