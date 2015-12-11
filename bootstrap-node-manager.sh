@@ -47,7 +47,9 @@ else
       git checkout serup
       git pull
     else
-      echo "*** FIRST time install ***"
+      echo "*******************************" 
+      echo " prerequisite for building"
+      echo "*******************************" 
       echo "fetch nodejs"
       sudo apt-get install -yq nodejs-legacy
       echo "fetch boost"
@@ -57,26 +59,24 @@ else
       echo "fetch g++ since somehow gcc default install does not get it"
       sudo apt-get install -yq g++
       echo "install incron to monitor event/changes in transfer folder - new images added, should then remove old versions of same image"
-      sudo apt-get install incron
+      sudo apt-get install -yq incron
       sudo echo "root" >> /etc/incron.allow
       sudo echo "root" >> /etc/cron.allow
       sudo echo "vagrant" >> /etc/incron.allow
       sudo echo "vagrant" >> /etc/cron.allow
       sudo mkdir /var/www/img
+      echo "*******************************" 
       echo "Clone from GitHub" 
+      echo "*******************************" 
       git clone https://review.gerrithub.io/serup/CloudChat
       cd CloudChat
       git checkout serup
       echo "CloudChat installed"
+      echo "*******************************" 
+      echo " Swap file - needed for build "
+      echo "*******************************" 
       echo "Set up swapfile"
       sudo bash addswapfile.sh
-      mkdir -p /var/www/CloudChatManager/img
-      sudo chown vagrant:vagrant /var/www/CloudChatManager/img
-      echo "copy cron job; clean old images to /usr/local/bin - the job is started by incron"
-      sudo cp ./cleanoldimages.sh /usr/local/bin/cleanoldimages.sh
-      sudo chmod +x /usr/local/bin/cleanoldimages.sh
-      echo "setup incron job"
-      incrontab -l | { cat; echo '/var/www/img IN_ALL_EVENTS /usr/local/bin/cleanoldimages.sh >> /var/log/cleanoldimages.log 2>&1'; } | incrontab -
       echo "**************************" 
       echo "First time build CloudChat"
       echo "**************************" 
@@ -85,6 +85,16 @@ else
       echo "done build - see info in file build.log"
       echo "Deploy to www"
       sudo bash deploy_www.sh
+      mkdir -p /var/www/CloudChatManager/img
+      echo "**************************" 
+      echo " cron job for cleaning "
+      echo "**************************" 
+      sudo chown vagrant:vagrant /var/www/CloudChatManager/img
+      echo "copy cron job; clean old images to /usr/local/bin - the job is started by incron"
+      sudo cp ./cleanoldimages.sh /usr/local/bin/cleanoldimages.sh
+      sudo chmod +x /usr/local/bin/cleanoldimages.sh
+      echo "setup incron job"
+      incrontab -l | { cat; echo '/var/www/img IN_ALL_EVENTS /usr/local/bin/cleanoldimages.sh *.jpg >> /var/log/cleanoldimages.log 2>&1'; } | incrontab -
       echo "- done setup - now REBOOT, to start cron"
      fi
 fi
