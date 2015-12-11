@@ -52,25 +52,26 @@ else
       echo "****************"
       echo "     INIT       "
       echo "****************"
+      sudo -s
       echo "install LCOV for code coverage"
-      sudo apt-get install -yq lcov
+      apt-get install -yq lcov
       echo "fetch nodejs"
-      sudo apt-get install -yq nodejs-legacy
+      apt-get install -yq nodejs-legacy
       echo "fetch boost"
-      sudo apt-get install -yq  libboost-all-dev
+      apt-get install -yq  libboost-all-dev
       echo "fetch xsltproc"
-      sudo apt-get install -yq xsltproc
+      apt-get install -yq xsltproc
       echo "fetch g++ since somehow gcc default install does not get it"
-      sudo apt-get install -yq g++
+      apt-get install -yq g++
       echo "install sshpass to allow automatic transfer of images script to run - consider using ssh keys instead in future"
-      sudo apt-get install -yq sshpass
+      apt-get install -yq sshpass
       echo "install incron to monitor event/changes in transfer folder - new images added, should then start transfer"
-      sudo apt-get install -yq incron
-      sudo echo "root" >> /etc/incron.allow
-      sudo echo "root" >> /etc/cron.allow
-      sudo echo "vagrant" >> /etc/incron.allow
-      sudo echo "vagrant" >> /etc/cron.allow
-      sudo mkdir /var/www/img
+      apt-get install -yq incron
+      echo "root" >> /etc/incron.allow
+      echo "root" >> /etc/cron.allow
+      echo "vagrant" >> /etc/incron.allow
+      echo "vagrant" >> /etc/cron.allow
+      mkdir /var/www/img
       echo "****************"
       echo "Clone from GitHub" 
       echo "****************"
@@ -81,35 +82,34 @@ else
       echo "****************"
       echo "Set up swapfile"
       echo "****************"
-      sudo bash addswapfile.sh
+      bash addswapfile.sh
       echo "****************"
       echo "First time build"
       echo "****************"
       echo "Building CloudChat project takes a long time - results are in file build.log - PLEASE WAIT!"
-      sudo ./run.sh > build.log
+      ./run.sh > build.log
       echo "done build - see info in file build.log"
       echo "************************************"
       echo "create lcov code coverage info "
       echo "************************************"
-      sudo lcov --capture --directory . --output-file coverage.info
+      lcov --capture --directory . --output-file coverage.info
       echo "generate html code coverage info in /www/lcov"
-      sudo genhtml coverage.info --output-directory /var/www/lcov > /dev/null
+      genhtml coverage.info --output-directory /var/www/lcov > /dev/null
       echo "****************"
       echo "setup incron job"
       echo "****************"
       echo "copy cron replication job to /usr/local/bin - the job is started by incron, and it copies from backend to cloudchatmanager"
-      sudo cp ./replication.sh /usr/local/bin/.
-      sudo chown vagrant:vagrant /usr/local/bin/replication.sh
-      sudo chmod +x /usr/local/bin/replication.sh
-      sudo cp ./cronStartServer.sh /usr/local/bin/.
-      sudo chown vagrant:vagrant /usr/local/bin/cronStartServer.sh
-      sudo chmod +x /usr/local/bin/cronStartServer.sh
+      cp ./replication.sh /usr/local/bin/.
+      chown vagrant:vagrant /usr/local/bin/replication.sh
+      chmod +x /usr/local/bin/replication.sh
+      cp ./cronStartServer.sh /usr/local/bin/.
+      chown vagrant:vagrant /usr/local/bin/cronStartServer.sh
+      chmod +x /usr/local/bin/cronStartServer.sh
       echo "replication deamon - should copy files using sshpass scp - its setup as a cron job"
       incrontab -l | { cat; echo '/var/www/img IN_ALL_EVENTS /usr/local/bin/replication.sh >> /var/log/replication.log 2>&1'; } | incrontab -
       echo "****************"
       echo "start backend server - as a crontab job"
       echo "****************"
-      sudo -s
       crontab -l | { cat; echo '@reboot /usr/local/bin/cronStartServer.sh >> /var/log/crontab.log 2>&1'; } | crontab -
       echo "- done setup - now REBOOT, to start cron"
       reboot
