@@ -88,7 +88,9 @@ else
       echo "Building CloudChat project takes a long time - results are in file build.log - PLEASE WAIT!"
       sudo ./run.sh > build.log
       echo "done build - see info in file build.log"
+      echo "************************************"
       echo "create lcov code coverage info "
+      echo "************************************"
       sudo lcov --capture --directory . --output-file coverage.info
       echo "generate html code coverage info in /www/lcov"
       sudo genhtml coverage.info --output-directory /var/www/lcov > /dev/null
