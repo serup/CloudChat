@@ -1,7 +1,7 @@
 cd codeblocks_projects
-make -f makefile_ubuntu.mak total 
+sudo make -f makefile_ubuntu.mak total 
 cd ../javascript_projects
-make -f makefile_ubuntu.mak total
+sudo make -f makefile_ubuntu.mak total
 cd ..
 cat codeblocks_projects/total_result.txt > output.txt
 cat javascript_projects/total_result.txt >> output.txt
