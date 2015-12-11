@@ -52,7 +52,6 @@ else
       echo "****************"
       echo "     INIT       "
       echo "****************"
-      sudo -s
       echo "install LCOV for code coverage"
       apt-get install -yq lcov
       echo "fetch nodejs"
