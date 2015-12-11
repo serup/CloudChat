@@ -136,7 +136,7 @@ if [ "" == "$NODEJS_OK" ]; then
 else
   echo "- puppetlabs-nodejs puppet module installed"
 fi
-BUILD_ESSENTIAL_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep initforthe-build-essential)
+BUILD_ESSENTIAL_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep initforthe-build_essential)
 if [ "" == "$BUILD_ESSENTIAL_OK" ]; then
   echo -n "- install initforthe-build_essential puppet module"
   puppet module install initforthe-build_essential --modulepath ./puppet/trunk/environments/devtest/modules
@@ -169,6 +169,18 @@ if [ ! -f tmphost ]; then
     # Configure /etc/hosts file
     sudo bash confighosts.sh
 fi
+
+# a community aka confluence, however free version - mediawiki
+# make it possible for devs/users to communicate about the progress
+MEDIAWIKI_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep martasd-mediawiki)
+if [ "" == "$MEDIAWIKI_OK" ]; then
+  echo -n "- install martasd-mediawiki puppet module"
+  puppet module install martasd-mediawiki  --modulepath ./puppet/trunk/environments/devtest/modules 
+  echo " - done."
+else
+  echo "- martasd-mediawiki puppet module installed"
+fi
+
 
 echo "******************************************************************************************************************"
 echo "environment is now ready! you may run vagrant up and then vagrant up cloudchatmanager, vagrant up cloudchatclient"
