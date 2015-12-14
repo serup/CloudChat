@@ -22,7 +22,7 @@ all:
 	@ echo " ex. : make -f makefile_ubuntu.mak total"
 	@ echo "------------------------"
 
-total:	msgbegintotal dataencoder2 compress2 ssapi2 cloudmanager2 msgend 	
+total:	msgbegintotal dataencoder2 compress2  cloudmanager2 ssapi2 msgend 	
 
 msgbegin:
 	@ echo "-------------------------------------------"
@@ -38,12 +38,12 @@ dataencoder2:
 compress: msgbegin compress2 msgend
 compress2:
 	@ cd DataEncoderDecoder/compression-lib; make -f Makefile >> ../../output.txt
-ssapi: msgbegin ssapi2 msgend
-ssapi2:
-	@ cd socketserverAPI; sudo make -f makefile_ubuntu.mak >> ../output.txt
 cloudmanager: msgbegin cloudmanager2 msgend
 cloudmanager2:
 	@ cd CloudChat; make -f makefile_ubuntu.mak >> ../output.txt
+ssapi: msgbegin ssapi2 msgend
+ssapi2:
+	@ cd socketserverAPI; sudo make -f makefile_ubuntu.mak >> ../output.txt
 msgend:
 	@ echo "Build ended --"
 	@ echo "------------------------"
