@@ -22,6 +22,7 @@ else
     sudo apt-get install -yq puppetmaster
 
     # Configure /etc/hosts file
+    sudo cp /vagrant/confighosts.sh .
     sudo bash confighosts.sh
 
     # Add optional alternate DNS names to /etc/puppet/puppet.conf

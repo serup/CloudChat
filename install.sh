@@ -60,6 +60,8 @@ else
   echo "- vagrant installed"
   echo "- destroy old setup, so new can run"
   vagrant destroy
+  echo "- update vagrant box to newest version"
+  vagrant box update
 fi
 VBOX_OK=$(vagrant box list|awk 'BEGIN {strtmp=$1} END {print $strtmp}')
 if [ "" == "$VBOX_OK" ]; then
