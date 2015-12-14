@@ -32,7 +32,6 @@ msgbegintotal:
 	@ echo "----------------------------------"
 	@ echo "TOTAL JavaScript Build started...  " 
 	@ echo "----------------------------------"
-	@ echo " " > output.txt
 dataencoder: msgbegin dataencoder2 msgend	
 dataencoder2:
 	@ cd DataEncoderDecoder; make -f Makefile > ../output.txt
