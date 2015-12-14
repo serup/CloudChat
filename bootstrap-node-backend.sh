@@ -86,7 +86,7 @@ else
       echo "First time build"
       echo "****************"
       echo "Building CloudChat project takes a long time - results are in file build.log - PLEASE WAIT!"
-      ./run.sh > build.log > tmp3
+      ./run.sh > build.log 2> tmp3
       echo "done build - see detailed info in file build.log"
       tail -5 build.log
       echo "************************************"
