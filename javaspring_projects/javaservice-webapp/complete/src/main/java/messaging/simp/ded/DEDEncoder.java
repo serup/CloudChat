@@ -25,12 +25,49 @@ import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.messaging.support.NativeMessageHeaderAccessor;
 import org.springframework.util.Assert;
 
+/*
+//TODO: make functions for encoding data - example
+        unsigned short trans_id = 1;
+		bool action = true;
+
+		DED_START_ENCODER(encoder_ptr);
+		DED_PUT_STRUCT_START( encoder_ptr, "event" );
+		  DED_PUT_METHOD  ( encoder_ptr, "name",  "MusicPlayer" );
+		  DED_PUT_USHORT  ( encoder_ptr, "trans_id",      trans_id);
+		  DED_PUT_BOOL    ( encoder_ptr, "startstop", action );
+		DED_PUT_STRUCT_END( encoder_ptr, "event" );
+*/
+
+
+
 /**
  * An encoder for DED frames.
  *
  * @author Johnny Serup
  */
-public final class DEDEncoder  {
+public class DEDEncoder  {
+
+	/**
+	 * use static functions to create "macro" type functions / methods for the decoder
+	 * inorder to be able to get something like this:
+	 * DEDEncoder DED = DEDEncoder.DED_START_ENCODER();
+	 * DED.PUT_STRUCT_START( encoder, "event" );
+	 *  DED.PUT_METHOD  ( encoder, "name",  "MusicPlayer" );
+	 *  DED.PUT_USHORT  ( encoder, "trans_id",      trans_id);
+	 *  DED.PUT_BOOL    ( encoder, "startstop", action );
+	 * DED.PUT_STRUCT_END( encoder, "event" );
+	 */
+	public static DEDEncoder DED_START_ENCODER()
+	{
+		DEDEncoder dedEncoder = new DEDEncoder();
+		return  dedEncoder;
+	}
+
+    public static void PUT_STRUCT_START(DEDEncoder dedEncoder)
+	{
+
+	}
+
 
 	private static final byte LF = '\n';
 
@@ -165,3 +202,5 @@ public final class DEDEncoder  {
 	}
 
 }
+
+
