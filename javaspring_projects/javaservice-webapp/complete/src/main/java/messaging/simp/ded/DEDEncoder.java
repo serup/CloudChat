@@ -48,14 +48,15 @@ import org.springframework.util.Assert;
 public class DEDEncoder  {
 
 	/**
-	 * use static functions to create "macro" type functions / methods for the decoder
-	 * inorder to be able to get something like this:
+	 * Functions / methods for the decoder
+	 * inorder to be able to make the usage look something like this:
+	 *
 	 * DEDEncoder DED = DEDEncoder.DED_START_ENCODER();
-	 * DED.PUT_STRUCT_START( encoder, "event" );
-	 *  DED.PUT_METHOD  ( encoder, "name",  "MusicPlayer" );
-	 *  DED.PUT_USHORT  ( encoder, "trans_id",      trans_id);
-	 *  DED.PUT_BOOL    ( encoder, "startstop", action );
-	 * DED.PUT_STRUCT_END( encoder, "event" );
+	 * DED.PUT_STRUCT_START( DED, "event" );
+	 *  DED.PUT_METHOD  ( DED, "name",  "MusicPlayer" );
+	 *  DED.PUT_USHORT  ( DED, "trans_id",      trans_id);
+	 *  DED.PUT_BOOL    ( DED, "startstop", action );
+	 * DED.PUT_STRUCT_END( DED, "event" );
 	 */
 	public static DEDEncoder DED_START_ENCODER()
 	{
@@ -63,18 +64,261 @@ public class DEDEncoder  {
 		return  dedEncoder;
 	}
 
-    public static void PUT_STRUCT_START(DEDEncoder dedEncoder)
+    public static int PUT_STRUCT_START(DEDEncoder dedEncoder, String name)
 	{
-
+		int result=-1;
+		if(dedEncoder != null)
+			result = dedEncoder.EncodeStructStart(name);
+		return result;
 	}
 
+	/**
+	 * ASN1 - limited version
+	 * sequence of abstract syntax notation
+	 * tag-byte,length-byte,data,tag-byte,length-byte,data,....
+	 *
+	 *
+	*/
+	class CASN1
+	{
+		byte[] ASN1Data;		// will be allocated an contain the data being processed
+		int iLengthOfData;  	// Length of ASN1 data, copied during construction.
+		int iTotalLengthOfData; // Total length of ASN1 data.
+		int pNextASN1;			// Will point at first ASN1 structure, and when FetchNextASN1 is called it will move to (point at) next ASN1 location.
+		int pAppendPosition;	// Pointer to end of current ASN1 data
+		int CurrentASN1Position;
+		int NextASN1Position;
+
+		public int CASN1p1(int iAppendMaxLength)
+		{
+			int result = -1;
+			if(iAppendMaxLength > 0)
+			{
+				pNextASN1 = -1;
+				CurrentASN1Position = 0;
+				iLengthOfData = 0;
+				ASN1Data = new byte[iAppendMaxLength];
+				if(ASN1Data.length == iAppendMaxLength)
+				{
+					iTotalLengthOfData = iAppendMaxLength;
+					pNextASN1 = 0; // First ASN1
+					pAppendPosition = 0;
+					for(int i=0; i < iAppendMaxLength; i++)
+					{
+						ASN1Data[i] = 0;
+					}
+					result=1;
+				}
+			}
+			return result;
+		}
+
+		public int CASN1p3(int LengthOfData,byte[] data, int iAppendMaxLength)
+		{
+			int result = -1;
+			pNextASN1 = -1;
+			CurrentASN1Position = 0;
+			int iLength = iAppendMaxLength + LengthOfData;
+			iLengthOfData = LengthOfData;
+			iTotalLengthOfData = iLength; // max room for data
+			if(iLength != 0)
+			{
+				ASN1Data = new byte[iLength];
+				if(ASN1Data.length == iLength)
+				{
+					for(int i=0; i < iLength; i++)
+					{
+						ASN1Data[i] = 0;
+					}
+					pNextASN1 = 0; // First ASN1
+					/*for(int n=0; n < LengthOfData; n++)
+					{
+						ASN1Data[n] = data[n]; // copy data into new allocated space
+					}*/
+					System.arraycopy(data,0,ASN1Data,0,LengthOfData); // copy data into new allocated space
+					pAppendPosition = 0;
+					result = 1;
+				}
+				else
+					result = -2;
+			}
+			return result;
+		}
+
+		public int WhatIsReadSize()
+		{
+			return iLengthOfData;
+		}
+
+		public int WhatIsWriteSize()
+		{
+			int result=0;
+			result = iTotalLengthOfData - iLengthOfData;
+			if(result<0)
+				result=0;
+			return result;
+		}
+
+		public boolean AppendASN1(int LengthOfNewASN1Data, byte Tag, byte[] data)
+		{
+			boolean bResult=true;
+			if(iTotalLengthOfData < (iLengthOfData + LengthOfNewASN1Data))
+				bResult = false;
+			else
+			{
+				pAppendPosition = iLengthOfData;
+				ASN1Data[pAppendPosition + 0] = (byte)(LengthOfNewASN1Data     & 0x000000ff);
+				ASN1Data[pAppendPosition + 1] = (byte)(LengthOfNewASN1Data>>8  & 0x000000ff);
+				ASN1Data[pAppendPosition + 2] = (byte)(LengthOfNewASN1Data>>16 & 0x000000ff);
+				ASN1Data[pAppendPosition + 3] = (byte)(LengthOfNewASN1Data>>24 & 0x000000ff);
+				ASN1Data[pAppendPosition + 4] = (byte)(Tag & 0x000000FF); // unsigned char 8 bit  -- tag byte
+
+				if(data.length > 0)
+				{
+                    for (int i = 0; i < LengthOfNewASN1Data; i++){
+                            ASN1Data[pAppendPosition + 4 + 1 + i] = data[i];
+                    }
+
+					iLengthOfData = iLengthOfData + 4 +1 + LengthOfNewASN1Data; // Add new ASN1 to length : Length+tag+SizeofData
+				}
+				else
+					bResult=false;
+			}
+			return bResult;
+		}
+
+		class asn
+		{
+			int Length;
+			int Tag;
+			byte[] data;
+		}
+
+		/*
+ 		 param = {
+ 			length:0,
+ 			tag:0,
+ 			data:0
+ 			};
+ 		*/
+		public boolean FetchNextASN1(asn param) // Returns true if ASN1 was found, and false if not.
+		{
+			boolean bResult = true;
+			if (pNextASN1 >= 0)
+			{
+				param.Length = param.Length | (ASN1Data[pNextASN1 + 0] & 0x000000ff);
+				param.Length = param.Length | (ASN1Data[pNextASN1 + 1] & 0x000000ff) << 8;
+				param.Length = param.Length | (ASN1Data[pNextASN1 + 2] & 0x000000ff) << 16;
+				param.Length = param.Length | (ASN1Data[pNextASN1 + 3] & 0x000000ff) << 24;
+
+				pNextASN1 += 4; // sizeof(length) 32 bits
+				param.Tag = ASN1Data[pNextASN1++] & 0x000000FF; // fetch byte tag
+
+				if (param.Length == 1)
+				{
+					param.data[0] = ASN1Data[pNextASN1];
+				}
+				else
+				{
+					if (param.Length == 2) {
+						param.data[0] = ASN1Data[pNextASN1];
+						param.data[1] = ASN1Data[pNextASN1 + 1];
+					}
+					else {
+						param.data = new byte[param.Length];
+						//for (int i = 0; i < param.Length; i++)
+						//	param.data[i] = ASN1Data[pNextASN1 + i];
+						System.arraycopy(ASN1Data,pNextASN1,param.data,0,param.Length);
+					}
+				}
+				NextASN1Position = CurrentASN1Position + param.Length + 1 + 4;
+				if (NextASN1Position > iTotalLengthOfData || NextASN1Position < 0) {
+					pNextASN1 = 0;
+					bResult = false; // ASN1 says it is longer than ASN1 allocated space ??? ASN1 has illegal size.
+				}
+				else {
+					CurrentASN1Position = NextASN1Position;
+					if (CurrentASN1Position >= iTotalLengthOfData)
+						pNextASN1 = 0;
+					else
+						pNextASN1 += param.Length;
+				}
+			}
+			else
+				bResult = false;
+
+			return bResult;
+		}
+
+		class data
+		{
+			int Length;
+			byte[] data;
+		}
+
+		public boolean FetchTotalASN1(data param)
+		{
+			boolean bResult = true;
+			if (ASN1Data.length > 0)
+			{
+				param.Length = iLengthOfData; // Array can be larger than amount of valid data inside
+				param.data = new byte[param.Length];
+				//for (int i = 0; i < param.Length; i++)
+				//	param.data[i] = ASN1Data[i];
+				System.arraycopy(ASN1Data,0,param.data,0,param.Length);
+			}
+			else
+				bResult = false;
+
+			return bResult;
+		}
+	}
+
+	/**
+	 * Element types
+	 */
+	public static final int DED_ELEMENT_TYPE_STRUCT = 14;
+
+
+	class param
+	{
+		public String name;
+		public int ElementType;
+	}
+
+	private int EncodeStructStart(String name)
+	{
+		int result=-1;
+		if(name.isEmpty()) {
+			param element = new param();
+			element.name = name;
+			element.ElementType = DED_ELEMENT_TYPE_STRUCT;
+			result = AddElement(element);
+		}
+		return result;
+	}
+
+	/**
+	 * General function for adding elements to array as ASN1 elements
+	 *
+	 * @param element
+	 * @return
+     */
+	private int AddElement(param element)
+	{
+		int result=-1;
+        if (element.ElementType == DED_ELEMENT_TYPE_STRUCT)
+		{
+			// First element in structure
+			int LengthOfAsn1 = element.name.length();
+
+		}
+		return result;
+	}
 
 	private static final byte LF = '\n';
-
 	private static final byte COLON = ':';
-
 	private final Log logger = LogFactory.getLog(DEDEncoder.class);
-
 
 	/**
 	 * Encodes the given DED {@code message} into a {@code byte[]}
