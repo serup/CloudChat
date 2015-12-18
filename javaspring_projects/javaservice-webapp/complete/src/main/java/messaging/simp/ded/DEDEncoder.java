@@ -272,11 +272,10 @@ public class DEDEncoder  {
     int iLengthOfData;
     byte[] ptotaldata;
     int iLengthOfTotalData;
-    CASN1 m_asn1; // used in decoder
 
 
 	/**
-	 * Functions / methods for the decoder
+	 * Functions / methods for the encoder
 	 * inorder to be able to make the usage look something like this:
 	 *
 	 * DEDEncoder DED = DEDEncoder.DED_START_ENCODER();
@@ -376,28 +375,6 @@ public class DEDEncoder  {
 		return result;
 	}
 
-	byte[] decompress_lzss(byte[] pCompressedData, int sizeofCompressedData)
-	{
-		byte[] result=null;
-	    //TODO: implement decompression
-		return result;
-	}
-
-	private DEDEncoder PUT_DATA_IN_DECODER(byte[] pCompressedData, int sizeofCompressedData)
-	{
-		DEDEncoder decoder_ptr = new DEDEncoder();
-
-		byte[] decmprsd = decompress_lzss(pCompressedData, sizeofCompressedData);
-		if (decmprsd.length > 0) {
-			decoder_ptr.ptotaldata = decmprsd;
-			ptotaldata = decoder_ptr.ptotaldata;
-			decoder_ptr.pdata = ptotaldata;
-			decoder_ptr.iLengthOfTotalData = decmprsd.length;
-			iLengthOfTotalData = decoder_ptr.iLengthOfTotalData;
-		}
-		return decoder_ptr;
-	}
-
 	private int DED_GET_ENCODED_DATA(_DEDobject DEDobject)
 	{
 		int result = -1;
@@ -433,168 +410,6 @@ public class DEDEncoder  {
 
 		return result;
 	}
-
-	private int GET_STRUCT_START(DEDEncoder decoder_ptr, String name)
-	{
-		int result = -1;
-        if(!name.isEmpty()) {
-			param DEDobject = new param();
-			DEDobject.name = name;
-			DEDobject.ElementType = DED_ELEMENT_TYPE_STRUCT;
-			DEDobject.value = null;
-			DEDobject.length = 0;
-			result = decoder_ptr.GetElement(DEDobject);
-		}
-		return result;
-	}
-
-	private String GET_METHOD(DEDEncoder decoder_ptr, String name)
-	{
-		String result="##unknown##";
-        if(!name.isEmpty()) {
-			param DEDobject = new param();
-			DEDobject.name = name;
-			DEDobject.ElementType = DED_ELEMENT_TYPE_METHOD;
-			DEDobject.value = null;
-			DEDobject.length = 0;
-			int found = decoder_ptr.GetElement(DEDobject);
-			if (found == 1)
-				result = DEDobject.value.toString();
-		}
-		return result;
-	}
-
-	private short GET_USHORT(DEDEncoder decoder_ptr, String name)
-	{
-		short result = -1;
-        if(!name.isEmpty()) {
-			param DEDobject = new param();
-			DEDobject.name = name;
-			DEDobject.ElementType = DED_ELEMENT_TYPE_USHORT;
-			DEDobject.value = null;
-			DEDobject.length = 0;
-			int found = decoder_ptr.GetElement(DEDobject);
-			if (found == 1)
-				result = (short)byteUtils.bytesToLong(DEDobject.value);
-		}
-		return result;
-	}
-
-	private long GET_LONG(DEDEncoder decoder_ptr, String name)
-	{
-		long result = -1;
-        if(!name.isEmpty()) {
-			param DEDobject = new param();
-			DEDobject.name = name;
-			DEDobject.ElementType = DED_ELEMENT_TYPE_LONG;
-			DEDobject.value = null;
-			DEDobject.length = 0;
-			int found = decoder_ptr.GetElement(DEDobject);
-			if (found == 1)
-				result = byteUtils.bytesToLong(DEDobject.value);
-		}
-		return result;
-	}
-
-	private boolean GET_BOOL(DEDEncoder decoder_ptr, String name)
-	{
-		boolean result = false;
-        if(!name.isEmpty()) {
-			param DEDobject = new param();
-			DEDobject.name = name;
-			DEDobject.ElementType = DED_ELEMENT_TYPE_BOOL;
-			DEDobject.value = null;
-			DEDobject.length = 0;
-			int found = decoder_ptr.GetElement(DEDobject);
-			if (found == 1) {
-				if((int)byteUtils.bytesToLong(DEDobject.value)!=0)
-					result=true;
-			}
-		}
-		return result;
-	}
-
-	String emptycheck(String str)
-	{
-		String strreturn="";
-		if(str=="##empty##")
-			strreturn = "";
-		else
-			strreturn = str;
-		return strreturn;
-	}
-
-	private String GET_STDSTRING(DEDEncoder decoder_ptr, String name)
-	{
-		String result = "";
-		if(!name.isEmpty()) {
-			param DEDobject = new param();
-			DEDobject.name = name;
-			DEDobject.ElementType = DED_ELEMENT_TYPE_STDSTRING;
-			DEDobject.value = null;
-			DEDobject.length = -1;
-			int found = decoder_ptr.GetElement(DEDobject);
-			if (found == 1)
-				result = DEDobject.value.toString();
-			    result = emptycheck(result);
-		}
-		return result;
-	}
-
-	//TODO: 20140724 consider designing _GET_ so that if element is NOT found, then internal pointer is NOT moved as it is NOW!!!
-	private int GET_ELEMENT(DEDEncoder decoder_ptr, String entityname, _Elements elementvalue)
-	{
-		int result = -1;
-
-		String strentity_chunk_id = entityname.toLowerCase() + "_chunk_id";
-		String strentity_chunk_data = entityname.toLowerCase() + "_chunk_data";
-
-		param DEDobject1 = new param();
-			DEDobject1.name = strentity_chunk_id;
-			DEDobject1.ElementType = DED_ELEMENT_TYPE_STDSTRING;
-			DEDobject1.value = null;
-			DEDobject1.length = -1;
-
-		param DEDobject2 = new param();
-			DEDobject2.name = strentity_chunk_data;
-			DEDobject2.ElementType = DED_ELEMENT_TYPE_STDVECTOR;
-			DEDobject2.value = null;
-			DEDobject2.length = -1;
-
-		result = decoder_ptr.GetElement(DEDobject1);
-		if (result == 1)
-			result = (int)byteUtils.bytesToLong(DEDobject1.value);
-		else
-			result = -1;
-		if (result != -1){
-			result = decoder_ptr.GetElement(DEDobject2);
-			if (result == 1)
-				result = (int)byteUtils.bytesToLong(DEDobject2.value);
-			else
-				result = -1;
-		}
-		elementvalue.strElementID = DEDobject1.value.toString();
-		elementvalue.ElementData = DEDobject2.value;
-		if(result != -1) result = 1;
-		return result;
-	}
-
-// ...
-//
-//
-
-	private int GET_STRUCT_END(DEDEncoder decoder_ptr, String name)
-	{
-		int result = -1;
-		param DEDobject = new param();
-		DEDobject.name = name;
-		DEDobject.ElementType = DED_ELEMENT_TYPE_STRUCT_END;
-		DEDobject.value = null;
-		DEDobject.length = -1;
-		result = decoder_ptr.GetElement(DEDobject);
-		return result;
-	}
-
 
 	/**
     * Element types
@@ -862,60 +677,6 @@ public class DEDEncoder  {
 		return result;
 	}
 
-	////////////////////////////////////////////////////////////////
-	// FETCH ELEMENTS FROM ASN1 DATAENCODER
-	////////////////////////////////////////////////////////////////
-	private int GetElement(param DEDobject)
-	{
-		int result=-1;
-		if (DEDobject.ElementType == DED_ELEMENT_TYPE_STRUCT)
-		{
-			m_asn1 = new CASN1();
-			result = m_asn1.CASN1p3(iLengthOfTotalData, pdata, iLengthOfTotalData + 1);
-		}
-
-		int ElementType = DEDobject.ElementType;
-		asn param = new asn();
-		if (m_asn1.FetchNextASN1(param))
-		{
-			if (param.Tag == ElementType)
-			{
-				String strCmp;
-				strCmp = param.data.toString();
-				if (DEDobject.name.equals(strCmp))
-				{
-					if (param.Tag == DED_ELEMENT_TYPE_STRUCT || param.Tag == DED_ELEMENT_TYPE_STRUCT_END)
-					{
-						// start and end elements does NOT have value, thus no need to go further
-						result = 1;
-					}
-					else {
-						param.Length = 0;
-						param.Tag = 0;
-						param.data = null;
-						if (m_asn1.FetchNextASN1(param))
-						{
-							if (param.Tag == ElementType)
-							{
-								if (ElementType == DED_ELEMENT_TYPE_METHOD || ElementType == DED_ELEMENT_TYPE_STRING || ElementType == DED_ELEMENT_TYPE_STDSTRING)
-								{
-									String str;
-									str = param.data.toString();
-									DEDobject.value = str.getBytes();
-								}
-								else
-								{
-									DEDobject.value = param.data;
-								}
-								result = 1;
-							}
-						}
-					}
-				}
-			}
-		}
-		return result;
-	}
 
 	//////////////////////////////////////////////
 	private static final byte LF = '\n';
