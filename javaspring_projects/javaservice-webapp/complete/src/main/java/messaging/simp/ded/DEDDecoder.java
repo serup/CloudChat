@@ -31,11 +31,51 @@ import org.springframework.util.MultiValueMap;
  * could be zero, one, or more.
  * The caller is responsible for dealing with incomplete content buffering until there is more input available.
  *
+ * example:
+ *
+ *   short trans_id = 1;
+ *   boolean action = true;
+ *
+ *   DEDEncoder DED = DEDEncoder.DED_START_ENCODER();
+ *   DED.PUT_STRUCT_START( DED, "event" );
+ *      DED.PUT_METHOD  ( DED, "name",  "MusicPlayer" );
+ *      DED.PUT_USHORT  ( DED, "trans_id",  trans_id);
+ *      DED.PUT_BOOL    ( DED, "startstop", action );
+ *   DED.PUT_STRUCT_END( DED, "event" );
+ *   DED_GET_ENCODED_DATA(encoder_ptr,data_ptr,iLengthOfTotalData,pCompressedData,sizeofCompressedData);
+ *
+ *   //..transmitting :-) simulation
+ *
+ *   //..receiving :-) simulation
+ *
+ *   DEDDecoder DED = DEDDecoder.DED_START_DECODER();
+ *   DED.PUT_DATA_IN_DECODER(decoder_ptr,pCompressedData,sizeofCompressedData);
+ *
+ *   boolean bDecoded=false;
+ *   String strValue;
+ *   short iValue;
+ *   boolean bValue;
+ *
+ *   // decode data ...
+ *
+ *   if( DED.GET_STRUCT_START( DED, "event" ) &&
+ *          DED.GET_METHOD ( DED, "name", strValue ) &&
+ *          DED.GET_USHORT ( DED, "trans_id", iValue) &&
+ *          DED.GET_BOOL   ( DED, "startstop", bValue ) &&
+ *       DED.GET_STRUCT_END( DED, "event" ))
+ *   {
+ *     bDecoded=true;
+ *   }
+ *   else
+ *   {
+ *     bDecoded=false;
+ *   }
+ *
  * @author Johnny Serup
- */
+ *  */
 public class DEDDecoder {
 
-	public class ByteUtils {
+public class ByteUtils {
 		private ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
 
 		public byte[] longToBytes(long x) {
