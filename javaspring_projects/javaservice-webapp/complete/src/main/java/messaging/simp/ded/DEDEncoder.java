@@ -309,56 +309,53 @@ public class DEDEncoder  {
 		return result;
 	}
 
-	public static int PUT_METHOD(DEDEncoder encoder_ptr, String name, byte[] value)
+	public static int PUT_METHOD(DEDEncoder encoder_ptr, String name, String value)
 	{
 		int result = -1;
 		if (encoder_ptr != null)
-			result = encoder_ptr.EncodeMethod(name, value, value.length);
+			result = encoder_ptr.EncodeMethod(name, value.getBytes(), value.length());
 
 		return result;
 	}
 
-	public static int PUT_USHORT(DEDEncoder encoder_ptr, String name, byte[] value)
+	public static int PUT_USHORT(DEDEncoder encoder_ptr, String name, short value)
 	{
 		int result = -1;
 		if (encoder_ptr != null)
-			result = encoder_ptr.EncodeUShort(name, value, 1);
+			result = encoder_ptr.EncodeUShort(name, encoder_ptr.byteUtils.longToBytes((long)value), 1);
 
 		return result;
 	}
 
-	public static int PUT_LONG(DEDEncoder encoder_ptr, String name, byte[] value)
+	public static int PUT_LONG(DEDEncoder encoder_ptr, String name, long value)
 	{
 		int result = -1;
 		if (encoder_ptr != null){
-			result = encoder_ptr.EncodeLong(name, encoder_ptr.byteUtils.bytesToLong(value), 1);
+			result = encoder_ptr.EncodeLong(name, value, 1);
 
 		}
 
 		return result;
 	}
 
-	private int PUT_BOOL(DEDEncoder encoder_ptr, String name, byte[] value)
+	private int PUT_BOOL(DEDEncoder encoder_ptr, String name, boolean value)
 	{
 		int result = -1;
-        boolean	 boolvalue = false; // 0 == false, 1 == true
 		if (encoder_ptr != null) {
-			if (value[0] == (byte)1)
-				boolvalue = true;
-			result = encoder_ptr.EncodeBool(name, boolvalue, 1);
+			result = encoder_ptr.EncodeBool(name, value, 1);
 		}
 		return result;
 	}
 
-	private int PUT_STDSTRING(DEDEncoder encoder_ptr, String name, byte[] value)
+	private int PUT_STDSTRING(DEDEncoder encoder_ptr, String name, String value)
 	{
 		int result = -1;
 		if (encoder_ptr != null) {
 			String strEmpty = "##empty##";
-			if(value.length <= 0)
-				value = strEmpty.getBytes();
+			if(value.length() <= 0)
+				value = strEmpty;
 
-			result = encoder_ptr.EncodeStdString(name, value.toString(), value.length);
+			result = encoder_ptr.EncodeStdString(name, value, value.length());
 		}
 		return result;
 	}
@@ -367,7 +364,7 @@ public class DEDEncoder  {
 	{
 		int result = -1;
 		if (encoder_ptr != null) {
-			result = encoder_ptr.EncodeElement(entityname, elementname, elementvalue);
+			result = encoder_ptr.EncodeElement(entityname, elementname, elementvalue); // will add _chunk_id and _chunk_data
 		}
 		return result;
 	}
@@ -379,16 +376,30 @@ public class DEDEncoder  {
 		return result;
 	}
 
+	byte[] decompress_lzss(byte[] pCompressedData, int sizeofCompressedData)
+	{
+		byte[] result=null;
+	    //TODO: implement decompression
+		return result;
+	}
+
+	private DEDEncoder PUT_DATA_IN_DECODER(byte[] pCompressedData, int sizeofCompressedData)
+	{
+		DEDEncoder decoder_ptr = new DEDEncoder();
+
+		byte[] decmprsd = decompress_lzss(pCompressedData, sizeofCompressedData);
+		if (decmprsd.length > 0) {
+			decoder_ptr.ptotaldata = decmprsd;
+			ptotaldata = decoder_ptr.ptotaldata;
+			decoder_ptr.pdata = ptotaldata;
+			decoder_ptr.iLengthOfTotalData = decmprsd.length;
+			iLengthOfTotalData = decoder_ptr.iLengthOfTotalData;
+		}
+		return decoder_ptr;
+	}
+
 	private int DED_GET_ENCODED_DATA(_DEDobject DEDobject)
 	{
-    /* var DEDobject = {
-     *  encoder_ptr: encoder_ptr,
-     *  uncompresseddata: ,
-     *  iLengthOfTotalData: ,
-     *  pCompressedData: ,
-     *  sizeofCompressedData:
-     *};
-     */
 		int result = -1;
 		if (DEDobject.encoder_ptr != null)
 			DEDobject.uncompresseddata = DEDobject.encoder_ptr.DataEncoder_GetData(DEDobject);
@@ -423,9 +434,171 @@ public class DEDEncoder  {
 		return result;
 	}
 
-		/**
-         * Element types
-         */
+	private int GET_STRUCT_START(DEDEncoder decoder_ptr, String name)
+	{
+		int result = -1;
+        if(!name.isEmpty()) {
+			param DEDobject = new param();
+			DEDobject.name = name;
+			DEDobject.ElementType = DED_ELEMENT_TYPE_STRUCT;
+			DEDobject.value = null;
+			DEDobject.length = 0;
+			result = decoder_ptr.GetElement(DEDobject);
+		}
+		return result;
+	}
+
+	private String GET_METHOD(DEDEncoder decoder_ptr, String name)
+	{
+		String result="##unknown##";
+        if(!name.isEmpty()) {
+			param DEDobject = new param();
+			DEDobject.name = name;
+			DEDobject.ElementType = DED_ELEMENT_TYPE_METHOD;
+			DEDobject.value = null;
+			DEDobject.length = 0;
+			int found = decoder_ptr.GetElement(DEDobject);
+			if (found == 1)
+				result = DEDobject.value.toString();
+		}
+		return result;
+	}
+
+	private short GET_USHORT(DEDEncoder decoder_ptr, String name)
+	{
+		short result = -1;
+        if(!name.isEmpty()) {
+			param DEDobject = new param();
+			DEDobject.name = name;
+			DEDobject.ElementType = DED_ELEMENT_TYPE_USHORT;
+			DEDobject.value = null;
+			DEDobject.length = 0;
+			int found = decoder_ptr.GetElement(DEDobject);
+			if (found == 1)
+				result = (short)byteUtils.bytesToLong(DEDobject.value);
+		}
+		return result;
+	}
+
+	private long GET_LONG(DEDEncoder decoder_ptr, String name)
+	{
+		long result = -1;
+        if(!name.isEmpty()) {
+			param DEDobject = new param();
+			DEDobject.name = name;
+			DEDobject.ElementType = DED_ELEMENT_TYPE_LONG;
+			DEDobject.value = null;
+			DEDobject.length = 0;
+			int found = decoder_ptr.GetElement(DEDobject);
+			if (found == 1)
+				result = byteUtils.bytesToLong(DEDobject.value);
+		}
+		return result;
+	}
+
+	private boolean GET_BOOL(DEDEncoder decoder_ptr, String name)
+	{
+		boolean result = false;
+        if(!name.isEmpty()) {
+			param DEDobject = new param();
+			DEDobject.name = name;
+			DEDobject.ElementType = DED_ELEMENT_TYPE_BOOL;
+			DEDobject.value = null;
+			DEDobject.length = 0;
+			int found = decoder_ptr.GetElement(DEDobject);
+			if (found == 1) {
+				if((int)byteUtils.bytesToLong(DEDobject.value)!=0)
+					result=true;
+			}
+		}
+		return result;
+	}
+
+	String emptycheck(String str)
+	{
+		String strreturn="";
+		if(str=="##empty##")
+			strreturn = "";
+		else
+			strreturn = str;
+		return strreturn;
+	}
+
+	private String GET_STDSTRING(DEDEncoder decoder_ptr, String name)
+	{
+		String result = "";
+		if(!name.isEmpty()) {
+			param DEDobject = new param();
+			DEDobject.name = name;
+			DEDobject.ElementType = DED_ELEMENT_TYPE_STDSTRING;
+			DEDobject.value = null;
+			DEDobject.length = -1;
+			int found = decoder_ptr.GetElement(DEDobject);
+			if (found == 1)
+				result = DEDobject.value.toString();
+			    result = emptycheck(result);
+		}
+		return result;
+	}
+
+	//TODO: 20140724 consider designing _GET_ so that if element is NOT found, then internal pointer is NOT moved as it is NOW!!!
+	private int GET_ELEMENT(DEDEncoder decoder_ptr, String entityname, _Elements elementvalue)
+	{
+		int result = -1;
+
+		String strentity_chunk_id = entityname.toLowerCase() + "_chunk_id";
+		String strentity_chunk_data = entityname.toLowerCase() + "_chunk_data";
+
+		param DEDobject1 = new param();
+			DEDobject1.name = strentity_chunk_id;
+			DEDobject1.ElementType = DED_ELEMENT_TYPE_STDSTRING;
+			DEDobject1.value = null;
+			DEDobject1.length = -1;
+
+		param DEDobject2 = new param();
+			DEDobject2.name = strentity_chunk_data;
+			DEDobject2.ElementType = DED_ELEMENT_TYPE_STDVECTOR;
+			DEDobject2.value = null;
+			DEDobject2.length = -1;
+
+		result = decoder_ptr.GetElement(DEDobject1);
+		if (result == 1)
+			result = (int)byteUtils.bytesToLong(DEDobject1.value);
+		else
+			result = -1;
+		if (result != -1){
+			result = decoder_ptr.GetElement(DEDobject2);
+			if (result == 1)
+				result = (int)byteUtils.bytesToLong(DEDobject2.value);
+			else
+				result = -1;
+		}
+		elementvalue.strElementID = DEDobject1.value.toString();
+		elementvalue.ElementData = DEDobject2.value;
+		if(result != -1) result = 1;
+		return result;
+	}
+
+// ...
+//
+//
+
+	private int GET_STRUCT_END(DEDEncoder decoder_ptr, String name)
+	{
+		int result = -1;
+		param DEDobject = new param();
+		DEDobject.name = name;
+		DEDobject.ElementType = DED_ELEMENT_TYPE_STRUCT_END;
+		DEDobject.value = null;
+		DEDobject.length = -1;
+		result = decoder_ptr.GetElement(DEDobject);
+		return result;
+	}
+
+
+	/**
+    * Element types
+    */
 	public static final int DED_ELEMENT_TYPE_BOOL = 0;
 	public static final int DED_ELEMENT_TYPE_CHAR = 1;
 	public static final int DED_ELEMENT_TYPE_BYTE = 2;
@@ -661,12 +834,12 @@ public class DEDEncoder  {
 		_Elements element = new _Elements();
 		element.strElementID = elementname;
 		element.ElementData = elementvalue;
-		String strentity_chunk_id = entityname + "_chunk_id";
-		String strentity_chunk_data = entityname + "_chunk_data";
+		String strentity_chunk_id = entityname.toLowerCase() + "_chunk_id";
+		String strentity_chunk_data = entityname.toLowerCase() + "_chunk_data";
 
-		result = EncodeStdString(strentity_chunk_id.toLowerCase(), element.strElementID, element.strElementID.length()); // key of particular item
+		result = EncodeStdString(strentity_chunk_id, element.strElementID, element.strElementID.length()); // key of particular item
 		if(result != -1)
-			result = Encodestdvector(strentity_chunk_data.toLowerCase(), element.ElementData, elementvalue.length); //
+			result = Encodestdvector(strentity_chunk_data, element.ElementData, elementvalue.length); //
 		return result;
 	}
 
@@ -709,7 +882,7 @@ public class DEDEncoder  {
 			{
 				String strCmp;
 				strCmp = param.data.toString();
-				if (DEDobject.name == strCmp)
+				if (DEDobject.name.equals(strCmp))
 				{
 					if (param.Tag == DED_ELEMENT_TYPE_STRUCT || param.Tag == DED_ELEMENT_TYPE_STRUCT_END)
 					{
