@@ -26,20 +26,15 @@ import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.messaging.support.NativeMessageHeaderAccessor;
 import org.springframework.util.Assert;
 
-/*
-//TODO: make functions for encoding data - example
-        unsigned short trans_id = 1;
-		bool action = true;
 
-		DED_START_ENCODER(encoder_ptr);
-		DED_PUT_STRUCT_START( encoder_ptr, "event" );
-		  DED_PUT_METHOD  ( encoder_ptr, "name",  "MusicPlayer" );
-		  DED_PUT_USHORT  ( encoder_ptr, "trans_id",      trans_id);
-		  DED_PUT_BOOL    ( encoder_ptr, "startstop", action );
-		DED_PUT_STRUCT_END( encoder_ptr, "event" );
-*/
-
-
+class DEDobject
+{
+	DEDEncoder encoder_ptr;
+	byte[] uncompresseddata;
+	long iLengthOfTotalData;
+	byte[] pCompressedData;
+	long sizeofCompressedData;
+}
 
 /**
  * An encoder for DED frames.
@@ -337,7 +332,7 @@ public class DEDEncoder  {
 		return result;
 	}
 
-	private int PUT_BOOL(DEDEncoder encoder_ptr, String name, boolean value)
+	public static int PUT_BOOL(DEDEncoder encoder_ptr, String name, boolean value)
 	{
 		int result = -1;
 		if (encoder_ptr != null) {
@@ -346,7 +341,7 @@ public class DEDEncoder  {
 		return result;
 	}
 
-	private int PUT_STDSTRING(DEDEncoder encoder_ptr, String name, String value)
+	public static int PUT_STDSTRING(DEDEncoder encoder_ptr, String name, String value)
 	{
 		int result = -1;
 		if (encoder_ptr != null) {
@@ -359,7 +354,7 @@ public class DEDEncoder  {
 		return result;
 	}
 
-	private int PUT_ELEMENT(DEDEncoder encoder_ptr, String entityname, String elementname, byte[] elementvalue)
+	public static int PUT_ELEMENT(DEDEncoder encoder_ptr, String entityname, String elementname, byte[] elementvalue)
 	{
 		int result = -1;
 		if (encoder_ptr != null) {
@@ -375,36 +370,36 @@ public class DEDEncoder  {
 		return result;
 	}
 
-	private int DED_GET_ENCODED_DATA(_DEDobject DEDobject)
+	public int GET_ENCODED_DATA(DEDobject object)
 	{
 		int result = -1;
-		if (DEDobject.encoder_ptr != null)
-			DEDobject.uncompresseddata = DEDobject.encoder_ptr.DataEncoder_GetData(DEDobject);
+		if (object.encoder_ptr != null)
+			object.uncompresseddata = object.encoder_ptr.DataEncoder_GetData(object);
 
 		// Do compression - okumura style
 		// First make sure byte are in same format !!!!
-		byte[] uncmpdata = new byte[DEDobject.uncompresseddata.length];
-		for(int i=0;i<DEDobject.uncompresseddata.length;i++){
-			uncmpdata[i] = DEDobject.uncompresseddata[i];
+		byte[] uncmpdata = new byte[object.uncompresseddata.length];
+		for(int i=0;i<object.uncompresseddata.length;i++){
+			uncmpdata[i] = object.uncompresseddata[i];
 		}
 		// now make room for case where compression yields lager size - when trying to compress an image for example.
 		byte[] tmpCompressedData = new byte[uncmpdata.length * 2];
 		// now compress
 		int compressedSize = compress_lzss(tmpCompressedData, tmpCompressedData.length*2, uncmpdata, uncmpdata.length);
 		if (compressedSize > 0) {
-			DEDobject.pCompressedData = new byte[compressedSize];
-			DEDobject.sizeofCompressedData = compressedSize;
+			object.pCompressedData = new byte[compressedSize];
+			object.sizeofCompressedData = compressedSize;
 			for (int i = 0; i < compressedSize; i++)
-				DEDobject.pCompressedData[i] = tmpCompressedData[i];
+				object.pCompressedData[i] = tmpCompressedData[i];
 			result = 1;
 		}
 		else
 		{
 			// somehow compression went wrong !!!! ignore and just use uncompressed data - perhaps data was already compressed !?
-			DEDobject.pCompressedData = new byte[uncmpdata.length];
-			DEDobject.sizeofCompressedData = uncmpdata.length;
-			for (int i = 0; i < DEDobject.uncompresseddata.length; i++)
-				DEDobject.pCompressedData[i] = uncmpdata[i];
+			object.pCompressedData = new byte[uncmpdata.length];
+			object.sizeofCompressedData = uncmpdata.length;
+			for (int i = 0; i < object.uncompresseddata.length; i++)
+				object.pCompressedData[i] = uncmpdata[i];
 			result = 1;
 		}
 
@@ -667,11 +662,11 @@ public class DEDEncoder  {
        long sizeofCompressedData;
     }
 
-	private byte[] DataEncoder_GetData(_DEDobject DEDobject)
+	private byte[] DataEncoder_GetData(DEDobject object)
 	{
 		byte[] result = null;
 		if (ptotaldata.length > 0) {
-			DEDobject.iLengthOfTotalData = iLengthOfTotalData;
+			object.iLengthOfTotalData = iLengthOfTotalData;
 			result = ptotaldata;
 		}
 		return result;
