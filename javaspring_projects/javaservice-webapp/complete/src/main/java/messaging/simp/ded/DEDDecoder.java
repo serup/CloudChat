@@ -42,7 +42,7 @@ import org.springframework.util.MultiValueMap;
  *      DED.PUT_USHORT  ( DED, "trans_id",  trans_id);
  *      DED.PUT_BOOL    ( DED, "startstop", action );
  *   DED.PUT_STRUCT_END( DED, "event" );
- *   DED_GET_ENCODED_DATA(encoder_ptr,data_ptr,iLengthOfTotalData,pCompressedData,sizeofCompressedData);
+ *   DED.GET_ENCODED_DATA(encoder_ptr,data_ptr,iLengthOfTotalData,pCompressedData,sizeofCompressedData);
  *
  *   //..transmitting :-) simulation
  *
