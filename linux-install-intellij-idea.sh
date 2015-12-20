@@ -1,5 +1,5 @@
 # Specify IDEA version here.
-IDEA_PACKAGE=ideaIU-15.0.2.tar.gz
+IDEA_PACKAGE=ideaIC-15.0.2.tar.gz
 
 # Assuming we already did this during the previous steps:
 # sudo add-apt-repository ppa:webupd8team/java
