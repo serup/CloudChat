@@ -15,18 +15,18 @@ public class DEDEncoderTest {
      *   short trans_id = 1;
      *   boolean action = true;
      *
-     *   DEDEncoder DED = DEDEncoder.DED_START_ENCODER();
-     *   DED.PUT_STRUCT_START( DED, "event" );
-     *      DED.PUT_METHOD  ( DED, "name",  "MusicPlayer" );
-     *      DED.PUT_USHORT  ( DED, "trans_id",  trans_id);
-     *      DED.PUT_BOOL    ( DED, "startstop", action );
-     *   DED.PUT_STRUCT_END( DED, "event" );
+     *   DEDEncoder DED = DEDEncoder();
+     *   DED.PUT_STRUCT_START( "event" );
+     *      DED.PUT_METHOD  ( "name",  "MusicPlayer" );
+     *      DED.PUT_USHORT  ( "trans_id",  trans_id);
+     *      DED.PUT_BOOL    ( "startstop", action );
+     *   DED.PUT_STRUCT_END( "event" );
      *   DED.GET_ENCODED_DATA(DEDobject);
      *
      *   //..transmitting :-) simulation
      *
      *   //..receiving :-) simulation
-     *   DEDDecoder DED = DEDDecoder.DED_START_DECODER();
+     *   DEDDecoder DED = DEDDecoder();
      *   DED.PUT_DATA_IN_DECODER( DEDobject.pCompressedData, DEDobject.sizeofCompressedData);
      *
      *   boolean bDecoded=false;
@@ -36,11 +36,11 @@ public class DEDEncoderTest {
      *
      *   // decode data ...
      *
-     *   if( DED.GET_STRUCT_START( DED, "event" ) &&
-     *          DED.GET_METHOD ( DED, "name", strValue ) &&
-     *          DED.GET_USHORT ( DED, "trans_id", iValue) &&
-     *          DED.GET_BOOL   ( DED, "startstop", bValue ) &&
-     *       DED.GET_STRUCT_END( DED, "event" ))
+     *   if( DED.GET_STRUCT_START( "event" ) &&
+     *          DED.GET_METHOD ( "name", strValue ) &&
+     *          DED.GET_USHORT ( "trans_id", iValue) &&
+     *          DED.GET_BOOL   ( "startstop", bValue ) &&
+     *       DED.GET_STRUCT_END( "event" ))
      *   {
      *     bDecoded=true;
      *   }
@@ -60,17 +60,40 @@ public class DEDEncoderTest {
         short trans_id = 1;
         boolean action = true;
 
-        DEDEncoder DED = DEDEncoder.DED_START_ENCODER();
-        DED.PUT_STRUCT_START( DED, "event" );
-        DED.PUT_METHOD  ( DED, "name",  "MusicPlayer" );
-        DED.PUT_USHORT  ( DED, "trans_id",  trans_id);
-        DED.PUT_BOOL    ( DED, "startstop", action );
-        DED.PUT_STRUCT_END( DED, "event" );
+        DEDEncoder DED = new DEDEncoder();
+        DED.PUT_STRUCT_START( "event" );
+        DED.PUT_METHOD  ( "name",  "MusicPlayer" );
+        DED.PUT_USHORT  ( "trans_id",  trans_id);
+        DED.PUT_BOOL    ( "startstop", action );
+        DED.PUT_STRUCT_END( "event" );
 
         DEDobject DEDobject = new DEDobject();
         DED.GET_ENCODED_DATA(DEDobject);
 
+        //..transmitting :-) simulation
 
+        //..receiving :-) simulation
+
+        boolean bDecoded=false;
+        String strValue="";
+        short iValue=0;
+        boolean bValue=false;
+
+        // decode data ...
+        DEDDecoder DED2 = new DEDDecoder();
+        DED2.PUT_DATA_IN_DECODER( DEDobject.pCompressedData, DEDobject.sizeofCompressedData);
+        if( DED2.GET_STRUCT_START( "event" )==1 &&
+                DED2.GET_METHOD ( "name", strValue )==1 &&
+                DED2.GET_USHORT ( "trans_id", iValue)==1 &&
+                DED2.GET_BOOL   ( "startstop", bValue )==1 &&
+            DED2.GET_STRUCT_END( "event" )==0)
+        {
+          bDecoded=true;
+        }
+        else
+        {
+          bDecoded=false;
+        }
 
 
     }
