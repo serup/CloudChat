@@ -91,6 +91,8 @@ public class ByteUtils {
 	}
 
 	public ByteUtils byteUtils;
+    DEDDecoder decoder_ptr;
+
 	public DEDDecoder()
 	{
 		byteUtils = new ByteUtils();
@@ -294,6 +296,7 @@ public class ByteUtils {
 				pNextASN1 += 4; // sizeof(length) 32 bits
 				param.Tag = ASN1Data[pNextASN1++] & 0x000000FF; // fetch byte tag
 
+				param.data = new byte[param.Length];
 				if (param.Length == 1)
 				{
 					param.data[0] = ASN1Data[pNextASN1];
@@ -305,7 +308,6 @@ public class ByteUtils {
 						param.data[1] = ASN1Data[pNextASN1 + 1];
 					}
 					else {
-						param.data = new byte[param.Length];
 						//for (int i = 0; i < param.Length; i++)
 						//	param.data[i] = ASN1Data[pNextASN1 + i];
 						System.arraycopy(ASN1Data,pNextASN1,param.data,0,param.Length);
@@ -370,11 +372,16 @@ public class ByteUtils {
 	}
 
 
-	private DEDDecoder PUT_DATA_IN_DECODER(byte[] pCompressedData, int sizeofCompressedData)
+	public DEDDecoder PUT_DATA_IN_DECODER(byte[] pCompressedData, int sizeofCompressedData)
 	{
-		DEDDecoder decoder_ptr = new DEDDecoder();
-
+		if(pCompressedData==null) return null;
+		decoder_ptr = new DEDDecoder();
+		if(decoder_ptr==null) return null;
 		byte[] decmprsd = decompress_lzss(pCompressedData, sizeofCompressedData);
+		if(decmprsd==null) {
+			// decompressed failed, perhaps it is not compressed
+			decmprsd=pCompressedData;
+		}
 		if (decmprsd.length > 0) {
 			decoder_ptr.ptotaldata = decmprsd;
 			ptotaldata = decoder_ptr.ptotaldata;
@@ -386,23 +393,25 @@ public class ByteUtils {
 	}
 
 
-	private int GET_STRUCT_START(DEDDecoder decoder_ptr, String name)
+	public int GET_STRUCT_START(String name)
 	{
 		int result = -1;
+		if(this.decoder_ptr==null) return -1;
 		if(!name.isEmpty()) {
 			param DEDobject = new param();
 			DEDobject.name = name;
 			DEDobject.ElementType = DED_ELEMENT_TYPE_STRUCT;
 			DEDobject.value = null;
 			DEDobject.length = 0;
-			result = decoder_ptr._GetElement(DEDobject);
+			result = this.decoder_ptr._GetElement(DEDobject);
 		}
 		return result;
 	}
 
-	private String GET_METHOD(DEDDecoder decoder_ptr, String name)
+	public int GET_METHOD(String name, String strValue)
 	{
-		String result="##unknown##";
+		int result=-1;
+		if(this.decoder_ptr==null) return -1;
 		if(!name.isEmpty()) {
 			param DEDobject = new param();
 			DEDobject.name = name;
@@ -410,15 +419,21 @@ public class ByteUtils {
 			DEDobject.value = null;
 			DEDobject.length = 0;
 			int found = decoder_ptr._GetElement(DEDobject);
-			if (found == 1)
-				result = DEDobject.value.toString();
+			if (found == 1) {
+				strValue="";
+				for(int i=0;i<DEDobject.value.length;i++)
+					strValue = strValue + (char)DEDobject.value[i];
+				//strValue = DEDobject.value.toString();
+				result = 1;
+			}
 		}
 		return result;
 	}
 
-	private short GET_USHORT(DEDDecoder decoder_ptr, String name)
+	public int GET_USHORT(String name, short value)
 	{
-		short result = -1;
+		int result = -1;
+		if(this.decoder_ptr==null) return -1;
 		if(!name.isEmpty()) {
 			param DEDobject = new param();
 			DEDobject.name = name;
@@ -426,15 +441,29 @@ public class ByteUtils {
 			DEDobject.value = null;
 			DEDobject.length = 0;
 			int found = decoder_ptr._GetElement(DEDobject);
-			if (found == 1)
-				result = (short)byteUtils.bytesToLong(DEDobject.value);
+			if (found == 1) {
+				int count=DEDobject.value.length; // should not be bigger than 3
+				int ivalue=0;
+				/*ivalue = ivalue | (DEDobject.value[0] & 0x000000ff);
+				ivalue = ivalue | (DEDobject.value[1] & 0x000000ff) << 8;
+				ivalue = ivalue | (DEDobject.value[2] & 0x000000ff) << 16;
+				ivalue = ivalue | (DEDobject.value[3] & 0x000000ff) << 24;
+                */
+				for(int c=0; c<count; c++)
+					ivalue = ivalue | (DEDobject.value[c] & 0x000000ff << c*8);
+
+				//value = (short) byteUtils.bytesToLong(DEDobject.value);
+				value = (short) ivalue;
+				result=1;
+			}
 		}
 		return result;
 	}
 
-	private long GET_LONG(DEDDecoder decoder_ptr, String name)
+	public int GET_LONG(String name, long value)
 	{
-		long result = -1;
+		int result = -1;
+		if(this.decoder_ptr==null) return -1;
 		if(!name.isEmpty()) {
 			param DEDobject = new param();
 			DEDobject.name = name;
@@ -442,15 +471,18 @@ public class ByteUtils {
 			DEDobject.value = null;
 			DEDobject.length = 0;
 			int found = decoder_ptr._GetElement(DEDobject);
-			if (found == 1)
-				result = byteUtils.bytesToLong(DEDobject.value);
+			if (found == 1) {
+				value = byteUtils.bytesToLong(DEDobject.value);
+				result = 1;
+			}
 		}
 		return result;
 	}
 
-	private boolean GET_BOOL(DEDDecoder decoder_ptr, String name)
+	public int GET_BOOL(String name, boolean value)
 	{
-		boolean result = false;
+		int result = -1;
+		if(this.decoder_ptr==null) return -1;
 		if(!name.isEmpty()) {
 			param DEDobject = new param();
 			DEDobject.name = name;
@@ -460,7 +492,10 @@ public class ByteUtils {
 			int found = decoder_ptr._GetElement(DEDobject);
 			if (found == 1) {
 				if((int)byteUtils.bytesToLong(DEDobject.value)!=0)
-					result=true;
+					value=true;
+				else
+				    value=false;
+				result=1;
 			}
 		}
 		return result;
@@ -476,9 +511,10 @@ public class ByteUtils {
 		return strreturn;
 	}
 
-	private String GET_STDSTRING(DEDDecoder decoder_ptr, String name)
+	public int GET_STDSTRING(String name, String value)
 	{
-		String result = "";
+		int result = -1;
+		if(this.decoder_ptr==null) return -1;
 		if(!name.isEmpty()) {
 			param DEDobject = new param();
 			DEDobject.name = name;
@@ -486,18 +522,21 @@ public class ByteUtils {
 			DEDobject.value = null;
 			DEDobject.length = -1;
 			int found = decoder_ptr._GetElement(DEDobject);
-			if (found == 1)
-				result = DEDobject.value.toString();
-			result = emptycheck(result);
+			if (found == 1) {
+				value = DEDobject.value.toString();
+				result = 0;
+			}
+			value = emptycheck(value);
 		}
 		return result;
 	}
 
 
 	//TODO: 20140724 consider designing _GET_ so that if element is NOT found, then internal pointer is NOT moved as it is NOW!!!
-	private int GET_ELEMENT(DEDDecoder decoder_ptr, String entityname, _Elements elementvalue)
+	public int GET_ELEMENT(String entityname, _Elements elementvalue)
 	{
 		int result = -1;
+		if(this.decoder_ptr==null) return -1;
 
 		String strentity_chunk_id = entityname.toLowerCase() + "_chunk_id";
 		String strentity_chunk_data = entityname.toLowerCase() + "_chunk_data";
@@ -550,8 +589,10 @@ public class ByteUtils {
 		{
 			if (param.Tag == ElementType)
 			{
-				String strCmp;
-				strCmp = param.data.toString();
+				String strCmp="";
+				for(int i=0;i<param.Length;i++)
+					strCmp = strCmp + (char)param.data[i];
+				//strCmp = param.data.toString();
 				if (DEDobject.name.equals(strCmp))
 				{
 					if (param.Tag == DED_ELEMENT_TYPE_STRUCT || param.Tag == DED_ELEMENT_TYPE_STRUCT_END)
@@ -569,8 +610,10 @@ public class ByteUtils {
 							{
 								if (ElementType == DED_ELEMENT_TYPE_METHOD || ElementType == DED_ELEMENT_TYPE_STRING || ElementType == DED_ELEMENT_TYPE_STDSTRING)
 								{
-									String str;
-									str = param.data.toString();
+									String str="";
+									for(int i=0;i<param.Length;i++)
+										str = str + (char)param.data[i];
+									//str = param.data.toString();
 									DEDobject.value = str.getBytes();
 								}
 								else
@@ -592,9 +635,10 @@ public class ByteUtils {
 //
 //
 
-	private int GET_STRUCT_END(DEDDecoder decoder_ptr, String name)
+	public int GET_STRUCT_END(String name)
 	{
 		int result = -1;
+		if(this.decoder_ptr==null) return -1;
 		param DEDobject = new param();
 		DEDobject.name = name;
 		DEDobject.ElementType = DED_ELEMENT_TYPE_STRUCT_END;

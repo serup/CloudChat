@@ -25,15 +25,15 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.messaging.support.NativeMessageHeaderAccessor;
 import org.springframework.util.Assert;
+import org.springframework.util.SystemPropertyUtils;
 
 
 class DEDobject
 {
-	DEDEncoder encoder_ptr;
 	byte[] uncompresseddata;
-	long iLengthOfTotalData;
+	int iLengthOfTotalData;
 	byte[] pCompressedData;
-	long sizeofCompressedData;
+	int sizeofCompressedData;
 }
 
 /**
@@ -60,9 +60,13 @@ public class DEDEncoder  {
 	}
 
 	public ByteUtils byteUtils;
+	DEDEncoder dedEncoder;
+
 	public DEDEncoder()
 	{
 		byteUtils = new ByteUtils();
+		dedEncoder = this;
+		//DED_START_ENCODER();
 	}
 
 	/**
@@ -112,6 +116,8 @@ public class DEDEncoder  {
 			pNextASN1 = -1;
 			CurrentASN1Position = 0;
 			int iLength = iAppendMaxLength + LengthOfData;
+			if(data==null)
+				return -1;
 			iLengthOfData = LengthOfData;
 			iTotalLengthOfData = iLength; // max room for data
 			if(iLength != 0)
@@ -168,10 +174,10 @@ public class DEDEncoder  {
 
 				if(data.length > 0)
 				{
-					for (int i = 0; i < LengthOfNewASN1Data; i++){
-						ASN1Data[pAppendPosition + 4 + 1 + i] = data[i];
-					}
-
+					//for (int i = 0; i < LengthOfNewASN1Data; i++){
+					//	ASN1Data[pAppendPosition + 4 + 1 + i] = data[i];
+					//}
+					System.arraycopy(data,0,ASN1Data,pAppendPosition+4+1,LengthOfNewASN1Data);
 					iLengthOfData = iLengthOfData + 4 +1 + LengthOfNewASN1Data; // Add new ASN1 to length : Length+tag+SizeofData
 				}
 				else
@@ -280,85 +286,85 @@ public class DEDEncoder  {
 	 *  DED.PUT_BOOL    ( DED, "startstop", action );
 	 * DED.PUT_STRUCT_END( DED, "event" );
 	 */
-	public static DEDEncoder DED_START_ENCODER()
+	public DEDEncoder DED_START_ENCODER()
 	{
-		DEDEncoder dedEncoder = new DEDEncoder();
-		return  dedEncoder;
+		this.dedEncoder = new DEDEncoder();
+		return this.dedEncoder;
 	}
 
-    public static int PUT_STRUCT_START(DEDEncoder dedEncoder, String name)
+    public int PUT_STRUCT_START(String name)
 	{
 		int result=-1;
-		if(dedEncoder != null)
-			result = dedEncoder.EncodeStructStart(name);
+		if(this.dedEncoder != null)
+			result = this.dedEncoder.EncodeStructStart(name);
 		return result;
 	}
 
-	public static int PUT_STRUCT_END(DEDEncoder encoder_ptr, String name)
+	public int PUT_STRUCT_END(String name)
 	{
 		int result = -1;
-		if (encoder_ptr != null)
-			result = encoder_ptr.EncodeStructEnd(name);
-
-		return result;
-	}
-
-	public static int PUT_METHOD(DEDEncoder encoder_ptr, String name, String value)
-	{
-		int result = -1;
-		if (encoder_ptr != null)
-			result = encoder_ptr.EncodeMethod(name, value.getBytes(), value.length());
+		if (this.dedEncoder != null)
+			result = this.dedEncoder.EncodeStructEnd(name);
 
 		return result;
 	}
 
-	public static int PUT_USHORT(DEDEncoder encoder_ptr, String name, short value)
+	public int PUT_METHOD(String name, String value)
 	{
 		int result = -1;
-		if (encoder_ptr != null)
-			result = encoder_ptr.EncodeUShort(name, encoder_ptr.byteUtils.longToBytes((long)value), 1);
+		if (this.dedEncoder != null)
+			result = this.dedEncoder.EncodeMethod(name, value.getBytes(), value.length());
 
 		return result;
 	}
 
-	public static int PUT_LONG(DEDEncoder encoder_ptr, String name, long value)
+	public int PUT_USHORT(String name, short value)
 	{
 		int result = -1;
-		if (encoder_ptr != null){
-			result = encoder_ptr.EncodeLong(name, value, 1);
+		if (this.dedEncoder != null)
+			result = this.dedEncoder.EncodeUShort(name, this.dedEncoder.byteUtils.longToBytes((long)value), 1);
+
+		return result;
+	}
+
+	public int PUT_LONG(String name, long value)
+	{
+		int result = -1;
+		if (this.dedEncoder != null){
+			result = this.dedEncoder.EncodeLong(name, value, 1);
 
 		}
 
 		return result;
 	}
 
-	public static int PUT_BOOL(DEDEncoder encoder_ptr, String name, boolean value)
+	public int PUT_BOOL(String name, boolean value)
 	{
 		int result = -1;
-		if (encoder_ptr != null) {
-			result = encoder_ptr.EncodeBool(name, value, 1);
+		if (this.dedEncoder != null) {
+			result = this.dedEncoder.EncodeBool(name, value, 1);
 		}
 		return result;
 	}
 
-	public static int PUT_STDSTRING(DEDEncoder encoder_ptr, String name, String value)
+	public int PUT_STDSTRING(String name, String value)
 	{
 		int result = -1;
-		if (encoder_ptr != null) {
+		if (this.dedEncoder != null) {
 			String strEmpty = "##empty##";
 			if(value.length() <= 0)
 				value = strEmpty;
 
-			result = encoder_ptr.EncodeStdString(name, value, value.length());
+			result = this.dedEncoder.EncodeStdString(name, value, value.length());
 		}
 		return result;
 	}
 
-	public static int PUT_ELEMENT(DEDEncoder encoder_ptr, String entityname, String elementname, byte[] elementvalue)
+	public int PUT_ELEMENT(String entityname, String elementname, byte[] elementvalue)
 	{
 		int result = -1;
-		if (encoder_ptr != null) {
-			result = encoder_ptr.EncodeElement(entityname, elementname, elementvalue); // will add _chunk_id and _chunk_data
+		if (this.dedEncoder != null) {
+			result = this.dedEncoder.EncodeElement(entityname, elementname, elementvalue); // will add _chunk_id and _chunk_data
 		}
 		return result;
 	}
@@ -373,36 +379,37 @@ public class DEDEncoder  {
 	public int GET_ENCODED_DATA(DEDobject object)
 	{
 		int result = -1;
-		if (object.encoder_ptr != null)
-			object.uncompresseddata = object.encoder_ptr.DataEncoder_GetData(object);
+		if (this.dedEncoder != null) {
+			object.uncompresseddata = this.dedEncoder.DataEncoder_GetData(object);
 
-		// Do compression - okumura style
-		// First make sure byte are in same format !!!!
-		byte[] uncmpdata = new byte[object.uncompresseddata.length];
-		for(int i=0;i<object.uncompresseddata.length;i++){
-			uncmpdata[i] = object.uncompresseddata[i];
+			// Do compression - okumura style
+			// First make sure byte are in same format !!!!
+			byte[] uncmpdata = new byte[object.uncompresseddata.length];
+			//for (int i = 0; i < object.uncompresseddata.length; i++) {
+			//	uncmpdata[i] = object.uncompresseddata[i];
+			//}
+			System.arraycopy(object.uncompresseddata,0,uncmpdata,0,object.uncompresseddata.length);
+			// now make room for case where compression yields lager size - when trying to compress an image for example.
+			byte[] tmpCompressedData = new byte[uncmpdata.length * 2];
+			// now compress
+			int compressedSize = compress_lzss(tmpCompressedData, tmpCompressedData.length * 2, uncmpdata, uncmpdata.length);
+			if (compressedSize > 0) {
+				object.pCompressedData = new byte[compressedSize];
+				object.sizeofCompressedData = compressedSize;
+				//for (int i = 0; i < compressedSize; i++)
+				//	object.pCompressedData[i] = tmpCompressedData[i];
+				System.arraycopy(tmpCompressedData,0,object.pCompressedData,0,compressedSize);
+				result = 1;
+			} else {
+				// somehow compression went wrong !!!! ignore and just use uncompressed data - perhaps data was already compressed !?
+				object.pCompressedData = new byte[uncmpdata.length];
+				object.sizeofCompressedData = uncmpdata.length;
+				//for (int i = 0; i < object.uncompresseddata.length; i++)
+				//	object.pCompressedData[i] = uncmpdata[i];
+				System.arraycopy(uncmpdata,0,object.pCompressedData,0,object.uncompresseddata.length);
+				result = 1;
+			}
 		}
-		// now make room for case where compression yields lager size - when trying to compress an image for example.
-		byte[] tmpCompressedData = new byte[uncmpdata.length * 2];
-		// now compress
-		int compressedSize = compress_lzss(tmpCompressedData, tmpCompressedData.length*2, uncmpdata, uncmpdata.length);
-		if (compressedSize > 0) {
-			object.pCompressedData = new byte[compressedSize];
-			object.sizeofCompressedData = compressedSize;
-			for (int i = 0; i < compressedSize; i++)
-				object.pCompressedData[i] = tmpCompressedData[i];
-			result = 1;
-		}
-		else
-		{
-			// somehow compression went wrong !!!! ignore and just use uncompressed data - perhaps data was already compressed !?
-			object.pCompressedData = new byte[uncmpdata.length];
-			object.sizeofCompressedData = uncmpdata.length;
-			for (int i = 0; i < object.uncompresseddata.length; i++)
-				object.pCompressedData[i] = uncmpdata[i];
-			result = 1;
-		}
-
 		return result;
 	}
 
@@ -437,7 +444,6 @@ public class DEDEncoder  {
 	//...
 	public static final int DED_ELEMENT_TYPE_UNKNOWN = 0xff;
 
-
 	class param
 	{
 		public String name;
@@ -450,8 +456,6 @@ public class DEDEncoder  {
 		int Length;
 		byte[] data;
 	}
-
-
 
 	/**
 	 * General function for adding elements to array as ASN1 elements
@@ -478,16 +482,16 @@ public class DEDEncoder  {
 			data paramasn1 = new data();
 			asn1.FetchTotalASN1(paramasn1);
 			iLengthOfTotalData = paramasn1.Length;
-		    /*
+
 			iLengthOfData = iLengthOfTotalData; // First element in structure
 			pdata = new byte[iLengthOfData];
 			//for (int i = 0; i < paramasn1.Length; i++)
 			//	pdata[i] = paramasn1.data[i];
 			System.arraycopy(paramasn1.data,0,pdata,0,paramasn1.Length);
 			ptotaldata = pdata;
-			*/
 
-			ptotaldata = null; // DED_ELEMENT_TYPE_STRUCT does NOT have a value
+
+			//ptotaldata = null; // DED_ELEMENT_TYPE_STRUCT does NOT have a value
 		}
 		else
 		{
