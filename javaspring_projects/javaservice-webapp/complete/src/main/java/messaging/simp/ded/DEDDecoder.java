@@ -75,8 +75,15 @@ import org.springframework.util.MultiValueMap;
  *  */
 public class DEDDecoder {
 
-public class ByteUtils {
+	public class ByteUtils {
 		private ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
+
+		public byte[] shortToBytes(short x)
+		{
+			ByteBuffer buffershort = ByteBuffer.allocate(2);
+			buffershort.putShort(x);
+			return buffershort.array();
+		}
 
 		public byte[] longToBytes(long x) {
 			buffer.putLong(0, x);
@@ -87,6 +94,13 @@ public class ByteUtils {
 			buffer.put(bytes, 0, bytes.length);
 			buffer.flip();//need flip
 			return buffer.getLong();
+		}
+
+		public short bytesToShort(byte[] bytes) {
+			ByteBuffer buffershort = ByteBuffer.allocate(2);
+			buffershort.put(bytes, 0, 2);
+			buffershort.flip();//need flip
+			return buffershort.getShort();
 		}
 	}
 
@@ -408,10 +422,11 @@ public class ByteUtils {
 		return result;
 	}
 
-	public int GET_METHOD(String name, String strValue)
+
+	public String GET_METHOD(String name)
 	{
-		int result=-1;
-		if(this.decoder_ptr==null) return -1;
+		String result="";
+		if(this.decoder_ptr==null) return "";
 		if(!name.isEmpty()) {
 			param DEDobject = new param();
 			DEDobject.name = name;
@@ -420,19 +435,16 @@ public class ByteUtils {
 			DEDobject.length = 0;
 			int found = decoder_ptr._GetElement(DEDobject);
 			if (found == 1) {
-				strValue="";
 				for(int i=0;i<DEDobject.value.length;i++)
-					strValue = strValue + (char)DEDobject.value[i];
-				//strValue = DEDobject.value.toString();
-				result = 1;
+					result = result + (char)DEDobject.value[i];
 			}
 		}
 		return result;
 	}
 
-	public int GET_USHORT(String name, short value)
+	public short GET_USHORT(String name)
 	{
-		int result = -1;
+		short result = -1;
 		if(this.decoder_ptr==null) return -1;
 		if(!name.isEmpty()) {
 			param DEDobject = new param();
@@ -442,19 +454,7 @@ public class ByteUtils {
 			DEDobject.length = 0;
 			int found = decoder_ptr._GetElement(DEDobject);
 			if (found == 1) {
-				int count=DEDobject.value.length; // should not be bigger than 3
-				int ivalue=0;
-				/*ivalue = ivalue | (DEDobject.value[0] & 0x000000ff);
-				ivalue = ivalue | (DEDobject.value[1] & 0x000000ff) << 8;
-				ivalue = ivalue | (DEDobject.value[2] & 0x000000ff) << 16;
-				ivalue = ivalue | (DEDobject.value[3] & 0x000000ff) << 24;
-                */
-				for(int c=0; c<count; c++)
-					ivalue = ivalue | (DEDobject.value[c] & 0x000000ff << c*8);
-
-				//value = (short) byteUtils.bytesToLong(DEDobject.value);
-				value = (short) ivalue;
-				result=1;
+				result = byteUtils.bytesToShort(DEDobject.value);
 			}
 		}
 		return result;
@@ -479,10 +479,10 @@ public class ByteUtils {
 		return result;
 	}
 
-	public int GET_BOOL(String name, boolean value)
+	public boolean GET_BOOL(String name)
 	{
-		int result = -1;
-		if(this.decoder_ptr==null) return -1;
+		boolean result = false;
+		if(this.decoder_ptr==null) return false;
 		if(!name.isEmpty()) {
 			param DEDobject = new param();
 			DEDobject.name = name;
@@ -491,11 +491,10 @@ public class ByteUtils {
 			DEDobject.length = 0;
 			int found = decoder_ptr._GetElement(DEDobject);
 			if (found == 1) {
-				if((int)byteUtils.bytesToLong(DEDobject.value)!=0)
-					value=true;
+				if(DEDobject.value[0]!=0)
+					result=true;
 				else
-				    value=false;
-				result=1;
+				    result=false;
 			}
 		}
 		return result;

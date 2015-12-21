@@ -36,6 +36,11 @@ class DEDobject
 	int sizeofCompressedData;
 }
 
+class _String
+{
+   	String str;
+}
+
 /**
  * An encoder for DED frames.
  *
@@ -47,6 +52,13 @@ public class DEDEncoder  {
 	public class ByteUtils {
 		private ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
 
+		public byte[] shortToBytes(short x)
+		{
+			ByteBuffer buffershort = ByteBuffer.allocate(2);
+			buffershort.putShort(x);
+			return buffershort.array();
+		}
+
 		public byte[] longToBytes(long x) {
 			buffer.putLong(0, x);
 			return buffer.array();
@@ -57,6 +69,14 @@ public class DEDEncoder  {
 			buffer.flip();//need flip
 			return buffer.getLong();
 		}
+
+		public short bytesToShort(byte[] bytes) {
+            ByteBuffer buffershort = ByteBuffer.allocate(2);
+			buffershort.put(bytes, 0, 2);
+			buffershort.flip();//need flip
+			return buffershort.getShort();
+		}
+
 	}
 
 	public ByteUtils byteUtils;
@@ -322,7 +342,7 @@ public class DEDEncoder  {
 	{
 		int result = -1;
 		if (this.dedEncoder != null)
-			result = this.dedEncoder.EncodeUShort(name, this.dedEncoder.byteUtils.longToBytes((long)value), 1);
+			result = this.dedEncoder.EncodeUShort(name, this.dedEncoder.byteUtils.shortToBytes(value), 2);
 
 		return result;
 	}
@@ -597,10 +617,11 @@ public class DEDEncoder  {
 	private int EncodeBool(String name, boolean value, int length)
 	{
 		int result = -1;
-		if(name.isEmpty()) {
+		if(!name.isEmpty()) {
 			param element = new param();
 			element.name = name;
 			element.ElementType = DED_ELEMENT_TYPE_BOOL;
+			element.value = new byte[1];
 			element.value[0] = (value == true) ? (byte)1 : (byte)0;
 			element.length = length;
 			result = AddElement(element);
