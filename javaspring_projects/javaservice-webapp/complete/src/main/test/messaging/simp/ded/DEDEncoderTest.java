@@ -83,10 +83,10 @@ public class DEDEncoderTest {
         DEDDecoder DED2 = new DEDDecoder();
         DED2.PUT_DATA_IN_DECODER( DEDobject.pCompressedData, DEDobject.sizeofCompressedData);
         if( DED2.GET_STRUCT_START( "event" )==1 &&
-                DED2.GET_METHOD ( "name", strValue )==1 &&
-                DED2.GET_USHORT ( "trans_id", iValue)==1 &&
-                DED2.GET_BOOL   ( "startstop", bValue )==1 &&
-            DED2.GET_STRUCT_END( "event" )==0)
+                (strValue = DED2.GET_METHOD ( "name" )).length()>0 &&
+                (iValue   = DED2.GET_USHORT ( "trans_id")) !=-1 &&
+                (bValue   = DED2.GET_BOOL   ( "startstop")) &&
+            DED2.GET_STRUCT_END( "event" )==1)
         {
           bDecoded=true;
         }
