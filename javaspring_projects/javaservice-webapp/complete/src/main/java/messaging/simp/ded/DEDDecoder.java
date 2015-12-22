@@ -510,10 +510,10 @@ public class DEDDecoder {
 		return strreturn;
 	}
 
-	public int GET_STDSTRING(String name, String value)
+	public String GET_STDSTRING(String name)
 	{
-		int result = -1;
-		if(this.decoder_ptr==null) return -1;
+		String result = "##empty##";
+		if(this.decoder_ptr==null) return "##error null decoder_ptr##";
 		if(!name.isEmpty()) {
 			param DEDobject = new param();
 			DEDobject.name = name;
@@ -522,10 +522,14 @@ public class DEDDecoder {
 			DEDobject.length = -1;
 			int found = decoder_ptr._GetElement(DEDobject);
 			if (found == 1) {
-				value = DEDobject.value.toString();
-				result = 0;
+				String strtest = new String(DEDobject.value, UTF8_CHARSET);
+				if(strtest.length()>0)
+					result = strtest;
+				//result="";
+				//for(int i=0;i<DEDobject.value.length;i++)
+				//	result = result + (char)DEDobject.value[i];
 			}
-			value = emptycheck(value);
+			result = emptycheck(result);
 		}
 		return result;
 	}
@@ -636,7 +640,7 @@ public class DEDDecoder {
 
 	public int GET_STRUCT_END(String name)
 	{
-		int result = -1;
+		int result = 0;
 		if(this.decoder_ptr==null) return -1;
 		param DEDobject = new param();
 		DEDobject.name = name;
@@ -644,6 +648,8 @@ public class DEDDecoder {
 		DEDobject.value = null;
 		DEDobject.length = -1;
 		result = decoder_ptr._GetElement(DEDobject);
+		if(result==-1) // last element received
+			result=1;
 		return result;
 	}
 

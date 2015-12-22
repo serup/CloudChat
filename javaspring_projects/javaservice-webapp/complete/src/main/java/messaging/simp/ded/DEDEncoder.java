@@ -632,7 +632,7 @@ public class DEDEncoder  {
 	private int EncodeStdString(String name, String value, int length)
 	{
 		int result = -1;
-		if(name.isEmpty()) {
+		if(!name.isEmpty()) {
 			param element = new param();
 			element.name = name;
 			element.ElementType = DED_ELEMENT_TYPE_STDSTRING;
