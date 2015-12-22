@@ -65,6 +65,7 @@ public class DEDEncoderTest {
         DED.PUT_METHOD  ( "name",  "MusicPlayer" );
         DED.PUT_USHORT  ( "trans_id",  trans_id);
         DED.PUT_BOOL    ( "startstop", action );
+        DED.PUT_STDSTRING("text", "hello world");
         DED.PUT_STRUCT_END( "event" );
 
         DEDobject DEDobject = new DEDobject();
@@ -78,6 +79,7 @@ public class DEDEncoderTest {
         String strValue="";
         short iValue=0;
         boolean bValue=false;
+        String strText="";
 
         // decode data ...
         DEDDecoder DED2 = new DEDDecoder();
@@ -86,6 +88,7 @@ public class DEDEncoderTest {
                 (strValue = DED2.GET_METHOD ( "name" )).length()>0 &&
                 (iValue   = DED2.GET_USHORT ( "trans_id")) !=-1 &&
                 (bValue   = DED2.GET_BOOL   ( "startstop")) &&
+                (strText  = DED2.GET_STDSTRING ( "text")).length()>0 &&
             DED2.GET_STRUCT_END( "event" )==1)
         {
           bDecoded=true;
