@@ -11,7 +11,7 @@ package messaging.simp.ded;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
+import java.nio.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -28,18 +28,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.SystemPropertyUtils;
 
 
-class DEDobject
-{
-	byte[] uncompresseddata;
-	int iLengthOfTotalData;
-	byte[] pCompressedData;
-	int sizeofCompressedData;
-}
 
-class _String
-{
-   	String str;
-}
 
 /**
  * An encoder for DED frames.
@@ -81,11 +70,13 @@ public class DEDEncoder  {
 
 	public ByteUtils byteUtils;
 	DEDEncoder dedEncoder;
+	public DEDobject dedobject;
 
 	public DEDEncoder()
 	{
 		byteUtils = new ByteUtils();
 		dedEncoder = this;
+		dedobject = new DEDobject();
 		//DED_START_ENCODER();
 	}
 
@@ -431,6 +422,19 @@ public class DEDEncoder  {
 			}
 		}
 		return result;
+	}
+
+	public ByteBuffer GET_ENCODED_BYTEBUFFER_DATA()
+	{
+		ByteBuffer data;
+        DEDobject dedobject = new DEDobject();
+		this.GET_ENCODED_DATA(dedobject);
+		if(dedobject.getiLengthOfTotalData()>0)
+			data = ByteBuffer.wrap(dedobject.getpCompressedData());
+		else {
+			data = null;
+		}
+		return data;
 	}
 
 	/**

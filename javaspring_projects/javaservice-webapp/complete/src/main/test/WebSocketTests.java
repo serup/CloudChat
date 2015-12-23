@@ -1,16 +1,18 @@
-import config.EchoByteArrayEndpoint;
-import config.EchoEndpoint;
-import junit.framework.Assert;
+import WebSocketEchoTestEndpoints.EchoByteArrayEndpoint;
+import ClientEndpoint.JavaWebSocketClientEndpoint;
+import WebSocketEchoTestEndpoints.EchoEndpoint;
+import messaging.simp.ded.DEDEncoder;
 import org.glassfish.tyrus.server.Server;
 import org.glassfish.tyrus.client.ClientManager;
 import org.junit.Test;
 
-import javax.validation.constraints.AssertTrue;
 import javax.websocket.*;
+import javax.websocket.Endpoint;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.nio.ByteBuffer;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -22,7 +24,6 @@ import static junit.framework.TestCase.assertEquals;
 public class WebSocketTests {
 
     private static CountDownLatch messageLatch;
-    private static final String SENT_MESSAGE = "Hello World";
     private static Thread serverThread;
     String strMessageToSend="";
     String strMsgBridge=""; // used as picky-bag message for echo client server test
@@ -75,6 +76,7 @@ public class WebSocketTests {
                 }
             }, cec, new URI("ws://localhost:8025/websockets/echo"));
             messageLatch.await(100, TimeUnit.SECONDS);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -89,7 +91,7 @@ public class WebSocketTests {
                     server.start();
                     BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
                     System.out.print("Please press a key to stop the server.");
-                    reader.readLine();
+                    reader.read();
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
@@ -99,6 +101,8 @@ public class WebSocketTests {
         };
         serverThread.start();
     }
+
+
 
     @Test
     public void testClientServerEcho() throws Exception {
@@ -117,4 +121,52 @@ public class WebSocketTests {
         assertEquals("Hello World",strReceivedMsg);
 
     }
+
+    @Test
+    public void testClientServerBinaryEcho() throws Exception {
+
+        /**
+         * First start a server which can receive and echo back a binary array
+         */
+        runByteArrayServer();
+
+        /**
+         * setup client
+         */
+        final ClientEndpointConfig cec = ClientEndpointConfig.Builder.create().build();
+        ClientManager client = ClientManager.createClient();
+        JavaWebSocketClientEndpoint clientEndpoint = new JavaWebSocketClientEndpoint();
+
+        /**
+         * connect client
+         */
+        client.connectToServer(clientEndpoint,cec, new URI("ws://localhost:8033/websockets/echoBinary"));
+
+        /**
+         * prepare data to be send
+         */
+        short trans_id = 1;
+        boolean action = true;
+
+        DEDEncoder DED = new DEDEncoder();
+        DED.PUT_STRUCT_START( "event" );
+        DED.PUT_METHOD  ( "name",  "MusicPlayer" );
+        DED.PUT_USHORT  ( "trans_id",  trans_id);
+        DED.PUT_BOOL    ( "startstop", action );
+        DED.PUT_STDSTRING("text", "hello world");
+        DED.PUT_STRUCT_END( "event" );
+
+        ByteBuffer data = DED.GET_ENCODED_BYTEBUFFER_DATA();
+
+        /**
+         * send to server with client current client session connection
+         */
+        clientEndpoint.sendToServer(data);
+
+        /**
+         * wait for response from server
+         */
+
+    }
+
 }
