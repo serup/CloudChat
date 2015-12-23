@@ -1,3 +1,4 @@
+import config.EchoByteArrayEndpoint;
 import config.EchoEndpoint;
 import junit.framework.Assert;
 import org.glassfish.tyrus.server.Server;
@@ -23,9 +24,10 @@ public class WebSocketTests {
     private static CountDownLatch messageLatch;
     private static final String SENT_MESSAGE = "Hello World";
     private static Thread serverThread;
-    boolean bSuccess=false;
+    String strMessageToSend="";
+    String strMsgBridge=""; // used as picky-bag message for echo client server test
 
-    public void runServer() {
+    public void runTxtMessageServer() {
         serverThread = new Thread() {
             public void run() {
                 Server server = new Server("localhost", 8025, "/websockets", null, EchoEndpoint.class);
@@ -44,25 +46,13 @@ public class WebSocketTests {
         serverThread.start();
     }
 
-
-    @Test
-    public void testConnect() throws Exception {
-
-
-        /**
-         * First start a server
-         */
-        runServer();
-
-        /**
-         * Second connect to it as a java websocket client
-         */
-
+    public String responseToClient(String strmsg)
+    {
         try {
+            strMessageToSend=strmsg;
             messageLatch = new CountDownLatch(1);
 
             final ClientEndpointConfig cec = ClientEndpointConfig.Builder.create().build();
-
             ClientManager client = ClientManager.createClient();
             client.connectToServer(new Endpoint() {
 
@@ -74,12 +64,11 @@ public class WebSocketTests {
                             @Override
                             public void onMessage(String message) {
                                 System.out.println("Received message: "+message);
-                                if(message.equals("Hello World"))
-                                    bSuccess=true;
+                                strMsgBridge = message;
                                 messageLatch.countDown();
                             }
                         });
-                        session.getBasicRemote().sendText(SENT_MESSAGE);
+                        session.getBasicRemote().sendText(strMessageToSend);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -89,8 +78,43 @@ public class WebSocketTests {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return strMsgBridge;
+    }
 
-        assertEquals(true,bSuccess);
+    public void runByteArrayServer() {
+        serverThread = new Thread() {
+            public void run() {
+                Server server = new Server("localhost", 8033, "/websockets", null, EchoByteArrayEndpoint.class);
+                try {
+                    server.start();
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+                    System.out.print("Please press a key to stop the server.");
+                    reader.readLine();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    server.stop();
+                }
+            }
+        };
+        serverThread.start();
+    }
+
+    @Test
+    public void testClientServerEcho() throws Exception {
+
+
+        /**
+         * First start a server
+         */
+        runTxtMessageServer();
+
+        /**
+         * Second connect to it as a java websocket client, and send a message, expecting it to echo back
+         */
+        String strReceivedMsg = responseToClient("Hello World");
+
+        assertEquals("Hello World",strReceivedMsg);
 
     }
 }
