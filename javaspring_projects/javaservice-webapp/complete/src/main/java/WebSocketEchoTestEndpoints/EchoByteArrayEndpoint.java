@@ -1,4 +1,4 @@
-package config;
+package WebSocketEchoTestEndpoints;
 
 import javax.websocket.OnMessage;
 import javax.websocket.Session;
