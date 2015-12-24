@@ -382,22 +382,26 @@ public class DEDEncoder  {
 
 	//TODO: change to fit JAVA style of programming -- reference in parameter does not really work onless you use objects
 	//TODO: change to return compressed array instead of changing parameters!!
-	int compress_lzss(byte[] compressedData ,long iLengthCompressedData, byte[] uncompressedData, long iLengthUncompressedData  )
+	byte[] compress_lzss(byte[] uncompressedData, long iLengthUncompressedData  )
 	{
-		int result=-1;
+		byte[] result=null;
 		if(uncompressedData.length != iLengthUncompressedData)
 			return result;
 		try {
 			ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(uncompressedData);
 			LZSS lzss = new LZSS(byteArrayInputStream);
 			ByteArrayOutputStream byteArrayOutputStream = lzss.compress();
-			result = byteArrayInputStream.available();
+			result = byteArrayOutputStream.toByteArray();
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
-		return result;
+
+		//TODO: implement uncompress, then remove this line
+		return null;
+
+		//return result;
 	}
 
 	public int GET_ENCODED_DATA(DEDobject object)
@@ -414,9 +418,14 @@ public class DEDEncoder  {
 			//}
 			System.arraycopy(object.uncompresseddata,0,uncmpdata,0,object.uncompresseddata.length);
 			// now make room for case where compression yields lager size - when trying to compress an image for example.
-			byte[] tmpCompressedData = new byte[uncmpdata.length * 2];
+			//byte[] tmpCompressedData = new byte[uncmpdata.length * 2];
+			byte[] tmpCompressedData;
 			// now compress
-			int compressedSize = compress_lzss(tmpCompressedData, tmpCompressedData.length * 2, uncmpdata, uncmpdata.length);
+			//int compressedSize = compress_lzss(tmpCompressedData, tmpCompressedData.length * 2, uncmpdata, uncmpdata.length);
+			tmpCompressedData = compress_lzss(uncmpdata, uncmpdata.length);
+			int compressedSize=-1;
+			if(tmpCompressedData != null)
+				compressedSize = tmpCompressedData.length;
 			if (compressedSize > 0) {
 				object.pCompressedData = new byte[compressedSize];
 				object.sizeofCompressedData = compressedSize;
