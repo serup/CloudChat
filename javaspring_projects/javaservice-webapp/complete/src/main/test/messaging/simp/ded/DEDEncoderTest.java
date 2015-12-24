@@ -35,12 +35,14 @@ public class DEDEncoderTest {
      *   boolean bValue;
      *
      *   // decode data ...
-     *
-     *   if( DED.GET_STRUCT_START( "event" ) &&
-     *          DED.GET_METHOD ( "name", strValue ) &&
-     *          DED.GET_USHORT ( "trans_id", iValue) &&
-     *          DED.GET_BOOL   ( "startstop", bValue ) &&
-     *       DED.GET_STRUCT_END( "event" ))
+     *   DEDDecoder DED2 = new DEDDecoder();
+     *   DED2.PUT_DATA_IN_DECODER( DEDobject.pCompressedData, DEDobject.sizeofCompressedData);
+     *   if( DED2.GET_STRUCT_START( "event" )==1 &&
+     *           (strValue = DED2.GET_METHOD ( "name" )).length()>0 &&
+     *           (iValue   = DED2.GET_USHORT ( "trans_id")) !=-1 &&
+     *           (bValue   = DED2.GET_BOOL   ( "startstop")) &&
+     *           (strText  = DED2.GET_STDSTRING ( "text")).length()>0 &&
+     *       DED2.GET_STRUCT_END( "event" )==1)
      *   {
      *     bDecoded=true;
      *   }
@@ -48,7 +50,7 @@ public class DEDEncoderTest {
      *   {
      *     bDecoded=false;
      *   }
-
+     *
      * @throws Exception
      */
     @Test
