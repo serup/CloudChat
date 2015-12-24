@@ -8,15 +8,14 @@
 
 package messaging.simp.ded;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import messaging.simp.ded.compression.LZSS;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -25,6 +24,7 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.messaging.support.NativeMessageHeaderAccessor;
 import org.springframework.util.Assert;
+import org.springframework.util.ExceptionTypeFilter;
 import org.springframework.util.SystemPropertyUtils;
 
 
@@ -380,10 +380,23 @@ public class DEDEncoder  {
 		return result;
 	}
 
+	//TODO: change to fit JAVA style of programming -- reference in parameter does not really work onless you use objects
+	//TODO: change to return compressed array instead of changing parameters!!
 	int compress_lzss(byte[] compressedData ,long iLengthCompressedData, byte[] uncompressedData, long iLengthUncompressedData  )
 	{
 		int result=-1;
-		//TODO: implement compression
+		if(uncompressedData.length != iLengthUncompressedData)
+			return result;
+		try {
+			ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(uncompressedData);
+			LZSS lzss = new LZSS(byteArrayInputStream);
+			ByteArrayOutputStream byteArrayOutputStream = lzss.compress();
+			result = byteArrayInputStream.available();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 		return result;
 	}
 
