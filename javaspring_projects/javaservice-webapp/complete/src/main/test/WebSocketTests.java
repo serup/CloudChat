@@ -193,6 +193,7 @@ public class WebSocketTests {
             bDecoded=false;
         }
 
+        assertEquals(true,bDecoded);
 
     }
 
