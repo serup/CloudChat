@@ -8,12 +8,14 @@
 
 package messaging.simp.ded;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
+import messaging.simp.ded.compression.LZSS;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -381,8 +383,25 @@ public class DEDDecoder {
 	byte[] decompress_lzss(byte[] pCompressedData, int sizeofCompressedData)
 	{
 		byte[] result=null;
-		//TODO: implement decompression
-		return result;
+
+
+		if(pCompressedData.length != sizeofCompressedData)
+			return result;
+		try {
+			ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(pCompressedData);
+			LZSS lzss = new LZSS(byteArrayInputStream);
+			ByteArrayOutputStream byteArrayOutputStream = lzss.uncompress();
+			result = byteArrayOutputStream.toByteArray();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+
+		//TODO: somehow decompress does NOT work on uncompressed data - it should NOT iterate thru data
+		return null;
+
+		//return result;
 	}
 
 
