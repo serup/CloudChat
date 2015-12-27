@@ -423,6 +423,8 @@ public class LZSS extends AbstractCompressor
                 // obvious.
                 if (input.read(c, 0, 2) != 2)
                 {
+                    //something went wrong, perhaps data is not compressed
+                    out=null;
                     break;
                 }
 
