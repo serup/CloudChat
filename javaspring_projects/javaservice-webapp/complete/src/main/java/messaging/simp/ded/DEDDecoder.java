@@ -391,17 +391,17 @@ public class DEDDecoder {
 			ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(pCompressedData);
 			LZSS lzss = new LZSS(byteArrayInputStream);
 			ByteArrayOutputStream byteArrayOutputStream = lzss.uncompress();
-			result = byteArrayOutputStream.toByteArray();
+			if(byteArrayOutputStream!=null)
+				result = byteArrayOutputStream.toByteArray();
+			else
+				return null; // somehow data was not compressed
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
 
-		//TODO: somehow decompress does NOT work on uncompressed data - it should NOT iterate thru data
-		return null;
-
-		//return result;
+		return result;
 	}
 
 
