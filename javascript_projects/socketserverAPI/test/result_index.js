@@ -69,7 +69,9 @@ function ListenToServer(callbackWhenConnect,sender,uniqueId,username,password,se
 		wsUri = "ws://127.0.0.1:7777"; 
         if(serverWsUri == "REMOTE")
 		wsUri = "ws://77.75.165.130:7777";  
-//		wsUri = "ws://77.75.165.130:7776";  //test not existing server
+        if(serverWsUri == "BACKEND")
+		wsUri = "ws://backend.scanva.com:7777";  
+///		wsUri = "ws://77.75.165.130:7776";  //test not existing server
 	if(state.wsUri != "")
                 wsUri = state.wsUri; // try connect to this new ip and port
             
