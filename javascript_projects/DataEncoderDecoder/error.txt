@@ -1,64 +1,39 @@
 --------------
 Test of DataEncoderDecoder - DED
 --------------
-
-Hello World
-
 OK:   testinit return expected
-<TestCase name="testinit return expected" result="passed" assertions_passed="1" assertions_failed="0" expected_failures="0"></TestCase>
 OK:   CASN1p3() return expected
-<TestCase name="CASN1p3() return expected" result="passed" assertions_passed="1" assertions_failed="0" expected_failures="0"></TestCase>
 OK:   CASN1p1() return expected
-<TestCase name="CASN1p1() return expected" result="passed" assertions_passed="1" assertions_failed="0" expected_failures="0"></TestCase>
 OK:   AppendASN1() return expected
-<TestCase name="AppendASN1() return expected" result="passed" assertions_passed="1" assertions_failed="0" expected_failures="0"></TestCase>
 OK:   FetchNextASN1() return expected
-<TestCase name="FetchNextASN1() return expected" result="passed" assertions_passed="1" assertions_failed="0" expected_failures="0"></TestCase>
 OK:   WhatIsWriteSize() return expected
-<TestCase name="WhatIsWriteSize() return expected" result="passed" assertions_passed="1" assertions_failed="0" expected_failures="0"></TestCase>
 OK:   WhatIsReadSize() return expected
-<TestCase name="WhatIsReadSize() return expected" result="passed" assertions_passed="1" assertions_failed="0" expected_failures="0"></TestCase>
 OK:   FetchTotalASN1() return expected
-<TestCase name="FetchTotalASN1() return expected" result="passed" assertions_passed="1" assertions_failed="0" expected_failures="0"></TestCase>
 OK:   DED_START_ENCODER return expected
-<TestCase name="DED_START_ENCODER return expected" result="passed" assertions_passed="1" assertions_failed="0" expected_failures="0"></TestCase>
 OK:   DED_PUT_STRUCT_START return expected
-<TestCase name="DED_PUT_STRUCT_START return expected" result="passed" assertions_passed="1" assertions_failed="0" expected_failures="0"></TestCase>
 OK:   DED_PUT_METHOD return expected
-<TestCase name="DED_PUT_METHOD return expected" result="passed" assertions_passed="1" assertions_failed="0" expected_failures="0"></TestCase>
 OK:   DED_PUT_USHORT return expected
-<TestCase name="DED_PUT_USHORT return expected" result="passed" assertions_passed="1" assertions_failed="0" expected_failures="0"></TestCase>
 OK:   DED_PUT_BOOL return expected
-<TestCase name="DED_PUT_BOOL return expected" result="passed" assertions_passed="1" assertions_failed="0" expected_failures="0"></TestCase>
 OK:   DED_PUT_STDSTRING return expected
-<TestCase name="DED_PUT_STDSTRING return expected" result="passed" assertions_passed="1" assertions_failed="0" expected_failures="0"></TestCase>
 OK:   DED_PUT_ELEMENT return expected
-<TestCase name="DED_PUT_ELEMENT return expected" result="passed" assertions_passed="1" assertions_failed="0" expected_failures="0"></TestCase>
 OK:   DED_PUT_STRUCT_END return expected
-<TestCase name="DED_PUT_STRUCT_END return expected" result="passed" assertions_passed="1" assertions_failed="0" expected_failures="0"></TestCase>
 OK:   DED_GET_ENCODED_DATA return expected
-<TestCase name="DED_GET_ENCODED_DATA return expected" result="passed" assertions_passed="1" assertions_failed="0" expected_failures="0"></TestCase>
 OK:   decompress_lzss decompress success
-<TestCase name="decompress_lzss decompress success" result="passed" assertions_passed="1" assertions_failed="0" expected_failures="0"></TestCase>
 OK:   DED_PUT_DATA_IN_DECODER success
-<TestCase name="DED_PUT_DATA_IN_DECODER success" result="passed" assertions_passed="1" assertions_failed="0" expected_failures="0"></TestCase>
 OK:   DED_GET_STRUCT_START success
-<TestCase name="DED_GET_STRUCT_START success" result="passed" assertions_passed="1" assertions_failed="0" expected_failures="0"></TestCase>
 OK:   DED_GET_METHOD return expected
-<TestCase name="DED_GET_METHOD return expected" result="passed" assertions_passed="1" assertions_failed="0" expected_failures="0"></TestCase>
 OK:   DED_GET_USHORT return expected
-<TestCase name="DED_GET_USHORT return expected" result="passed" assertions_passed="1" assertions_failed="0" expected_failures="0"></TestCase>
 OK:   DED_GET_BOOL action1 return expected
-<TestCase name="DED_GET_BOOL action1 return expected" result="passed" assertions_passed="1" assertions_failed="0" expected_failures="0"></TestCase>
 OK:   DED_GET_BOOL action2 return expected
-<TestCase name="DED_GET_BOOL action2 return expected" result="passed" assertions_passed="1" assertions_failed="0" expected_failures="0"></TestCase>
 OK:   DED_GET_STDSTRING return expected
-<TestCase name="DED_GET_STDSTRING return expected" result="passed" assertions_passed="1" assertions_failed="0" expected_failures="0"></TestCase>
 OK:   DED_GET_ELEMENT return expected
-<TestCase name="DED_GET_ELEMENT return expected" result="passed" assertions_passed="1" assertions_failed="0" expected_failures="0"></TestCase>
 OK:   DED_GET_STRUCT_END return expected
-<TestCase name="DED_GET_STRUCT_END return expected" result="passed" assertions_passed="1" assertions_failed="0" expected_failures="0"></TestCase>
 OK:   testDED_GET_ELEMENT_embed_image return expected
-<TestCase name="testDED_GET_ELEMENT_embed_image return expected" result="passed" assertions_passed="1" assertions_failed="0" expected_failures="0"></TestCase>
 OK:   testDED_GET_ELEMENT_embed_largeimage return expected
-<TestCase name="testDED_GET_ELEMENT_embed_largeimage return expected" result="passed" assertions_passed="1" assertions_failed="0" expected_failures="0"></TestCase>
+OK:   testDED_GET_ELEMENT_embed_Xlargeimage return expected
+--------------
+Tests Complete
+--------------
+Passed: 30
+Failed: 0
+--------------
