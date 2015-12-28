@@ -10,35 +10,38 @@
 # read vm and chef configurations from JSON files
 nodes_config = (JSON.parse(File.read("nodes.json")))['nodes']
 puppet_source = ENV['DOPS_PUPPET_PATH']
-   
-
+  
 if puppet_source == nil
-   puts "NodeOS: " + nodeOS
+#   puts "NodeOS: " + nodeOS
    puts "Please set DOPS_PUPPET_PATH to your checkout of devtest, test and production"
-   exit
+   puppet_source = "$DIR""/puppet/trunk/environments/"
+   #exit
 end
 
 VAGRANTFILE_API_VERSION = "2"
-
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   nodes_config.each do |node|
-    node_name   = node[0] # name of node
-    node_values = node[1] # content of node
+   node_name   = node[0] # name of node
+   node_values = node[1] # content of node
 
-	if node_name == "puppet.dops.local"
-		config.vm.define "puppet.dops.local", primary: true
-	else
-		config.vm.define node_name.to_s, autostart: false
-	end	
+   if node_name == "dops.puppet.master"
+	config.vm.define "dops.puppet.master", primary: true
+   else
+	config.vm.define node_name.to_s, autostart: false
+   end	
 
-    config.vm.define node_name do |config|   
+   config.vm.boot_timeout = 90000
+
+   config.vm.define node_name do |config|   
       # Enable provisioning with Puppet stand alone.
       config.vm.provision :puppet do |puppet|
 	puppet.manifests_path = "puppet/manifests"
 	puppet.manifest_file  = "site.pp"
 	puppet.module_path = "puppet/trunk/environments/devtest/modules"
-	puppet.options = "--verbose --debug"
+	#puppet.options = "--verbose --debug"
+        puppet.hiera_config_path = "puppet/hiera/node_site_config.yaml"
+        puppet.working_directory = "/tmp/vagrant-puppet-3/"
       end 
 
       # configures all forwarding ports in JSON array
@@ -50,17 +53,21 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           id:    port[':id']
       end
 
-      if node_name == "puppet.dops.local"
+      if node_name == "dops.puppet.master"
         config.vm.synced_folder puppet_source, '/etc/puppet/environments'
       end
 
+      if node_name == "javaservices"
+        config.ssh.forward_x11 = true 
+      end
+      config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
+
+      config.vm.synced_folder("puppet/hiera", "/tmp/vagrant-puppet-3/hiera")
 
       config.vm.provision :shell, :path => node_values['bootstrap']
-      #   inline: "apt-get update -y"  # https://github.com/mitchellh/vagrant/pull/5860
+      # inline: "apt-get update -y" # https://github.com/mitchellh/vagrant/pull/5860
       config.vm.box = node_values['nodeOS']
-      #config.vm.box = "trusty64"   # vagrant box add precise64 http://files.vagrantup.com/trusty64.box
-      # The current trusty64 image cannot be found in the vagrantup.com server, so use this instead :
-      # vagrant box add trusty64 https://cloud-images.ubuntu.com/vagrant/trusty/current/trusty-server-cloudimg-amd64-vagrant-disk1.box  
+      #config.vm.provision :shell, inline: "hostnamectl set-hostname " + node_values[':hostname'] 
       config.vm.hostname = node_values[':hostname']
       config.vm.network :private_network, ip: node_values[':ip']
 
@@ -69,8 +76,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         vb.customize ["modifyvm", :id, "--name", node_name]
         vb.customize ["modifyvm", :id, "--vram", "16"]
         vb.customize ["modifyvm", :id, "--nictype1", "virtio"]
-	    vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
-	    vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+	vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+	vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+        vb.cpus = 1
       end
     end
   end

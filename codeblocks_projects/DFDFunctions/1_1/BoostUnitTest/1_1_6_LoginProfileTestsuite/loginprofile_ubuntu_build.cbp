@@ -13,12 +13,13 @@
 				<Option compiler="gcc" />
 				<Option parameters="0.0.0.0 7777" />
 				<Compiler>
-					<Add option="-std=c++0x" />
+					<Add option="-std=c++11" />
 					<Add option="-Wall" />
 					<Add option="-g" />
 					<Add option="-std=gnu++11" />
 					<Add option="-D__MSABI_LONG=long" />
 					<Add option="-D__DEBUG__" />
+					<Add option="-DBOOST_EXCEPTION_DISABLE" />
 				</Compiler>
 				<Linker>
 					<Add library="boost_system" />
@@ -54,10 +55,6 @@
 			<Add library="boost_thread" />
 			<Add directory="/usr/local/lib/" />
 		</Linker>
-		<Unit filename="../../1_1_Profile.cpp" />
-		<Unit filename="../../1_1_Profile.hpp" />
-		<Unit filename="1_1_6_LoginProfile_test.cpp" />
-		<Unit filename="../../md5.h" />
 		<Unit filename="../../../../DataBaseControl/databasecontrol.cpp" />
 		<Unit filename="../../../../DataBaseControl/databasecontrol.hpp" />
 		<Unit filename="../../../../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.cpp" />
@@ -82,6 +79,12 @@
 		<Unit filename="../../../../websocket_server/session.hpp" />
 		<Unit filename="../../../../websocket_server/wsclient/wsclient.cpp" />
 		<Unit filename="../../../../websocket_server/wsclient/wsclient.hpp" />
+		<Unit filename="../../1_1_Profile.cpp" />
+		<Unit filename="../../1_1_Profile.hpp" />
+		<Unit filename="../../base64.cpp" />
+		<Unit filename="../../base64.h" />
+		<Unit filename="../../md5.h" />
+		<Unit filename="1_1_6_LoginProfile_test.cpp" />
 		<Extensions>
 			<code_completion />
 			<debugger />

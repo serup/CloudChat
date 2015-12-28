@@ -128,7 +128,8 @@ namespace websocket {
 
             void room::handleIncomming(const dataframe& msg, participant_ptr source)
             {
-                bool bDecoded=false;
+                bool bDecoded;
+                bDecoded=false;
                 std::string strMethod;
                 std::string strProtocolTypeID;
                 std::string strUniqueId;
@@ -241,7 +242,7 @@ namespace websocket {
                                             participant_ptr dfddest = findvipparticipant(strDFD);
                                             if(dfddest==0)
                                             {
-                                                /// TODO: if DFD is NOT online then do something smart
+                                                /// TODO: if DFD is NOT online then do something smart - perhaps restart it !?
                                                 std::cout << "[webserver] ERROR DFD_1.1 is NOT online " << "\n";
 
  /*
@@ -257,15 +258,18 @@ namespace websocket {
                                                 DED_PUT_BOOL	    ( encoder_ptr, "testbool_false", false );
                                                 DED_PUT_BOOL	    ( encoder_ptr, "testbool_true", true );
                                                 DED_PUT_STRUCT_END( encoder_ptr, "WSResponse" );
+                                                /// Create a binary dataframe with above DED inside payload
+                                                dataframe tempframe;
+                                                DED_GET_ENCODED_DATAFRAME(encoder_ptr, tempframe);
+/*
                                                 DED_GET_ENCODED_DATA(encoder_ptr,data_ptr,iLengthOfTotalData,ptmpCompressedData,sizeoftmpCompressedData);
-
                                                 /// Create a binary dataframe with above DED inside payload
                                                 dataframe tempframe;
                                                 //tempframe.opcode = dataframe::text_frame; // javascript has issues with converting from blob to arraybuffer
                                                 tempframe.opcode = dataframe::binary_frame;
                                                 if(sizeoftmpCompressedData==0) sizeoftmpCompressedData = iLengthOfTotalData; // if sizeofcompresseddata is 0 then compression was not possible and size is the same as for uncompressed
                                                 tempframe.putBinaryInPayload(ptmpCompressedData,sizeoftmpCompressedData); // Put DED structure in dataframe payload
-
+*/
                                                 /// set dataframe as response frame
                                                 frmResponse=tempframe;
                                                 destination=source; // since reply have to go back to source, then destination becomes source
@@ -290,7 +294,7 @@ namespace websocket {
                                                 DED_PUT_STDSTRING	( encoder_ptr2, "STARTrequest", (std::string)"LoginProfileRequest" );
                                                 DED_PUT_STDSTRING	( encoder_ptr2, "STARTDATAstream", (std::string)"116" ); // TODO: add datadictionary id for the datastream
                                                 DED_PUT_STDSTRING	( encoder_ptr2, "profileID", (std::string)strFunctionName ); // unique id for registered profile - this is actually the name of the main profile entityfile
-                                                DED_PUT_STDSTRING	( encoder_ptr2, "username", (std::string)strUserName );
+                                                DED_PUT_STDSTRING	( encoder_ptr2, "username", (std::string)strUserName ); // TODO: find a way to use fx. hashing of user and password
                                                 DED_PUT_STDSTRING	( encoder_ptr2, "password", (std::string)strPassword );
                                                 DED_PUT_STDSTRING	( encoder_ptr2, "ENDDATAstream", (std::string)"116" ); // TODO: add datadictionary id for the datastream
                                                 DED_PUT_STDSTRING	( encoder_ptr2, "ENDrequest", (std::string)"LoginProfileRequest" );

@@ -4,7 +4,7 @@
 	"version": "1.1.1",
 	"project_page": "",
 	"source": "",
-	"summary": "Test af puppet kode via vagrant setup",
+	"summary": "puppet kode via vagrant setup",
 	"tags": [],
 	"dependencies": [{
 			"name": "puppetlabs/stdlib",
@@ -41,7 +41,7 @@
 	"license": "Copyright (C) scanva \n   - All Rights Reserved Unauthorized copying of this file, via any medium is strictly prohibited",
 	"operatingsystem_support": [{
 			"operatingsystem": "Ubuntu",
-			"operatingsystemrelease": [ "14.04"
+			"operatingsystemrelease": [ "15.04"
 			]
 		}
 	]

@@ -20,19 +20,21 @@
 
 #include "1_1_Profile.hpp"
 
-
 #include <iostream>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/thread.hpp>
 
 #include "md5.h"
+#include "base64.h"
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
 
 #define BOOST_FILESYSTEM_NO_DEPRECATED
 #include <boost/filesystem.hpp>
-
+#include <boost/algorithm/string.hpp>
+using namespace std;
+using namespace boost;
 
 //////////////////////////////////////////
 // howto compile :
@@ -97,23 +99,26 @@ bool C1_1_Profile::ConnectToWebserver(std::string strurl,void (*pt2Function)(voi
         DED_PUT_STDSTRING	( encoder_ptr, "protocolTypeID", (std::string)"DED1.00.00" );
         DED_PUT_STDSTRING	( encoder_ptr, "functionName", (std::string)"DFD_1.1" );
         DED_PUT_STRUCT_END( encoder_ptr, "WSRequest" );
-        DED_GET_ENCODED_DATA(encoder_ptr,data_ptr,iLengthOfTotalData,pCompressedData,sizeofCompressedData); // -----------
+        /// Create a binary dataframe
+        wsclient::dataframe frame;
+        DED_GET_WSCLIENT_DATAFRAME(encoder_ptr,frame)
 
         /// start thread handling response from webserver
         ws->start(pt2Function); // HandleDataframe_Response -- unless user is providing another
 
+/*old way - DED_GET_WSCLIENT_DATAFRAME should do this
+        DED_GET_ENCODED_DATA(encoder_ptr,data_ptr,iLengthOfTotalData,pCompressedData,sizeofCompressedData); // -----------
         /// Create a binary dataframe
         wsclient::dataframe frame;
-        // /* ---------------------------
+        // //+ ---------------------------
         frame.opcode = wsclient::dataframe::operation_code::binary_frame;
         if(sizeofCompressedData==0) sizeofCompressedData = iLengthOfTotalData; // if sizeofcompresseddata is 0 then compression was not possible and size is the same as for uncompressed
         if(data_ptr == 0) return false;
         if(iLengthOfTotalData == 0) return false;
         if(pCompressedData == 0) return false;
         frame.putBinaryInPayload(pCompressedData,sizeofCompressedData); // Put DED structure in dataframe payload
-        // */ ------------------------
-        //DED_GET_ENCODED_DATAFRAME(encoder_ptr, frame)
-
+        // //- ------------------------
+*/
         /// put dataframe in outgoing buffer -- first test with txbuf, then with ringbuffer
         ws->insertDataframeIn_txbuf(frame);
 
@@ -534,49 +539,8 @@ bool C1_1_Profile::HandleDataframe_Response(wsclient::CDED* pDED)
                     }
                 }
             }
-            else if (strMethod==(std::string)"1_1_8_FetchProfile") ///TODO: consider using HandleDFDRequest_1_1_8_FetchProfile
+            else if (strMethod==(std::string)"1_1_8_FetchProfile")
             {
-/*//                /// Fetchprofile request
-//                if(  DED_GET_USHORT( decoder_ptr, "TransID", iTransID) && /// iTransID should be used in a dataframe reply to this received dataframe
-//                        DED_GET_STDSTRING( decoder_ptr, "protocolTypeID", strProtocolTypeID ) && strProtocolTypeID == (std::string)"DED1.00.00" )
-//                {
-//                    /// Handle version DED1.00.00 for FetchProfile
-//                    std::string strDestination=(std::string)"";
-//                    std::string strSource=(std::string)"";
-//                    std::string strStartRequest=(std::string)"";
-//                    std::string strStartdatastream=(std::string)"";
-//
-//                    if(  DED_GET_STDSTRING( decoder_ptr, "dest", strDestination ) && strDestination == (std::string)"DFD_1.1" &&
-//                            DED_GET_STDSTRING( decoder_ptr, "src", strSource ) &&
-//                            DED_GET_STDSTRING( decoder_ptr, "STARTrequest", strStartRequest ) && strStartRequest == (std::string)"FetchProfileRequest" &&
-//                            DED_GET_STDSTRING( decoder_ptr, "STARTDATAstream", strStartdatastream ) && strStartdatastream == (std::string)"118" )
-//                    {
-//                        /// Take profile info and transfer to 1.1.8 Fetch Profile
-//                        /// DFD stream "Fetch Profile Info" -> "Fetch Profile 1.1.8"
-//
-//                        FetchProfileInfo foundProfileInfo;
-//                        foundProfileInfo.iTransID = iTransID;
-//                        foundProfileInfo.strSource = strSource;
-//                        if (DED_GET_STDSTRING( decoder_ptr, "profileID", foundProfileInfo.strProfileID ) &&
-//                            DED_GET_STDSTRING( decoder_ptr, "profileName", foundProfileInfo.strProfileName ) &&
-//                            DED_GET_STDSTRING( decoder_ptr, "password", foundProfileInfo.strPassword ))
-//                        {
-//                            bDecoded=true;
-//                            cndSignalDataframeReceived.notify_one();
-//
-//                            FetchProfileRequestResponse response;
-//                            /// transfer to bool fn118_FetchProfile(FetchProfileInfo datastream); as a datastream
-//                            bDecoded=fn118_FetchProfile(foundProfileInfo, response);
-//                            if(bDecoded && response.enumresp != FetchProfileRequestResponse::enumResponse::error)
-//                                cndSignalProfileFetched.notify_one();
-//                            /// send response dataframe back
-//                            bDecoded = SendDataframe(response.frame);
-//
-//                        }
-//
-//                    }
-//                }
-*/
                   bDecoded = HandleDFDRequest_1_1_8_FetchProfile(decoder_ptr);
             }
             else if (strMethod==(std::string)"1_1_9_HandleProfileLog")
@@ -939,6 +903,49 @@ bool C1_1_Profile::fn118_FetchProfile(FetchProfileInfo datastream, FetchProfileR
 
     if(bResult==true && response.eAccountStatus == FetchProfileRequestResponse::AccountValid)
     {
+        // TODO: take the embedded foto from record_value and write to image file in /var/www/img/xxxxx.jpg, then give URI to this extracted file instead of base64 embedded image - this is due to performance issues - it takes too long in JavaScript to receive a large base64 image inside DED
+        //+ Due to performance issues, the embedded foto is extracted and a new URI is given to client
+        {
+            Elements fotoelement;
+            bool bFound = CDbCtrl.fetch_element(record_value,(std::string)"foto", fotoelement);
+            if(bFound==true) {
+                std::string _strfoto(fotoelement.ElementData.begin(),fotoelement.ElementData.end());
+
+                boost::system_time const systime=boost::get_system_time();
+                std::stringstream sstream;
+                sstream << systime;
+
+                std::string filenamepath = "/var/www/img/" + datastream.strProfileID + "_" + sstream.str() + ".jpg"; // TODO: add a guid filename to newly created image -- NB! filepath should be inside /var/www/img/   -- to make sure client can access it
+                bool bExtracted = extractBase64TojpgImagefile(filenamepath,_strfoto);
+                if(bExtracted == true)
+                {
+                    std::vector<unsigned char> ElementData;
+                    // Add timestamp to image name, this will make sure that the image will be refreshed at receivers browser, however
+                    // TODO: add at receivers end Automatic cleanup of old image files
+                    //namespace pt = boost::posix_time;
+                    //pt::ptime now = pt::second_clock::local_time();
+                    //std::stringstream sstream;
+                    //sstream << now;
+                    std::string imageURI = "img/" + datastream.strProfileID + "_" + sstream.str() + ".jpg";
+           //         std::string strTimeNow = pt::to_simple_string(now);
+           //         std::string imageURI = "img/" + datastream.strProfileID + "_" + pt::to_iso_string(now) + ".jpg";
+
+                    // TODO: Automatic replication of extracted images to cloudchatmanager.com
+                    // INFO: fx. scp the foto to cloudchatmanager machine - it should reside in relative img/<profileid>.jpg - NB! This is necessary since no extracted data is allowed on backend.scanva.com server
+                    // sudo scp -r img/ vagrant@cloudchatmanager.com:/home/vagrant/.
+                    // TODO: remove tmp local stored image - no extracted data is allowed on backend.scanva.com
+
+                    // Image is now created in temp area, so update the record_value with the new path
+                    // NB! ONLY the cash record value is updated - NOT the file record value, since that would destroy the embedded profile image
+                    std::copy( imageURI.begin(), imageURI.end(), std::back_inserter(ElementData));
+                    CDbCtrl.update_element_value(record_value,"foto",ElementData);
+                    // Wait a moment, so background automatic replication can transfer image
+                    sleep(1); // wait seconds
+                }
+            }
+        }
+        //-
+
         /// Profile was read, now make a response "ProfileFoundInDatabase"
         response.enumresp = FetchProfileRequestResponse::enumResponse::ProfileFoundInDatabase;
 
@@ -1187,110 +1194,7 @@ bool C1_1_Profile::fn1111_HandleProfileInfo(CreateNewProfileInfo datastream)
     return bResult;
 }
 
-/*
-bool C1_1_Profile::fn111x1_CreateTemporaryProfile(CreateNewProfileInfo datastream)
-{
-    bool bResult=false;
 
-///TODO: make it use datastream instead of fixed values
-
-    /// create a temp profile
-    //+
-    std::vector<Elements> DEDElements;
-    std::string EntityName = "Profile";
-    std::string EntityFileName = datastream.strProfileID;
-
-    CDatabaseControl CDbCtrl;
-    CDbCtrl.readDDEntityRealm((std::string)EntityName, DEDElements); /// Fetch current datadictionary specs for this entity
-    CDbCtrl.readDDTOASTEntityRealm((std::string)EntityName, DEDElements); /// Fetch current datadictionary specs for this entity TOAST and add it to list
-
-    /// put values to elements
-    std::string strAttr[] = {"profileID",
-                             "profileName",
-                             "protocolTypeID",
-                             "sizeofProfileData",
-                             "profile_chunk_id",
-                             //"organizationID",
-                             "AccountStatus",
-                             "SubscriptionExpireDate",
-                             "ProfileStatus",
-                             "lifecyclestate", /// TOAST area start
-                             "username",
-                             "password"
-                            };  /// last 3 elements belongs in TOAST area ; WriteEntityFile - should find out by itself and update value inside TOAST file
-
-    std::vector<std::string> strVecAttrValue = {EntityFileName,
-                                                "TestName",
-                                                "DED1.00.00",
-                                                "0",
-                                                "22980574", // file does NOT exists, so method will consider it empty, could be considered an error, however it really is more a warning
-                                                //"888",
-                                                "1",  //TODO: find a way to handle when types are not string -- so far for test
-                                                "20160101",
-                                                "2",
-                                                "1", // lifecyclestate
-                                                "22980574",
-                                                "EB23445"
-                                               };
-
-    unsigned int n=0;
-    unsigned int nn = strVecAttrValue.size();
-    while(DEDElements.size() > nn)
-    {
-        DEDElements.pop_back(); /// remove elements that are not being updated
-    }
-    BOOST_FOREACH( Elements f, DEDElements )
-    {
-        // iterate thru elements and add value to current specs of above given entity
-        if( f.strElementID == (std::string)strAttr[n] )
-        {
-            std::copy(strVecAttrValue[n].begin(), strVecAttrValue[n].end(), std::back_inserter(DEDElements[n].ElementData));
-        }
-        n++;
-        if(n>=nn)
-            break;
-    }
-    /// Write values in entity file
-    bResult = CDbCtrl.put((std::string)EntityName,(std::string)EntityFileName,DEDElements);
-
-    /// Validate that file was written with the correct values
-    // Read entity file using general read for database entity files
-    std::vector<Elements> wDEDElements;
-    bResult = CDbCtrl.ftgt((std::string)EntityName,(std::string)EntityFileName,wDEDElements);
-
-    /// validate data read
-    bResult=true;
-    n=0;
-    /// ftgt should have read all attributes into wDEDElements, now compare with DEDElements, which is elements written
-    BOOST_FOREACH( Elements v, wDEDElements )
-    {
-        // iterate thru elements and compare
-        if(v.strElementID != (std::string)DEDElements[n].strElementID) bResult=false;
-        if(bResult == false)
-        {
-            std::cout << "v.strElementID [ " << v.strElementID << (std::string)" ] != DEDElements[n].strElementID [ " << DEDElements[n].strElementID << " ] \n";
-        }
-        else
-            bResult=true;
-
-        if(v.ElementData != DEDElements[n].ElementData) bResult=false;
-        if(bResult == false)
-        {
-            std::cout << "v.ElementDataElementData [ "  << (std::string)" ] != DEDElements[n].ElementData [ "  << " ] \n";
-        }
-        else
-            bResult=true;
-
-        n++;
-        if(n>=DEDElements.size())
-            break;
-    }
-    //-
-    /// There should now exists a profile to use in this test
-
-    return bResult;
-}
-*/
 
 
 /** \brief Login Profile DFD 1.1.6
@@ -1310,8 +1214,8 @@ bool C1_1_Profile::fn116_LoginProfile(LoginProfileRequest datastream, LoginProfi
     AccountValidationResponse avresp;
     UpdateProfileStatusRequest upreq;
     UpdateProfileStatusResponse upresp;
-    WriteLogRequest wlreq;
-    WriteLogResponse wlresp;
+    //WriteLogRequest wlreq;
+    //WriteLogResponse wlresp;
 
     bResult = fn1161_Authentication(datastream,aresp);
     if(bResult==false)
@@ -1434,7 +1338,7 @@ bool C1_1_Profile::fn11611_FetchProfile(LoginProfileRequest &datastream, std::ve
 
     if(bResult == false)
     { // search through existing profile files in database and find one that has a matching username and password
-        std::cout << "[fn11611_FetchProfile] WARNING: ftgt could now find profile -- now try to search using username and password" << "\n";
+        std::cout << "[fn11611_FetchProfile] WARNING: ftgt could not find profile -- now try to search using username and password" << "\n";
         std::vector<std::string> Entities;
         bResult = CDbCtrl.list_realm_entities( realm_name, Entities );
         /// search thru all files to find a mathing profile

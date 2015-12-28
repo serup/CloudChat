@@ -233,9 +233,10 @@ bool CDatabaseControl::ReadTOASTXmlFile(std::ifstream & is, std::vector<Elements
                 //std::cout << strChild << " database TOAST record entry : " << f.TransGUID << "\n";
 
                 std::string strMD5(CMD5(f.Data.c_str()).GetMD5s());
-                if(strMD5 != f.DataMD5)
+                if(strMD5 != f.DataMD5) {
+                    std::cout << "ERROR: data area in file have changed without having the MD5 checsum changed -- Warning data could be compromised ; " << strChild << "\n";
                     return false;  // data area in file have changed without having the MD5 checsum changed -- Warning data could be compromised
-
+                }
 //TODO: INVESTIGATE byte size here -- size should be smaller after unhex, since hex take 2 bytes per byte
                 // take the hex converted data and unhex it before DED will decode it
                 unsigned int sizeofCompressedDataInHex = (unsigned int)f.DataSize;
@@ -244,7 +245,7 @@ bool CDatabaseControl::ReadTOASTXmlFile(std::ifstream & is, std::vector<Elements
                 ZeroMemory(data_in_unhexed_buf,sizeof_data_in_unhexed_buf); // make sure no garbage is inside the newly allocated space
                 const std::vector<unsigned char> iterator_data_in_hexed_buf(&f.Data[0],&f.Data[sizeofCompressedDataInHex]);
                 boost::algorithm::unhex(iterator_data_in_hexed_buf.begin(),iterator_data_in_hexed_buf.end(), data_in_unhexed_buf);// convert the hex array to an array containing byte values
-                // According to what the protocol prescribes for DED entries in customer TOAST, then a loop of decode, according to specs, of entries is needed
+                // According to what the protocol prescribes for DED entries in TOAST, then a loop of decode, according to specs, of entries is needed
                 // fetch the data area and unpack it with DED to check it
                 EntityChunkDataInfo chunk;
                 DED_PUT_DATA_IN_DECODER(decoder_ptr,data_in_unhexed_buf,sizeof_data_in_unhexed_buf);
@@ -688,7 +689,7 @@ bool CDatabaseControl::ReadEntityFile(std::string EntityName, std::string Entity
         bResult = readDDEntityRealm(isEntity,(std::string)EntityName, DEDElements);
         if(bResult==false)
         {
-            std::cout << "[ReadEntityFile] ERROR : File can not be read : " << strFilepathEntity << std::endl;    /// no need to go further, something is wrong with the file
+            std::cout << "[ReadEntityFile] ERROR : File can not be read - please check access rights : " << strFilepathEntity << std::endl;    /// no need to go further, something is wrong with the file
             return bResult;
         }
 
@@ -754,45 +755,14 @@ bool CDatabaseControl::ReadEntityFile(std::string EntityName, std::string Entity
                     }
                 }
                 if( bDecoded == true && DED_GET_STRUCT_END( decoder_ptr, "record" ) )
-///TODO: consider adding reading TOAST area here !?!?!
-/*                if( DED_GET_STRUCT_START( decoder_ptr, "record" ) &&
-                        DED_GET_STDSTRING	( decoder_ptr, "ProfileID", datastream.strProfileID ) &&
-                        DED_GET_STDSTRING	( decoder_ptr, "ProfileName", datastream.strProfileName ) &&
-                        DED_GET_STDSTRING	( decoder_ptr, "protocolTypeID", datastream.strProtocolTypeID) &&
-                        DED_GET_STDSTRING	( decoder_ptr, "sizeofProfileData", datastream.strSizeofProfileData ) &&
-                        DED_GET_STDSTRING	( decoder_ptr, "Profile_chunk_id", datastream.strProfile_chunk_id ) &&
-                        DED_GET_STDSTRING	( decoder_ptr, "organizationID", datastream.strOrganizationID ) &&
-                        DED_GET_STRUCT_END( decoder_ptr, "record" ))  */
                 {
-                    //TODO: read the toast data and put it on datastream -- use ReadTOASTXmlFile
-                    //TODO: ProfileToastData structure is focused wrong -- CHANGE it, it should not know about elements - it should be neutral!!!
- /*                   ProfileToastData ProfileTOASTDataResult;
-                    {
-                        //    std::ifstream is ("../../../../DataDictionary/Database/TOASTs/22980574.xml");
-                        std::string strTOASTFilepath = "../../../../DataDictionary/Database/TOASTs/" + datastream.strProfile_chunk_id + ".xml";
-                        if ( boost::filesystem::exists( strTOASTFilepath ) )
-                        {
-                            std::ifstream istoast (strTOASTFilepath);
-                            bDecoded = ReadTOASTXmlFile(istoast,ProfileTOASTDataResult);
-                            Elements element;
-                            BOOST_FOREACH( Elements f, ProfileTOASTDataResult.vecElements )
-                            {
-                                element.strElementID = f.strElementID;
-                                element.ElementData = f.ElementData;
-                                datastream.vecElements.push_back(element);
-                            }
-                        }
-                        else
-                            std::cout << "[DFD1.1.1: fn1181_ReadProfileFile ] Can't find TOAST file!" << std::endl;
-                    }
-*/
+                    //std::cout << "[ReadEntityFile] INFO : end of record " << std::endl;
                 }
                 else
                 {
                     bDecoded=false;
                 }
                 bResult = bDecoded;
-//                delete[] data_in_unhexed_buf;
                 free(data_in_unhexed_buf);
             }
         }

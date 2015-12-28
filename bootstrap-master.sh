@@ -12,18 +12,18 @@ then
 else
     # Install Puppet Master
     sudo cp /vagrant/sources.list /etc/apt/sources.list
-    wget https://apt.puppetlabs.com/puppetlabs-release-trusty.deb && \
-    sudo dpkg -i puppetlabs-release-trusty.deb && \
+    #wget https://apt.puppetlabs.com/puppetlabs-release-trusty.deb && \
+    #sudo dpkg -i puppetlabs-release-trusty.deb && \
+    wget https://apt.puppetlabs.com/puppetlabs-release-pc1-vivid.deb && \
+    sudo dpkg -i puppetlabs-release-pc1-vivid.deb && \
     sudo apt-get update -yq && sudo apt-get upgrade -yq
 
     sudo rm -f /var/run/puppet/master.pid
     sudo apt-get install -yq puppetmaster
 
     # Configure /etc/hosts file
-    echo "" | sudo tee --append /etc/hosts 2> /dev/null && \
-    echo "# Host config for Puppet Master and Agent Nodes" | sudo tee --append /etc/hosts 2> /dev/null && \
-    echo "192.168.32.8    puppet.dops.local         puppet" | sudo tee --append /etc/hosts 2> /dev/null && \
-    echo "192.168.32.11   node01.dops.local         node01" | sudo tee --append /etc/hosts 2> /dev/null
+    sudo cp /vagrant/confighosts.sh .
+    sudo bash confighosts.sh
 
     # Add optional alternate DNS names to /etc/puppet/puppet.conf
     sudo cp /vagrant/puppet-master.conf /etc/puppet/puppet.conf

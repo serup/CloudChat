@@ -145,10 +145,11 @@ public:
         return bResult;
     }
 
-	 bool FetchNextASN1(int& Length, __byte& Tag, __byte** m_pdata) // Returns true if ASN1 was found, and false if not.
+    bool FetchNextASN1(int& Length, __byte& Tag, __byte** m_pdata) // Returns true if ASN1 was found, and false if not.
     {
         bool bResult=true;
-        __byte* m_pPrevASN1=0;
+        __byte* m_pPrevASN1;
+        m_pPrevASN1 = 0;
         try{
             if(NULL!=m_pNextASN1)
             {
