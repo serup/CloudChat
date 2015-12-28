@@ -13,12 +13,13 @@
 				<Option compiler="gcc" />
 				<Option parameters="0.0.0.0 7777" />
 				<Compiler>
-					<Add option="-std=c++0x" />
+					<Add option="-std=c++11" />
 					<Add option="-Wall" />
 					<Add option="-g" />
 					<Add option="-std=gnu++11" />
 					<Add option="-D__MSABI_LONG=long" />
 					<Add option="-D__DEBUG__" />
+					<Add option="-DBOOST_EXCEPTION_DISABLE" />
 				</Compiler>
 				<Linker>
 					<Add library="boost_system" />
