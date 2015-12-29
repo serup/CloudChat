@@ -1,0 +1,4 @@
+---
+
+consul_nodename: "omnibus"
+consul_datacenter: "us-east"

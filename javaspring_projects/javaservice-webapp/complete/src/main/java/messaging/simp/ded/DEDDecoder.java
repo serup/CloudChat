@@ -380,11 +380,18 @@ public class DEDDecoder {
 	int iLengthOfTotalData;
 	CASN1 m_asn1; // used in decoder
 
+<<<<<<< HEAD
 	byte[] decompress_lzss(byte[] pCompressedData, int sizeofCompressedData)
 	{
 		byte[] result=null;
 
 
+=======
+	public byte[] decompress_lzss(byte[] pCompressedData, int sizeofCompressedData)
+	{
+		byte[] result=null;
+
+>>>>>>> 6ef04b1fed7c5a7ddb6c4c3e6306c59e10b08420
 		if(pCompressedData.length != sizeofCompressedData)
 			return result;
 		try {

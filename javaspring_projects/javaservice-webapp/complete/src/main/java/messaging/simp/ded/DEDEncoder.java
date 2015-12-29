@@ -382,7 +382,11 @@ public class DEDEncoder  {
 
 	//TODO: change to fit JAVA style of programming -- reference in parameter does not really work onless you use objects
 	//TODO: change to return compressed array instead of changing parameters!!
+<<<<<<< HEAD
 	byte[] compress_lzss(byte[] uncompressedData, long iLengthUncompressedData  )
+=======
+	public byte[] compress_lzss(byte[] uncompressedData, long iLengthUncompressedData  )
+>>>>>>> 6ef04b1fed7c5a7ddb6c4c3e6306c59e10b08420
 	{
 		byte[] result=null;
 		if(uncompressedData.length != iLengthUncompressedData)
@@ -398,10 +402,16 @@ public class DEDEncoder  {
 			e.printStackTrace();
 		}
 
+<<<<<<< HEAD
 		//TODO: implement uncompress, then remove this line
 		return null;
 
 		//return result;
+=======
+		//return null;
+
+		return result;
+>>>>>>> 6ef04b1fed7c5a7ddb6c4c3e6306c59e10b08420
 	}
 
 	public int GET_ENCODED_DATA(DEDobject object)
