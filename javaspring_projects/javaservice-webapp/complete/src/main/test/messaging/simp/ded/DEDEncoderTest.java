@@ -54,24 +54,21 @@ public class DEDEncoderTest {
      * @throws Exception
      */
     @Test
-    public void testEncode() throws Exception
+    public void testEncodeDecode() throws Exception
     {
-
-        //TODO: make functions for encddoding data - example
-
         short trans_id = 1;
         boolean action = true;
 
         DEDEncoder DED = new DEDEncoder();
         DED.PUT_STRUCT_START( "event" );
-        DED.PUT_METHOD  ( "name",  "MusicPlayer" );
-        DED.PUT_USHORT  ( "trans_id",  trans_id);
-        DED.PUT_BOOL    ( "startstop", action );
-        DED.PUT_STDSTRING("text", "hello world");
+            DED.PUT_METHOD  ( "name",  "MusicPlayer" );
+            DED.PUT_USHORT  ( "trans_id",  trans_id);
+            DED.PUT_BOOL    ( "startstop", action );
+            DED.PUT_STDSTRING("text", "hello world");
         DED.PUT_STRUCT_END( "event" );
 
         DEDobject DEDobject = new DEDobject();
-        DED.GET_ENCODED_DATA(DEDobject);
+        DED.GET_ENCODED_DATA(DEDobject); // data should be compressed using LZSS algorithm
 
         //..transmitting :-) simulation
 
@@ -85,7 +82,7 @@ public class DEDEncoderTest {
 
         // decode data ...
         DEDDecoder DED2 = new DEDDecoder();
-        DED2.PUT_DATA_IN_DECODER( DEDobject.pCompressedData, DEDobject.sizeofCompressedData);
+        DED2.PUT_DATA_IN_DECODER( DEDobject.pCompressedData, DEDobject.sizeofCompressedData); // data should be decompressed using LZSS algorithm
         if( DED2.GET_STRUCT_START( "event" )==1 &&
                 (strValue = DED2.GET_METHOD ( "name" )).length()>0 &&
                 (iValue   = DED2.GET_USHORT ( "trans_id")) !=-1 &&
