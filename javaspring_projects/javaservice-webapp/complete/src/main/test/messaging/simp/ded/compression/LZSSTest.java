@@ -18,44 +18,6 @@ public class LZSSTest {
     DEDDecoder dedDecoder = new DEDDecoder();
 
     @Test
-    public void testCompress() throws Exception
-    {
-	    // Do compression - okumura style
-	    byte[] uncmpdata = "Any String you want".getBytes();
-
-        // now make room for case where compression yields lager size - when trying to compress an image for example.
-        byte[] tmpCompressedData;
-
-        // now compress
-        tmpCompressedData = dedEncoder.compress_lzss(uncmpdata, uncmpdata.length);
-        int compressedSize=-1;
-        if(tmpCompressedData != null)
-	        compressedSize = tmpCompressedData.length;
-
-        assertNotEquals(-1,compressedSize);
-    }
-
-    @Test
-    public void testUncompress() throws Exception
-    {
-        // Do compression - okumura style
-        byte[] uncmpdata = "Any String you want...........AAAAABBBBBBCCCCCCDDDDDEEEEEFFFFFF................".getBytes();
-
-        // now make room for case where compression yields lager size - when trying to compress an image for example.
-        byte[] tmpCompressedData;
-
-
-        // now compress
-        tmpCompressedData = dedEncoder.compress_lzss(uncmpdata, uncmpdata.length);
-        int compressedSize=-1;
-        if(tmpCompressedData != null) {
-            compressedSize = tmpCompressedData.length;
-            byte[] decompressedData = dedDecoder.decompress_lzss(tmpCompressedData,compressedSize);
-            assertEquals(uncmpdata,decompressedData); // test if decompressed data is same as the data before compression
-        }
-    }
-
-    @Test
     public void testCompression() {
         InputStream txtfile = null;
 /*        try {
@@ -95,5 +57,25 @@ public class LZSSTest {
             return;
         }
 
+    }
+
+    @Test
+    public void testDEDEncode_DEDDecode() throws Exception
+    {
+        // Do compression - okumura style
+        byte[] uncmpdata = "Any String you want...........AAAAABBBBBBCCCCCCDDDDDEEEEEFFFFFF................".getBytes();
+
+        // now make room for case where compression yields lager size - when trying to compress an image for example.
+        byte[] tmpCompressedData;
+
+
+        // now compress
+        tmpCompressedData = dedEncoder.compress_lzss(uncmpdata, uncmpdata.length);
+        int compressedSize=-1;
+        if(tmpCompressedData != null) {
+            compressedSize = tmpCompressedData.length;
+            byte[] decompressedData = dedDecoder.decompress_lzss(tmpCompressedData,compressedSize);
+            assertArrayEquals(uncmpdata,decompressedData);// test if decompressed data is same as the data before compression
+        }
     }
 }
