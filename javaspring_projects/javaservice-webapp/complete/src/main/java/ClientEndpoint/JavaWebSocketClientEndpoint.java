@@ -42,16 +42,19 @@ public final class JavaWebSocketClientEndpoint extends Endpoint
         }
     }
 
-    public void connectToServer(String strURI)
+    public Session connectToServer(String strURI)
     {
+        Session session=null;
         try {
-            client.connectToServer(this, cec, new URI(strURI));
+            session = client.connectToServer(this, cec, new URI(strURI));
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
+        return session;
     }
+
     public int sendToServer(ByteBuffer data)
     {
         int result=-1;

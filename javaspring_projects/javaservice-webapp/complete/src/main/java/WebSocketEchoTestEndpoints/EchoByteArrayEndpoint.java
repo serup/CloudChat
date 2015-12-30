@@ -12,6 +12,7 @@ public class EchoByteArrayEndpoint {
     @OnMessage
     public byte[] onMessage(byte[] message, Session session)
     {
+        System.out.print("echoBinary received a message - now echo it");
         return message;
     }
 }
