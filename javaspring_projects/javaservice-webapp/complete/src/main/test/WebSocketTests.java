@@ -322,13 +322,10 @@ public class WebSocketTests {
         mockTestServer.sendToServer(data);
 
 
-        //TODO: create method wait for incoming datapacket
-
         /**
-         * wait for incomming data response, then receive data
+         * wait for incomming data response, then receive data - or timeout
          */
         byte[] receivedData = mockTestServer.receiveFromServer();
-
 
 
         /**
