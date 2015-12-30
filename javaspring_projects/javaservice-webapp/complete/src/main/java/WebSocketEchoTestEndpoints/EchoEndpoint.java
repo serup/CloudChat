@@ -11,6 +11,7 @@ import javax.websocket.server.ServerEndpoint;
 public class EchoEndpoint {
     @OnMessage
     public String onMessage(String message, Session session) {
+        System.out.println("echo endpoint received message - now echo it");
         return message;
     }
 }
