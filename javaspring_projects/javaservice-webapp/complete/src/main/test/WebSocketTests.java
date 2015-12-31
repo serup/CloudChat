@@ -4,6 +4,7 @@ import WebSocketEchoTestEndpoints.EchoEndpoint;
 import WebSocketEchoTestEndpoints.MockServer;
 import messaging.simp.ded.DEDDecoder;
 import messaging.simp.ded.DEDEncoder;
+import org.glassfish.tyrus.core.StrictUtf8;
 import org.glassfish.tyrus.server.Server;
 import org.glassfish.tyrus.client.ClientManager;
 import org.junit.Test;
@@ -303,16 +304,24 @@ public class WebSocketTests {
         /**
          * prepare data to be send
          */
-        short trans_id = 1;
+        short trans_id = 69;
         boolean action = true;
+        String uniqueId = "985998707DF048B2A796B44C89345494";
+        String username = "johndoe@email.com"; // TODO: find a way to safely handle retrieval of username,password - should NOT be stored in source code
+        String password = "12345";
 
+        /**
+         * create DED connect datapacket for DOPS for java clients
+         */
         DEDEncoder DED = new DEDEncoder();
-        DED.PUT_STRUCT_START( "event" );
-            DED.PUT_METHOD  ( "name",  "MusicPlayer" );
-            DED.PUT_USHORT  ( "trans_id",  trans_id);
-            DED.PUT_BOOL    ( "startstop", action );
-            DED.PUT_STDSTRING("text", "hello world");
-        DED.PUT_STRUCT_END( "event" );
+        DED.PUT_STRUCT_START ( "WSRequest" );
+            DED.PUT_METHOD   ( "name",  "JavaConnect" );
+            DED.PUT_USHORT   ( "trans_id",  trans_id);
+            DED.PUT_STDSTRING( "protocolTypeID", "DED1.00.00");
+            DED.PUT_STDSTRING( "functionName", uniqueId );
+            DED.PUT_STDSTRING( "username", username );
+            DED.PUT_STDSTRING( "password", password );
+        DED.PUT_STRUCT_END( "WSRequest" );
 
         ByteBuffer data = DED.GET_ENCODED_BYTEBUFFER_DATA();
 
@@ -332,22 +341,34 @@ public class WebSocketTests {
          * decode incomming data
          */
         boolean bDecoded=false;
-        String strValue="";
-        short iValue=0;
-        boolean bValue=false;
-        String strText="";
+        String strMethod="";
+        String strProtocolTypeID="";
+        String strFunctionName="";
+        String strStatus="";
+        short uTrans_id=0;
 
         // decode data ...
         DEDDecoder DED2 = new DEDDecoder();
         DED2.PUT_DATA_IN_DECODER( receivedData, receivedData.length);
-        if( DED2.GET_STRUCT_START( "event" )==1 &&
-                (strValue = DED2.GET_METHOD ( "name" )).length()>0 &&
-                (iValue   = DED2.GET_USHORT ( "trans_id")) !=-1 &&
-                (bValue   = DED2.GET_BOOL   ( "startstop")) &&
-                (strText  = DED2.GET_STDSTRING ( "text")).length()>0 &&
-            DED2.GET_STRUCT_END( "event" )==1)
+        if( DED2.GET_STRUCT_START( "WSResponse" )==1 &&
+                (strMethod   = DED2.GET_METHOD ( "name" )).length()>0 &&
+                (uTrans_id     = DED2.GET_USHORT ( "trans_id")) !=-1 &&
+                (strProtocolTypeID  = DED2.GET_STDSTRING ( "protocolTypeID")).length()>0 &&
+                (strFunctionName    = DED2.GET_STDSTRING ( "functionName")).length()>0 &&
+                (strStatus  = DED2.GET_STDSTRING ( "status")).length()>0 &&
+            DED2.GET_STRUCT_END( "WSResponse" )==1)
         {
             bDecoded=true;
+            System.out.println("DED packet decoded - now validate");
+
+            if(!strMethod.equals("JavaConnect")) bDecoded=false;
+            if(uTrans_id != trans_id) bDecoded=false;
+            assertEquals(true,bDecoded);
+            if(!strFunctionName.equals(uniqueId)) bDecoded=false;
+            assertEquals(true,bDecoded);
+            if(!strStatus.equals("ACCEPTED")) bDecoded=false;
+            assertEquals(true,bDecoded);
+            if(!strProtocolTypeID.equals("DED1.00.00")) bDecoded=false;
         }
         else
         {
@@ -355,7 +376,6 @@ public class WebSocketTests {
         }
 
         assertEquals(true,bDecoded);
-
 
     }
 }
