@@ -458,6 +458,16 @@ public class DEDEncoder  {
 		return data;
 	}
 
+	public byte[] GET_ENCODED_BYTEARRAY_DATA()
+	{
+		DEDobject dedobject = new DEDobject();
+		this.GET_ENCODED_DATA(dedobject);
+		if(dedobject.getiLengthOfTotalData()>0)
+			return dedobject.getpCompressedData();
+		else
+			return null;
+	}
+
 	/**
     * Element types
     */
