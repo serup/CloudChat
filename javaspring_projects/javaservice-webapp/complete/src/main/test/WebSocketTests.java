@@ -1,14 +1,17 @@
 import WebSocketEchoTestEndpoints.EchoByteArrayEndpoint;
 import ClientEndpoint.JavaWebSocketClientEndpoint;
 import WebSocketEchoTestEndpoints.EchoEndpoint;
+import WebSocketEchoTestEndpoints.MockServer;
 import messaging.simp.ded.DEDDecoder;
 import messaging.simp.ded.DEDEncoder;
+import org.glassfish.tyrus.core.StrictUtf8;
 import org.glassfish.tyrus.server.Server;
 import org.glassfish.tyrus.client.ClientManager;
 import org.junit.Test;
 
 import javax.websocket.*;
 import javax.websocket.Endpoint;
+import javax.websocket.server.ServerEndpoint;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -91,7 +94,7 @@ public class WebSocketTests {
                 try {
                     server.start();
                     BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-                    System.out.print("Please press a key to stop the server.");
+                    System.out.println("Server ready and waiting for input.");
                     reader.read();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -103,6 +106,97 @@ public class WebSocketTests {
         serverThread.start();
     }
 
+    class MockTestServer{
+
+        private Thread MockserverThread;
+        private JavaWebSocketClientEndpoint clientEndpoint;
+        private Session session;
+        private Object waitLock = new Object();
+        private Server server;
+
+        private void  wait4TerminateSignal()
+        {
+            synchronized(waitLock)
+            {
+                try {
+                    waitLock.wait();
+                }
+                catch (InterruptedException e) { }
+            }
+        }
+
+        public void runMockServer(int port) {
+            MockserverThread = new Thread() {
+                public void run() {
+                    server = new Server("localhost", port, "/websockets", null, MockServer.class);
+                    if(server!=null) {
+                        try {
+                            server.start();
+                            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+                            System.out.println("Mock Test server ready to read incoming packets");
+                            while (reader.read() != -1) ;
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        } finally {
+                            System.out.print("Mock Test Server will stop !!!");
+                            stopServer();
+                        }
+                    }
+                }
+            };
+            MockserverThread.start();
+        }
+
+        public void stopServer()
+        {
+            if(MockserverThread.isAlive() && server != null)
+                server.stop();
+        }
+
+        MockTestServer(int ServerPort, String ServerEndpoint)
+        {
+            /**
+             * start the MOCK server
+             */
+            this.runMockServer(ServerPort);
+
+            /**
+             * setup client
+             */
+            clientEndpoint = new JavaWebSocketClientEndpoint();
+
+            /**
+             * connect client to MockServer
+             */
+            session = clientEndpoint.connectToServer("ws://localhost:" + ServerPort + "/websockets/" + ServerEndpoint);
+
+
+        }
+
+        public boolean isOpen()
+        {
+            if(session!=null)
+                return session.isOpen();
+            else
+                return false;
+        }
+
+       public int sendToServer(ByteBuffer DEDpacket)
+        {
+            int iResult=-1;
+            if(isOpen())
+                iResult = clientEndpoint.sendToServer(DEDpacket);
+            return iResult;
+        }
+
+        public byte[] receiveFromServer()
+        {
+            byte[] IncomingPacket=null;
+            if(isOpen())
+                IncomingPacket = clientEndpoint.receiveFromServer();
+            return IncomingPacket;
+        }
+    }
 
 
     @Test
@@ -149,10 +243,10 @@ public class WebSocketTests {
 
         DEDEncoder DED = new DEDEncoder();
         DED.PUT_STRUCT_START( "event" );
-        DED.PUT_METHOD  ( "name",  "MusicPlayer" );
-        DED.PUT_USHORT  ( "trans_id",  trans_id);
-        DED.PUT_BOOL    ( "startstop", action );
-        DED.PUT_STDSTRING("text", "hello world");
+            DED.PUT_METHOD  ( "name",  "MusicPlayer" );
+            DED.PUT_USHORT  ( "trans_id",  trans_id);
+            DED.PUT_BOOL    ( "startstop", action );
+            DED.PUT_STDSTRING("text", "hello world");
         DED.PUT_STRUCT_END( "event" );
 
         ByteBuffer data = DED.GET_ENCODED_BYTEBUFFER_DATA();
@@ -197,4 +291,91 @@ public class WebSocketTests {
 
     }
 
+    @Test
+    public void testLoginToMockServer() throws Exception {
+
+        /**
+         * First start and connect to a MOCK server which can act as a Server and receive a DED packet and return a DED packet with result
+         */
+        MockTestServer mockTestServer = new MockTestServer(8044,"MockServerLogin");
+
+        assertEquals(true,mockTestServer.isOpen());
+
+        /**
+         * prepare data to be send
+         */
+        short trans_id = 69;
+        boolean action = true;
+        String uniqueId = "985998707DF048B2A796B44C89345494";
+        String username = "johndoe@email.com"; // TODO: find a way to safely handle retrieval of username,password - should NOT be stored in source code
+        String password = "12345";
+
+        /**
+         * create DED connect datapacket for DOPS for java clients
+         */
+        DEDEncoder DED = new DEDEncoder();
+        DED.PUT_STRUCT_START ( "WSRequest" );
+            DED.PUT_METHOD   ( "name",  "JavaConnect" );
+            DED.PUT_USHORT   ( "trans_id",  trans_id);
+            DED.PUT_STDSTRING( "protocolTypeID", "DED1.00.00");
+            DED.PUT_STDSTRING( "functionName", uniqueId );
+            DED.PUT_STDSTRING( "username", username );
+            DED.PUT_STDSTRING( "password", password );
+        DED.PUT_STRUCT_END( "WSRequest" );
+
+        ByteBuffer data = DED.GET_ENCODED_BYTEBUFFER_DATA();
+
+        /**
+         * send to server with client current client session connection
+         */
+        mockTestServer.sendToServer(data);
+
+
+        /**
+         * wait for incomming data response, then receive data - or timeout
+         */
+        byte[] receivedData = mockTestServer.receiveFromServer();
+
+
+        /**
+         * decode incomming data
+         */
+        boolean bDecoded=false;
+        String strMethod="";
+        String strProtocolTypeID="";
+        String strFunctionName="";
+        String strStatus="";
+        short uTrans_id=0;
+
+        // decode data ...
+        DEDDecoder DED2 = new DEDDecoder();
+        DED2.PUT_DATA_IN_DECODER( receivedData, receivedData.length);
+        if( DED2.GET_STRUCT_START( "WSResponse" )==1 &&
+                (strMethod   = DED2.GET_METHOD ( "name" )).length()>0 &&
+                (uTrans_id     = DED2.GET_USHORT ( "trans_id")) !=-1 &&
+                (strProtocolTypeID  = DED2.GET_STDSTRING ( "protocolTypeID")).length()>0 &&
+                (strFunctionName    = DED2.GET_STDSTRING ( "functionName")).length()>0 &&
+                (strStatus  = DED2.GET_STDSTRING ( "status")).length()>0 &&
+            DED2.GET_STRUCT_END( "WSResponse" )==1)
+        {
+            bDecoded=true;
+            System.out.println("DED packet decoded - now validate");
+
+            if(!strMethod.equals("JavaConnect")) bDecoded=false;
+            if(uTrans_id != trans_id) bDecoded=false;
+            assertEquals(true,bDecoded);
+            if(!strFunctionName.equals(uniqueId)) bDecoded=false;
+            assertEquals(true,bDecoded);
+            if(!strStatus.equals("ACCEPTED")) bDecoded=false;
+            assertEquals(true,bDecoded);
+            if(!strProtocolTypeID.equals("DED1.00.00")) bDecoded=false;
+        }
+        else
+        {
+            bDecoded=false;
+        }
+
+        assertEquals(true,bDecoded);
+
+    }
 }

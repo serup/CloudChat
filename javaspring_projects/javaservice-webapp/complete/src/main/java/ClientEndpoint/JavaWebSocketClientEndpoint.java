@@ -42,16 +42,19 @@ public final class JavaWebSocketClientEndpoint extends Endpoint
         }
     }
 
-    public void connectToServer(String strURI)
+    public Session connectToServer(String strURI)
     {
+        Session session=null;
         try {
-            client.connectToServer(this, cec, new URI(strURI));
+            session = client.connectToServer(this, cec, new URI(strURI));
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
+        return session;
     }
+
     public int sendToServer(ByteBuffer data)
     {
         int result=-1;
@@ -73,11 +76,18 @@ public final class JavaWebSocketClientEndpoint extends Endpoint
     {
         byte[] data = null;
         try{
-            msgHandler.messageLatch.await(100, TimeUnit.SECONDS); // wait for incomming data
-            data = msgHandler.receivedData;
+            if(msgHandler.messageLatch.await(100, TimeUnit.SECONDS)) // wait for incoming data -- data will arrive in JavaWebSocketClientMessageHandler onMessage and latch will be decreased to zero
+            {
+                data = msgHandler.receivedData;
+            }
+            else
+            {
+                System.out.println("WARNING - Timeout when trying to receive data from server - NO data received");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
+        msgHandler.messageLatch = new CountDownLatch(1); // prepare for next incoming packet
         return data;
     }
 }
