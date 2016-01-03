@@ -19,7 +19,7 @@ public class DOPSconnectTests {
         /**
          * connect client
          */
-        clientEndpoint.connectToServer("ws://localhost:8033");
+        clientEndpoint.connectToServer("ws://localhost:7777");
 
         /**
          * prepare data to be send
