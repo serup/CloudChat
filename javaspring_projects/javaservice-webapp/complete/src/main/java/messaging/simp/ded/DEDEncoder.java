@@ -39,32 +39,22 @@ public class DEDEncoder  {
 
 
 	public class ByteUtils {
-		private ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
 
 		public byte[] shortToBytes(short x)
 		{
-			ByteBuffer buffershort = ByteBuffer.allocate(2);
-			buffershort.putShort(x);
-			return buffershort.array();
+			ByteBuffer buffer = ByteBuffer.allocate(Short.BYTES);
+			buffer.order(ByteOrder.LITTLE_ENDIAN);  // server is Little Endian
+			buffer.putShort(x);
+			return buffer.array();
 		}
 
 		public byte[] longToBytes(long x) {
+			ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
+			buffer.order(ByteOrder.LITTLE_ENDIAN);  // server is Little Endian
 			buffer.putLong(0, x);
 			return buffer.array();
 		}
 
-		public long bytesToLong(byte[] bytes) {
-			buffer.put(bytes, 0, bytes.length);
-			buffer.flip();//need flip
-			return buffer.getLong();
-		}
-
-		public short bytesToShort(byte[] bytes) {
-            ByteBuffer buffershort = ByteBuffer.allocate(2);
-			buffershort.put(bytes, 0, 2);
-			buffershort.flip();//need flip
-			return buffershort.getShort();
-		}
 
 	}
 
@@ -333,7 +323,7 @@ public class DEDEncoder  {
 	{
 		int result = -1;
 		if (this.dedEncoder != null)
-			result = this.dedEncoder.EncodeUShort(name, this.dedEncoder.byteUtils.shortToBytes(value), 2);
+			result = this.dedEncoder.EncodeUShort(name, value, Short.BYTES);
 
 		return result;
 	}
@@ -342,7 +332,7 @@ public class DEDEncoder  {
 	{
 		int result = -1;
 		if (this.dedEncoder != null){
-			result = this.dedEncoder.EncodeLong(name, value, 1);
+			result = this.dedEncoder.EncodeLong(name, value, Long.BYTES);
 
 		}
 
@@ -620,14 +610,14 @@ public class DEDEncoder  {
 		return result;
 	}
 
-	private int EncodeUShort(String name, byte[] value, int length)
+	private int EncodeUShort(String name, short value, int length)
 	{
 		int result = -1;
 		if(!name.isEmpty()) {
 			param element = new param();
 			element.name = name;
 			element.ElementType = DED_ELEMENT_TYPE_USHORT;
-			element.value = value;
+			element.value = byteUtils.shortToBytes(value);
 			element.length = length;
 			result = AddElement(element);
 		}
