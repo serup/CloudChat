@@ -1,18 +1,73 @@
-# CloudChat
+# CloudChat 
+via vagrant a master and one node is created in VirtualBox and via puppet master and puppet agent on master and node, then the puppetlabs modules are  installed on several nodes 
 
+*********************************************************************
+**get started with CloudChat project on new machine                **
+*********************************************************************
+**Clone the gerrit repository**
+```javascript 
+  git clone ssh://serup@review.gerrithub.io:29418/serup/CloudChat && scp -p -P 29418 serup@review.gerrithub.io:hooks/commit-msg CloudChat/.git/hooks/
+  cd CloudChat/
+```
+**Create your own branch and checkout**
+```javascript 
+  git branch <your branch name>
+  git checkout <your branch name>
+```
+**Setup environment and start creating / modifying files**
+```
+  run the install script - it will setup environment variables, and install needed modules for the project, used later in vagrant up
+  . ./install.sh <docker image project name fx. skeleton>
+  use your favorite editor to write code
+```
+**Checkin to your own branch using this setup**
+ first time you checkin your branch needs to be created on gerrithub, thus make following command
+```javascript 
+   git add <your files..>
+   git commit -m "<your checkin info>"
+   git push -u origin <your branch name>
+```
+ next time use normal push - this will create a new review on GerritHub and you must review and approve it before submit - you can find your reviews here:
+```
+  https://review.gerrithub.io/#/q/project:  < your branch name >  /CloudChat
+```
+ Normal push command :
+```javascript 
+   git push origin HEAD:refs/for/<your branch name>
+```
+ NB! Inorder to make checkin on this GerritHub project, then you need to create a RSA public key and send to administrator - he will then add it to users, making it possible for you to make reviews on your own branch
+
+*********************************************************************
+**Following can be done after install**
+*********************************************************************
+**Start vagrant**
+```javascript 
+  vagrant up
+```
+**Start javaservices**
+```javascript 
+  vagrant up javaservices 
+```
+**log into javaservices**
+```javascript 
+  vagrant -XY ssh javaservices 
+```
+**if needed then run puppet agent**
+```javascript 
+  sudo -s
+  puppet agent -t
+```
+
+**Inorder to replicate to GitHub manually, then setup upstream on your GitHub clone as follows**
+```javascript 
+  git remote add upstream https://serup@review.gerrithub.io/a/serup/CloudChat
+  git pull upstream <your branch name>
+  git push
+```
+
+```javascript 
 [![Join the chat at https://gitter.im/serup/CloudChat](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/serup/CloudChat?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 javascript chat via. SCANVA server using CloudChatManager and CloudChatClient
+```
 
-Inorder to check in to this branch then do following:
-git add <file>
-git commit -m "boble : message"
-git push origin HEAD:refs/for/serup
-
-commit via gerrithub from IDEA intellij... -- not working from inside Intellij, that is it does not create a review - you must
-checkin like above mentioned --  instead of using the IDE's checkin !!!!!
-
-NB!
-inorder to get puppet to work, then put following in .bashrc file:
-export DOPS_PUPPET_PATH=/home/serup/GerritHub/CloudChat/puppet/trunk/environments/
-
--- jenkins should have gerrit build trigger plugin
+*****************************
