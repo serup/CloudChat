@@ -766,6 +766,18 @@ bool CDataEncoder::Get(std::string name, int ElementType,__byte* pdata,WORD& len
 	return bResult;
 }
 
+union CharToStruct {
+    char charArray[2];
+    unsigned short value;
+};
+
+short toShort(char* value){
+    CharToStruct cs;
+    cs.charArray[0] = value[1]; // most significant bit of short is not first bit of char array
+    cs.charArray[1] = value[0];
+    return cs.value;
+}
+
 bool CDataEncoder::GetElement(std::string name, int ElementType, uint16& value)
 {
 	bool bResult=false;
@@ -793,9 +805,12 @@ bool CDataEncoder::GetElement(std::string name, int ElementType, uint16& value)
 						{
 							if(tag == DED_ELEMENT_TYPE_USHORT)
 							{
-								//value = (uint16)*pdata;
-								unsigned short p = (pdata[0] << 8) | pdata[1];
-								value = p;
+								value = (uint16)*pdata; // MUST be in little Endian format
+								//BigEndian to little Endian
+								//unsigned short p = (pdata[0] << 8) | pdata[1];
+								//unsigned short p = (((unsigned short)pdata[0])<<8) | pdata[1];
+								//unsigned short p = toShort((char*)pdata);
+								//value = p;
 								bResult = true;
 							}
 						}

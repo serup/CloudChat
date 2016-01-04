@@ -435,7 +435,7 @@ namespace websocket {
                         }
                         break;
                         case JavaConnect:
-                        {
+                        { // NB! There are no unsigned integers in Java (all are signed and in Big Endian).
                             /// Handle protocol DED1.00.00
                             if( DED_GET_USHORT( decoder_ptr, "TransID", iTransID) &&
                                     DED_GET_STDSTRING( decoder_ptr, "protocolTypeID", strProtocolTypeID ) && strProtocolTypeID == (std::string)"DED1.00.00" )

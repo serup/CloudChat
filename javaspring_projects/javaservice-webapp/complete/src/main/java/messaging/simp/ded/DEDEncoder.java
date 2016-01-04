@@ -44,8 +44,9 @@ public class DEDEncoder  {
 		public byte[] shortToBytes(short x)
 		{
 			ByteBuffer buffershort = ByteBuffer.allocate(Short.BYTES);
+			buffershort.order(ByteOrder.LITTLE_ENDIAN);  // server is Little Endian
 			buffershort.putShort(x);
-			buffershort.flip();
+			//buffershort.flip();
 			return buffershort.array();
 		}
 

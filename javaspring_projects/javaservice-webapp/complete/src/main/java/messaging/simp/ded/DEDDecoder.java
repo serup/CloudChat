@@ -11,6 +11,7 @@ package messaging.simp.ded;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -99,10 +100,13 @@ public class DEDDecoder {
 		}
 
 		public short bytesToShort(byte[] bytes) {
-			ByteBuffer buffershort = ByteBuffer.allocate(2);
-			buffershort.put(bytes, 0, 2);
-			buffershort.flip();//need flip
-			return buffershort.getShort();
+			ByteBuffer buffershort = ByteBuffer.wrap(bytes);
+			buffershort.order(ByteOrder.LITTLE_ENDIAN); // coming from server which, when running on linux, is a Little Endian architecture
+			short v=0;
+			while( buffershort.hasRemaining()) {
+				v = buffershort.getShort();
+			}
+			return v;
 		}
 	}
 
