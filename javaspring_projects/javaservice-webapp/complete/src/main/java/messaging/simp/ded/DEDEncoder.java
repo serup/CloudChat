@@ -43,8 +43,9 @@ public class DEDEncoder  {
 
 		public byte[] shortToBytes(short x)
 		{
-			ByteBuffer buffershort = ByteBuffer.allocate(2);
+			ByteBuffer buffershort = ByteBuffer.allocate(Short.BYTES);
 			buffershort.putShort(x);
+			buffershort.flip();
 			return buffershort.array();
 		}
 
@@ -333,7 +334,7 @@ public class DEDEncoder  {
 	{
 		int result = -1;
 		if (this.dedEncoder != null)
-			result = this.dedEncoder.EncodeUShort(name, this.dedEncoder.byteUtils.shortToBytes(value), 2);
+			result = this.dedEncoder.EncodeUShort(name, value, Short.BYTES);
 
 		return result;
 	}
@@ -342,7 +343,7 @@ public class DEDEncoder  {
 	{
 		int result = -1;
 		if (this.dedEncoder != null){
-			result = this.dedEncoder.EncodeLong(name, value, 1);
+			result = this.dedEncoder.EncodeLong(name, value, Long.BYTES);
 
 		}
 
@@ -620,14 +621,14 @@ public class DEDEncoder  {
 		return result;
 	}
 
-	private int EncodeUShort(String name, byte[] value, int length)
+	private int EncodeUShort(String name, short value, int length)
 	{
 		int result = -1;
 		if(!name.isEmpty()) {
 			param element = new param();
 			element.name = name;
 			element.ElementType = DED_ELEMENT_TYPE_USHORT;
-			element.value = value;
+			element.value = byteUtils.shortToBytes(value);
 			element.length = length;
 			result = AddElement(element);
 		}

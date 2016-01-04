@@ -793,7 +793,9 @@ bool CDataEncoder::GetElement(std::string name, int ElementType, uint16& value)
 						{
 							if(tag == DED_ELEMENT_TYPE_USHORT)
 							{
-								value = (uint16)*pdata;
+								//value = (uint16)*pdata;
+								unsigned short p = (pdata[0] << 8) | pdata[1];
+								value = p;
 								bResult = true;
 							}
 						}
