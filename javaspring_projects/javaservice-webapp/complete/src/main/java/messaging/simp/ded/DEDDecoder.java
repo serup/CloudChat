@@ -11,6 +11,7 @@ package messaging.simp.ded;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -78,31 +79,25 @@ import org.springframework.util.MultiValueMap;
 public class DEDDecoder {
 
 	public class ByteUtils {
-		private ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
-
-		public byte[] shortToBytes(short x)
-		{
-			ByteBuffer buffershort = ByteBuffer.allocate(2);
-			buffershort.putShort(x);
-			return buffershort.array();
-		}
-
-		public byte[] longToBytes(long x) {
-			buffer.putLong(0, x);
-			return buffer.array();
-		}
 
 		public long bytesToLong(byte[] bytes) {
-			buffer.put(bytes, 0, bytes.length);
-			buffer.flip();//need flip
-			return buffer.getLong();
+			ByteBuffer buffer = ByteBuffer.wrap(bytes);
+			buffer.order(ByteOrder.LITTLE_ENDIAN);  // coming from server which, when running on linux, is a Little Endian architecture
+			long v=0;
+			while( buffer.hasRemaining()){
+				v = buffer.getLong();
+			}
+			return v;
 		}
 
 		public short bytesToShort(byte[] bytes) {
-			ByteBuffer buffershort = ByteBuffer.allocate(2);
-			buffershort.put(bytes, 0, 2);
-			buffershort.flip();//need flip
-			return buffershort.getShort();
+			ByteBuffer buffer = ByteBuffer.wrap(bytes);
+			buffer.order(ByteOrder.LITTLE_ENDIAN); // coming from server which, when running on linux, is a Little Endian architecture
+			short v=0;
+			while( buffer.hasRemaining()) {
+				v = buffer.getShort();
+			}
+			return v;
 		}
 	}
 
