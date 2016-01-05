@@ -106,7 +106,7 @@ else
       chown vagrant:vagrant /usr/local/bin/cronStartServer.sh
       chmod +x /usr/local/bin/cronStartServer.sh
       echo "replication deamon - should copy files using sshpass scp - its setup as a cron job"
-      incrontab -l | { cat; echo '/var/www/img IN_ALL_EVENTS /usr/local/bin/replication.sh >> /var/log/replication.log 2>&1'; } | incrontab -
+      incrontab -l | { cat; echo '/var/www/img IN_CREATE /usr/local/bin/replication.sh >> /var/log/replication.log 2>&1 $@/$#'; } | incrontab -
       echo "****************"
       echo "start backend server - as a crontab job"
       echo "****************"
