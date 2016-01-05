@@ -1220,7 +1220,7 @@ bool C1_1_Profile::fn116_LoginProfile(LoginProfileRequest datastream, LoginProfi
     bResult = fn1161_Authentication(datastream,aresp);
     if(bResult==false)
     {
-        std::cout << "[fn116_LoginProfile] WARNING: fn1161_Authentication failed" << "\n";
+        //std::cout << "[fn116_LoginProfile] WARNING: fn1161_Authentication failed" << "\n";
         response.enumresp = LoginProfileRequestResponse::enumResponse::error;
     }
     else
@@ -1232,7 +1232,7 @@ bool C1_1_Profile::fn116_LoginProfile(LoginProfileRequest datastream, LoginProfi
         bResult = fn1162_AccountValidation(avreq,avresp);
         if(bResult==false)
         {
-            std::cout << "[fn116_LoginProfile] WARNING: fn1162_AccountValidation failed" << "\n";
+            //std::cout << "[fn116_LoginProfile] WARNING: fn1162_AccountValidation failed" << "\n";
             response.enumresp = LoginProfileRequestResponse::enumResponse::error;
         }
         else
@@ -1297,7 +1297,7 @@ bool C1_1_Profile::fn1161_Authentication(LoginProfileRequest &datastream, Authen
     bResult = fn11611_FetchProfile(datastream,record_value,fpresp);
     if(bResult==false)
     {
-        std::cout << "[fn1161_Authentication] WARNING: fn11611_FetchProfile failed" << "\n";
+        //std::cout << "[fn1161_Authentication] WARNING: fn11611_FetchProfile failed" << "\n";
         response.enumresp = AuthenticationResponse::enumResponse::AuthentificationFailed;
     }
     else
@@ -1338,7 +1338,7 @@ bool C1_1_Profile::fn11611_FetchProfile(LoginProfileRequest &datastream, std::ve
 
     if(bResult == false)
     { // search through existing profile files in database and find one that has a matching username and password
-        std::cout << "[fn11611_FetchProfile] WARNING: ftgt could not find profile -- now try to search using username and password" << "\n";
+        //std::cout << "[fn11611_FetchProfile] WARNING: ftgt could not find profile -- now try to search using username and password" << "\n";
         std::vector<std::string> Entities;
         bResult = CDbCtrl.list_realm_entities( realm_name, Entities );
         /// search thru all files to find a mathing profile
@@ -1389,7 +1389,7 @@ bool C1_1_Profile::fn11611_FetchProfile(LoginProfileRequest &datastream, std::ve
     }
     if(bResult == false)
     {
-        std::cout << "[fn11611_FetchProfile] WARNING: ftgt failed" << "\n";
+ //       std::cout << "[fn11611_FetchProfile] WARNING: ftgt failed" << "\n";
         response.enumresp = FetchProfileResponse::enumResponse::ProfileDoNotExists;
     }
     else

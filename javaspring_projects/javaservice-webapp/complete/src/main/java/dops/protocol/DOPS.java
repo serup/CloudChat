@@ -1,42 +1,25 @@
-package integrationTests;
+package dops.protocol;
 
 import ClientEndpoint.JavaWebSocketClientEndpoint;
 import messaging.simp.ded.DEDDecoder;
 import messaging.simp.ded.DEDEncoder;
-import org.junit.Test;
 
 import java.nio.ByteBuffer;
 
-import static junit.framework.TestCase.assertEquals;
-
 /**
- * Created by serup on 31-12-15.
+ * This class handles DED packet data communication between client and DOPS server
+ * It has methods for login to DOPS DFD server and it handles basic communication
+ * it is also a wrapper class for JavaWebSocketClientEndpoint
+ *
+ * Created by serup on 05-01-16.
  */
-public class DOPSconnectTests {
+public class DOPS extends JavaWebSocketClientEndpoint {
 
-    @Test
-    public void testConnectToDFD()
+    JavaWebSocketClientEndpoint clientEndpoint = new JavaWebSocketClientEndpoint();
+
+    private ByteBuffer createDEDLogin(short trans_id, String uniqueId, String username, String password)
     {
-        /**
-        * setup client
-        */
-        JavaWebSocketClientEndpoint clientEndpoint = new JavaWebSocketClientEndpoint();
-
-        /**
-         * connect client -- Make sure the backend is running -- example start: vagrant up backend
-         */
-        //clientEndpoint.connectToServer("ws://localhost:7777");
-        clientEndpoint.connectToServer("ws://backend.scanva.com:7777");
-
-        /**
-         * prepare data to be send
-         */
-        short trans_id = 69;
-        boolean action = true;
-        String uniqueId = "985998707DF048B2A796B44C89345494";
-        String username = "johndoe@email.com"; // TODO: find a way to safely handle retrieval of username,password - should NOT be stored in source code
-        String password = "12345";
-
+        ByteBuffer data = null;
         /**
          * create DED connect datapacket for DOPS for java clients
          */
@@ -46,11 +29,37 @@ public class DOPSconnectTests {
             DED.PUT_USHORT   ( "TransID",  trans_id);
             DED.PUT_STDSTRING( "protocolTypeID", "DED1.00.00");
             DED.PUT_STDSTRING( "functionName", uniqueId );
-            DED.PUT_STDSTRING( "username", username );
+            DED.PUT_STDSTRING( "username", username ); //TODO: SUGGESTION: use username to lookup in secure file, then use content in file as username and password
             DED.PUT_STDSTRING( "password", password );
         DED.PUT_STRUCT_END( "WSRequest" );
+        data = DED.GET_ENCODED_BYTEBUFFER_DATA();
 
-        ByteBuffer data = DED.GET_ENCODED_BYTEBUFFER_DATA();
+        return data;
+    }
+
+    public boolean loginToServer(String strURL, String port, String uniqueId, String username, String password)
+    {
+        boolean bResult=false;
+
+        /**
+         * connect client
+         */
+        //clientEndpoint.connectToServer("ws://backend.scanva.com:7777");
+        if(port.isEmpty()) port = "7777";
+        clientEndpoint.connectToServer("ws://"+strURL+":"+port);
+
+        /**
+         * prepare data to be send
+         */
+        short trans_id = 69; // trans id for java clients
+        String _uniqueId = uniqueId; // example : "985998707DF048B2A796B44C89345494";
+        String _username = username; //           "johndoe@email.com";
+        String _password = password; //           "12345";
+
+        /**
+         * create DED connect datapacket for DOPS for java clients
+         */
+        ByteBuffer data = createDEDLogin(trans_id,_uniqueId,_username,_password);
 
         /**
          * send to server with client current client session connection
@@ -86,54 +95,39 @@ public class DOPSconnectTests {
                 String strSource="";
                 // login response from DFD was received, now decode response
                 if ( (strDestination = DED2.GET_STDSTRING ( "dest")).length()>0 &&
-                     (strSource      = DED2.GET_STDSTRING ( "src")).length()>0 &&
-                     (strStatus      = DED2.GET_STDSTRING ( "status")).length()>0 &&
-                     DED2.GET_STRUCT_END( "WSResponse" )==1)
+                        (strSource      = DED2.GET_STDSTRING ( "src")).length()>0 &&
+                        (strStatus      = DED2.GET_STDSTRING ( "status")).length()>0 &&
+                        DED2.GET_STRUCT_END( "WSResponse" )==1)
                 {
                     // response from login to profile in DFD was received - now validate status
                     if(strStatus.equals("ACCEPTED")) {
+                        // login success
                         bDecoded=true;
                         System.out.println("1_1_6_LoginProfile response packet decoded; src: "+strSource+" ; dest: "+strDestination+" ; Status: ACCEPTED");
                     }
                     else
                     {
-                        bDecoded=true; // set to true since login failure is actually a correct response, since client is not registered
+                        // login failure is actually a correct response, since client is not registered
                         System.out.println("1_1_6_LoginProfile response packet decoded; however login failed ;  Status: "+strStatus);
                     }
                 }
             }
             else
             { // When DFD is offline, then this type of packet is received
-               if (
-                     (strFunctionName    = DED2.GET_STDSTRING ( "functionName")).length()>0 &&
-                     (strStatus  = DED2.GET_STDSTRING ( "status")).length()>0 &&
-                   DED2.GET_STRUCT_END( "WSResponse" )==1)
-               {
-                   bDecoded=true;
-                   System.out.println("DED packet decoded - now validate");
-
-                   if(!strMethod.equals("JavaConnect")) bDecoded=false;
-                   if(uTrans_id != trans_id) bDecoded=false;
-                   assertEquals(true,bDecoded);
-                   if(!strFunctionName.equals(uniqueId)) bDecoded=false;
-                   assertEquals(true,bDecoded);
-                   if(!strStatus.equals("ACCEPTED")) bDecoded=false;
-                   assertEquals(true,bDecoded);
-                   if(!strProtocolTypeID.equals("DED1.00.00")) bDecoded=false;
-               }
-               else
-               {
-                   // unknown method
-                   System.out.println("DED packet could NOT be decoded - unknown Method: "+strMethod);
-               }
+                if ( (strFunctionName    = DED2.GET_STDSTRING ( "functionName")).length()>0 &&
+                                (strStatus  = DED2.GET_STDSTRING ( "status")).length()>0 &&
+                     DED2.GET_STRUCT_END( "WSResponse" )==1)
+                {
+                    System.out.println("[loginToServer] Profile on server is OFF line: ");
+                }
+                else
+                {
+                    // unknown response
+                    System.out.println("[loginToServer] unknown response from server");
+                }
             }
         }
-        else
-        {
-            bDecoded=false;
-        }
-        assertEquals(true,bDecoded);
+        bResult = bDecoded;
+        return bResult;
     }
-
-
 }
