@@ -699,7 +699,7 @@ bool CDatabaseControl::ReadEntityFile(std::string EntityName, std::string Entity
             std::ifstream is (strFilepath);
             if ( !boost::filesystem::exists( strFilepath ) )
             {
-                std::cout << "[ReadEntityFile] File NOT found : " << strFilepath << std::endl;
+                //std::cout << "[ReadEntityFile] File NOT found : " << strFilepath << std::endl;
                 bResult = false;
             }
             else
@@ -707,7 +707,7 @@ bool CDatabaseControl::ReadEntityFile(std::string EntityName, std::string Entity
         }
         if(bResult==false)
         {
-            std::cout << "[ReadEntityFile] ERROR : File can not be read : " << strFilepath << std::endl;    /// no need to go further, something is wrong with the file
+            //std::cout << "[ReadEntityFile] ERROR : File can not be read : " << strFilepath << std::endl;    /// no need to go further, something is wrong with the file
             return bResult;
         }
 
@@ -1010,7 +1010,7 @@ bool CDatabaseControl::WriteEntityFile(std::string EntityName, std::string Entit
     bResult = readDDEntityRealm((std::string)EntityName, _DEDElements);
     if(bResult==false)
     {
-        std::cout << "[WriteEntityFile] ERROR : File can not be read : Entity name : " << EntityName << std::endl;    /// no need to go further, something is wrong with the file
+        //std::cout << "[WriteEntityFile] ERROR : File can not be read : Entity name : " << EntityName << std::endl;    /// no need to go further, something is wrong with the file
         return bResult;
     }
     else
