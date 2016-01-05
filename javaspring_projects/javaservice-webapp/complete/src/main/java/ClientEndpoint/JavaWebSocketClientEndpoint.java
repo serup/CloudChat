@@ -9,7 +9,6 @@ import javax.websocket.EndpointConfig;
 import javax.websocket.Session;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -17,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by serup on 23-12-15.
  */
-public final class JavaWebSocketClientEndpoint extends Endpoint
+public class JavaWebSocketClientEndpoint extends Endpoint
 {
     public Session clientSession;
     JavaWebSocketClientMessageHandler msgHandler;
