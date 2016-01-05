@@ -1,31 +1,20 @@
-//TODO: change to fit DED ASN1 Okumura compress
 /*
  * Copyright 2014-2016 SCANVA ApS
  *
  * This Decoder follows same structure as the Decoder for STOMP, however it is NOT the same
  * - DED is a completely different protocol
  */
-
 package messaging.simp.ded;
+
+import messaging.simp.ded.compression.LZSS;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-
-import messaging.simp.ded.compression.LZSS;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import org.springframework.messaging.Message;
-import org.springframework.messaging.support.MessageBuilder;
-import org.springframework.messaging.support.MessageHeaderInitializer;
-import org.springframework.messaging.support.NativeMessageHeaderAccessor;
-import org.springframework.util.InvalidMimeTypeException;
-import org.springframework.util.MultiValueMap;
 
 /**
  * Decodes one or more DED frames contained in a {@link ByteBuffer}.
