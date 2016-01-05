@@ -6,3 +6,4 @@ sshpass -p "vagrant" scp -oStrictHostKeyChecking=no -rp /var/www/img/ vagrant@cl
 sleep 1000
 # Cleanup
 rm -f /var/www/img/*
+exec "$@"
