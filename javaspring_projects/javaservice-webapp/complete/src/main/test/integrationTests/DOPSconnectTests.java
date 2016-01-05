@@ -99,7 +99,6 @@ public class DOPSconnectTests {
                     {
                         bDecoded=true; // set to true since login failure is actually a correct response, since client is not registered
                         System.out.println("1_1_6_LoginProfile response packet decoded; however login failed ;  Status: "+strStatus);
-                        assertEquals(true,bDecoded);
                     }
                 }
             }
