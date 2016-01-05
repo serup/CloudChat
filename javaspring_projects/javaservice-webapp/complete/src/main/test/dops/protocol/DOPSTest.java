@@ -20,5 +20,6 @@ public class DOPSTest {
         String password = "12345";
 
         assertEquals(false,dops.loginToServer(url,port,uniqueId,username,password)); // expect false, since user is NOT registered in DFD
+        assertEquals(true,dops.clientEndpoint.clientSession.isOpen()); // even though login to profile failed, then connection to DOPS main part should have been established
     }
 }
