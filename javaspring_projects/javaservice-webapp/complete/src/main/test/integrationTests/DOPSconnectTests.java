@@ -23,7 +23,7 @@ public class DOPSconnectTests {
         JavaWebSocketClientEndpoint clientEndpoint = new JavaWebSocketClientEndpoint();
 
         /**
-         * connect client
+         * connect client -- Make sure the backend is running -- example start: vagrant up backend
          */
         //clientEndpoint.connectToServer("ws://localhost:7777");
         clientEndpoint.connectToServer("ws://backend.scanva.com:7777");
