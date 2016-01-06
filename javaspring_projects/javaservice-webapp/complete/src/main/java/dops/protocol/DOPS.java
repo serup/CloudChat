@@ -17,6 +17,11 @@ public class DOPS extends JavaWebSocketClientEndpoint {
 
     JavaWebSocketClientEndpoint clientEndpoint = new JavaWebSocketClientEndpoint();
 
+    public boolean isOpen()
+    {
+        return clientEndpoint.clientSession.isOpen();
+    }
+
     private ByteBuffer createDEDLogin(short trans_id, String uniqueId, String username, String password)
     {
         ByteBuffer data = null;
