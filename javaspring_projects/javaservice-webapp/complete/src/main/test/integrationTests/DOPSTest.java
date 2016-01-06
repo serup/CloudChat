@@ -1,6 +1,7 @@
 package integrationTests;
 
 import dops.protocol.DOPS;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.BufferedReader;
@@ -25,6 +26,8 @@ import static org.junit.Assert.*;
  * Created by serup on 05-01-16.
  */
 public class DOPSTest {
+
+    boolean bIntegrationEnvironmentAlreadySetup=false;
 
     public static boolean containsAny(String str, String[] words)
     {
@@ -78,6 +81,43 @@ public class DOPSTest {
         return strtmp;
     }
 
+    private boolean setupIntegrationEnvironment()
+    {
+        boolean bResult=true;
+        if (!bIntegrationEnvironmentAlreadySetup) {
+            try {
+                // Make sure VM is running for this test
+                System.out.println("Waiting for VM to start ...");
+
+                String path = new File(".").getCanonicalPath();
+                path = trimOffLastFileSeperator(path, 3);
+
+                String cmd = "vagrant --version";
+                String result = executeCommand(cmd, path);
+                assertEquals(true, result.contains("Vagrant"));
+
+                cmd = "vagrant up backend";
+                result = executeCommand(cmd, path);
+                assertEquals(true, containsAny(result, new String[]{"VM is already running", "Machine booted and ready"}));
+
+                System.out.println("VM is started - now run test");
+            }catch(Exception e){
+                e.printStackTrace();
+                bResult = false;
+            }
+            bIntegrationEnvironmentAlreadySetup = bResult;
+        }
+        else
+          System.out.println("- Integration Environment already setup");
+
+        return bResult;
+    }
+
+    @Before
+    public void setup() throws Exception {
+        assertEquals(true,setupIntegrationEnvironment());
+    }
+
     @Test
     public void testLoginToServer() throws Exception {
 
@@ -87,22 +127,6 @@ public class DOPSTest {
         String uniqueId = "985998707DF048B2A796B44C89345494";
         String username = "johndoe@email.com"; // TODO: find a way to safely handle retrieval of username,password - should NOT be stored in source code
         String password = "12345";
-
-        // Make sure VM is running for this test
-        System.out.println("Waiting for VM to start ...");
-
-        String path = new java.io.File(".").getCanonicalPath();
-        path = trimOffLastFileSeperator(path,3);
-
-        String cmd = "vagrant --version";
-        String result = executeCommand(cmd, path);
-        assertEquals(true,result.contains("Vagrant"));
-
-        cmd = "vagrant up backend";
-        result = executeCommand(cmd, path);
-        assertEquals(true,containsAny(result,new String[]{"VM is already running", "Machine booted and ready"}));
-
-        System.out.println("VM is started - now run test");
 
         assertEquals(false,dops.loginToServer(url,port,uniqueId,username,password)); // expect false, since user is NOT registered in DFD
         assertEquals(true,dops.isOpen()); // even though login to profile failed, then connection to DOPS main part should have been established
