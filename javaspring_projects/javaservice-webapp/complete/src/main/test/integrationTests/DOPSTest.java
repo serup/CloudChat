@@ -1,6 +1,7 @@
 package integrationTests;
 
 import dops.protocol.DOPS;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.BufferedReader;
@@ -112,6 +113,11 @@ public class DOPSTest {
         return bResult;
     }
 
+    @Before
+    public void setup() throws Exception {
+        assertEquals(true,setupIntegrationEnvironment());
+    }
+
     @Test
     public void testLoginToServer() throws Exception {
 
@@ -122,7 +128,6 @@ public class DOPSTest {
         String username = "johndoe@email.com"; // TODO: find a way to safely handle retrieval of username,password - should NOT be stored in source code
         String password = "12345";
 
-        assertEquals(true,setupIntegrationEnvironment());
         assertEquals(false,dops.loginToServer(url,port,uniqueId,username,password)); // expect false, since user is NOT registered in DFD
         assertEquals(true,dops.isOpen()); // even though login to profile failed, then connection to DOPS main part should have been established
 
