@@ -2,9 +2,13 @@
 IDEA_PACKAGE=ideaIC-15.0.2.tar.gz
 
 # Assuming we already did this during the previous steps:
-# sudo add-apt-repository ppa:webupd8team/java
-# sudo apt-get update
-# sudo apt-get install oracle-java7-installer oracle-java8-installer
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 oracle-java8-installer |grep "install ok installed")
+if ["" == "$PKG_OK" ]; then
+# install essentials
+	sudo add-apt-repository ppa:webupd8team/java
+	sudo apt-get update
+	sudy apt-get install oracle-java7-installer oracle-java8-installer
+fi
 
 wget -O "/tmp/$IDEA_PACKAGE" http://download-cf.jetbrains.com/idea/$IDEA_PACKAGE
 cd /tmp
