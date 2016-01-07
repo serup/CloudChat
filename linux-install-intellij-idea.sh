@@ -16,16 +16,16 @@ cd /tmp
 if [ -f "/tmp/$IDEA_PACKAGE" ]; then
   tar -xzvf "$IDEA_PACKAGE"
 
-  IDEA_EXTRACTED_FOLDER=`ls -dt idea-IU* | head -1`
+  IDEA_EXTRACTED_FOLDER=`ls -dt idea-IC* | head -1`
   sudo rsync -av "$IDEA_EXTRACTED_FOLDER/" /opt/idea/
   sudo cp /opt/idea/bin/idea.png /usr/share/pixmaps/
 
   echo '[Desktop Entry]
 Name=IntelliJ IDEA
 Type=Application
-Exec=idea.sh
+Exec=/opt/idea/bin/idea.sh
 Terminal=false
-Icon=idea
+Icon=/opt/idea/bin/idea.png
 Comment=Integrated Development Environment
 NoDisplay=false
 Categories=Development;IDE;

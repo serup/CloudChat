@@ -1,7 +1,8 @@
-cd /home/serup/codeblocks_projects/serup/websocket_server/bin/Debug/
+cd ../websocket_server/bin/Debug/
 ./scanvaserver.exe 0.0.0.0 7777 &  echo $! > /var/scanva/runningServerProcessID
 sleep 10
-cd /home/serup/codeblocks_projects/serup/DFDFunctions/1_1/bin/Debug/
+cd -
+cd ../DFDFunctions/1_1/bin/Debug/
 ./DFD_1_1.exe 127.0.0.1 7777 & echo $! >> /var/scanva/runningServerProcessID
 cd -
 read -p "Press any key to continue... Server will be stopped!! " -n1 -s

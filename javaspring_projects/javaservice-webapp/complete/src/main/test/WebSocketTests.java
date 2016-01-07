@@ -1,17 +1,14 @@
-import WebSocketEchoTestEndpoints.EchoByteArrayEndpoint;
 import ClientEndpoint.JavaWebSocketClientEndpoint;
+import WebSocketEchoTestEndpoints.EchoByteArrayEndpoint;
 import WebSocketEchoTestEndpoints.EchoEndpoint;
 import WebSocketEchoTestEndpoints.MockServer;
 import messaging.simp.ded.DEDDecoder;
 import messaging.simp.ded.DEDEncoder;
-import org.glassfish.tyrus.core.StrictUtf8;
-import org.glassfish.tyrus.server.Server;
 import org.glassfish.tyrus.client.ClientManager;
+import org.glassfish.tyrus.server.Server;
 import org.junit.Test;
 
 import javax.websocket.*;
-import javax.websocket.Endpoint;
-import javax.websocket.server.ServerEndpoint;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
