@@ -8,6 +8,7 @@ import org.glassfish.tyrus.client.ClientManager;
 import org.glassfish.tyrus.server.Server;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.websocket.*;
@@ -107,6 +108,7 @@ public class WebSocketTests {
 
 
     @Test
+    @Ignore  // deprecated
     public void testClientServerEcho() throws Exception {
 
 
@@ -125,6 +127,7 @@ public class WebSocketTests {
     }
 
     @Test
+    @Ignore  // deprecated
     public void testClientServerBinaryEcho() throws Exception {
 
 
