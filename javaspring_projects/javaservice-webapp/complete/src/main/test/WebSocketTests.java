@@ -1,11 +1,13 @@
 import ClientEndpoint.JavaWebSocketClientEndpoint;
+import Mocks.MockTestServer;
 import WebSocketEchoTestEndpoints.EchoByteArrayEndpoint;
 import WebSocketEchoTestEndpoints.EchoEndpoint;
-import WebSocketEchoTestEndpoints.MockServer;
 import messaging.simp.ded.DEDDecoder;
 import messaging.simp.ded.DEDEncoder;
 import org.glassfish.tyrus.client.ClientManager;
 import org.glassfish.tyrus.server.Server;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import javax.websocket.*;
@@ -103,98 +105,6 @@ public class WebSocketTests {
         serverThread.start();
     }
 
-    class MockTestServer{
-
-        private Thread MockserverThread;
-        private JavaWebSocketClientEndpoint clientEndpoint;
-        private Session session;
-        private Object waitLock = new Object();
-        private Server server;
-
-        private void  wait4TerminateSignal()
-        {
-            synchronized(waitLock)
-            {
-                try {
-                    waitLock.wait();
-                }
-                catch (InterruptedException e) { }
-            }
-        }
-
-        public void runMockServer(int port) {
-            MockserverThread = new Thread() {
-                public void run() {
-                    server = new Server("localhost", port, "/websockets", null, MockServer.class);
-                    if(server!=null) {
-                        try {
-                            server.start();
-                            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-                            System.out.println("Mock Test server ready to read incoming packets");
-                            while (reader.read() != -1) ;
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        } finally {
-                            System.out.print("Mock Test Server will stop !!!");
-                            stopServer();
-                        }
-                    }
-                }
-            };
-            MockserverThread.start();
-        }
-
-        public void stopServer()
-        {
-            if(MockserverThread.isAlive() && server != null)
-                server.stop();
-        }
-
-        MockTestServer(int ServerPort, String ServerEndpoint)
-        {
-            /**
-             * start the MOCK server
-             */
-            this.runMockServer(ServerPort);
-
-            /**
-             * setup client
-             */
-            clientEndpoint = new JavaWebSocketClientEndpoint();
-
-            /**
-             * connect client to MockServer
-             */
-            session = clientEndpoint.connectToServer("ws://localhost:" + ServerPort + "/websockets/" + ServerEndpoint);
-
-
-        }
-
-        public boolean isOpen()
-        {
-            if(session!=null)
-                return session.isOpen();
-            else
-                return false;
-        }
-
-       public int sendToServer(ByteBuffer DEDpacket)
-        {
-            int iResult=-1;
-            if(isOpen())
-                iResult = clientEndpoint.sendToServer(DEDpacket);
-            return iResult;
-        }
-
-        public byte[] receiveFromServer()
-        {
-            byte[] IncomingPacket=null;
-            if(isOpen())
-                IncomingPacket = clientEndpoint.receiveFromServer();
-            return IncomingPacket;
-        }
-    }
-
 
     @Test
     public void testClientServerEcho() throws Exception {
@@ -216,6 +126,7 @@ public class WebSocketTests {
 
     @Test
     public void testClientServerBinaryEcho() throws Exception {
+
 
         /**
          * First start a server which can receive and echo back a binary array
@@ -290,7 +201,6 @@ public class WebSocketTests {
 
     @Test
     public void testLoginToMockServer() throws Exception {
-
         /**
          * First start and connect to a MOCK server which can act as a Server and receive a DED packet and return a DED packet with result
          */
@@ -373,6 +283,5 @@ public class WebSocketTests {
         }
 
         assertEquals(true,bDecoded);
-
     }
 }
