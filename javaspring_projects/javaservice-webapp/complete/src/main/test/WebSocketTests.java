@@ -6,8 +6,6 @@ import messaging.simp.ded.DEDDecoder;
 import messaging.simp.ded.DEDEncoder;
 import org.glassfish.tyrus.client.ClientManager;
 import org.glassfish.tyrus.server.Server;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -200,6 +198,23 @@ public class WebSocketTests {
 
         assertEquals(true,bDecoded);
 
+    }
+
+    @Test
+    public void testCreateProfileInMockServer()
+    {
+        boolean bCreatedProfile=false;
+        /**
+         * First start and connect to a MOCK server which can act as a Server and receive a DED packet and return a DED packet with result
+         */
+        MockTestServer mockTestServer = new MockTestServer(8044,"MockServerCreateProfile");
+        assertEquals(true,mockTestServer.isOpen());
+
+        /**
+         * prepare data to be send
+         */
+//TODO: build handling of a create profile event
+        assertEquals(true,bCreatedProfile);
     }
 
     @Test
