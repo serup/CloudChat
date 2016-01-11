@@ -37,6 +37,14 @@ if [ "docker-image-skeleton" == "$image" ]; then
 else
    echo "- docker images NOT installed - please check setup.conf to see if it is correct"
 fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 libboost* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install libboost "
+  sudo apt-get install -yq libboost-all-dev 
+  echo " - done."
+else
+  echo "libbost already installed"
+fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 virtualbox |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install Virtualbox "
