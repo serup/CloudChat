@@ -1,9 +1,15 @@
+import ClientEndpoint.JavaWebSocketClientEndpoint;
 import Mocks.MockTestServer;
+import WebSocketEchoTestEndpoints.EchoByteArrayEndpoint;
 import messaging.simp.ded.DEDDecoder;
 import messaging.simp.ded.DEDEncoder;
+import org.glassfish.tyrus.server.Server;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 
 import static junit.framework.TestCase.assertEquals;
@@ -13,7 +19,28 @@ import static junit.framework.TestCase.assertEquals;
  */
 public class WebSocketTests {
 
-    MockTestServer mockTestServer=null;
+    private static MockTestServer mockTestServer=null;
+    private static Thread serverThread;
+
+    public void runByteArrayServer() {
+        serverThread = new Thread() {
+            public void run() {
+                Server server = new Server("localhost", 8033, "/websockets", null, EchoByteArrayEndpoint.class);
+                try {
+                    server.start();
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+                    System.out.println("Server ready and waiting for input.");
+                    reader.read();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    server.stop();
+                }
+            }
+        };
+        serverThread.start();
+    }
+
 
     @Before
     public void setupMockServer()
@@ -22,8 +49,88 @@ public class WebSocketTests {
          * Start and connect to a MOCK server which can act as a Server and receive a DED packet and return a DED packet with result
          */
         if(mockTestServer==null)
-            mockTestServer = new MockTestServer(8044,"MockServerEndpoint");
+            mockTestServer = new MockTestServer(8046,"MockServerEndpoint");
     }
+
+    @Test
+    @Ignore
+    public void testClientServerBinaryEcho() throws Exception {
+
+        // no need for mockTestServer, so close it down if running - there is however issues when localhost has a running server - normally there could be more servers on seperate ports, however in Java there seems to be some issues
+        if(mockTestServer!=null)
+            mockTestServer.stopServer();
+
+        /**
+         * First start a server which can receive and echo back a binary array
+         */
+        runByteArrayServer();
+
+        /**
+         * setup client
+         */
+        JavaWebSocketClientEndpoint clientEndpoint = new JavaWebSocketClientEndpoint();
+
+        /**
+         * connect client
+         */
+        clientEndpoint.connectToServer("ws://localhost:8033/websockets/echoBinary");
+
+        /**
+         * prepare data to be send
+         */
+        short trans_id = 1;
+        boolean action = true;
+
+        DEDEncoder DED = new DEDEncoder();
+        DED.PUT_STRUCT_START( "event" );
+        DED.PUT_METHOD  ( "name",  "MusicPlayer" );
+        DED.PUT_USHORT  ( "trans_id",  trans_id);
+        DED.PUT_BOOL    ( "startstop", action );
+        DED.PUT_STDSTRING("text", "hello world");
+        DED.PUT_STRUCT_END( "event" );
+
+        ByteBuffer data = DED.GET_ENCODED_BYTEBUFFER_DATA();
+
+        /**
+         * send to server with client current client session connection
+         */
+        clientEndpoint.sendToServer(data);
+
+        /**
+         * wait for incomming data response, then receive data
+         */
+        byte[] receivedData = clientEndpoint.receiveFromServer();
+
+        /**
+         * decode incomming data
+         */
+        boolean bDecoded=false;
+        String strValue="";
+        short iValue=0;
+        boolean bValue=false;
+        String strText="";
+
+        // decode data ...
+        DEDDecoder DED2 = new DEDDecoder();
+        DED2.PUT_DATA_IN_DECODER( receivedData, receivedData.length);
+        if( DED2.GET_STRUCT_START( "event" )==1 &&
+                (strValue = DED2.GET_METHOD ( "name" )).length()>0 &&
+                (iValue   = DED2.GET_USHORT ( "trans_id")) !=-1 &&
+                (bValue   = DED2.GET_BOOL   ( "startstop")) &&
+                (strText  = DED2.GET_STDSTRING ( "text")).length()>0 &&
+                DED2.GET_STRUCT_END( "event" )==1)
+        {
+            bDecoded=true;
+        }
+        else
+        {
+            bDecoded=false;
+        }
+
+        assertEquals(true,bDecoded);
+
+    }
+
 
     @Test
     public void testCreateProfileInMockServer()
