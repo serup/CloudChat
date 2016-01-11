@@ -60,6 +60,13 @@ public class MockServer {
         }
         else
         {
+            if( DED.GET_STRUCT_START( "DFDRequest" )==1 &&
+                (strMethod          = DED.GET_METHOD ( "Method" )).length()>0 &&
+                (uTrans_id          = DED.GET_USHORT ( "TransID")) !=-1 &&
+                (strProtocolTypeID  = DED.GET_STDSTRING ( "protocolTypeID")).length()>0 )
+            {
+                System.out.println("DFDRequest - received - now parse");
+            }
             bDecoded=false;
             System.out.println("WARNING [MockServer] - was not capable of decoding incoming DED datapacket - could be unknown DED method");
         }
