@@ -72,8 +72,35 @@ public class MockServer {
                                         (DED.GET_STDSTRING("STARTrecord")).contains("record") )
                 {
                     System.out.println("EmployeeRequest - received - now parse");
+                    String strProfileID = "", strProfileName = "", strSizeOfProfileData = "", strProfile_chunk_id = "", strAccountStatus = "", strExpireDate = "", strProfileStatus = "";
+                    if((strProfileID = DED.GET_STDSTRING("profileID")).length()>0 &&
+                            (strProfileName = DED.GET_STDSTRING("profileName")).length()>0 &&
+                            (strProtocolTypeID = DED.GET_STDSTRING("protocolTypeID")).length()>0 &&
+                            (strSizeOfProfileData = DED.GET_STDSTRING("sizeofProfileData")).length()>0 &&
+                            (strProfile_chunk_id = DED.GET_STDSTRING("profile_chunk_id")).length()>0 &&
+                            (strAccountStatus = DED.GET_STDSTRING("AccountStatus")).length()>0 &&
+                            (strExpireDate = DED.GET_STDSTRING("ExpireDate")).length()>0 &&
+                            (strProfileStatus = DED.GET_STDSTRING("ProfileStatus")).length()>0)
+                    {
+                        System.out.println("Employee record received - now validate TOAST ");
+                        if((DED.GET_STDSTRING("STARTtoast")).length()>0 )
+                        {
+                            // TOAST area found, now iterate thru all elements
+                            System.out.println("TOAST area found, now iterate thru all elements");
+                            DEDDecoder._Elements elementvalue = null;
+                            //TODO: issue with GET_ELEMENT - not working yet
+                            /*while((elementvalue = DED.GET_ELEMENT("profile"))!=null)
+                            {
+                                System.out.println("TOAST element found");
+                            }*/
+                        }
+                        else
+                        {
+                            // NO TOAST area found
+                            System.out.println("No TOAST area found in request, meaning NO elements added to profile info");
 
-
+                        }
+                    }
                 }
                 else
                 {
