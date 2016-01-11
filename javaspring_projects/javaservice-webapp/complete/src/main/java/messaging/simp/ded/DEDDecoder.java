@@ -148,8 +148,8 @@ public class DEDDecoder {
 
 	public class _Elements
 	{
-		String strElementID;
-		byte[] ElementData;
+		public String strElementID;
+		public byte[] ElementData;
 	}
 
 	class data
@@ -540,41 +540,55 @@ public class DEDDecoder {
 	//TODO: 20140724 consider designing _GET_ so that if element is NOT found, then internal pointer is NOT moved as it is NOW!!!
 	public DEDDecoder._Elements GET_ELEMENT(String entityname)
 	{
+		param DEDobject1;
+		param DEDobject2;
 		int result = -1;
-		if(this.decoder_ptr==null) return null;
 
 		_Elements elementvalue = new _Elements();
+		try {
+			if (this.decoder_ptr == null) return null;
 
-		String strentity_chunk_id = entityname.toLowerCase() + "_chunk_id";
-		String strentity_chunk_data = entityname.toLowerCase() + "_chunk_data";
 
-		param DEDobject1 = new param();
-		DEDobject1.name = strentity_chunk_id;
-		DEDobject1.ElementType = DED_ELEMENT_TYPE_STDSTRING;
-		DEDobject1.value = null;
-		DEDobject1.length = -1;
+			String strentity_chunk_id = entityname.toLowerCase() + "_chunk_id";
+			String strentity_chunk_data = entityname.toLowerCase() + "_chunk_data";
 
-		param DEDobject2 = new param();
-		DEDobject2.name = strentity_chunk_data;
-		DEDobject2.ElementType = DED_ELEMENT_TYPE_STDVECTOR;
-		DEDobject2.value = null;
-		DEDobject2.length = -1;
+			DEDobject1 = new param();
+			DEDobject1.name = strentity_chunk_id;
+			DEDobject1.ElementType = DED_ELEMENT_TYPE_STDSTRING;
+			DEDobject1.value = null;
+			DEDobject1.length = -1;
 
-		result = decoder_ptr._GetElement(DEDobject1);
-		if (result == 1)
+			DEDobject2 = new param();
+			DEDobject2.name = strentity_chunk_data;
+			DEDobject2.ElementType = DED_ELEMENT_TYPE_STDVECTOR;
+			DEDobject2.value = null;
+			DEDobject2.length = -1;
+
+			result = decoder_ptr._GetElement(DEDobject1);
+		/*if (result == 1)
 			result = (int)byteUtils.bytesToLong(DEDobject1.value);
 		else
-			result = -1;
-		if (result != -1){
-			result = decoder_ptr._GetElement(DEDobject2);
-			if (result == 1)
+			result = -1;*/
+			if (result != -1) {
+				result = decoder_ptr._GetElement(DEDobject2);
+			/*if (result == 1)
 				result = (int)byteUtils.bytesToLong(DEDobject2.value);
 			else
-				result = -1;
-		}
-		elementvalue.strElementID = DEDobject1.value.toString();
-		elementvalue.ElementData = DEDobject2.value;
+				result = -1;*/
 
+				elementvalue.strElementID = new String(DEDobject1.value, UTF8_CHARSET);
+				elementvalue.ElementData = new byte[DEDobject2.value.length];
+				System.arraycopy(DEDobject2.value,0,elementvalue.ElementData,0,DEDobject2.value.length);
+				//elementvalue.ElementData = DEDobject2.value;
+
+			}
+			else
+				return null;
+		}
+		catch (Exception e){
+		    elementvalue = null;
+			e.printStackTrace();
+		}
 		return elementvalue;
 	}
 
