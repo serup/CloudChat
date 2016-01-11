@@ -12,7 +12,7 @@ import javax.websocket.server.ServerEndpoint;
  *
  * this class simulates a DOPS system login - login to pro actor server, which logs in to DFD backend database profile and then response
  */
-@ServerEndpoint(value = "/MockServerLogin")
+@ServerEndpoint(value = "/MockServerEndpoint")
 public class MockServer {
 
     boolean bDecoded=false;

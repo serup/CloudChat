@@ -14,6 +14,7 @@ import java.nio.ByteBuffer;
  */
 public class MockTestServer{
 
+    public boolean bIsRunning=false;
     private Thread MockserverThread;
     private JavaWebSocketClientEndpoint clientEndpoint;
     private Session session;
@@ -47,6 +48,7 @@ public class MockTestServer{
                         System.out.print("Mock Test Server will stop !!!");
                         stopServer();
                     }
+                    bIsRunning=false;
                 }
             }
         };
@@ -76,6 +78,7 @@ public class MockTestServer{
          */
         session = clientEndpoint.connectToServer("ws://localhost:" + ServerPort + "/websockets/" + ServerEndpoint);
 
+        bIsRunning=true;
 
     }
 
