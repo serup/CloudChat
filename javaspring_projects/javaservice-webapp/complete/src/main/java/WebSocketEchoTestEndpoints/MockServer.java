@@ -89,10 +89,11 @@ public class MockServer {
                             System.out.println("TOAST area found, now iterate thru all elements");
                             DEDDecoder._Elements elementvalue = null;
                             //TODO: issue with GET_ELEMENT - not working yet
-                            /*while((elementvalue = DED.GET_ELEMENT("profile"))!=null)
+                            //elementvalue = DED.GET_ELEMENT("profile");
+                            while((elementvalue = DED.GET_ELEMENT("profile"))!=null)
                             {
-                                System.out.println("TOAST element found");
-                            }*/
+                                System.out.println("TOAST element : " + elementvalue.strElementID);
+                            }
                         }
                         else
                         {
