@@ -53,7 +53,7 @@ public class WebSocketTests {
     }
 
     @Test
-    @Ignore
+    @Ignore // some how it is not possible to run multiple servers even if port is different - hmm !?!?!
     public void testClientServerBinaryEcho() throws Exception {
 
         // no need for mockTestServer, so close it down if running - there is however issues when localhost has a running server - normally there could be more servers on seperate ports, however in Java there seems to be some issues
