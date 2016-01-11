@@ -66,6 +66,20 @@ public class MockServer {
                 (strProtocolTypeID  = DED.GET_STDSTRING ( "protocolTypeID")).length()>0 )
             {
                 System.out.println("DFDRequest - received - now parse");
+                if((DED.GET_STDSTRING("dest")).length()>0 &&
+                        (DED.GET_STDSTRING("src")).contains("DFD_1.1") &&
+                        (DED.GET_STDSTRING("STARTrequest")).contains("EmployeeRequest") &&
+                                        (DED.GET_STDSTRING("STARTrecord")).contains("record") )
+                {
+                    System.out.println("EmployeeRequest - received - now parse");
+
+
+                }
+                else
+                {
+                    System.out.println("Warning - unknown DFDRequest - accepting basic parsing - header of packet was correct");
+                    bDecoded=true;
+                }
             }
             bDecoded=false;
             System.out.println("WARNING [MockServer] - was not capable of decoding incoming DED datapacket - could be unknown DED method");
