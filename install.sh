@@ -43,7 +43,7 @@ if [ "" == "$PKG_OK" ]; then
   sudo apt-get install -yq libboost-all-dev 
   echo " - done."
 else
-  echo "libbost already installed"
+  echo "- libbost already installed"
 fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 virtualbox |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
