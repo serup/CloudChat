@@ -361,11 +361,11 @@ public class DEDEncoder  {
 		return result;
 	}
 
-	public int PUT_ELEMENT(String entityname, String elementname, byte[] elementvalue)
+	public int PUT_ELEMENT(String entityname, String elementname, String elementvalue)
 	{
 		int result = -1;
 		if (this.dedEncoder != null) {
-			result = this.dedEncoder.EncodeElement(entityname, elementname, elementvalue); // will add _chunk_id and _chunk_data
+			result = this.dedEncoder.EncodeElement(entityname, elementname, elementvalue.getBytes()); // will add _chunk_id and _chunk_data
 		}
 		return result;
 	}
