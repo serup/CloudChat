@@ -88,11 +88,18 @@ public class MockServer {
                             // TOAST area found, now iterate thru all elements
                             System.out.println("TOAST area found, now iterate thru all elements");
                             DEDDecoder._Elements elementvalue = null;
-                            //TODO: issue with GET_ELEMENT - not working yet
-                            //elementvalue = DED.GET_ELEMENT("profile");
                             while((elementvalue = DED.GET_ELEMENT("profile"))!=null)
                             {
                                 System.out.println("TOAST element : " + elementvalue.strElementID);
+                            }
+                            String strtmp = DED.GET_STDSTRING("elements-ignore");
+                            if(//(DED.GET_STDSTRING("ENDtoast")).contains("elements") &&
+                               (DED.GET_STDSTRING("ENDrecord")).contains("record") &&
+                               (DED.GET_STDSTRING("ENDrequest")).contains("EmployeeRequest") &&
+                               (DED.GET_STDSTRING("DFDRequest")).isEmpty())
+                            {
+                                System.out.println("DFDRequest parsed correct");
+                                bDecoded=true;
                             }
                         }
                         else
@@ -109,8 +116,8 @@ public class MockServer {
                     bDecoded=true;
                 }
             }
-            bDecoded=false;
-            System.out.println("WARNING [MockServer] - was not capable of decoding incoming DED datapacket - could be unknown DED method");
+            if(!bDecoded)
+                System.out.println("WARNING [MockServer] - was not capable of decoding incoming DED datapacket - could be unknown DED method");
         }
 
         // 2. determine what to respond
