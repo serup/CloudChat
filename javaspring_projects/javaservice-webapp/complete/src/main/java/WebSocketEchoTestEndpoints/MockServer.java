@@ -72,8 +72,18 @@ public class MockServer {
                                         (DED.GET_STDSTRING("STARTrecord")).contains("record") )
                 {
                     System.out.println("EmployeeRequest - received - now parse");
-
-
+                    String strProfileID = "", strProfileName = "", strSizeOfProfileData = "", strProfile_chunk_id = "", strAccountStatus = "", strExpireDate = "", strProfileStatus = "";
+                    if((strProfileID = DED.GET_STDSTRING("profileID")).length()>0 &&
+                            (strProfileName = DED.GET_STDSTRING("profileName")).length()>0 &&
+                            (strProtocolTypeID = DED.GET_STDSTRING("protocolTypeID")).length()>0 &&
+                            (strSizeOfProfileData = DED.GET_STDSTRING("sizeofProfileData")).length()>0 &&
+                            (strProfile_chunk_id = DED.GET_STDSTRING("profile_chunk_id")).length()>0 &&
+                            (strAccountStatus = DED.GET_STDSTRING("AccountStatus")).length()>0 &&
+                            (strExpireDate = DED.GET_STDSTRING("ExpireDate")).length()>0 &&
+                            (strProfileStatus = DED.GET_STDSTRING("ProfileStatus")).length()>0)
+                    {
+                        System.out.println("Employee record received - now validate TOAST ");
+                    }
                 }
                 else
                 {
