@@ -1,22 +1,16 @@
 import ClientEndpoint.JavaWebSocketClientEndpoint;
 import Mocks.MockTestServer;
 import WebSocketEchoTestEndpoints.EchoByteArrayEndpoint;
-import WebSocketEchoTestEndpoints.EchoEndpoint;
 import messaging.simp.ded.DEDDecoder;
 import messaging.simp.ded.DEDEncoder;
-import org.glassfish.tyrus.client.ClientManager;
 import org.glassfish.tyrus.server.Server;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import javax.websocket.*;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URI;
 import java.nio.ByteBuffer;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import static junit.framework.TestCase.assertEquals;
 
@@ -25,65 +19,8 @@ import static junit.framework.TestCase.assertEquals;
  */
 public class WebSocketTests {
 
-    private static CountDownLatch messageLatch;
+    private static MockTestServer mockTestServer=null;
     private static Thread serverThread;
-    String strMessageToSend="";
-    String strMsgBridge=""; // used as picky-bag message for echo client server test
-
-    public void runTxtMessageServer() {
-        serverThread = new Thread() {
-            public void run() {
-                Server server = new Server("localhost", 8025, "/websockets", null, EchoEndpoint.class);
-                try {
-                    server.start();
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-                    System.out.print("Please press a key to stop the server.");
-                    reader.readLine();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    server.stop();
-                }
-            }
-        };
-        serverThread.start();
-    }
-
-    public String responseToClient(String strmsg)
-    {
-        try {
-            strMessageToSend=strmsg;
-            messageLatch = new CountDownLatch(1);
-
-            final ClientEndpointConfig cec = ClientEndpointConfig.Builder.create().build();
-            ClientManager client = ClientManager.createClient();
-            client.connectToServer(new Endpoint() {
-
-                @Override
-                public void onOpen(Session session, EndpointConfig config) {
-                    try {
-                        session.addMessageHandler(new MessageHandler.Whole<String>() {
-
-                            @Override
-                            public void onMessage(String message) {
-                                System.out.println("Received message: "+message);
-                                strMsgBridge = message;
-                                messageLatch.countDown();
-                            }
-                        });
-                        session.getBasicRemote().sendText(strMessageToSend);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }, cec, new URI("ws://localhost:8025/websockets/echo"));
-            messageLatch.await(100, TimeUnit.SECONDS);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return strMsgBridge;
-    }
 
     public void runByteArrayServer() {
         serverThread = new Thread() {
@@ -105,29 +42,23 @@ public class WebSocketTests {
     }
 
 
-    @Test
-    @Ignore  // deprecated
-    public void testClientServerEcho() throws Exception {
-
-
+    @Before
+    public void setupMockServer()
+    {
         /**
-         * First start a server
+         * Start and connect to a MOCK server which can act as a Server and receive a DED packet and return a DED packet with result
          */
-        runTxtMessageServer();
-
-        /**
-         * Second connect to it as a java websocket client, and send a message, expecting it to echo back
-         */
-        String strReceivedMsg = responseToClient("Hello World");
-
-        assertEquals("Hello World",strReceivedMsg);
-
+        if(mockTestServer==null)
+            mockTestServer = new MockTestServer(8046,"MockServerEndpoint");
     }
 
     @Test
-    @Ignore  // deprecated
+    @Ignore
     public void testClientServerBinaryEcho() throws Exception {
 
+        // no need for mockTestServer, so close it down if running - there is however issues when localhost has a running server - normally there could be more servers on seperate ports, however in Java there seems to be some issues
+        if(mockTestServer!=null)
+            mockTestServer.stopServer();
 
         /**
          * First start a server which can receive and echo back a binary array
@@ -152,10 +83,10 @@ public class WebSocketTests {
 
         DEDEncoder DED = new DEDEncoder();
         DED.PUT_STRUCT_START( "event" );
-            DED.PUT_METHOD  ( "name",  "MusicPlayer" );
-            DED.PUT_USHORT  ( "trans_id",  trans_id);
-            DED.PUT_BOOL    ( "startstop", action );
-            DED.PUT_STDSTRING("text", "hello world");
+        DED.PUT_METHOD  ( "name",  "MusicPlayer" );
+        DED.PUT_USHORT  ( "trans_id",  trans_id);
+        DED.PUT_BOOL    ( "startstop", action );
+        DED.PUT_STDSTRING("text", "hello world");
         DED.PUT_STRUCT_END( "event" );
 
         ByteBuffer data = DED.GET_ENCODED_BYTEBUFFER_DATA();
@@ -200,14 +131,11 @@ public class WebSocketTests {
 
     }
 
+
     @Test
     public void testCreateProfileInMockServer()
     {
         boolean bCreatedProfile=false;
-        /**
-         * First start and connect to a MOCK server which can act as a Server and receive a DED packet and return a DED packet with result
-         */
-        MockTestServer mockTestServer = new MockTestServer(8044,"MockServerCreateProfile");
         assertEquals(true,mockTestServer.isOpen());
 
         /**
@@ -219,11 +147,6 @@ public class WebSocketTests {
 
     @Test
     public void testLoginToMockServer() throws Exception {
-        /**
-         * First start and connect to a MOCK server which can act as a Server and receive a DED packet and return a DED packet with result
-         */
-        MockTestServer mockTestServer = new MockTestServer(8044,"MockServerLogin");
-
         assertEquals(true,mockTestServer.isOpen());
 
         /**
@@ -294,6 +217,10 @@ public class WebSocketTests {
             if(!strStatus.equals("ACCEPTED")) bDecoded=false;
             assertEquals(true,bDecoded);
             if(!strProtocolTypeID.equals("DED1.00.00")) bDecoded=false;
+
+            if(bDecoded)
+                System.out.println("DED packet validated - OK");
+
         }
         else
         {
