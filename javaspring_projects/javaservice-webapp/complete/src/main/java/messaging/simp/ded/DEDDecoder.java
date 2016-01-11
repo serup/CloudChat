@@ -146,7 +146,7 @@ public class DEDDecoder {
 		public int length;
 	}
 
-	class _Elements
+	public class _Elements
 	{
 		String strElementID;
 		byte[] ElementData;
@@ -538,10 +538,12 @@ public class DEDDecoder {
 
 
 	//TODO: 20140724 consider designing _GET_ so that if element is NOT found, then internal pointer is NOT moved as it is NOW!!!
-	public int GET_ELEMENT(String entityname, _Elements elementvalue)
+	public DEDDecoder._Elements GET_ELEMENT(String entityname)
 	{
 		int result = -1;
-		if(this.decoder_ptr==null) return -1;
+		if(this.decoder_ptr==null) return null;
+
+		_Elements elementvalue = new _Elements();
 
 		String strentity_chunk_id = entityname.toLowerCase() + "_chunk_id";
 		String strentity_chunk_data = entityname.toLowerCase() + "_chunk_data";
@@ -572,8 +574,8 @@ public class DEDDecoder {
 		}
 		elementvalue.strElementID = DEDobject1.value.toString();
 		elementvalue.ElementData = DEDobject2.value;
-		if(result != -1) result = 1;
-		return result;
+
+		return elementvalue;
 	}
 
 	////////////////////////////////////////////////////////////////
