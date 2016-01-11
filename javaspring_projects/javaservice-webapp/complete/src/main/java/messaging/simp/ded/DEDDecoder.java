@@ -565,22 +565,16 @@ public class DEDDecoder {
 			DEDobject2.length = -1;
 
 			result = decoder_ptr._GetElement(DEDobject1);
-		/*if (result == 1)
-			result = (int)byteUtils.bytesToLong(DEDobject1.value);
-		else
-			result = -1;*/
 			if (result != -1) {
 				result = decoder_ptr._GetElement(DEDobject2);
-			/*if (result == 1)
-				result = (int)byteUtils.bytesToLong(DEDobject2.value);
-			else
-				result = -1;*/
-
-				elementvalue.strElementID = new String(DEDobject1.value, UTF8_CHARSET);
-				elementvalue.ElementData = new byte[DEDobject2.value.length];
-				System.arraycopy(DEDobject2.value,0,elementvalue.ElementData,0,DEDobject2.value.length);
-				//elementvalue.ElementData = DEDobject2.value;
-
+				if(result != -1) {
+					elementvalue.strElementID = new String(DEDobject1.value, UTF8_CHARSET);
+					elementvalue.ElementData = new byte[DEDobject2.value.length];
+					System.arraycopy(DEDobject2.value, 0, elementvalue.ElementData, 0, DEDobject2.value.length);
+					//elementvalue.ElementData = DEDobject2.value;
+				}
+				else
+					return null;
 			}
 			else
 				return null;
