@@ -126,7 +126,7 @@ public class MockServer {
 
                             // 4. send response packet
                             if(dedResponsePacket==null) {
-                                dedResponsePacket = dedpacket; // echo back original packet, since encoding of response packet went wrong!!
+                                dedResponsePacket = dedpacket; // echo back original packet, since creation of response packet went wrong!!
                                 System.out.println("Internal ERROR [MockServer] - was not capable of creating a DED response packet, thus echoing received back");
                             }
                             return dedResponsePacket;
@@ -168,7 +168,7 @@ public class MockServer {
 
         // 4. send response packet
         if(dedResponsePacket==null) {
-            dedResponsePacket = dedpacket; // echo back original packet, since encoding of response packet went wrong!!
+            dedResponsePacket = dedpacket; // echo back original packet, since creation of response packet went wrong!!
             System.out.println("Internal ERROR [MockServer] - was not capable of creating a DED response packet, thus echoing received back");
         }
         return dedResponsePacket;
