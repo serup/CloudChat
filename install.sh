@@ -37,6 +37,14 @@ if [ "docker-image-skeleton" == "$image" ]; then
 else
    echo "- docker images NOT installed - please check setup.conf to see if it is correct"
 fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 taskwarrior* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install taskwarrior "
+  sudo apt-get install -yq taskwarrior
+  echo " - done."
+else
+  echo "- taskwarrior already installed"
+fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 xslt* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install xsltproc "
