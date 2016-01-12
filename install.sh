@@ -37,6 +37,22 @@ if [ "docker-image-skeleton" == "$image" ]; then
 else
    echo "- docker images NOT installed - please check setup.conf to see if it is correct"
 fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 rsync* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install rsync "
+  sudo apt-get install -yq rsync 
+  echo " - done."
+else
+  echo "- rsync already installed"
+fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 ssh* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install ssh "
+  sudo apt-get install -yq ssh 
+  echo " - done."
+else
+  echo "- ssh already installed"
+fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 taskwarrior* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install taskwarrior "
@@ -205,6 +221,15 @@ if [ "" == "$MEDIAWIKI_OK" ]; then
   echo " - done."
 else
   echo "- martasd-mediawiki puppet module installed"
+fi
+
+PUPPET_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep cesnet-hadoop)
+if [ "" == "$PUPPET_OK" ]; then
+  echo -n "- install cesnet-hadoop puppet module"
+  puppet module install cesnet-hadoop --modulepath ./puppet/trunk/environments/devtest/modules 
+  echo " - done."
+else
+  echo "- cesnet-hadoop puppet module installed"
 fi
 
 # install mogrify - to resize extracted profile images, thus making transfer to javascript client performance wice faster
