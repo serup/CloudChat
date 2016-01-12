@@ -22,7 +22,7 @@ public class WebSocketTests {
     private static MockTestServer mockTestServer=null;
     private static Thread serverThread;
 
-    public void runByteArrayServer() {
+    private void runByteArrayServer() {
         serverThread = new Thread() {
             public void run() {
                 Server server = new Server("localhost", 8033, "/websockets", null, EchoByteArrayEndpoint.class);
