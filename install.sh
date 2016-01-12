@@ -111,7 +111,7 @@ if [ "" == "$VBOX_OK" ]; then
 else
   echo "- vbox installed"
 fi
-PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 puppetlabs-release |grep "install ok installed")
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 puppet-co* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
 #  echo "puppetlabs-release was not found, now it will be installed - please wait..."
   echo -n "- install puppetlabs-release "
@@ -150,7 +150,7 @@ if [ "" == "$SPRINGBOOT_OK" ]; then
   echo -n "- install maven puppet module"
   puppet module install maestrodev/maven  --modulepath ./puppet/trunk/environments/devtest/modules
   echo -n "- install curl"
-  sudo apt-get install curl 
+  sudo apt-get install -yq curl 
   echo -n "- install sdkman"
   curl -s http://get.sdkman.io | bash
   echo -n "- init sdk"
@@ -223,14 +223,18 @@ else
   echo "- martasd-mediawiki puppet module installed"
 fi
 
-PUPPET_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep cesnet-hadoop)
-if [ "" == "$PUPPET_OK" ]; then
-  echo -n "- install cesnet-hadoop puppet module"
-  puppet module install cesnet-hadoop --modulepath ./puppet/trunk/environments/devtest/modules 
-  echo " - done."
-else
-  echo "- cesnet-hadoop puppet module installed"
-fi
+#for m in cesnet-hadoop cesnet-hbase cesnet-hive cesnet-sit_hadoop cesnet-zookeeper puppetlabs-mysql puppetlabs-postgresql; do puppet module install ${m} --modulepath ./puppet/trunk/environments/devtest/modules; done
+for m in cesnet-hadoop cesnet-hbase cesnet-hive cesnet-zookeeper puppetlabs-mysql puppetlabs-postgresql; do puppet module install ${m} --modulepath ./puppet/trunk/environments/devtest/modules; done
+
+#PUPPET_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep viirya-hadoop)
+#if [ "" == "$PUPPET_OK" ]; then
+#  echo -n "- install viirya-hadoop puppet module"
+#  puppet module install viirya-hadoop --modulepath ./puppet/trunk/environments/devtest/modules 
+#  echo " - done."
+#else
+#  echo "- viirya-hadoop puppet module installed"
+#fi
+
 
 # install mogrify - to resize extracted profile images, thus making transfer to javascript client performance wice faster
 MOGRIFY_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 imagemagick |grep "install ok installed")

@@ -2,6 +2,8 @@ node default {
   # Test message
   notify { "Debug output on ${hostname} node.": }
   #include ntp, git
+
+  include java
 }
 
 #node /^node01.*/ {
@@ -145,6 +147,49 @@ node /^jenkins.*/ {
   }
 
   include git
+
+}
+
+#class{"hadoop":
+#  hdfs_hostname => $::fqdn,
+#  yarn_hostname => $::fqdn,
+#  slaves => [ $::fqdn ],
+#  frontends => [ $::fqdn ],
+#  properties => {
+#    'dfs.replication' => 1,
+#  }
+#}
+
+node /^hadoop.*/ {
+
+  class { apache : } 
+
+  exec { "apt-update":
+    command => "/usr/bin/apt-get update"
+  }
+  Exec["apt-update"] -> Package <| |>
+
+  include sudo
+  # Add adm group to sudoers with NOPASSWD
+  sudo::conf { 'vagrant':
+    priority => 01,
+    content  => "vagrant ALL=(ALL) NOPASSWD: ALL",
+  }
+
+  include git
+  
+  # HDFS
+  #include hadoop::namenode
+  # YARN
+  #include hadoop::resourcemanager
+  # MAPRED
+  #include hadoop::historyserver
+  # slave (HDFS)
+  #include hadoop::datanode
+  # slave (YARN)
+  #include hadoop::nodemanager
+  # client
+  #include hadoop::frontend
 
 }
 
