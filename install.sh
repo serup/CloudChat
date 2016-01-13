@@ -85,6 +85,20 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- Virtualbox installed"
 fi
+
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 virtualbox-guest* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install Virtualbox guest addition "
+  sudo apt-get install -yq virtualbox-guest-additions-iso
+  sudo mkdir -p /media/VirtualBoxGuestAdditions
+  sudo mount -t iso9660 -o loop /usr/share/virtualbox/VBoxGuestAdditions.iso /media/VirtualBoxGuestAdditions/
+  sudo /media/VirtualBoxGuestAdditions/VBoxLinuxAdditions.run
+  sudo /etc/init.d/vboxadd setup
+  echo " - done."
+else
+  echo "- Virtualbox guest addition installed"
+fi
+
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 vagrant |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install vagrant "
@@ -224,7 +238,7 @@ else
 fi
 
 #for m in cesnet-hadoop cesnet-hbase cesnet-hive cesnet-sit_hadoop cesnet-zookeeper puppetlabs-mysql puppetlabs-postgresql; do puppet module install ${m} --modulepath ./puppet/trunk/environments/devtest/modules; done
-for m in cesnet-hadoop cesnet-hbase cesnet-hive cesnet-zookeeper puppetlabs-mysql puppetlabs-postgresql; do puppet module install ${m} --modulepath ./puppet/trunk/environments/devtest/modules; done
+#for m in cesnet-hadoop cesnet-hbase cesnet-hive cesnet-zookeeper puppetlabs-mysql puppetlabs-postgresql; do puppet module install ${m} --modulepath ./puppet/trunk/environments/devtest/modules; done
 
 #PUPPET_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep viirya-hadoop)
 #if [ "" == "$PUPPET_OK" ]; then
@@ -235,6 +249,11 @@ for m in cesnet-hadoop cesnet-hbase cesnet-hive cesnet-zookeeper puppetlabs-mysq
 #  echo "- viirya-hadoop puppet module installed"
 #fi
 
+#puppet module install razorsedge-cloudera --modulepath ./puppet/trunk/environments/devtest/modules 
+ 
+# install https://forge.puppetlabs.com/vzach/ambari 
+puppet module install vzach-ambari --modulepath ./puppet/trunk/environments/devtest/modules 
+ 
 
 # install mogrify - to resize extracted profile images, thus making transfer to javascript client performance wice faster
 MOGRIFY_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 imagemagick |grep "install ok installed")
