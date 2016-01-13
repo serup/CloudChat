@@ -125,11 +125,12 @@ if [ "" == "$VBOX_OK" ]; then
 else
   echo "- vbox installed"
 fi
+
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 puppet-co* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
 #  echo "puppetlabs-release was not found, now it will be installed - please wait..."
   echo -n "- install puppetlabs-release "
-  sudo apt-get install puppet-common
+  sudo apt-get install -yq puppet-common
 #  wget https://apt.puppetlabs.com/puppetlabs-release-trusty.deb
 #  sudo dpkg -i puppetlabs-release-trusty.deb
    wget https://apt.puppetlabs.com/puppetlabs-release-pc1-vivid.deb && \
@@ -252,6 +253,7 @@ fi
 #puppet module install razorsedge-cloudera --modulepath ./puppet/trunk/environments/devtest/modules 
  
 # install https://forge.puppetlabs.com/vzach/ambari 
+puppet module install puppetlabs-stdlib --modulepath ./puppet/trunk/environments/devtest/modules  
 puppet module install vzach-ambari --modulepath ./puppet/trunk/environments/devtest/modules 
  
 
