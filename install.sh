@@ -104,7 +104,7 @@ if [ "" == "$PKG_OK" ]; then
   echo -n "- install vagrant "
   #sudo apt-get --force-yes --yes install vagrant 
   # info : http://www.kianmeng.org/2015/07/vagrant-173-and-virtualbox-50.html
-  sudo apt-get install aria2
+  sudo apt-get install -yq aria2
   #aria2c -x 4 https://dl.bintray.com/mitchellh/vagrant/vagrant_1.7.4_x86_64.deb
   aria2c -x 4 https://releases.hashicorp.com/vagrant/1.7.4/vagrant_1.7.4_x86_64.deb
   sudo dpkg -i vagrant_1.7.4_x86_64.deb
@@ -116,6 +116,15 @@ else
   vagrant destroy
   echo "- update vagrant box to newest version"
   vagrant box update
+fi
+
+PLUGIN_OK=$(vagrant plugin list|grep vagrant-vbguest) 
+if [ "" == "$PLUGIN_OK" ]; then
+  echo -n "- install vagrant plugin vbguest"
+  sudo vagrant plugin install vagrant-vbguest
+  echo " - done."
+else
+  echo "- vagrant plugin vbguest installed"
 fi
 VBOX_OK=$(vagrant box list|awk 'BEGIN {strtmp=$1} END {print $strtmp}')
 if [ "" == "$VBOX_OK" ]; then
@@ -170,9 +179,9 @@ if [ "" == "$SPRINGBOOT_OK" ]; then
   curl -s http://get.sdkman.io | bash
   echo -n "- init sdk"
   source $(pwd)/.sdkman/bin/sdkman-init.sh
-  gvm version
+  sdk version
   echo -n "- install grails"
-  gvm install grails 
+  sdk install grails < /dev/null
   echo " - done."
 else
   echo "- puppet-springboot puppet module installed"

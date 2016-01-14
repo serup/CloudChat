@@ -62,12 +62,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       end
       config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
 
-      if node_name == "hadoop"
-	  # Prevent Vagrant from mounting the default /vagrant synced folder
-  	config.vm.synced_folder ".", "/home/vagrant/sync", disabled: true
-      else
+      #if node_name == "hadoop"   # Centos/7 related -- redhat is somehow not working well, thus use ubuntu/vivid32
+#	  # Prevent Vagrant from mounting the default /vagrant synced folder
+ # 	config.vm.synced_folder ".", "/home/vagrant/sync", disabled: true
+#      else
         config.vm.synced_folder("puppet/hiera", "/tmp/vagrant-puppet-3/hiera")
-      end
+#      end
 
       config.vm.provision :shell, :path => node_values['bootstrap']
       # inline: "apt-get update -y" # https://github.com/mitchellh/vagrant/pull/5860

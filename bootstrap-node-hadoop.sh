@@ -76,6 +76,7 @@ else
       git clone https://review.gerrithub.io/serup/CloudChat
       cd CloudChat
       git checkout serup
+      cd ..
       echo "CloudChat installed - from GitHub"
       echo "****************"
       echo "Set up swapfile"
@@ -87,10 +88,22 @@ else
       sudo apt-get install -yq rsync
       sudo apt-get install -yq ssh
       echo "****************"
-      echo " cesnet-hadoop"
+      echo "hadoop_common"
       echo "****************"
-#	for m in cesnet-hadoop cesnet-hbase cesnet-hive cesnet-sit_hadoop cesnet-zookeeper puppetlabs-mysql puppetlabs-postgresql; do puppet module install ${m}; done 
-#should already be done in the puppet module install using install.sh - and site.pp is telling what this node needs -- MORE research needed here!!!
+      sudo wget -nc http://www.eu.apache.org/dist/hadoop/common/KEYS 2> /dev/null
+      sudo wget -nc http://www.eu.apache.org/dist/hadoop/common/hadoop-2.7.1/hadoop-2.7.1.tar.gz.asc  2> /dev/null 
+      sudo wget -nc http://www.eu.apache.org/dist/hadoop/common/hadoop-2.7.1/hadoop-2.7.1.tar.gz  2> /dev/null 
+      sudo gpg --import KEYS  2> /dev/null  
+      sudo gpg --verify hadoop-2.7.1.tar.gz.asc hadoop-2.7.1.tar.gz  2> /dev/null 
+      sudo tar -xvf hadoop-2.7.1.tar.gz | nl | tail -1 | awk '{print "lines extracted:"  $1}'
+      cd hadoop-2.7.1/bin
+      ./hadoop version|grep Hadoop | awk '{print $2}' 
+      cd ../..
+      sudo mkdir input
+      sudo cp ./hadoop-2.7.1/etc/hadoop/*.xml input
+      ./hadoop-2.7.1/bin/hadoop jar ./hadoop-2.7.1/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.1.jar grep input output 'dfs[a-z.]+'
+      cat output/* 
+
       echo "****************"
       echo " taskwarrior "
       echo "****************"
