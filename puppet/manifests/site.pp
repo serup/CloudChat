@@ -102,11 +102,6 @@ class hadoop_install {
     content  => "vagrant ALL=(ALL) NOPASSWD: ALL",
   }
 
-  exec { "hadoop_common":
-     command => "/usr/bin/wget http://www.eu.apache.org/dist/hadoop/common/KEYS;/usr/bin/wget http://www.eu.apache.org/dist/hadoop/common/hadoop-2.7.1/hadoop-2.7.1.tar.gz.asc; /usr/bin/wget http://www.eu.apache.org/dist/hadoop/common/hadoop-2.7.1/hadoop-2.7.1.tar.gz; gpg --import KEYS; gpg --verify hadoop-2.7.1.tar.gz.asc hadoop-2.7.1.tar.gz",
-     require => Exec["apt-update"],
-  }
-
     exec { 'apt-get update':
         command => '/usr/bin/apt-get update',
         before => Apt::Ppa["ppa:webupd8team/java"],
@@ -152,6 +147,36 @@ class hadoop_install {
         command => '/bin/echo "export JAVA_HOME=/usr/lib/jvm/java-8-oracle" >> /home/vagrant/.bashrc',
         require => Package["oracle-java8-installer"],
     }
+
+
+#  exec { "hadoop_common":
+#     command => "/usr/bin/wget -nc http://www.eu.apache.org/dist/hadoop/common/KEYS;/usr/bin/wget -nc http://www.eu.apache.org/dist/hadoop/common/hadoop-2.7.1/hadoop-2.7.1.tar.gz.asc; /usr/bin/wget -nc http://www.eu.apache.org/dist/hadoop/common/hadoop-2.7.1/hadoop-2.7.1.tar.gz; gpg --import KEYS; gpg --verify hadoop-2.7.1.tar.gz.asc hadoop-2.7.1.tar.gz",
+#     require => Exec["add_java_home"],
+#  }
+#
+#  exec { "extract_hadoop":
+#     command => "/bin/tar -xvf hadoop-2.7.1.tar.gz | nl | tail -1 | awk '{print \"lines extracted: \" $1}'; ./hadoop-2.7.1/bin/hadoop version|grep Hadoop| awk '{print $2}' ",
+#     require => Exec["hadoop_common"],
+#  }
+#
+#  exec { "standalone_hadoop":
+#     command => "/bin/mkdir input; /bin/cp ./hadoop-2.7.1/etc/hadoop/*.xml input; ./hadoop-2.7.1/bin/hadoop jar ./hadoop-2.7.1/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.1.jar grep input output 'dfs[a-z.]+'; cat output/* ",
+#     require => Exec["extract_hadoop"],
+#  }
+
+#  exec { "setup_passphrase":
+##     path => ['/usr/bin','/usr/sbin','/bin' ],
+#     command => "/usr/bin/ssh-keygen -t dsa -P '' -f ~/.ssh/id_dsa; /bin/cat ~/.ssh/id_dsa.pub >> ~/.ssh/authorized_keys ",
+#     require => Exec["standalone_hadoop"],
+#  }
+#
+##  exec { "Execution_hadoop":
+##     path => ['./hadoop-2.7.1/bin','./hadoop-2.7.1/sbin' ],
+#     #command => "./hadoop-2.7.1/bin/hdfs namenode -format; ./hadoop-2.7.1/sbin/start-dfs.sh ",
+#     command => "hadoop-2.7.1/bin/hdfs namenode -format ",
+#     require => Exec["setup_passphrase"],
+#     #require => Exec["standalone_hadoop"],
+#  }
 
 
 }
@@ -211,10 +236,12 @@ node /^jenkins.*/ {
 
 node /^hadoop.*/ {
 
-    include ambari
-    class { 'ambari::server':
-	  ownhostname => 'hadoop.scanva.com'
-    }
+  include hadoop_install
+
+#    include ambari
+#    class { 'ambari::server':
+#	  ownhostname => 'hadoop.scanva.com'
+#    }
 
 }
 
