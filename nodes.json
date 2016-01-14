@@ -8,6 +8,22 @@
       ":memory": 512,
       ":hostname" :  "puppet.dev.dops.scanva.com"
     },
+    "hadoop1": {
+      "nodeOS": "ubuntu/vivid32",
+      "bootstrap": "bootstrap-node-hadoop_1.sh",
+      ":ip": "192.168.31.16",
+      "ports": [],
+      ":memory": 1024,
+      ":hostname":  "hadoop1.scanva.com"
+    },
+    "hadoop2": {
+      "nodeOS": "ubuntu/vivid32",
+      "bootstrap": "bootstrap-node-hadoop_2.sh",
+      ":ip": "192.168.31.17",
+      "ports": [],
+      ":memory": 1024,
+      ":hostname":  "hadoop2.scanva.com"
+    },
     "hadoop": {
       "nodeOS": "ubuntu/vivid32",
       "bootstrap": "bootstrap-node-hadoop.sh",
