@@ -85,12 +85,26 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- Virtualbox installed"
 fi
+
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 virtualbox-guest* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install Virtualbox guest addition "
+  sudo apt-get install -yq virtualbox-guest-additions-iso
+  sudo mkdir -p /media/VirtualBoxGuestAdditions
+  sudo mount -t iso9660 -o loop /usr/share/virtualbox/VBoxGuestAdditions.iso /media/VirtualBoxGuestAdditions/
+  sudo /media/VirtualBoxGuestAdditions/VBoxLinuxAdditions.run
+  sudo /etc/init.d/vboxadd setup
+  echo " - done."
+else
+  echo "- Virtualbox guest addition installed"
+fi
+
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 vagrant |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install vagrant "
   #sudo apt-get --force-yes --yes install vagrant 
   # info : http://www.kianmeng.org/2015/07/vagrant-173-and-virtualbox-50.html
-  sudo apt-get install aria2
+  sudo apt-get install -yq aria2
   #aria2c -x 4 https://dl.bintray.com/mitchellh/vagrant/vagrant_1.7.4_x86_64.deb
   aria2c -x 4 https://releases.hashicorp.com/vagrant/1.7.4/vagrant_1.7.4_x86_64.deb
   sudo dpkg -i vagrant_1.7.4_x86_64.deb
@@ -103,6 +117,15 @@ else
   echo "- update vagrant box to newest version"
   vagrant box update
 fi
+
+PLUGIN_OK=$(vagrant plugin list|grep vagrant-vbguest) 
+if [ "" == "$PLUGIN_OK" ]; then
+  echo -n "- install vagrant plugin vbguest"
+  sudo vagrant plugin install vagrant-vbguest
+  echo " - done."
+else
+  echo "- vagrant plugin vbguest installed"
+fi
 VBOX_OK=$(vagrant box list|awk 'BEGIN {strtmp=$1} END {print $strtmp}')
 if [ "" == "$VBOX_OK" ]; then
   echo "vbox not found - installing.."
@@ -111,11 +134,12 @@ if [ "" == "$VBOX_OK" ]; then
 else
   echo "- vbox installed"
 fi
+
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 puppet-co* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
 #  echo "puppetlabs-release was not found, now it will be installed - please wait..."
   echo -n "- install puppetlabs-release "
-  sudo apt-get install puppet-common
+  sudo apt-get install -yq puppet-common
 #  wget https://apt.puppetlabs.com/puppetlabs-release-trusty.deb
 #  sudo dpkg -i puppetlabs-release-trusty.deb
    wget https://apt.puppetlabs.com/puppetlabs-release-pc1-vivid.deb && \
@@ -155,9 +179,9 @@ if [ "" == "$SPRINGBOOT_OK" ]; then
   curl -s http://get.sdkman.io | bash
   echo -n "- init sdk"
   source $(pwd)/.sdkman/bin/sdkman-init.sh
-  gvm version
+  sdk version
   echo -n "- install grails"
-  gvm install grails 
+  sdk install grails < /dev/null
   echo " - done."
 else
   echo "- puppet-springboot puppet module installed"
@@ -224,7 +248,7 @@ else
 fi
 
 #for m in cesnet-hadoop cesnet-hbase cesnet-hive cesnet-sit_hadoop cesnet-zookeeper puppetlabs-mysql puppetlabs-postgresql; do puppet module install ${m} --modulepath ./puppet/trunk/environments/devtest/modules; done
-for m in cesnet-hadoop cesnet-hbase cesnet-hive cesnet-zookeeper puppetlabs-mysql puppetlabs-postgresql; do puppet module install ${m} --modulepath ./puppet/trunk/environments/devtest/modules; done
+#for m in cesnet-hadoop cesnet-hbase cesnet-hive cesnet-zookeeper puppetlabs-mysql puppetlabs-postgresql; do puppet module install ${m} --modulepath ./puppet/trunk/environments/devtest/modules; done
 
 #PUPPET_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep viirya-hadoop)
 #if [ "" == "$PUPPET_OK" ]; then
@@ -235,6 +259,12 @@ for m in cesnet-hadoop cesnet-hbase cesnet-hive cesnet-zookeeper puppetlabs-mysq
 #  echo "- viirya-hadoop puppet module installed"
 #fi
 
+#puppet module install razorsedge-cloudera --modulepath ./puppet/trunk/environments/devtest/modules 
+ 
+# install https://forge.puppetlabs.com/vzach/ambari 
+puppet module install puppetlabs-stdlib --modulepath ./puppet/trunk/environments/devtest/modules  
+puppet module install vzach-ambari --modulepath ./puppet/trunk/environments/devtest/modules 
+ 
 
 # install mogrify - to resize extracted profile images, thus making transfer to javascript client performance wice faster
 MOGRIFY_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 imagemagick |grep "install ok installed")
