@@ -85,11 +85,12 @@ else
       echo "****************"
       echo "  HADOOP SETUP"
       echo "****************"
-      sudo apt-get install -yq rsync
-      sudo apt-get install -yq ssh
+      #sudo apt-get install -yq rsync
+      #sudo apt-get install -yq ssh
       echo "****************"
       echo "hadoop_common"
       echo "****************"
+      $(cat .bashrc | grep JAVA)
       sudo wget -nc http://www.eu.apache.org/dist/hadoop/common/KEYS 2> /dev/null
       sudo wget -nc http://www.eu.apache.org/dist/hadoop/common/hadoop-2.7.1/hadoop-2.7.1.tar.gz.asc  2> /dev/null 
       sudo wget -nc http://www.eu.apache.org/dist/hadoop/common/hadoop-2.7.1/hadoop-2.7.1.tar.gz  2> /dev/null 
@@ -101,7 +102,7 @@ else
       cd ../..
       sudo mkdir input
       sudo cp ./hadoop-2.7.1/etc/hadoop/*.xml input
-      ./hadoop-2.7.1/bin/hadoop jar ./hadoop-2.7.1/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.1.jar grep input output 'dfs[a-z.]+'
+      ./hadoop-2.7.1/bin/hadoop jar ./hadoop-2.7.1/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.1.jar grep input output 'dfs[a-z.]+' 2> /dev/null
       cat output/* 
 
       echo "****************"
