@@ -78,6 +78,7 @@ fi
     echo "****************"
     echo "  HADOOP SETUP"
     echo "****************"
+    XPRTJAVA=$(cat .bashrc | grep 'export JAVA_HOME')
     $(cat .bashrc | grep 'export JAVA_HOME')
     sudo wget -nc http://www.eu.apache.org/dist/hadoop/common/KEYS 2> /dev/null
     sudo wget -nc http://www.eu.apache.org/dist/hadoop/common/hadoop-2.7.1/hadoop-2.7.1.tar.gz.asc  2> /dev/null 
@@ -88,14 +89,17 @@ fi
     cd hadoop-2.7.1/bin
     ./hadoop version|grep Hadoop | awk '{print $2}' 
     cd ../..
-
+    sudo mv hadoop-2.7.1 hadoop
+    sed -i 's/export JAVA_HOME=${JAVA_HOME}/export JAVA_HOME=\/usr\/lib\/jvm\/java-8-oracle/' hadoop/etc/hadoop/hadoop-env.sh  
+ 
     echo "**********************************************************************************************************************"
     echo " example where grep is the Map/Reduce method and input folder is searched using regex, output is then in folder output"
     echo "**********************************************************************************************************************"
     sudo mkdir input
-    sudo cp ./hadoop-2.7.1/etc/hadoop/*.xml input
-    ./hadoop-2.7.1/bin/hadoop jar ./hadoop-2.7.1/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.1.jar grep input output 'dfs[a-z.]+' 2> /dev/null
+    sudo cp ./hadoop/etc/hadoop/*.xml input
+    ./hadoop/bin/hadoop jar ./hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.1.jar grep input output 'dfs[a-z.]+' 2> /dev/null
     cat output/* 
+
     echo "**********************************************************************************************************************"
 
     sudo ssh-keygen -t dsa -P '' -f ~/.ssh/id_dsa
@@ -105,11 +109,15 @@ fi
     echo "*******************************"
     echo " setup distributed file system " 
     echo "*******************************"
-    cd hadoop-2.7.1/bin
-    ./hdfs namenode -format
-    cd ..
-    cd sbin
-    ./start-dfs.sh
+#    cd hadoop/bin
+#    ./hdfs namenode -format
+#    cd ..
+#    cd sbin
+#    ./start-dfs.sh
+    
+    sudo ./hadoop/sbin/stop-all.sh
+    sudo ./hadoop/sbin/start-all.sh
+
     echo "*******************************"
 
 
