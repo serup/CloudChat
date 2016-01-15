@@ -148,7 +148,7 @@ class hadoop_install {
         require => Package["oracle-java8-installer"],
     }
 
-
+# NB! did not work - moved to bootstrap-node-hadoop.sh script which starts during boot of node hadoop
 #  exec { "hadoop_common":
 #     command => "/usr/bin/wget -nc http://www.eu.apache.org/dist/hadoop/common/KEYS;/usr/bin/wget -nc http://www.eu.apache.org/dist/hadoop/common/hadoop-2.7.1/hadoop-2.7.1.tar.gz.asc; /usr/bin/wget -nc http://www.eu.apache.org/dist/hadoop/common/hadoop-2.7.1/hadoop-2.7.1.tar.gz; gpg --import KEYS; gpg --verify hadoop-2.7.1.tar.gz.asc hadoop-2.7.1.tar.gz",
 #     require => Exec["add_java_home"],
@@ -235,6 +235,8 @@ node /^jenkins.*/ {
 }
 
 node /^hadoop.*/ {
+
+  class { apache : } 
 
   include hadoop_install
 
