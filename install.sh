@@ -37,6 +37,31 @@ if [ "docker-image-skeleton" == "$image" ]; then
 else
    echo "- docker images NOT installed - please check setup.conf to see if it is correct"
 fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 monodevelop* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install monodevelop for C# on ubuntu "
+  sudo apt-get install -yq monodevelop 
+  echo " - done."
+else
+  echo "- monodevelop already installed"
+fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 bundler* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install bundler "
+  sudo apt-get install -yq bundler 
+  sudo bundle install
+  echo " - done."
+else
+  echo "- bundler already installed"
+fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 ruby-full* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install ruby-full "
+  sudo apt-get install -yq ruby-full 
+  echo " - done."
+else
+  echo "- ruby-full already installed"
+fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 rsync* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install rsync "
@@ -134,6 +159,8 @@ if [ "" == "$VBOX_OK" ]; then
 else
   echo "- vbox installed"
 fi
+  
+puppet module install puppetlabs/stdlib --modulepath ./puppet/trunk/environments/devtest/modules
 
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 puppet-co* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
@@ -261,9 +288,9 @@ fi
 
 #puppet module install razorsedge-cloudera --modulepath ./puppet/trunk/environments/devtest/modules 
  
-# install https://forge.puppetlabs.com/vzach/ambari 
-puppet module install puppetlabs-stdlib --modulepath ./puppet/trunk/environments/devtest/modules  
-puppet module install vzach-ambari --modulepath ./puppet/trunk/environments/devtest/modules 
+## install https://forge.puppetlabs.com/vzach/ambari 
+#puppet module install puppetlabs-stdlib --modulepath ./puppet/trunk/environments/devtest/modules  
+#puppet module install vzach-ambari --modulepath ./puppet/trunk/environments/devtest/modules 
  
 
 # install mogrify - to resize extracted profile images, thus making transfer to javascript client performance wice faster
