@@ -37,6 +37,22 @@ if [ "docker-image-skeleton" == "$image" ]; then
 else
    echo "- docker images NOT installed - please check setup.conf to see if it is correct"
 fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 monodevelop-nunit* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install monodevelop-nunit for C# on ubuntu "
+  sudo apt-get install -yq monodevelop-nunit 
+  echo " - done."
+else
+  echo "- monodevelop-nunit already installed"
+fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 libnunit-cil-dev* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install libnunit-cil-dev for C# on ubuntu "
+  sudo apt-get install -yq libnunit-cil-dev 
+  echo " - done."
+else
+  echo "- libnunit-cil-dev already installed"
+fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 monodevelop* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install monodevelop for C# on ubuntu "
