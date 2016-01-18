@@ -45,6 +45,14 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- monodevelop already installed"
 fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 libwebkit-c* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install libwebkit-cil-dev for C# on ubuntu "
+  sudo apt-get install -yq libwebkit-cil-dev 
+  echo " - done."
+else
+  echo "- libwebkit already installed"
+fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 bundler* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install bundler "
