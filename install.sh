@@ -78,6 +78,14 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- bundler already installed"
 fi
+JEKYLL_OK=$(jekyll -v|grep jekyll)
+if [ "" == "$JEKYLL_OK" ]; then 
+  echo -n "- install jekyll"
+  sudo gem install jekyll
+  echo " - done."
+else
+  echo "- jekyll already installed"
+fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 ruby-full* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install ruby-full "
