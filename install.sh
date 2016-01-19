@@ -78,6 +78,14 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- bundler already installed"
 fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 rubygems* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install rubygems "
+  sudo apt-get install -yq rubygems 
+  echo " - done."
+else
+  echo "- rubygems already installed"
+fi
 JEKYLL_OK=$(jekyll -v|grep jekyll)
 if [ "" == "$JEKYLL_OK" ]; then 
   echo -n "- install jekyll"
@@ -191,8 +199,33 @@ if [ "" == "$VBOX_OK" ]; then
 else
   echo "- vbox installed"
 fi
-  
-puppet module install puppetlabs/stdlib --modulepath ./puppet/trunk/environments/devtest/modules
+
+MODULE_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep leonardothibes-jekyll)
+if [ "" == "$MODULE_OK" ]; then
+  echo -n "- install leonardothibes-jekyll"
+  puppet module install leonardothibes-jekyll --modulepath ./puppet/trunk/environments/devtest/modules
+  echo " - done."
+else
+  echo "- leonardothibes-jekyll puppet module installed"
+fi
+
+MODULE_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep puppetlabs-stdlib)
+if [ "" == "$MODULE_OK" ]; then
+  echo -n "- install puppetlabs-stdlib"
+  puppet module install puppetlabs/stdlib --modulepath ./puppet/trunk/environments/devtest/modules
+  echo " - done."
+else
+  echo "- puppetlabs-stdlib puppet module installed"
+fi
+
+MODULE_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep puppetlabs-ruby)
+if [ "" == "$MODULE_OK" ]; then
+  echo -n "- install puppetlabs-ruby"
+  puppet module install puppetlabs-ruby  --modulepath ./puppet/trunk/environments/devtest/modules
+  echo " - done."
+else
+  echo "- puppetlabs-ruby puppet module installed"
+fi
 
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 puppet-co* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then

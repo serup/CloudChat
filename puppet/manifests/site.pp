@@ -204,6 +204,33 @@ node default {
 
 }
 
+node /^jekyll.*/ {
+
+  class { apache : } 
+
+  exec { "apt-update":
+    command => "/usr/bin/apt-get update"
+  }
+  Exec["apt-update"] -> Package <| |>
+
+  include sudo
+  # Add adm group to sudoers with NOPASSWD
+  sudo::conf { 'vagrant':
+    priority => 01,
+    content  => "vagrant ALL=(ALL) NOPASSWD: ALL",
+  }
+
+  include git
+
+  class { 'ruby':
+    gems_version => 'latest'
+  }
+
+  class {'jekyll':}
+
+}
+
+
 node /^javaservices.*/ {
 
    include grails_springboot
