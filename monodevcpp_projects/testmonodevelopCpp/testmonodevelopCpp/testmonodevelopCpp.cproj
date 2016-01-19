@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{6EB75ED1-FF27-4764-9387-5560A6C01F92}</ProjectGuid>
+    <Compiler>
+      <Compiler ctype="GppCompiler" />
+    </Compiler>
+    <Language>CPP</Language>
+    <Target>Bin</Target>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug</OutputPath>
+    <OutputName>testmonodevelopCpp</OutputName>
+    <CompileTarget>Bin</CompileTarget>
+    <DefineSymbols>DEBUG MONODEVELOP</DefineSymbols>
+    <SourceDirectory>.</SourceDirectory>
+    <ExtraCompilerArguments>-std=c++11</ExtraCompilerArguments>
+    <ExtraLinkerArguments>-lboost_system</ExtraLinkerArguments>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="Build" command="make -f makefile_ubuntu.mak" workingdir="/home/serup/GerritHub/CloudChat/monodevcpp_projects/testmonodevelopCpp/testmonodevelopCpp/../../../codeblocks_projects/DataEncoderDecoder/DataEncoderDecoder/compression-lib/BoostUnitTest" pauseExternalConsole="True" />
+      </CustomCommands>
+    </CustomCommands>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release</OutputPath>
+    <OutputName>testmonodevelopCpp</OutputName>
+    <CompileTarget>Bin</CompileTarget>
+    <OptimizationLevel>3</OptimizationLevel>
+    <DefineSymbols>MONODEVELOP</DefineSymbols>
+    <SourceDirectory>.</SourceDirectory>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\codeblocks_projects\DataEncoderDecoder\DataEncoderDecoder\compression-lib\compression.cpp">
+      <Link>compression.cpp</Link>
+    </Compile>
+    <Compile Include="..\..\..\codeblocks_projects\DataEncoderDecoder\DataEncoderDecoder\compression-lib\BoostUnitTest\compressionTest.cpp">
+      <Link>compressionTest.cpp</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\codeblocks_projects\DataEncoderDecoder\DataEncoderDecoder\compression-lib\compression.h">
+      <Link>compression.h</Link>
+    </None>
+  </ItemGroup>
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <MonoDevelop.Autotools.MakefileInfo RelativeMakefileName="../../../codeblocks_projects/DataEncoderDecoder/DataEncoderDecoder/compression-lib/BoostUnitTest/makefile_ubuntu.mak" BuildTargetName="test" CleanTargetName="">
+          <BuildFilesVar />
+          <DeployFilesVar />
+          <ResourcesVar />
+          <OthersVar />
+          <GacRefVar />
+          <AsmRefVar />
+          <ProjectRefVar />
+          <MessageRegex Name="gcc" />
+        </MonoDevelop.Autotools.MakefileInfo>
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
+</Project>
