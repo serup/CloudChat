@@ -8,13 +8,21 @@
       ":memory": 512,
       ":hostname" :  "puppet.dev.dops.scanva.com"
     },
+    "jekyll": {
+      "nodeOS": "ubuntu/vivid32",
+      "bootstrap": "bootstrap-node-jekyll.sh",
+      ":ip": "192.168.31.15",
+      "ports": [],
+      ":memory": 512,
+      ":hostname" :  "jekyll.dops.scanva.com"
+    },
     "hadoop1": {
       "nodeOS": "ubuntu/vivid32",
       "bootstrap": "bootstrap-node-hadoop_1.sh",
       ":ip": "192.168.31.16",
       "ports": [],
       ":memory": 1024,
-      ":hostname":  "hadoop1.scanva.com"
+      ":hostname":  "hadoop1.dops.scanva.com"
     },
     "hadoop2": {
       "nodeOS": "ubuntu/vivid32",
@@ -22,7 +30,7 @@
       ":ip": "192.168.31.17",
       "ports": [],
       ":memory": 1024,
-      ":hostname":  "hadoop2.scanva.com"
+      ":hostname":  "hadoop2.dops.scanva.com"
     },
     "hadoop": {
       "nodeOS": "ubuntu/vivid32",
@@ -30,7 +38,7 @@
       ":ip": "192.168.31.18",
       "ports": [],
       ":memory": 1024,
-      ":hostname":  "hadoop.scanva.com"
+      ":hostname":  "hadoop.dops.scanva.com"
     },
     "javaservices": {
       "nodeOS": "ubuntu/vivid32",
@@ -38,7 +46,7 @@
       ":ip": "192.168.31.19",
       "ports": [],
       ":memory": 1024,
-      ":hostname":  "javaservices.scanva.com"
+      ":hostname":  "javaservices.dops.scanva.com"
     },
     "jenkins": {
       "nodeOS": "ubuntu/vivid32",
@@ -48,7 +56,7 @@
         {":host": 8080, ":guest": 8080, ":id": "jenkins"}
       ],
       ":memory": 1024,
-      ":hostname":  "jenkins.scanva.com"
+      ":hostname":  "jenkins.dops.scanva.com"
     },
     "backend": {
       "nodeOS": "ubuntu/vivid32",
@@ -58,7 +66,7 @@
         {":host": 7777, ":guest": 7777, ":id": "database"}
       ],
       ":memory": 1024,
-      ":hostname":  "backend.scanva.com"
+      ":hostname":  "backend.dops.scanva.com"
     },
     "cloudchatmanager": {
       "nodeOS": "ubuntu/vivid32",
