@@ -1,13 +1,12 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="csharpServices/WebSocket/WebSocketConnection.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="csharpServices/unittests/WebSocketConnectionTests.cs">
     <Files>
       <File FileName="csharpServices/Program.cs" Line="1" Column="1" />
       <File FileName="csharpServices/MainWindow.cs" Line="1" Column="1" />
       <File FileName="csharpServices/EmptyClass.cs" Line="1" Column="1" />
-      <File FileName="csharpServices/testtemplate.txt" Line="1" Column="1" />
-      <File FileName="csharpServices/unittests/WebSocketConnectionTests.cs" Line="1" Column="1" />
-      <File FileName="csharpServices/WebSocket/WebSocketConnection.cs" Line="27" Column="27" />
+      <File FileName="csharpServices/unittests/WebSocketConnectionTests.cs" Line="9" Column="9" />
+      <File FileName="csharpServices/WebSocket/WebSocketConnection.cs" Line="23" Column="23" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
