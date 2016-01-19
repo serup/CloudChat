@@ -2,8 +2,18 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.Workbench ActiveDocument="../../codeblocks_projects/DataEncoderDecoder/DataEncoderDecoder/compression-lib/BoostUnitTest/compressionTest.cpp">
     <Files>
-      <File FileName="../../codeblocks_projects/DataEncoderDecoder/DataEncoderDecoder/compression-lib/BoostUnitTest/compressionTest.cpp" Line="12" Column="12" />
+      <File FileName="../../codeblocks_projects/DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.cpp" Line="28" Column="28" />
+      <File FileName="../../codeblocks_projects/DataEncoderDecoder/DataEncoderDecoder/compression-lib/BoostUnitTest/compressionTest.cpp" Line="57" Column="57" />
     </Files>
+    <Pads>
+      <Pad Id="ClassPad">
+        <State expanded="True">
+          <Node name="testmonodevelopCpp" expanded="True">
+            <Node name="(Global Scope)" selected="True" />
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
