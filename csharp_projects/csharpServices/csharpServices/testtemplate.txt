@@ -2,7 +2,7 @@
 // brackets (and the brackets themselves) should be replaced by appropriate
 // code.
 
-// DEDencoderDecoderTests.cs - NUnit Test Cases for {explain here}
+// {File Name}.cs - NUnit Test Cases for {explain here}
 //
 // {Author Name} ({Author email Address})
 //
