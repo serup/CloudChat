@@ -94,12 +94,64 @@ namespace DEDTests.Tests
 				DED.PUT_BOOL ("startstop", bAction);
 			DED.PUT_STRUCT_END ("event");
 
-			//..transmitting :-) simulation
-			//..receiving :-) simulation
-
 			byte[] byteArray = DED.GET_ENCODED_BYTEARRAY_DATA ();
 			Assert.IsNotNull (byteArray);
 		}
+
+		[Test]
+		public void PUT_DATA_IN_DECODER() {
+			short trans_id = 1;
+			bool bAction = true;
+			DEDEncoder DED = DEDEncoder.DED_START_ENCODER();
+			Assert.IsNotNull(DED);
+			DED.PUT_STRUCT_START ("event");
+				DED.PUT_METHOD ("Method", "MusicPlayer");
+				DED.PUT_USHORT ("trans_id", trans_id);
+				DED.PUT_BOOL ("startstop", bAction);
+			DED.PUT_STRUCT_END ("event");
+
+			byte[] byteArray = DED.GET_ENCODED_BYTEARRAY_DATA ();
+			Assert.IsNotNull (byteArray);
+
+			//..transmitting :-) simulation
+			//..receiving :-) simulation
+
+			DEDDecoder DED2 = DEDDecoder.DED_START_DECODER();
+			DED2.PUT_DATA_IN_DECODER (byteArray, byteArray.Length);
+
+		}
+
+		[Test]
+		public void Decoder_GET() {
+			short trans_id = 1;
+			bool bAction = true;
+			DEDEncoder DED = DEDEncoder.DED_START_ENCODER();
+			Assert.IsNotNull(DED);
+			DED.PUT_STRUCT_START ("event");
+				DED.PUT_METHOD ("Method", "MusicPlayer");
+				DED.PUT_USHORT ("trans_id", trans_id);
+				DED.PUT_BOOL ("startstop", bAction);
+			DED.PUT_STRUCT_END ("event");
+
+			byte[] byteArray = DED.GET_ENCODED_BYTEARRAY_DATA ();
+			Assert.IsNotNull (byteArray);
+
+			//..transmitting :-) simulation
+			//..receiving :-) simulation
+
+			bool bDecoded = false;
+			DEDDecoder DED2 = DEDDecoder.DED_START_DECODER();
+			DED2.PUT_DATA_IN_DECODER (byteArray, byteArray.Length);
+			if (DED2.GET_STRUCT_START ("event") == 1 &&
+				(DED2.GET_METHOD ("Method")).Contains("MusicPlayer")) {
+				bDecoded = true;
+			} else
+				bDecoded = false;
+
+			Assert.IsTrue (bDecoded);
+
+		}
+
 
 		// An nice way to test for exceptions the class under test should 
 		// throw is:

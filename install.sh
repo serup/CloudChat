@@ -89,7 +89,7 @@ fi
 JEKYLL_OK=$(jekyll -v|grep jekyll)
 if [ "" == "$JEKYLL_OK" ]; then 
   echo -n "- install jekyll"
-  sudo gem install jekyll
+  sudo gem install -yq jekyll
   echo " - done."
 else
   echo "- jekyll already installed"
@@ -164,7 +164,7 @@ else
   echo "- Virtualbox guest addition installed"
 fi
 
-PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 vagrant |grep "install ok installed")
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 vagrant* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install vagrant "
   #sudo apt-get --force-yes --yes install vagrant 
