@@ -24,7 +24,10 @@ namespace DED
 //				return buffer.array();
 //			}
 
-
+			public byte[] toBytes(char[] chars) {
+				return Encoding.Unicode.GetBytes (chars);
+				//Convert.FromBase64CharArray (chars, 0, chars.Length);
+			}
 		}
 
 		public ByteUtils byteUtils;
@@ -283,7 +286,7 @@ namespace DED
 		{
 			int result = -1;
 			if (this.dedEncoder != null)
-				result = this.dedEncoder.EncodeMethod(name, value.ToCharArray(), value.Length);
+				result = this.dedEncoder.EncodeMethod(name, byteUtils.toBytes(value.ToCharArray()), value.Length);
 
 			return result;
 		}
@@ -345,9 +348,8 @@ namespace DED
 			if(uncompressedData.Length != iLengthUncompressedData)
 				return result;
 			try {
-				MemoryStream byteArrayInputStream = new MemoryStream(uncompressedData);
-				LZSS lzss = new LZSS();
-				MemoryStream byteArrayOutputStream = lzss.Compress(byteArrayInputStream);
+				Stream byteArrayInputStream = new MemoryStream(uncompressedData);
+				MemoryStream byteArrayOutputStream = LZSS.Compress(ref byteArrayInputStream);
 				result = byteArrayOutputStream.GetBuffer();
 			}
 			catch (Exception e)
@@ -491,7 +493,7 @@ namespace DED
 				result = asn1.CASN1p1(element.name.Length + 4 + 1);
 
 				int LengthOfAsn1 = element.name.Length;
-				asn1.AppendASN1(LengthOfAsn1, (byte)element.ElementType, element.name.ToCharArray());
+				asn1.AppendASN1(LengthOfAsn1, (byte)element.ElementType, byteUtils.toBytes(element.name.ToCharArray()));
 
 				data paramasn1 = new data();
 				asn1.FetchTotalASN1(paramasn1);
@@ -512,7 +514,7 @@ namespace DED
 
 				// 1. asn  "name"
 				int LengthOfAsn1 = element.name.Length;
-				asn1.AppendASN1(LengthOfAsn1, (byte)element.ElementType, element.name.ToCharArray());
+				asn1.AppendASN1(LengthOfAsn1, (byte)element.ElementType, byteUtils.toBytes(element.name.ToCharArray()));
 				// 2. asn "value"
 				LengthOfAsn1 = element.length;
 				if (LengthOfAsn1 > 0)
@@ -538,7 +540,7 @@ namespace DED
 		private int EncodeStructStart(String name)
 		{
 			int result=-1;
-			if(!name.Length == 0) {
+			if(name.Length != 0) {
 				param element = new param();
 				element.name = name;
 				element.ElementType = DED_ELEMENT_TYPE_STRUCT;
@@ -552,7 +554,7 @@ namespace DED
 		private int EncodeStructEnd(String name)
 		{
 			int result = -1;
-			if(!name.Length == 0) {
+			if(name.Length != 0) {
 				param element = new param();
 				element.name = name;
 				element.ElementType = DED_ELEMENT_TYPE_STRUCT_END;
@@ -566,7 +568,7 @@ namespace DED
 		private int EncodeMethod(String name, byte[] value, int length)
 		{
 			int result = -1;
-			if(!name.Length == 0) {
+			if(name.Length != 0) {
 				param element = new param();
 				element.name = name;
 				element.ElementType = DED_ELEMENT_TYPE_METHOD;
@@ -580,7 +582,7 @@ namespace DED
 		private int EncodeUShort(String name, short value, int length)
 		{
 			int result = -1;
-			if(!name.Length == 0) {
+			if(name.Length != 0) {
 				param element = new param();
 				element.name = name;
 				element.ElementType = DED_ELEMENT_TYPE_USHORT;
@@ -596,7 +598,7 @@ namespace DED
 		private int EncodeLong(String name, long value, int length)
 		{
 			int result = -1;
-			if(!name.Length == 0) {
+			if(name.Length != 0) {
 				param element = new param();
 				element.name = name;
 				element.ElementType = DED_ELEMENT_TYPE_LONG;
@@ -611,7 +613,7 @@ namespace DED
 		private int EncodeBool(String name, Boolean value, int length)
 		{
 			int result = -1;
-			if(!name.Length == 0) {
+			if(name.Length != 0) {
 				param element = new param();
 				element.name = name;
 				element.ElementType = DED_ELEMENT_TYPE_BOOL;
@@ -626,11 +628,11 @@ namespace DED
 		private int EncodeStdString(String name, String value, int length)
 		{
 			int result = -1;
-			if(!name.Length == 0) {
+			if(name.Length != 0) {
 				param element = new param();
 				element.name = name;
 				element.ElementType = DED_ELEMENT_TYPE_STDSTRING;
-				element.value = value.ToCharArray();
+				element.value = byteUtils.toBytes(value.ToCharArray());
 				element.length = length;
 				result = AddElement(element);
 			}
