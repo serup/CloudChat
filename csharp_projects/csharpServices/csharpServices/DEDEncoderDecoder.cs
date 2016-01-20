@@ -259,10 +259,10 @@ namespace DED
 	 *  DED.PUT_BOOL    ( DED, "startstop", action );
 	 * DED.PUT_STRUCT_END( DED, "event" );
 	 */
-		public DEDEncoder DED_START_ENCODER()
+		public static DEDEncoder DED_START_ENCODER()
 		{
-			this.dedEncoder = new DEDEncoder();
-			return this.dedEncoder;
+	        DEDEncoder dedEncoder = new DEDEncoder();
+			return dedEncoder;
 		}
 
 		public int PUT_STRUCT_START(String name)
