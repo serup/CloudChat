@@ -164,7 +164,7 @@ else
   echo "- Virtualbox guest addition installed"
 fi
 
-PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 vagrant* |grep "install ok installed")
+PKG_OK=$(cd; dpkg-query -W --showformat='${Status}\n' 2>&1 vagrant* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install vagrant "
   sudo apt-get install -yq aria2
