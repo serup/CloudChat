@@ -89,7 +89,7 @@ fi
 JEKYLL_OK=$(jekyll -v|grep jekyll)
 if [ "" == "$JEKYLL_OK" ]; then 
   echo -n "- install jekyll"
-  sudo gem install -yq jekyll
+  sudo gem install jekyll
   echo " - done."
 else
   echo "- jekyll already installed"
@@ -167,12 +167,16 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 vagrant* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install vagrant "
-  #sudo apt-get --force-yes --yes install vagrant 
-  # info : http://www.kianmeng.org/2015/07/vagrant-173-and-virtualbox-50.html
   sudo apt-get install -yq aria2
-  #aria2c -x 4 https://dl.bintray.com/mitchellh/vagrant/vagrant_1.7.4_x86_64.deb
-  aria2c -x 4 https://releases.hashicorp.com/vagrant/1.7.4/vagrant_1.7.4_x86_64.deb
-  sudo dpkg -i vagrant_1.7.4_x86_64.deb
+  PLATFORM=$(uname -i)
+  if [ "i686" == "$PLATFORM" ]; then
+    aria2c -x 4 https://releases.hashicorp.com/vagrant/1.7.4/vagrant_1.7.4_i686.deb
+    sudo dpkg -i vagrant_1.7.4_i686.deb
+  else
+    #aria2c -x 4 https://dl.bintray.com/mitchellh/vagrant/vagrant_1.7.4_x86_64.deb
+    aria2c -x 4 https://releases.hashicorp.com/vagrant/1.7.4/vagrant_1.7.4_x86_64.deb
+    sudo dpkg -i vagrant_1.7.4_x86_64.deb
+  fi
   vagrant version
   echo " - done."
 else
