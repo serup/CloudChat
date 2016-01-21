@@ -146,7 +146,7 @@ namespace DEDTests.Tests
 				(	DED2.GET_METHOD ("Method")).Contains("MusicPlayer") &&
 				(	DED2.GET_USHORT ("trans_id")).Equals(trans_id) &&
 				(	DED2.GET_BOOL   ("startstop")).Equals(bAction) &&
-				(DED2.GET_STRUCT_END("event")).Equals(1)) 
+			(DED2.GET_STRUCT_END("event")).Equals(1)) 
 			{
 				bDecoded = true;
 			}
