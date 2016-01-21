@@ -47,11 +47,11 @@
     <Reference Include="pnunit.framework">
       <HintPath>..\packages\NUnit.2.5.7.10213\lib\pnunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="NUnit.ManualTest">
-      <HintPath>..\packages\NUnit.ManualTest.1.0.0\lib\net45\NUnit.ManualTest.dll</HintPath>
-    </Reference>
     <Reference Include="Moq">
       <HintPath>..\csharpServices\packages\Moq.4.0.10827\lib\NET40\Moq.dll</HintPath>
+    </Reference>
+    <Reference Include="NUnit.ManualTest">
+      <HintPath>..\packages\NUnit.ManualTest.1.0.0\lib\net45\NUnit.ManualTest.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
