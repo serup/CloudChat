@@ -1,6 +1,7 @@
 ﻿using System;
-using System.Text;
+using System.Collections;
 using System.IO;
+using System.Text;
 using csharpServices;
 
 namespace DED
@@ -40,7 +41,8 @@ namespace DED
 		public static int DED_ELEMENT_TYPE_UNKNOWN = 0xff;
 
 		public byte[] toBytes(char[] chars) {
-			return Encoding.Unicode.GetBytes (chars);
+			//return Encoding.Unicode.GetBytes (chars);
+			return UTF8Encoding.ASCII.GetBytes (chars);
 			//Convert.FromBase64CharArray (chars, 0, chars.Length);
 		}
 
@@ -136,11 +138,11 @@ namespace DED
 						ASN1Data[i] = 0;
 					}
 					pNextASN1 = 0; // First ASN1
-					/*for(int n=0; n < LengthOfData; n++)
+					for(int n=0; n < LengthOfData; n++)
 					{
 						ASN1Data[n] = data[n]; // copy data into new allocated space
-					}*/
-					System.Array.Copy(data,0,ASN1Data,0,LengthOfData); // copy data into new allocated space
+					}
+					//System.Array.Copy(data,0,ASN1Data,0,LengthOfData); // copy data into new allocated space
 					pAppendPosition = 0;
 					result = 1;
 				}
@@ -180,10 +182,10 @@ namespace DED
 
 				if(data.Length > 0)
 				{
-					//for (int i = 0; i < LengthOfNewASN1Data; i++){
-					//	ASN1Data[pAppendPosition + 4 + 1 + i] = data[i];
-					//}
-					System.Array.Copy(data,0,ASN1Data,pAppendPosition+4+1,LengthOfNewASN1Data);
+					for (int i = 0; i < LengthOfNewASN1Data; i++){
+						ASN1Data[pAppendPosition + 4 + 1 + i] = data[i];
+					}
+					//System.Array.Copy(data,0,ASN1Data,pAppendPosition+4+1,LengthOfNewASN1Data);
 					iLengthOfData = iLengthOfData + 4 +1 + LengthOfNewASN1Data; // Add new ASN1 to length : Length+tag+SizeofData
 				}
 				else
@@ -212,6 +214,7 @@ namespace DED
 
 				pNextASN1 += 4; // sizeof(length) 32 bits
 				param.Tag = ASN1Data[pNextASN1++] & 0x000000FF; // fetch byte tag
+				param.data = new byte[param.Length];
 
 				if (param.Length == 1)
 				{
@@ -224,10 +227,9 @@ namespace DED
 						param.data[1] = ASN1Data[pNextASN1 + 1];
 					}
 					else {
-						param.data = new byte[param.Length];
-						//for (int i = 0; i < param.Length; i++)
-						//	param.data[i] = ASN1Data[pNextASN1 + i];
-						System.Array.Copy(ASN1Data,pNextASN1,param.data,0,param.data.Length);
+						for (int i = 0; i < param.Length; i++)
+							param.data[i] = ASN1Data[pNextASN1 + i];
+						//System.Array.Copy(ASN1Data,pNextASN1,param.data,0,param.Length);
 					}
 				}
 				NextASN1Position = CurrentASN1Position + param.Length + 1 + 4;
@@ -257,9 +259,9 @@ namespace DED
 			{
 				param.Length = iLengthOfData; // Array can be larger than amount of valid data inside
 				param._data = new byte[param.Length];
-				//for (int i = 0; i < param.Length; i++)
-				//	param.data[i] = ASN1Data[i];
-				System.Array.Copy(ASN1Data,0,param._data,0,param.Length);
+				for (int i = 0; i < param.Length; i++)
+					param._data[i] = ASN1Data[i];
+				//System.Array.Copy(ASN1Data,0,param._data,0,param.Length);
 			}
 			else
 				bResult = false;
@@ -358,24 +360,23 @@ namespace DED
 		int iLengthOfTotalData;
 		CASN1 m_asn1; // used in decoder
 
-		public byte[] decompress_lzss(byte[] pCompressedData, int sizeofCompressedData)
+		public static byte[] decompress_lzss(byte[] pCompressedData, int sizeofCompressedData)
 		{
 			byte[] result=null;
 
 			if(pCompressedData.Length != sizeofCompressedData)
 				return result;
 			try {
-				MemoryStream byteArrayOutputStream = LZSS.Decompress(pCompressedData);
-				if(byteArrayOutputStream!=null)
-					result = byteArrayOutputStream.GetBuffer();
-				else
+				LZSS _lzss = new LZSS();
+				BitArray bitArray = new BitArray(pCompressedData);
+				result = _lzss.UnCompress(bitArray,bitArray.Length);
+				if(result==null)
 					return null; // somehow data was not decompressed
 			}
 			catch (Exception e)
 			{
 				Console.WriteLine(e.ToString());
 			}
-
 			return result;
 		}
 
@@ -388,6 +389,7 @@ namespace DED
 			byte[] decmprsd = decompress_lzss(pCompressedData, sizeofCompressedData);
 			if(decmprsd==null) {
 				// decompressed failed, perhaps it is not compressed
+				Console.WriteLine("Warning decompress_lzss failed - perhaps data was not compressed with this algorithm - continue with data...");
 				decmprsd=pCompressedData;
 			}
 			if (decmprsd.Length > 0) {
@@ -768,15 +770,14 @@ namespace DED
 			if(uncompressedData.Length != iLengthUncompressedData)
 				return result;
 			try {
-				Stream byteArrayInputStream = new MemoryStream(uncompressedData);
-				MemoryStream byteArrayOutputStream = LZSS.Compress(ref byteArrayInputStream);
-				result = byteArrayOutputStream.GetBuffer();
+				LZSS _lzss = new LZSS();
+				BitArray byteArrayOutputStream = _lzss.Compress(uncompressedData);
+				result = _lzss.BitArrayToByteArray(byteArrayOutputStream);
 			}
 			catch (Exception e)
 			{
 				Console.WriteLine(e.ToString());
 			}
-
 			return result;
 		}
 
@@ -789,33 +790,41 @@ namespace DED
 				// Do compression - okumura style
 				// First make sure byte are in same format !!!!
 				byte[] uncmpdata = new byte[obj.uncompresseddata.Length];
-				//for (int i = 0; i < object.uncompresseddata.Length; i++) {
-				//	uncmpdata[i] = object.uncompresseddata[i];
-				//}
-				System.Array.Copy(obj.uncompresseddata,0,uncmpdata,0,obj.uncompresseddata.Length);
+				for (int i = 0; i < obj.uncompresseddata.Length; i++) {
+					uncmpdata[i] = obj.uncompresseddata[i];
+				}
+				//System.Array.Copy(obj.uncompresseddata,0,uncmpdata,0,obj.uncompresseddata.Length);
 				// now make room for case where compression yields lager size - when trying to compress an image for example.
 				//byte[] tmpCompressedData = new byte[uncmpdata.length * 2];
 				byte[] tmpCompressedData;
 				// now compress
 				//int compressedSize = compress_lzss(tmpCompressedData, tmpCompressedData.length * 2, uncmpdata, uncmpdata.length);
 				tmpCompressedData = compress_lzss(uncmpdata, uncmpdata.Length);
+
+				// try decompress and compare
+				byte[] decmprsd = DEDDecoder.decompress_lzss(tmpCompressedData, tmpCompressedData.Length);
+				if (null == decmprsd) {
+					tmpCompressedData = null;
+					Console.WriteLine("ERROR: compress_lzss -> decompress_lzss internal test failed - now continue with uncompressed data");
+				}
+
 				int compressedSize=-1;
 				if(tmpCompressedData != null)
 					compressedSize = tmpCompressedData.Length;
 				if (compressedSize > 0) {
 					obj.pCompressedData = new byte[compressedSize];
 					obj.sizeofCompressedData = compressedSize;
-					//for (int i = 0; i < compressedSize; i++)
-					//	object.pCompressedData[i] = tmpCompressedData[i];
-					System.Array.Copy(tmpCompressedData,0,obj.pCompressedData,0,compressedSize);
+					for (int i = 0; i < compressedSize; i++)
+						obj.pCompressedData[i] = tmpCompressedData[i];
+					//System.Array.Copy(tmpCompressedData,0,obj.pCompressedData,0,compressedSize);
 					result = 1;
 				} else {
 					// somehow compression went wrong !!!! ignore and just use uncompressed data - perhaps data was already compressed !?
 					obj.pCompressedData = new byte[uncmpdata.Length];
 					obj.sizeofCompressedData = uncmpdata.Length;
-					//for (int i = 0; i < object.uncompresseddata.Length; i++)
-					//	object.pCompressedData[i] = uncmpdata[i];
-					System.Array.Copy(uncmpdata,0,obj.pCompressedData,0,obj.uncompresseddata.Length);
+					for (int i = 0; i < obj.uncompresseddata.Length; i++)
+						obj.pCompressedData[i] = uncmpdata[i];
+					//System.Array.Copy(uncmpdata,0,obj.pCompressedData,0,obj.uncompresseddata.Length);
 					result = 1;
 				}
 			}
@@ -886,9 +895,9 @@ namespace DED
 
 				iLengthOfData = iLengthOfTotalData; // First element in structure
 				pdata = new byte[iLengthOfData];
-				//for (int i = 0; i < paramasn1.Length; i++)
-				//	pdata[i] = paramasn1.data[i];
-				System.Array.Copy(paramasn1._data,0,pdata,0,paramasn1.Length);
+				for (int i = 0; i < paramasn1.Length; i++)
+					pdata[i] = paramasn1._data[i];
+				//System.Array.Copy(paramasn1._data,0,pdata,0,paramasn1.Length);
 				ptotaldata = pdata;
 				//ptotaldata = null; // DED_ELEMENT_TYPE_STRUCT does NOT have a value
 			}
@@ -911,9 +920,9 @@ namespace DED
 				if(iLengthOfTotalData > 0)
 				{
 					pdata = new byte[iLengthOfTotalData];
-					//for (int i = 0; i < iLengthOfTotalData; i++)
-					//	pdata[i] = paramasn1.data[i];
-					System.Array.Copy(paramasn1._data,0,pdata,0,paramasn1.Length);
+					for (int i = 0; i < iLengthOfTotalData; i++)
+						pdata[i] = paramasn1._data[i];
+					//System.Array.Copy(paramasn1._data,0,pdata,0,paramasn1.Length);
 					ptotaldata = pdata;
 				}
 			}
