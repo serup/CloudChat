@@ -142,14 +142,17 @@ namespace DEDTests.Tests
 			bool bDecoded = false;
 			DEDDecoder DED2 = DEDDecoder.DED_START_DECODER();
 			DED2.PUT_DATA_IN_DECODER (byteArray, byteArray.Length);
-			if (DED2.GET_STRUCT_START ("event") == 1 &&
-				(DED2.GET_METHOD ("Method")).Contains("MusicPlayer")) {
+			if ((DED2.GET_STRUCT_START ("event")).Equals(1) &&
+				(DED2.GET_METHOD ("Method")).Contains("MusicPlayer") &&
+				(DED2.GET_USHORT ("trans_id")).Equals(trans_id) &&
+				(DED2.GET_BOOL   ("startstop")).Equals(bAction)) 
+			{
 				bDecoded = true;
-			} else
+			}
+			else
 				bDecoded = false;
 
 			Assert.IsTrue (bDecoded);
-
 		}
 
 

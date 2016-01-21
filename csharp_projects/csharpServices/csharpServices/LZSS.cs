@@ -1,281 +1,171 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using Extensions;
+using System.Linq;
 
 namespace csharpServices
 {
-	class LzWindowDictionary
+	class LZSS/*<TDataType> where TDataType : IComparable<TDataType>*/
 	{
-		int WindowSize = 0x1000;
-		int WindowStart = 0;
-		int WindowLength = 0;
-		int MinMatchAmount = 3;
-		int MaxMatchAmount = 18;
-		int BlockSize = 0;
-		List<int>[] OffsetList;
+		public static float Procent;
 
-		public LzWindowDictionary()
+		/// <summary>
+		/// Высвобождает память
+		/// </summary>
+		public void Clear()
 		{
-			// Build the offset list, so Lz compression will become significantly faster
-			OffsetList = new List<int>[0x100];
-			for (int i = 0; i < OffsetList.Length; i++)
-				OffsetList[i] = new List<int>();
+			Procent = 0f;
 		}
 
-		public int[] Search(byte[] DecompressedData, uint offset, uint length)
+		/// <summary>
+		/// Выполняет поиск указанной последовательности в словаре
+		/// </summary>
+		/// <param name="dictionary">Входной массив/список в котором выполняем поиск подпоследовательности</param>
+		/// <param name="input">Подпоследовательность для поиска </param>
+		/// <returns>Если последовательность была найдена возвращает её индекс, иначе  -1</returns>
+		private static Int32 SearchInDict(IList<Byte> dictionary, IList<Byte> input)
 		{
-			RemoveOldEntries(DecompressedData[offset]); // Remove old entries for this index
-
-			if (offset < MinMatchAmount || length - offset < MinMatchAmount) // Can't find matches if there isn't enough data
-				return new int[] { 0, 0 };
-
-			// Start finding matches
-			int[] Match = new int[] { 0, 0 };
-			int MatchStart;
-			int MatchSize;
-
-			for (int i = OffsetList[DecompressedData[offset]].Count - 1; i >= 0; i--)
+			//if (input.Count > dictionary.Count) return -1;
+			for (var i = 0; i < dictionary.Count; i++)
 			{
-				MatchStart = OffsetList[DecompressedData[offset]][i];
-				MatchSize = 1;
-
-				while (MatchSize < MaxMatchAmount && MatchSize < WindowLength && MatchStart + MatchSize < offset && offset + MatchSize < length && DecompressedData[offset + MatchSize] == DecompressedData[MatchStart + MatchSize])
-					MatchSize++;
-
-				if (MatchSize >= MinMatchAmount && MatchSize > Match[1]) // This is a good match
+				for (var j = 0; j < input.Count && i + j < dictionary.Count; j++)
 				{
-					Match = new int[] { (int)(offset - MatchStart), MatchSize };
-
-					if (MatchSize == MaxMatchAmount) // Don't look for more matches
-						break;
+					if (dictionary[i + j] == input[j])
+					{
+						if (j + 1 == input.Count)
+							return i;
+					}
+					else break;
 				}
 			}
-
-			// Return the match.
-			// If no match was made, the distance & length pair will be zero
-			return Match;
+			return -1;
 		}
 
-		// Slide the window
-		public void SlideWindow(int Amount)
+		private static IEnumerable<Boolean> getBitList(Byte input)
 		{
-			if (WindowLength == WindowSize)
-				WindowStart += Amount;
-			else
+			return new BitArray(new[] { input }).Cast<Boolean>().ToList();
+		}
+
+		public Byte BitArrayToByte(BitArray ba)
+		{
+			Byte result = 0;
+			for (Byte index = 0, m = 1; index < 8; index++, m *= 2)
+				result += ba.Get(index) ? m : (Byte)0;
+			return result;
+		}
+
+		public byte[] BitArrayToByteArray(BitArray bits)
+		{
+			byte[] ret = new byte[(bits.Length - 1) / 8 + 1];
+			bits.CopyTo(ret, 0);
+			return ret;
+		}
+
+		/// <summary>
+		/// Сжимает входную последовательность с помощью алгоритма LZSS
+		/// </summary>
+		/// <param name="source">Исходный поток данных для сжатия</param>
+		/// <returns></returns>
+		public BitArray Compress(IList<Byte> source)
+		{
+			//Словарь
+			var dictionary = new List<Byte>();
+			//Выходной поток
+			var output = new List<Boolean>();
+			//Буферное окошко
+			var buffer = new List<Byte>();
+
+			for (var i = 0; i < source.Count; i++)
 			{
-				if (WindowLength + Amount <= WindowSize)
-					WindowLength += Amount;
+				buffer.Add(source[i]);
+				while ((SearchInDict(dictionary, buffer) != -1 && i + 1 < source.Count))
+				{
+					buffer.Add(source[++i]);
+				}
+				if (buffer.Count > 1)
+				{
+					buffer.RemoveAt(buffer.Count - 1);
+					--i;
+				}
+				if (buffer.Count > 1)
+				{
+					output.Add(true);
+					output.AddRange(getBitList((Byte)((dictionary.Count) - SearchInDict(dictionary, buffer))));
+					output.AddRange(getBitList((Byte)buffer.Count));
+					dictionary.AddRange(buffer);
+					while (dictionary.Count > 255)
+					{
+						dictionary.RemoveAt(0);
+					}
+					buffer.Clear();
+				}
 				else
 				{
-					Amount -= (WindowSize - WindowLength);
-					WindowLength = WindowSize;
-					WindowStart += Amount;
+					output.Add(false);
+					output.AddRange(new BitArray(buffer.ToArray()).Cast<Boolean>().ToList());
+					dictionary.AddRange(buffer);
+					while (dictionary.Count > 255)
+					{
+						dictionary.RemoveAt(0);
+					}
+					buffer.Clear();
 				}
+				Procent = (100f / source.Count) * i;
 			}
+			Procent = 100;
+			var countBits = new BitArray(BitConverter.GetBytes(output.Count)).Cast<Boolean>().ToList();
+			output.InsertRange(0, countBits);
+			return new BitArray(output.ToArray());
 		}
 
-		// Slide the window to the next block
-		public void SlideBlock()
+		/// <summary>
+		/// Расжимает входную последовательность
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="bitsCount">Колличество бит в исходном файле (за исключением мусора)</param>
+		/// <returns></returns>
+		public Byte[] UnCompress(BitArray source, Int32 bitsCount)
 		{
-			WindowStart += BlockSize;
-		}
-
-		// Remove old entries
-		private void RemoveOldEntries(byte index)
-		{
-			for (int i = 0; i < OffsetList[index].Count; ) // Don't increment i
+			//Выходной поток
+			var output = new List<Byte>();
+			var tempByte = new BitArray(8);
+			var bitOffset = new BitArray(8);
+			var bitCount = new BitArray(8);
+			for (var i = 32; i < bitsCount + 24 && i < source.Length; )
 			{
-				if (OffsetList[index][i] >= WindowStart)
-					break;
+
+				if (source[i] == false)
+				{
+					for (var j = 0; j < 8 && j + i + 1 < source.Length; j++)
+					{
+						tempByte[j] = source[++i];
+					}
+					output.Add(BitArrayToByte(tempByte));
+					i++;
+				}
 				else
-					OffsetList[index].RemoveAt(0);
-			}
-		}
-
-		// Set variables
-		public void SetWindowSize(int size)
-		{
-			WindowSize = size;
-		}
-		public void SetMinMatchAmount(int amount)
-		{
-			MinMatchAmount = amount;
-		}
-		public void SetMaxMatchAmount(int amount)
-		{
-			MaxMatchAmount = amount;
-		}
-		public void SetBlockSize(int size)
-		{
-			BlockSize = size;
-			WindowLength = size; // The window will work in blocks now
-		}
-
-		// Add entries
-		public void AddEntry(byte[] DecompressedData, int offset)
-		{
-			OffsetList[DecompressedData[offset]].Add(offset);
-		}
-		public void AddEntryRange(byte[] DecompressedData, int offset, int length)
-		{
-			for (int i = 0; i < length; i++)
-				AddEntry(DecompressedData, offset + i);
-		}
-	}
-
-	public class LZSS
-	{
-
-		/* Decompress */
-		public static MemoryStream Decompress(byte[] data)
-		{
-			try
-			{
-				// Compressed & Decompressed Data Information
-				uint CompressedSize = (uint)data.Length;
-				uint DecompressedSize = (uint)(data[0] + data[1]*256);
-
-				uint SourcePointer = 0x4;
-				uint DestPointer = 0x0;
-
-				byte[] CompressedData = data;
-				byte[] DecompressedData = new byte[DecompressedSize];
-
-				// Start Decompression
-				while (SourcePointer < CompressedSize && DestPointer < DecompressedSize)
 				{
-					byte Flag = CompressedData[SourcePointer]; // Compression Flag
-					SourcePointer++;
-
-					for (int i = 7; i >= 0; i--)
+					for (var j = 0; j < 8 && j + i + 1 < source.Length; j++)
 					{
-						if ((Flag & (1 << i)) == 0) // Data is not compressed
-						{
-							DecompressedData[DestPointer] = CompressedData[SourcePointer];
-							SourcePointer++;
-							DestPointer++;
-						}
-						else // Data is compressed
-						{
-							int Distance = (((CompressedData[SourcePointer] & 0xF) << 8) | CompressedData[SourcePointer + 1]) + 1;
-							int Amount = (CompressedData[SourcePointer] >> 4) + 3;
-							SourcePointer += 2;
-
-							// Copy the data
-							for (int j = 0; j < Amount; j++)
-								DecompressedData[DestPointer + j] = DecompressedData[DestPointer - Distance + j];
-							DestPointer += (uint)Amount;
-						}
-
-						// Check for out of range
-						if (SourcePointer >= CompressedSize || DestPointer >= DecompressedSize)
-							break;
+						bitOffset[j] = source[++i];
 					}
-				}
-
-				return new MemoryStream(DecompressedData);
-			}
-			catch
-			{
-				return null; // An error occured while decompressing
-			}
-		}
-
-		/* Compress */
-		public static MemoryStream Compress(ref Stream data)
-		{
-			try
-			{
-				uint DecompressedSize = (uint)data.Length;
-
-				MemoryStream CompressedData = new MemoryStream();
-				byte[] DecompressedData = data.ToByteArray();
-
-				uint SourcePointer = 0x0;
-				uint DestPointer = 0x4;
-
-				// Test if the file is too large to be compressed
-				if (data.Length > 0xFFFFFF)
-					throw new Exception("Input file is too large to compress.");
-
-				// Set up the Lz Compression Dictionary
-				LzWindowDictionary LzDictionary = new LzWindowDictionary();
-				LzDictionary.SetWindowSize(0x1000);
-				LzDictionary.SetMaxMatchAmount(0xF + 3);
-
-				// Start compression
-				CompressedData.Write((uint)('\x10' | (DecompressedSize << 8)));
-				while (SourcePointer < DecompressedSize)
-				{
-					byte Flag = 0x0;
-					uint FlagPosition = DestPointer;
-					CompressedData.WriteByte(Flag); // It will be filled in later
-					DestPointer++;
-
-					for (int i = 7; i >= 0; i--)
+					for (var j = 0; j < 8 && j + i + 1 < source.Length; j++)
 					{
-						int[] LzSearchMatch = LzDictionary.Search(DecompressedData, SourcePointer, DecompressedSize);
-						if (LzSearchMatch[1] > 0) // There is a compression match
-						{
-							Flag |= (byte)(1 << i);
-
-							CompressedData.WriteByte((byte)((((LzSearchMatch[1] - 3) & 0xF) << 4) | (((LzSearchMatch[0] - 1) & 0xFFF) >> 8)));
-							CompressedData.WriteByte((byte)((LzSearchMatch[0] - 1) & 0xFF));
-
-							LzDictionary.AddEntryRange(DecompressedData, (int)SourcePointer, LzSearchMatch[1]);
-							LzDictionary.SlideWindow(LzSearchMatch[1]);
-
-							SourcePointer += (uint)LzSearchMatch[1];
-							DestPointer += 2;
-						}
-						else // There wasn't a match
-						{
-							Flag |= (byte)(0 << i);
-
-							CompressedData.WriteByte(DecompressedData[SourcePointer]);
-
-							LzDictionary.AddEntry(DecompressedData, (int)SourcePointer);
-							LzDictionary.SlideWindow(1);
-
-							SourcePointer++;
-							DestPointer++;
-						}
-
-						// Check for out of bounds
-						if (SourcePointer >= DecompressedSize)
-							break;
+						bitCount[j] = source[++i];
 					}
-
-					// Write the flag.
-					// Note that the original position gets reset after writing.
-					CompressedData.Seek(FlagPosition, SeekOrigin.Begin);
-					CompressedData.WriteByte(Flag);
-					CompressedData.Seek(DestPointer, SeekOrigin.Begin);
+					var offset = BitArrayToByte(new BitArray(bitOffset));
+					var count = BitArrayToByte(new BitArray(bitCount));
+					var dicCount = output.Count;
+					for (var c = 0; c < count; c++)
+					{
+						output.Add(output[dicCount - offset + c]);
+					}
+					i++;
 				}
-
-				return CompressedData;
+				Procent = (100f / source.Length) * i;
 			}
-			catch
-			{
-				return null; // An error occured while compressing
-			}
-		}
-
-		// Check
-		public static bool Check(ref Stream data, string filename)
-		{
-			try
-			{
-				// Because this can conflict with other compression formats we are going to add a check them too
-				return (data.ReadString(0x0, 1) == "\x10"); //&&
-				//!Compression.Dictionary[CompressionFormat.PRS].Check(ref data, filename) &&
-				//!Images.Dictionary[GraphicFormat.PVR].Check(ref data, filename));
-			}
-			catch
-			{
-				return false;
-			}
+			Procent = 100;
+			return output.ToArray();
 		}
 	}
 }
