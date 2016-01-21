@@ -37,6 +37,111 @@ if [ "docker-image-skeleton" == "$image" ]; then
 else
    echo "- docker images NOT installed - please check setup.conf to see if it is correct"
 fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 monodevelop-nunit* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install monodevelop-nunit for C# on ubuntu "
+  sudo apt-get install -yq monodevelop-nunit 
+  echo " - done."
+else
+  echo "- monodevelop-nunit already installed"
+fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 libnunit-cil-dev* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install libnunit-cil-dev for C# on ubuntu "
+  sudo apt-get install -yq libnunit-cil-dev 
+  echo " - done."
+else
+  echo "- libnunit-cil-dev already installed"
+fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 monodevelop* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install monodevelop for C# on ubuntu "
+  sudo apt-get install -yq monodevelop 
+  echo " - done."
+else
+  echo "- monodevelop already installed"
+fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 libwebkit-c* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install libwebkit-cil-dev for C# on ubuntu "
+  sudo apt-get install -yq libwebkit-cil-dev 
+  echo " - done."
+else
+  echo "- libwebkit already installed"
+fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 bundler* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install bundler "
+  sudo apt-get install -yq bundler 
+  sudo bundle install
+  echo " - done."
+else
+  echo "- bundler already installed"
+fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 rubygems* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install rubygems "
+  sudo apt-get install -yq rubygems 
+  echo " - done."
+else
+  echo "- rubygems already installed"
+fi
+JEKYLL_OK=$(jekyll -v|grep jekyll)
+if [ "" == "$JEKYLL_OK" ]; then 
+  echo -n "- install jekyll"
+  sudo gem install jekyll
+  echo " - done."
+else
+  echo "- jekyll already installed"
+fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 ruby-full* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install ruby-full "
+  sudo apt-get install -yq ruby-full 
+  echo " - done."
+else
+  echo "- ruby-full already installed"
+fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 rsync* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install rsync "
+  sudo apt-get install -yq rsync 
+  echo " - done."
+else
+  echo "- rsync already installed"
+fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 ssh* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install ssh "
+  sudo apt-get install -yq ssh 
+  echo " - done."
+else
+  echo "- ssh already installed"
+fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 taskwarrior* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install taskwarrior "
+  sudo apt-get install -yq taskwarrior
+  echo " - done."
+else
+  echo "- taskwarrior already installed"
+fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 xslt* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install xsltproc "
+  sudo apt-get install -yq xsltproc
+  echo " - done."
+else
+  echo "- xsltproc already installed"
+fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 libboost* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install libboost "
+  sudo apt-get install -yq libboost-all-dev 
+  echo " - done."
+else
+  echo "- libbost already installed"
+fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 virtualbox |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install Virtualbox "
@@ -45,15 +150,33 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- Virtualbox installed"
 fi
-PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 vagrant |grep "install ok installed")
+
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 virtualbox-guest* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install Virtualbox guest addition "
+  sudo apt-get install -yq virtualbox-guest-additions-iso
+  sudo mkdir -p /media/VirtualBoxGuestAdditions
+  sudo mount -t iso9660 -o loop /usr/share/virtualbox/VBoxGuestAdditions.iso /media/VirtualBoxGuestAdditions/
+  sudo /media/VirtualBoxGuestAdditions/VBoxLinuxAdditions.run
+  sudo /etc/init.d/vboxadd setup
+  echo " - done."
+else
+  echo "- Virtualbox guest addition installed"
+fi
+
+PKG_OK=$(cd; dpkg-query -W --showformat='${Status}\n' 2>&1 vagrant* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install vagrant "
-  #sudo apt-get --force-yes --yes install vagrant 
-  # info : http://www.kianmeng.org/2015/07/vagrant-173-and-virtualbox-50.html
-  sudo apt-get install aria2
-  #aria2c -x 4 https://dl.bintray.com/mitchellh/vagrant/vagrant_1.7.4_x86_64.deb
-  aria2c -x 4 https://releases.hashicorp.com/vagrant/1.7.4/vagrant_1.7.4_x86_64.deb
-  sudo dpkg -i vagrant_1.7.4_x86_64.deb
+  sudo apt-get install -yq aria2
+  PLATFORM=$(uname -i)
+  if [ "i686" == "$PLATFORM" ]; then
+    aria2c -x 4 https://releases.hashicorp.com/vagrant/1.7.4/vagrant_1.7.4_i686.deb
+    sudo dpkg -i vagrant_1.7.4_i686.deb
+  else
+    #aria2c -x 4 https://dl.bintray.com/mitchellh/vagrant/vagrant_1.7.4_x86_64.deb
+    aria2c -x 4 https://releases.hashicorp.com/vagrant/1.7.4/vagrant_1.7.4_x86_64.deb
+    sudo dpkg -i vagrant_1.7.4_x86_64.deb
+  fi
   vagrant version
   echo " - done."
 else
@@ -63,6 +186,15 @@ else
   echo "- update vagrant box to newest version"
   vagrant box update
 fi
+
+PLUGIN_OK=$(vagrant plugin list|grep vagrant-vbguest) 
+if [ "" == "$PLUGIN_OK" ]; then
+  echo -n "- install vagrant plugin vbguest"
+  sudo vagrant plugin install vagrant-vbguest
+  echo " - done."
+else
+  echo "- vagrant plugin vbguest installed"
+fi
 VBOX_OK=$(vagrant box list|awk 'BEGIN {strtmp=$1} END {print $strtmp}')
 if [ "" == "$VBOX_OK" ]; then
   echo "vbox not found - installing.."
@@ -71,11 +203,48 @@ if [ "" == "$VBOX_OK" ]; then
 else
   echo "- vbox installed"
 fi
-PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 puppetlabs-release |grep "install ok installed")
+
+MODULE_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep leonardothibes-jekyll)
+if [ "" == "$MODULE_OK" ]; then
+  echo -n "- install leonardothibes-jekyll"
+  puppet module install leonardothibes-jekyll --modulepath ./puppet/trunk/environments/devtest/modules
+  echo " - done."
+else
+  echo "- leonardothibes-jekyll puppet module installed"
+fi
+
+MODULE_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep puppetlabs-apache)
+if [ "" == "$MODULE_OK" ]; then
+  echo -n "- install puppetlabs-apache"
+  puppet module install puppetlabs-apache --modulepath ./puppet/trunk/environments/devtest/modules
+  echo " - done."
+else
+  echo "- puppetlabs-apache puppet module installed"
+fi
+
+MODULE_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep puppetlabs-stdlib)
+if [ "" == "$MODULE_OK" ]; then
+  echo -n "- install puppetlabs-stdlib"
+  puppet module install puppetlabs/stdlib --modulepath ./puppet/trunk/environments/devtest/modules
+  echo " - done."
+else
+  echo "- puppetlabs-stdlib puppet module installed"
+fi
+
+MODULE_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep puppetlabs-ruby)
+if [ "" == "$MODULE_OK" ]; then
+  echo -n "- install puppetlabs-ruby"
+  puppet module install puppetlabs-ruby  --modulepath ./puppet/trunk/environments/devtest/modules
+  echo " - done."
+else
+  echo "- puppetlabs-ruby puppet module installed"
+fi
+
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 puppet-co* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
 #  echo "puppetlabs-release was not found, now it will be installed - please wait..."
   echo -n "- install puppetlabs-release "
-  sudo apt-get install puppet-common
+  sudo apt-get install -yq puppet-common
 #  wget https://apt.puppetlabs.com/puppetlabs-release-trusty.deb
 #  sudo dpkg -i puppetlabs-release-trusty.deb
    wget https://apt.puppetlabs.com/puppetlabs-release-pc1-vivid.deb && \
@@ -110,14 +279,14 @@ if [ "" == "$SPRINGBOOT_OK" ]; then
   echo -n "- install maven puppet module"
   puppet module install maestrodev/maven  --modulepath ./puppet/trunk/environments/devtest/modules
   echo -n "- install curl"
-  sudo apt-get install curl 
+  sudo apt-get install -yq curl 
   echo -n "- install sdkman"
   curl -s http://get.sdkman.io | bash
   echo -n "- init sdk"
   source $(pwd)/.sdkman/bin/sdkman-init.sh
-  gvm version
+  sdk version
   echo -n "- install grails"
-  gvm install grails 
+  sdk install grails < /dev/null
   echo " - done."
 else
   echo "- puppet-springboot puppet module installed"
@@ -182,6 +351,25 @@ if [ "" == "$MEDIAWIKI_OK" ]; then
 else
   echo "- martasd-mediawiki puppet module installed"
 fi
+
+#for m in cesnet-hadoop cesnet-hbase cesnet-hive cesnet-sit_hadoop cesnet-zookeeper puppetlabs-mysql puppetlabs-postgresql; do puppet module install ${m} --modulepath ./puppet/trunk/environments/devtest/modules; done
+#for m in cesnet-hadoop cesnet-hbase cesnet-hive cesnet-zookeeper puppetlabs-mysql puppetlabs-postgresql; do puppet module install ${m} --modulepath ./puppet/trunk/environments/devtest/modules; done
+
+#PUPPET_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep viirya-hadoop)
+#if [ "" == "$PUPPET_OK" ]; then
+#  echo -n "- install viirya-hadoop puppet module"
+#  puppet module install viirya-hadoop --modulepath ./puppet/trunk/environments/devtest/modules 
+#  echo " - done."
+#else
+#  echo "- viirya-hadoop puppet module installed"
+#fi
+
+#puppet module install razorsedge-cloudera --modulepath ./puppet/trunk/environments/devtest/modules 
+ 
+## install https://forge.puppetlabs.com/vzach/ambari 
+#puppet module install puppetlabs-stdlib --modulepath ./puppet/trunk/environments/devtest/modules  
+#puppet module install vzach-ambari --modulepath ./puppet/trunk/environments/devtest/modules 
+ 
 
 # install mogrify - to resize extracted profile images, thus making transfer to javascript client performance wice faster
 MOGRIFY_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 imagemagick |grep "install ok installed")
