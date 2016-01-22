@@ -4,6 +4,7 @@ import ClientEndpoint.JavaWebSocketClientEndpoint;
 import WebSocketEchoTestEndpoints.MockServer;
 import org.glassfish.tyrus.server.Server;
 
+import javax.websocket.MessageHandler;
 import javax.websocket.Session;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -16,7 +17,7 @@ public class MockTestServer{
 
     public boolean bIsRunning=false;
     private Thread MockserverThread;
-    private JavaWebSocketClientEndpoint clientEndpoint;
+    public JavaWebSocketClientEndpoint clientEndpoint;
     private Session session;
     private Object waitLock = new Object();
     private Server server;
@@ -37,6 +38,8 @@ public class MockTestServer{
             public void run() {
                 server = new Server("localhost", port, "/websockets", null, MockServer.class);
                 if(server!=null) {
+
+
                     try {
                         server.start();
                         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -77,6 +80,8 @@ public class MockTestServer{
          * connect client to MockServer
          */
         session = clientEndpoint.connectToServer("ws://localhost:" + ServerPort + "/websockets/" + ServerEndpoint);
+
+
 
         bIsRunning=true;
 

@@ -6,7 +6,7 @@ using DED;
 // contains the class you are testing, e.g. MonoTests.System.Collections
 
 
-namespace DEDTests.Tests
+namespace DED.UnitTests
 {
 
 	[TestFixture]
@@ -122,7 +122,7 @@ namespace DEDTests.Tests
 		}
 
 		[Test]
-		public void Decoder_GET() {
+		public void EncodeCompressDecompressDecode() {
 			short trans_id = 1;
 			bool bAction = true;
 			DEDEncoder DED = DEDEncoder.DED_START_ENCODER();
@@ -143,9 +143,10 @@ namespace DEDTests.Tests
 			DEDDecoder DED2 = DEDDecoder.DED_START_DECODER();
 			DED2.PUT_DATA_IN_DECODER (byteArray, byteArray.Length);
 			if ((DED2.GET_STRUCT_START ("event")).Equals(1) &&
-				(DED2.GET_METHOD ("Method")).Contains("MusicPlayer") &&
-				(DED2.GET_USHORT ("trans_id")).Equals(trans_id) &&
-				(DED2.GET_BOOL   ("startstop")).Equals(bAction)) 
+				(	DED2.GET_METHOD ("Method")).Contains("MusicPlayer") &&
+				(	DED2.GET_USHORT ("trans_id")).Equals(trans_id) &&
+				(	DED2.GET_BOOL   ("startstop")).Equals(bAction) &&
+			(DED2.GET_STRUCT_END("event")).Equals(1)) 
 			{
 				bDecoded = true;
 			}
