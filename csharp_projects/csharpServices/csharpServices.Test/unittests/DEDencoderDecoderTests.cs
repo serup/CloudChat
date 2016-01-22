@@ -6,7 +6,7 @@ using DED;
 // contains the class you are testing, e.g. MonoTests.System.Collections
 
 
-namespace DEDTests.Tests
+namespace DED.UnitTests
 {
 
 	[TestFixture]
