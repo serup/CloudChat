@@ -3,7 +3,9 @@ package WebSocketEchoTestEndpoints;
 import messaging.simp.ded.DEDDecoder;
 import messaging.simp.ded.DEDEncoder;
 
+import javax.websocket.MessageHandler;
 import javax.websocket.OnMessage;
+import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
@@ -173,5 +175,20 @@ public class MockServer {
         }
         return dedResponsePacket;
     }
+
+    @OnOpen
+    public void onOpen(Session session)
+    {
+        // for test purposes - if a pure text is send from client
+        session.addMessageHandler(new MessageHandler.Whole<String>() {
+
+            @Override
+            public void onMessage(String message) {
+                System.out.println("WARNING TEXT on a Binary socket - Received message: "+message);
+            }
+        });
+
+    }
+
 }
 
