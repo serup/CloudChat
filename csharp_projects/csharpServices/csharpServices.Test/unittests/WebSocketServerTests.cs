@@ -5,6 +5,7 @@ using Moq;
 using NUnit.Framework;
 using System.Net.Sockets;
 using System.Security.Authentication;
+using System.Linq;
 
 
 
@@ -33,7 +34,53 @@ namespace Fleck.Tests
 
             _ipV4Socket = new Socket(_ipV4Address.AddressFamily, SocketType.Stream, ProtocolType.IP);
             _ipV6Socket = new Socket(_ipV6Address.AddressFamily, SocketType.Stream, ProtocolType.IP);
+
+
         }
+
+		[Test]
+		public void mockDOPsServer()
+		{
+			// Setup mockDOPsServer - it should simulate receive and response of DED packets
+			FleckLog.Level = LogLevel.Debug;
+			var allSockets = new System.Collections.Generic.List<IWebSocketConnection>();
+			var server = new WebSocketServer("ws://127.0.0.1:8046/websockets/MockServerEndpoint"); // NB! running as mockserver in java spring project
+			server.Start(socket =>
+				{
+					socket.OnOpen = () =>
+					{
+						Console.WriteLine("Open!");
+						allSockets.Add(socket);
+					};
+					socket.OnClose = () =>
+					{
+						Console.WriteLine("Close!");
+						allSockets.Remove(socket);
+					};
+					socket.OnMessage = message =>
+					{
+						Console.WriteLine(message);
+						if(message.Equals("exit")){
+							//allSockets.Remove(socket);
+							socket.Close();
+						}
+						else
+							allSockets.ToList().ForEach(s => s.Send("Echo: " + message));
+					};
+				});
+
+			// Test handling incomming TEXT until DED handling is made
+			do {
+				Console.WriteLine("wait for client to connect");
+			} while(allSockets.Count <= 0);
+			// write "exit" in message to get it to exit
+			do {
+				Console.WriteLine("wait for client to exit");
+			} while(allSockets.Count > 0);
+
+			Console.WriteLine("exit");
+
+		}
 
         [Test]
         public void ShouldStart()
