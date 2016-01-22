@@ -1,52 +1,25 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="csharpServices.IntegrationTests/unittests/DOPsConnectTests.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="csharpServices.Test/unittests/WebSocketServerTests.cs">
     <Files>
-      <File FileName="csharpServices.Test/unittests/DEDencoderDecoderTests.cs" Line="29" Column="29" />
-      <File FileName="csharpServices.Test/unittests/WebSocketConnectionTests.cs" Line="3" Column="3" />
-      <File FileName="csharpServices/DEDEncoderDecoder.cs" Line="1" Column="1" />
-      <File FileName="csharpServices/LZSS.cs" Line="34" Column="34" />
-      <File FileName="csharpServices.IntegrationTests/unittests/DOPsConnectTests.cs" Line="5" Column="5" />
-      <File FileName="csharpServices/Interfaces/ISocket.cs" Line="5" Column="5" />
-      <File FileName="csharpServices/WebSocket/WebSocketConnection.cs" Line="5" Column="5" />
+      <File FileName="csharpServices/WebSocket/WebSocketStatusCodes.cs" Line="5" Column="5" />
+      <File FileName="csharpServices.Test/unittests/WebSocketServerTests.cs" Line="1" Column="1" />
+      <File FileName="csharpServices/Interfaces/ISocket.cs" Line="19" Column="19" />
+      <File FileName="csharpServices/WebSocket/WebSocketServer.cs" Line="1" Column="1" />
     </Files>
     <Pads>
-      <Pad Id="ProjectPad">
-        <State expanded="True">
-          <Node name="csharpServices" expanded="True">
-            <Node name="Interfaces" expanded="True" />
-            <Node name="WebSocket" expanded="True" />
-          </Node>
-          <Node name="csharpServices.IntegrationTests" expanded="True" selected="True">
-            <Node name="References" expanded="True">
-              <Node name="From Packages" expanded="True" />
-            </Node>
-            <Node name="Packages" expanded="True" />
-            <Node name="unittests" expanded="True" />
-          </Node>
-          <Node name="csharpServices.Test" expanded="True">
-            <Node name="References" expanded="True">
-              <Node name="From Packages" expanded="True" />
-            </Node>
-            <Node name="Packages" expanded="True" />
-            <Node name="unittests" expanded="True" />
-          </Node>
-        </State>
-      </Pad>
-      <Pad Id="MonoDevelop.Debugger.WatchPad">
-        <State>
-          <Value>source[i-1]</Value>
-          <Value>i</Value>
-          <Value>decmprsd</Value>
-          <Value>uncmpdata</Value>
-          <Value>output</Value>
-          <Value>output[dicCount - offset + c]</Value>
-          <Value>dicCount</Value>
-          <Value>offset</Value>
-        </State>
-      </Pad>
       <Pad Id="MonoDevelop.NUnit.TestPad">
-        <State expanded="True" selected="True" />
+        <State expanded="True">
+          <Node name="csharpServices.Test" expanded="True">
+            <Node name="Fleck" expanded="True">
+              <Node name="Tests" expanded="True">
+                <Node name="WebSocketServerTests" expanded="True">
+                  <Node name="ShouldStart" selected="True" />
+                </Node>
+              </Node>
+            </Node>
+          </Node>
+        </State>
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
@@ -83,6 +56,7 @@
       <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.Test/unittests/DEDencoderDecoderTests.cs" line="145" column="1" />
       <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices/DEDEncoderDecoder.cs" line="451" column="34" />
       <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices/DEDEncoderDecoder.cs" line="603" column="1" />
+      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.Test/unittests/WebSocketServerTests.cs" line="44" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />

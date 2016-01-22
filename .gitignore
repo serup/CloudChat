@@ -2,7 +2,7 @@
 ## tmp
 #################
 *.o
-*/tmp
+tmp/
 *.txt
 result_index.js
 puppet/
@@ -16,6 +16,9 @@ env_docker_puppet_path
 *.gcda
 *.iml
 *.bin
+javaspring_projects/javaservice-webapp/complete/target/
+codeblocks_projects/DFDFunctions/1_1/tmp
+tmphost
 
 #################
 ## Eclipse
