@@ -72,6 +72,11 @@
     <Reference Include="NUnit.ManualTest">
       <HintPath>..\packages\NUnit.ManualTest.1.0.0\lib\net45\NUnit.ManualTest.dll</HintPath>
     </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="Xwt, Version=0.1.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756">
+      <Package>monodevelop</Package>
+    </Reference>
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="gtk-gui\gui.stetic">
@@ -101,6 +106,20 @@
     <Compile Include="DEDEncoderDecoder.cs" />
     <Compile Include="LZSS.cs" />
     <Compile Include="StreamExtensions.cs" />
+    <Compile Include="WebSocket\WebSocketServer.cs" />
+    <Compile Include="Helpers\MonoHelper.cs" />
+    <Compile Include="WebSocket\SocketWrapper.cs" />
+    <Compile Include="WebSocket\HandlerFactory.cs" />
+    <Compile Include="WebSocket\RequestParser.cs" />
+    <Compile Include="Handlers\ComposableHandler.cs" />
+    <Compile Include="Handlers\Draft76Handler.cs" />
+    <Compile Include="Handlers\FlashSocketPolicyRequestHandler.cs" />
+    <Compile Include="Handlers\Hybi13Handler.cs" />
+    <Compile Include="WebSocket\FrameType.cs" />
+    <Compile Include="IntExtensions.cs" />
+    <Compile Include="WebSocket\QueuedStream.cs" />
+    <Compile Include="WebSocket\ReadState.cs" />
+    <Compile Include="WebSocket\SubProtocolNegotiator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -110,5 +129,7 @@
   <ItemGroup>
     <Folder Include="WebSocket\" />
     <Folder Include="Log\" />
+    <Folder Include="Helpers\" />
+    <Folder Include="Handlers\" />
   </ItemGroup>
 </Project>

@@ -336,14 +336,14 @@ namespace DED
 			return dedDecoder;
 		}
 
-		class _DEDobject
-		{
-			DEDEncoder encoder_ptr;
-			byte[] uncompresseddata;
-			long iLengthOfTotalData;
-			byte[] pCompressedData;
-			long sizeofCompressedData;
-		}
+//		class _DEDobject
+//		{
+//			DEDEncoder encoder_ptr;
+//			byte[] uncompresseddata;
+//			long iLengthOfTotalData;
+//			byte[] pCompressedData;
+//			long sizeofCompressedData;
+//		}
 
 		class param
 		{
@@ -355,7 +355,7 @@ namespace DED
 
 
 		byte[] pdata;
-		int iLengthOfData;
+		//int iLengthOfData;
 		byte[] ptotaldata;
 		int iLengthOfTotalData;
 		CASN1 m_asn1; // used in decoder
