@@ -2,19 +2,27 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
   <MonoDevelop.Ide.Workbench ActiveDocument="csharpServices.Test/unittests/WebSocketServerTests.cs">
     <Files>
-      <File FileName="csharpServices/WebSocket/WebSocketStatusCodes.cs" Line="5" Column="5" />
-      <File FileName="csharpServices.Test/unittests/WebSocketServerTests.cs" Line="1" Column="1" />
-      <File FileName="csharpServices/Interfaces/ISocket.cs" Line="19" Column="19" />
-      <File FileName="csharpServices/WebSocket/WebSocketServer.cs" Line="1" Column="1" />
+      <File FileName="csharpServices/WebSocket/WebSocketStatusCodes.cs" Line="1" Column="1" />
+      <File FileName="csharpServices.Test/unittests/WebSocketServerTests.cs" Line="17" Column="17" />
+      <File FileName="csharpServices/Interfaces/ISocket.cs" Line="1" Column="1" />
+      <File FileName="csharpServices/WebSocket/WebSocketServer.cs" Line="73" Column="73" />
+      <File FileName="csharpServices/DEDEncoderDecoder.cs" Line="1" Column="1" />
+      <File FileName="csharpServices.Test/unittests/DEDencoderDecoderTests.cs" Line="3" Column="3" />
+      <File FileName="csharpServices.Test/unittests/WebSocketConnectionInfoTests.cs" Line="21" Column="21" />
     </Files>
     <Pads>
       <Pad Id="MonoDevelop.NUnit.TestPad">
         <State expanded="True">
           <Node name="csharpServices.Test" expanded="True">
+            <Node name="DED" expanded="True">
+              <Node name="UnitTests" expanded="True">
+                <Node name="EncodeDecodeTest" expanded="True" />
+              </Node>
+            </Node>
             <Node name="Fleck" expanded="True">
               <Node name="Tests" expanded="True">
                 <Node name="WebSocketServerTests" expanded="True">
-                  <Node name="ShouldStart" selected="True" />
+                  <Node name="ShouldBeSecureWithWssAndCertificate" selected="True" />
                 </Node>
               </Node>
             </Node>
