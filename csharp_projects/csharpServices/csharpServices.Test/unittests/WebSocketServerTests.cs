@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Threading;
 using System.Threading;
 using System.Net.WebSockets;
+using System.Text;
 
 namespace Fleck.Tests
 {
@@ -73,7 +74,7 @@ namespace Fleck.Tests
 		}
 
 		[Test]
-		public void mockDOPsServer()
+		public void ConnectionToMockDOPsServer()
 		{
 			var mockDOPsServer = new MockDOPsServer ();
 			mockDOPsServer.Start(); // start mock DOPs Server
@@ -82,15 +83,51 @@ namespace Fleck.Tests
 			ClientWebSocket clientSocket = new ClientWebSocket ();
 			clientSocket.ConnectAsync (new Uri ("ws://localhost:8046/websockets/MockServerEndpoint"), CancellationToken.None);
 
-
-			// do some work with server...
-			//...
-
-			//clientSocket.Dispose ();
+			bool bStateConnection=false;
+			if(clientSocket.State == WebSocketState.Connecting)
+				bStateConnection = true;
 
 			// wait for release
-			mockDOPsServer.WaitForStop (); 
+			mockDOPsServer.WaitForStop (0); 
 
+			// verify communication with server
+			Assert.IsTrue(bStateConnection); // did we have a connection?
+		}
+
+		[Test]
+		public void SendDEDToMockDOPsServer()
+		{
+			var mockDOPsServer = new MockDOPsServer ();
+			mockDOPsServer.Start(); // start mock DOPs Server
+
+ 			// connect to mock DOPs server
+			ClientWebSocket clientSocket = new ClientWebSocket ();
+			clientSocket.ConnectAsync (new Uri ("ws://localhost:8046/websockets/MockServerEndpoint"), CancellationToken.None);
+
+			bool bStateConnection=false;
+			if(clientSocket.State == WebSocketState.Connecting)
+				bStateConnection = true;
+
+			while (clientSocket.State == WebSocketState.Connecting); // wait until socket is in open state
+
+			bool bStateOpen = false;
+			if (clientSocket.State == WebSocketState.Open)
+				bStateOpen = true;
+
+			// Send blob to server
+			var ob = new ArraySegment<byte>(Encoding.UTF8.GetBytes("hello")); 
+			try {
+				 //clientSocket.SendAsync(ob, WebSocketMessageType.Text, true, CancellationToken.None).Wait(CancellationToken.None);
+			}catch(Exception e) {
+				Console.WriteLine ("ERROR: Exception %s", e.ToString());
+			}
+
+			// wait for release
+			mockDOPsServer.WaitForStop (0); 
+
+			// verify communication with server
+			Assert.IsTrue(bStateConnection); 	// did we have a connection?
+			Assert.IsTrue(bStateOpen); 			// did we have an open socket?
 		}
 
         [Test]
