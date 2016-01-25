@@ -51,12 +51,16 @@ class MockDOPsServer {
 					{
 						Console.WriteLine(message);
 						if(message.Equals("exit")){
-							//allSockets.Remove(socket);
 							socket.Close();
 							_shouldStop = true;
 						}
 						else
 							allSockets.ToList().ForEach(s => s.Send("Echo: " + message));
+					};
+					socket.OnBinary = blob =>
+					{
+						Console.WriteLine("Received blob from client");
+
 					};
 				});
 
@@ -104,9 +108,9 @@ class MockDOPsServer {
 	}
 
 
-	public void WaitForStop()
+	public void WaitForStop(int additionCycles)
 	{
-		WaitSomeTime (100000);
+		WaitSomeTime (additionCycles);
 		// Use the Join method to block the current thread  
 		// until the object's thread terminates.
 		workerThread.Join();
