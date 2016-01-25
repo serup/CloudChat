@@ -35,6 +35,7 @@
     <Compile Include="unittests\WebSocketConnectionTests.cs" />
     <Compile Include="unittests\WebSocketServerTests.cs" />
     <Compile Include="unittests\WebSocketConnectionInfoTests.cs" />
+    <Compile Include="mocks\mockDOPsServer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="YamlDotNet">
@@ -92,6 +93,7 @@
     <Reference Include="Xwt, Version=0.1.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756">
       <Package>monodevelop</Package>
     </Reference>
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -101,5 +103,8 @@
       <Project>{E0E53F98-15BF-4248-8055-5CD67C986DAD}</Project>
       <Name>csharpServices</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="mocks\" />
   </ItemGroup>
 </Project>
