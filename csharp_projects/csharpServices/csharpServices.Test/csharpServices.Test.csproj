@@ -35,6 +35,7 @@
     <Compile Include="unittests\WebSocketConnectionTests.cs" />
     <Compile Include="unittests\WebSocketServerTests.cs" />
     <Compile Include="unittests\WebSocketConnectionInfoTests.cs" />
+    <Compile Include="mocks\mockDOPsServer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="YamlDotNet">
@@ -101,5 +102,8 @@
       <Project>{E0E53F98-15BF-4248-8055-5CD67C986DAD}</Project>
       <Name>csharpServices</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="mocks\" />
   </ItemGroup>
 </Project>
