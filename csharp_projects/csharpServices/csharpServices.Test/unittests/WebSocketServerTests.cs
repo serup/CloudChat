@@ -95,7 +95,7 @@ namespace Fleck.Tests
 		}
 
 		[Test]
-		public void SendDEDToMockDOPsServer()
+		public async void SendDEDToMockDOPsServer()
 		{
 			var mockDOPsServer = new MockDOPsServer ();
 			mockDOPsServer.Start(); // start mock DOPs Server
@@ -117,7 +117,7 @@ namespace Fleck.Tests
 			// Send blob to server
 			var ob = new ArraySegment<byte>(Encoding.UTF8.GetBytes("hello")); 
 			try {
-				 //clientSocket.SendAsync(ob, WebSocketMessageType.Text, true, CancellationToken.None).Wait(CancellationToken.None);
+				await clientSocket.SendAsync(ob, WebSocketMessageType.Binary, false, CancellationToken.None);
 			}catch(Exception e) {
 				Console.WriteLine ("ERROR: Exception %s", e.ToString());
 			}
