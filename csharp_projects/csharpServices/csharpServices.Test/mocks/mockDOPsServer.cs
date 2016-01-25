@@ -11,6 +11,20 @@ class MockDOPsServer {
 	Thread workerThread;
 	public volatile bool bDone;
 
+	public void WaitSomeTime(int additioncycles)
+	{
+		int c = 0;
+		while (!bDone) {
+			Console.WriteLine ("busy..");
+			c++;
+			// finished with work
+			//if (c > 100000) {
+			if (c > additioncycles) {
+				StopDOPsServer (); bDone=true;
+			}
+		}
+	}
+
 	class Worker {
 		private volatile bool _shouldStop;
 		WebSocketServer server;
@@ -55,6 +69,9 @@ class MockDOPsServer {
 
 		public void RequestStop()
 		{
+			// close all sockets, if any
+			allSockets.ToList().ForEach(s => s.Close());
+
 			_shouldStop = true;
 		}
 
@@ -89,6 +106,7 @@ class MockDOPsServer {
 
 	public void WaitForStop()
 	{
+		WaitSomeTime (100000);
 		// Use the Join method to block the current thread  
 		// until the object's thread terminates.
 		workerThread.Join();
