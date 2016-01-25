@@ -10,6 +10,7 @@ using System.Timers;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using System.Threading;
+using System.Net.WebSockets;
 
 namespace Fleck.Tests
 {
@@ -71,41 +72,21 @@ namespace Fleck.Tests
 			timer.Start();
 		}
 
-		async Task PutTaskDelay()
-		{
-			await Task.Delay(1000);
-		} 
-
 		[Test]
-		public async void mockDOPsServer()
+		public void mockDOPsServer()
 		{
 			var mockDOPsServer = new MockDOPsServer ();
-			mockDOPsServer.Start();
+			mockDOPsServer.Start(); // start mock DOPs Server
 
-			// do something with server...
-			//mockDOPsServer.Idle (8000);
-			//Thread.Sleep (8000);
+			// connect to mock DOPs server
+			ClientWebSocket clientSocket = new ClientWebSocket ();
+			clientSocket.ConnectAsync (new Uri ("ws://localhost:8046/websockets/MockServerEndpoint"), CancellationToken.None);
 
-			// Does not really work
-			//SetTimer ();
-//			DelayAction (8000, new Action(() => { Console.WriteLine("doing delayed action"); }));
-//			DelayAction (8000, new Action(() => { mockDOPsServer.StopDOPsServer (); mockDOPsServer.bDone=true; }));
 
-			// stop it
-			//mockDOPsServer.StopDOPsServer ();
-			//System.Threading.Thread.Sleep(1000); // somehow gets the mockDOPsServer internal thread to block, thus freezing
-			int c = 0;
-			while (!mockDOPsServer.bDone) {
-				Console.WriteLine ("busy..");
-				//System.Threading.Thread.Sleep(1000); // somehow gets the mockDOPsServer internal thread to block, thus freezing
-				//await PutTaskDelay (); // somehow gets the mockDOPsServer internal thread to block, thus freezing
-				c++;
-//				if (c > 10) {
-				if (c > 100000) {
-					mockDOPsServer.StopDOPsServer (); mockDOPsServer.bDone=true;
-				}
-			}
+			// do some work with server...
+			//...
 
+			//clientSocket.Dispose ();
 
 			// wait for release
 			mockDOPsServer.WaitForStop (); 
