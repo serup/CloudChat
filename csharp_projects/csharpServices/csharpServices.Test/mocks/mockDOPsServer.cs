@@ -66,9 +66,11 @@ class MockDOPsServer {
 
 			while (!_shouldStop)
 			{
-				Console.WriteLine("worker thread: working...");
+				//Console.WriteLine("worker thread: working...");
+				Console.Title = "WORKING";
 			}
 			Console.WriteLine("worker thread: terminating gracefully.");
+			Console.Title = "DONE";
 		}
 
 		public void RequestStop()
