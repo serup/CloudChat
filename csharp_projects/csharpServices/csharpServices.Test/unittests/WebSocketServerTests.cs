@@ -6,8 +6,10 @@ using NUnit.Framework;
 using System.Net.Sockets;
 using System.Security.Authentication;
 using System.Linq;
-
-
+using System.Timers;
+using System.Threading.Tasks;
+using System.Windows.Threading;
+using System.Threading;
 
 namespace Fleck.Tests
 {
@@ -38,12 +40,75 @@ namespace Fleck.Tests
 
         }
 
+		private static void OnTimedEvent(Object source, ElapsedEventArgs e)
+		{
+			Console.WriteLine("The Elapsed event was raised at {0:HH:mm:ss.fff}",
+				e.SignalTime);
+		}
+
+		private static System.Timers.Timer aTimer;
+
+		private static void SetTimer()
+		{
+			// Create a timer with a two second interval.
+			aTimer = new System.Timers.Timer(2000);
+			// Hook up the Elapsed event for the timer. 
+			aTimer.Elapsed += OnTimedEvent;
+			aTimer.AutoReset = true;
+			aTimer.Enabled = true;
+		}
+
+		public static void DelayAction(int millisecond, Action action)
+		{
+			var timer = new DispatcherTimer();
+			timer.Tick += delegate
+			{
+				action.Invoke();
+				timer.Stop();
+			};
+
+			timer.Interval = TimeSpan.FromMilliseconds(millisecond);
+			timer.Start();
+		}
+
+		async Task PutTaskDelay()
+		{
+			await Task.Delay(1000);
+		} 
+
 		[Test]
-		public void mockDOPsServer()
+		public async void mockDOPsServer()
 		{
 			var mockDOPsServer = new MockDOPsServer ();
 			mockDOPsServer.Start();
 
+			// do something with server...
+			//mockDOPsServer.Idle (8000);
+			//Thread.Sleep (8000);
+
+			// Does not really work
+			//SetTimer ();
+//			DelayAction (8000, new Action(() => { Console.WriteLine("doing delayed action"); }));
+//			DelayAction (8000, new Action(() => { mockDOPsServer.StopDOPsServer (); mockDOPsServer.bDone=true; }));
+
+			// stop it
+			//mockDOPsServer.StopDOPsServer ();
+			//System.Threading.Thread.Sleep(1000); // somehow gets the mockDOPsServer internal thread to block, thus freezing
+			int c = 0;
+			while (!mockDOPsServer.bDone) {
+				Console.WriteLine ("busy..");
+				//System.Threading.Thread.Sleep(1000); // somehow gets the mockDOPsServer internal thread to block, thus freezing
+				//await PutTaskDelay (); // somehow gets the mockDOPsServer internal thread to block, thus freezing
+				c++;
+//				if (c > 10) {
+				if (c > 100000) {
+					mockDOPsServer.StopDOPsServer (); mockDOPsServer.bDone=true;
+				}
+			}
+
+
+			// wait for release
+			mockDOPsServer.WaitForStop (); 
 
 		}
 

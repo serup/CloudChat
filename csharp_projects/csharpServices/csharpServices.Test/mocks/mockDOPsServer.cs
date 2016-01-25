@@ -7,7 +7,9 @@ using System.Linq;
 using System.Threading;
 
 class MockDOPsServer {
-
+	Worker workerObject;
+	Thread workerThread;
+	public volatile bool bDone;
 
 	class Worker {
 		private volatile bool _shouldStop;
@@ -60,8 +62,8 @@ class MockDOPsServer {
 
 	public void Start()
 	{
-		Worker workerObject = new Worker ();
-		Thread workerThread = new Thread(workerObject.DoWork);
+		workerObject = new Worker ();
+		workerThread = new Thread(workerObject.DoWork);
 
 		// Start the worker thread.
 		workerThread.Start();
@@ -74,16 +76,24 @@ class MockDOPsServer {
 		// allow the worker thread to do some work:
 		Thread.Sleep(1);
 
+	}
+
+
+	public void StopDOPsServer()
+	{
 		// Request that the worker thread stop itself:
 		workerObject.RequestStop();
+		bDone = true;
+	}
 
+
+	public void WaitForStop()
+	{
 		// Use the Join method to block the current thread  
 		// until the object's thread terminates.
 		workerThread.Join();
 		Console.WriteLine("main thread: Worker thread has terminated.");
 	}
-
-
 
 
 }
