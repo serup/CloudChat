@@ -1,9 +1,11 @@
 ﻿using System;
 using NUnit.Framework;
 using DED;
+using WebSocketClient;
 
 // all test namespaces start with "MonoTests."  Append the Namespace that
 // contains the class you are testing, e.g. MonoTests.System.Collections
+using System.Threading;
 
 
 namespace DED.UnitTests
@@ -156,6 +158,35 @@ namespace DED.UnitTests
 			Assert.IsTrue (bDecoded);
 		}
 
+		[Test]
+		public void SendReceiveDEDMockDOPsServer()
+		{
+			var mockDOPsServer = new MockDOPsServer ();
+			mockDOPsServer.Start(); // start mock DOPs Server
+
+			// connect to mock DOPs server
+			Client.Connect ("ws://localhost:8046/websockets/MockServerEndpoint");
+
+			short trans_id = 1;
+			bool bAction = true;
+			DEDEncoder DED = DEDEncoder.DED_START_ENCODER();
+			Assert.IsNotNull(DED);
+			DED.PUT_STRUCT_START ("event");
+			DED.PUT_METHOD ("Method", "MusicPlayer");
+			DED.PUT_USHORT ("trans_id", trans_id);
+			DED.PUT_BOOL ("startstop", bAction);
+			DED.PUT_STRUCT_END ("event");
+
+			byte[] byteArray = DED.GET_ENCODED_BYTEARRAY_DATA ();
+			Assert.IsNotNull (byteArray);
+
+			Client.SendBLOB (byteArray);
+
+			Thread.Sleep (1000);
+
+			// wait for release
+			mockDOPsServer.WaitForStop (0); 
+		}
 
 		// An nice way to test for exceptions the class under test should 
 		// throw is:
