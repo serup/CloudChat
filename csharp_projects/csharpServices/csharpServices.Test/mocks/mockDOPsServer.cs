@@ -75,6 +75,11 @@ class MockDOPsServer {
 						{
 							bDecoded = true;
 							Console.WriteLine("mockDOPsServer Received DED and decoded it from WebSocketClient");
+
+							// Send it back as echo
+							socket.Send(blob).Wait(CancellationToken.None);
+							//socket.Send("hello").Wait(CancellationToken.None);
+							Thread.Sleep(1000);
 						}
 						else
 							bDecoded = false;
