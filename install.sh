@@ -62,7 +62,9 @@ else
   echo "- monodevelop already installed"
 fi
 
-# somehow not working on ubuntu 15.04 vivid
+# somehow not working on ubuntu 15.04 vivid  -- use pyCharm in intellij instead : https://confluence.jetbrains.com/display/PYH/PyCharm+IDE+and+Python+Plugin+for+IntelliJ+IDEA
+# install the http://plugins.jetbrains.com/plugin/631
+#
 #PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 monodevelop-python* |grep "install ok installed")
 #if [ "" == "$PKG_OK" ]; then
 #  echo -n "- install monodevelop for python on ubuntu "

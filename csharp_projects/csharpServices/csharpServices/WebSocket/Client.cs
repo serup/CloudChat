@@ -59,6 +59,38 @@ namespace WebSocketClient
 			}
 		}
 
+		public static async Task Connect(string uri, Func<ClientWebSocket, Task> ReceiveDataFunction)
+		{
+			//ClientWebSocket webSocket = null;
+
+			try
+			{
+				webSocket = new ClientWebSocket();
+				webSocket.ConnectAsync(new Uri(uri), CancellationToken.None).Wait();
+//				await Task.WhenAll(Receive(webSocket), SendRandom(webSocket));
+				await Task.WhenAll(ReceiveDataFunction(webSocket));
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine("Exception: {0}", ex);
+			}
+			finally
+			{
+				if (webSocket != null) {
+					if (webSocket.State == WebSocketState.Open || webSocket.State == WebSocketState.CloseReceived)
+						webSocket.Dispose ();
+				}
+				Console.WriteLine("Connection with mockDOPsServer ended for WebSocketClient");
+
+				lock (consoleLock)
+				{
+					Console.ForegroundColor = ConsoleColor.Red;
+					Console.WriteLine("WebSocket closed.");
+					Console.ResetColor();
+				}
+			}
+		}
+
 		public static async Task SendBLOB(byte[] buffer)
 		{
 			Console.WriteLine("WebSocketClient SendBLOB starting!");
