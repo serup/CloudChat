@@ -5,6 +5,7 @@ using System;
 using Fleck;
 using System.Linq;
 using System.Threading;
+using DED;
 
 class MockDOPsServer {
 	Worker workerObject;
@@ -60,6 +61,24 @@ class MockDOPsServer {
 					socket.OnBinary = blob =>
 					{
 						Console.WriteLine("mockDOPsServer Received blob from WebSocketClient");
+
+						short trans_id = 1;
+						bool bAction = true;
+						bool bDecoded = false;
+						DEDDecoder DED2 = DEDDecoder.DED_START_DECODER();
+						DED2.PUT_DATA_IN_DECODER (blob, blob.Length);
+						if ((DED2.GET_STRUCT_START ("event")).Equals(1) &&
+							(	DED2.GET_METHOD ("Method")).Contains("MusicPlayer") &&
+							(	DED2.GET_USHORT ("trans_id")).Equals(trans_id) &&
+							(	DED2.GET_BOOL   ("startstop")).Equals(bAction) &&
+							(DED2.GET_STRUCT_END("event")).Equals(1)) 
+						{
+							bDecoded = true;
+							Console.WriteLine("mockDOPsServer Received DED and decoded it from WebSocketClient");
+						}
+						else
+							bDecoded = false;
+
 
 					};
 				});
