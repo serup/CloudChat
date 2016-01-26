@@ -39,12 +39,12 @@ class MockDOPsServer {
 				{
 					socket.OnOpen = () =>
 					{
-						Console.WriteLine("Open!");
+						Console.WriteLine("mockDOPsServer Client Socket Open!");
 						allSockets.Add(socket);
 					};
 					socket.OnClose = () =>
 					{
-						Console.WriteLine("Close!");
+						Console.WriteLine("mockDOPsServer Client Socket Close!");
 						allSockets.Remove(socket);
 					};
 					socket.OnMessage = message =>
