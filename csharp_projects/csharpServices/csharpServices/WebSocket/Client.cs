@@ -14,7 +14,8 @@ namespace WebSocketClient
 	{
 		private static object consoleLock = new object();
 		private const int sendChunkSize = 256;
-		private const int receiveChunkSize = 64;
+//		private const int receiveChunkSize = 64; // TODO: perhaps implement ringbuffer to handle incomming data
+		private const int receiveChunkSize = 256;
 		private const bool verbose = true;
 		private static readonly TimeSpan delay = TimeSpan.FromMilliseconds(1000);
 		private static ClientWebSocket webSocket = null;
@@ -36,6 +37,38 @@ namespace WebSocketClient
 				webSocket = new ClientWebSocket();
 				webSocket.ConnectAsync(new Uri(uri), CancellationToken.None).Wait();
 				await Task.WhenAll(Receive(webSocket), SendRandom(webSocket));
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine("Exception: {0}", ex);
+			}
+			finally
+			{
+				if (webSocket != null) {
+					if (webSocket.State == WebSocketState.Open || webSocket.State == WebSocketState.CloseReceived)
+						webSocket.Dispose ();
+				}
+				Console.WriteLine("Connection with mockDOPsServer ended for WebSocketClient");
+
+				lock (consoleLock)
+				{
+					Console.ForegroundColor = ConsoleColor.Red;
+					Console.WriteLine("WebSocket closed.");
+					Console.ResetColor();
+				}
+			}
+		}
+
+		public static async Task Connect(string uri, Func<ClientWebSocket, Task> ReceiveDataFunction)
+		{
+			//ClientWebSocket webSocket = null;
+
+			try
+			{
+				webSocket = new ClientWebSocket();
+				webSocket.ConnectAsync(new Uri(uri), CancellationToken.None).Wait();
+//				await Task.WhenAll(Receive(webSocket), SendRandom(webSocket));
+				await Task.WhenAll(ReceiveDataFunction(webSocket));
 			}
 			catch (Exception ex)
 			{
@@ -121,7 +154,10 @@ namespace WebSocketClient
 				}
 				else
 				{
-					LogStatus(true, buffer, result.Count);
+					if (buffer.Length < result.Count)
+						Console.WriteLine ("WARNING - incomming data is larger than internal buffer !!!");
+					else
+						LogStatus(true, buffer, result.Count);
 				}
 			}
 			Console.WriteLine("WebSocket Receive ending!");

@@ -61,6 +61,22 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- monodevelop already installed"
 fi
+
+# somehow not working on ubuntu 15.04 vivid  -- use pyCharm in intellij instead : https://confluence.jetbrains.com/display/PYH/PyCharm+IDE+and+Python+Plugin+for+IntelliJ+IDEA
+# install the http://plugins.jetbrains.com/plugin/631
+#
+#PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 monodevelop-python* |grep "install ok installed")
+#if [ "" == "$PKG_OK" ]; then
+#  echo -n "- install monodevelop for python on ubuntu "
+#  #sudo sh -c 'echo deb http://us.archive.ubuntu.com/ubuntu vivid main universe > /etc/apt/sources.list.d/monodevelop-python.list' 
+#  sudo add-apt-repository ppa:keks9n/monodevelop-latest  
+#  sudo apt-get update -yq
+#  sudo apt-get install -yq monodevelop-python
+#  echo " - done."
+#else
+#  echo "- monodevelop-python already installed"
+#fi
+
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 libwebkit-c* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install libwebkit-cil-dev for C# on ubuntu "
@@ -384,7 +400,7 @@ fi
 echo "******************************************************************************************************************"
 echo "environment is now ready! you may run vagrant up and then vagrant up cloudchatmanager, vagrant up cloudchatclient"
 echo "******************************************************************************************************************"
-vagrant up
+#vagrant up
 #vagrant up jenkins
 #vagrant up backend
 #vagrant up cloudchatmanager
