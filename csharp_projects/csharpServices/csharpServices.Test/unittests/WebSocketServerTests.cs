@@ -12,6 +12,7 @@ using System.Windows.Threading;
 using System.Threading;
 using System.Net.WebSockets;
 using System.Text;
+using WebSocketClient;
 
 namespace Fleck.Tests
 {
@@ -74,6 +75,7 @@ namespace Fleck.Tests
 		}
 
 		[Test]
+		[Ignore]
 		public void ConnectionToMockDOPsServer()
 		{
 			var mockDOPsServer = new MockDOPsServer ();
@@ -95,7 +97,8 @@ namespace Fleck.Tests
 		}
 
 		[Test]
-		public async void SendDEDToMockDOPsServer()
+		[Ignore]
+		public async void SendBLOBToMockDOPsServer()
 		{
 			var mockDOPsServer = new MockDOPsServer ();
 			mockDOPsServer.Start(); // start mock DOPs Server
@@ -128,6 +131,34 @@ namespace Fleck.Tests
 			// verify communication with server
 			Assert.IsTrue(bStateConnection); 	// did we have a connection?
 			Assert.IsTrue(bStateOpen); 			// did we have an open socket?
+		}
+
+		[Test]
+		public async void SendReceiveBLOBMockDOPsServer()
+		{
+			var mockDOPsServer = new MockDOPsServer ();
+			mockDOPsServer.Start(); // start mock DOPs Server
+
+			// connect to mock DOPs server
+			Client.Connect ("ws://localhost:8046/websockets/MockServerEndpoint");
+
+			// Send blob to server
+//			var ob = new ArraySegment<byte>(Encoding.UTF8.GetBytes("hello")); 
+//			try {
+//				Client.Send
+//				await clientSocket.SendAsync(ob, WebSocketMessageType.Binary, false, CancellationToken.None);
+//			}catch(Exception e) {
+//				Console.WriteLine ("ERROR: Exception %s", e.ToString());
+//			}
+
+			Thread.Sleep (1000);
+
+			// wait for release
+			//mockDOPsServer.WaitForStop (0); 
+
+			// verify communication with server
+			//Assert.IsTrue(bStateConnection); 	// did we have a connection?
+			//Assert.IsTrue(bStateOpen); 			// did we have an open socket?
 		}
 
         [Test]
