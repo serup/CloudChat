@@ -6,6 +6,8 @@ using WebSocketClient;
 // all test namespaces start with "MonoTests."  Append the Namespace that
 // contains the class you are testing, e.g. MonoTests.System.Collections
 using System.Threading;
+using System.Threading.Tasks;
+using System.Net.WebSockets;
 
 
 namespace DED.UnitTests
@@ -158,6 +160,46 @@ namespace DED.UnitTests
 			Assert.IsTrue (bDecoded);
 		}
 
+		private static async Task Receive(ClientWebSocket webSocket)
+		{
+			byte[] buffer = new byte[256];
+			Console.WriteLine("WebSocketClient Receive setup");
+			while (webSocket.State == WebSocketState.Open)
+			{                
+				var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+				if (result.MessageType == WebSocketMessageType.Close)
+				{
+					await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
+				}
+				else
+				{
+					if (buffer.Length < result.Count)
+						Console.WriteLine ("WARNING - incomming data is larger than internal buffer !!!");
+					else {
+						Console.WriteLine ("unittest received blob - now try to DED decode it");
+
+						short trans_id = 1;
+						bool bAction = true;
+						DEDDecoder DED2 = DEDDecoder.DED_START_DECODER ();
+						DED2.PUT_DATA_IN_DECODER (buffer, buffer.Length);
+						if ((DED2.GET_STRUCT_START ("event")).Equals (1) &&
+						    (DED2.GET_METHOD ("Method")).Contains ("MusicPlayer") &&
+						    (DED2.GET_USHORT ("trans_id")).Equals (trans_id) &&
+						    (DED2.GET_BOOL ("startstop")).Equals (bAction) &&
+						(DED2.GET_STRUCT_END ("event")).Equals (1)) 
+						{
+							Console.WriteLine ("SUCCESS - unittest received from mockDOPsServer a DED blob, and decoded it");
+						} 
+						else
+						{
+							Console.WriteLine ("FAILURE - unittest could NOT decode DED blob");
+						}
+					}
+				}
+			}
+			Console.WriteLine("WebSocket Receive ending!");
+		}
+
 		[Test]
 		public void SendReceiveDEDMockDOPsServer()
 		{
@@ -165,7 +207,8 @@ namespace DED.UnitTests
 			mockDOPsServer.Start(); // start mock DOPs Server
 
 			// connect to mock DOPs server
-			Client.Connect ("ws://localhost:8046/websockets/MockServerEndpoint");
+			//Client.Connect ("ws://localhost:8046/websockets/MockServerEndpoint");
+			Client.Connect ("ws://localhost:8046/websockets/MockServerEndpoint",Receive);
 
 			short trans_id = 1;
 			bool bAction = true;
