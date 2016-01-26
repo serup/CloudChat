@@ -142,14 +142,7 @@ namespace Fleck.Tests
 			// connect to mock DOPs server
 			Client.Connect ("ws://localhost:8046/websockets/MockServerEndpoint");
 
-			// Send blob to server
-//			var ob = new ArraySegment<byte>(Encoding.UTF8.GetBytes("hello")); 
-//			try {
-//				Client.Send
-//				await clientSocket.SendAsync(ob, WebSocketMessageType.Binary, false, CancellationToken.None);
-//			}catch(Exception e) {
-//				Console.WriteLine ("ERROR: Exception %s", e.ToString());
-//			}
+			Client.SendBLOB ();
 
 			Thread.Sleep (1000);
 

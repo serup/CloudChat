@@ -17,6 +17,7 @@ namespace WebSocketClient
 		private const int receiveChunkSize = 64;
 		private const bool verbose = true;
 		private static readonly TimeSpan delay = TimeSpan.FromMilliseconds(1000);
+		private static ClientWebSocket webSocket = null;
 
 /*		static void Main(string[] args)
 		{
@@ -28,13 +29,13 @@ namespace WebSocketClient
 */
 		public static async Task Connect(string uri)
 		{
-			ClientWebSocket webSocket = null;
+			//ClientWebSocket webSocket = null;
 
 			try
 			{
 				webSocket = new ClientWebSocket();
 				webSocket.ConnectAsync(new Uri(uri), CancellationToken.None).Wait();
-				await Task.WhenAll(Receive(webSocket), Send(webSocket));
+				await Task.WhenAll(Receive(webSocket), SendRandom(webSocket));
 			}
 			catch (Exception ex)
 			{
@@ -55,11 +56,29 @@ namespace WebSocketClient
 			}
 		}
 
-		private static async Task Send(ClientWebSocket webSocket)
+		public static async Task SendBLOB()
 		{
 			var random = new Random();
 			byte[] buffer = new byte[sendChunkSize];
-			Console.WriteLine("WebSocket Send setup");
+			Console.WriteLine("WebSocketClient SendBLOB setup");
+
+			while (webSocket.State == WebSocketState.Open)
+			{
+				random.NextBytes(buffer);
+
+				await webSocket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Binary, false, CancellationToken.None);
+				LogStatus(false, buffer, buffer.Length);
+
+				await Task.Delay(delay);
+			}
+			Console.WriteLine("WebSocket SendBLOB ending!");
+		}
+
+		private static async Task SendRandom(ClientWebSocket webSocket)
+		{
+			var random = new Random();
+			byte[] buffer = new byte[sendChunkSize];
+			Console.WriteLine("WebSocketClient Send setup");
 
 			while (webSocket.State == WebSocketState.Open)
 			{
@@ -76,7 +95,7 @@ namespace WebSocketClient
 		private static async Task Receive(ClientWebSocket webSocket)
 		{
 			byte[] buffer = new byte[receiveChunkSize];
-			Console.WriteLine("WebSocket Receive serup");
+			Console.WriteLine("WebSocketClient Receive setup");
 			while (webSocket.State == WebSocketState.Open)
 			{                
 				var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
