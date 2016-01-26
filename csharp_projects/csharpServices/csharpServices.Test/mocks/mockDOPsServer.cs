@@ -59,7 +59,7 @@ class MockDOPsServer {
 					};
 					socket.OnBinary = blob =>
 					{
-						Console.WriteLine("Received blob from client");
+						Console.WriteLine("mockDOPsServer Received blob from WebSocketClient");
 
 					};
 				});
