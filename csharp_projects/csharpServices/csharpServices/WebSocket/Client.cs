@@ -43,9 +43,11 @@ namespace WebSocketClient
 			}
 			finally
 			{
-				if (webSocket != null)
-					webSocket.Dispose();
-				Console.WriteLine();
+				if (webSocket != null) {
+					if (webSocket.State == WebSocketState.Open || webSocket.State == WebSocketState.CloseReceived)
+						webSocket.Dispose ();
+				}
+				Console.WriteLine("Connection with mockDOPsServer ended for WebSocketClient");
 
 				lock (consoleLock)
 				{
@@ -56,7 +58,21 @@ namespace WebSocketClient
 			}
 		}
 
-		public static async Task SendBLOB()
+		public static async Task SendBLOB(byte[] buffer)
+		{
+			Console.WriteLine("WebSocketClient SendBLOB starting!");
+
+			if (webSocket.State == WebSocketState.Open)
+			{
+				webSocket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Binary, false, CancellationToken.None).Wait();
+				LogStatus(false, buffer, buffer.Length);
+
+				await Task.Delay(delay);
+			}
+			Console.WriteLine("WebSocket SendBLOB ending!");
+		}
+
+		public static async Task SendRandomBLOB()
 		{
 			var random = new Random();
 			byte[] buffer = new byte[sendChunkSize];
