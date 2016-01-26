@@ -134,7 +134,7 @@ namespace Fleck.Tests
 		}
 
 		[Test]
-		public async void SendReceiveBLOBMockDOPsServer()
+		public void SendReceiveBLOBMockDOPsServer()
 		{
 			var mockDOPsServer = new MockDOPsServer ();
 			mockDOPsServer.Start(); // start mock DOPs Server
@@ -142,12 +142,12 @@ namespace Fleck.Tests
 			// connect to mock DOPs server
 			Client.Connect ("ws://localhost:8046/websockets/MockServerEndpoint");
 
-			Client.SendBLOB ();
+			Client.SendRandomBLOB ();
 
 			Thread.Sleep (1000);
 
 			// wait for release
-			//mockDOPsServer.WaitForStop (0); 
+			mockDOPsServer.WaitForStop (10000); 
 
 			// verify communication with server
 			//Assert.IsTrue(bStateConnection); 	// did we have a connection?
