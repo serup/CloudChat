@@ -37,6 +37,18 @@ if [ "docker-image-skeleton" == "$image" ]; then
 else
    echo "- docker images NOT installed - please check setup.conf to see if it is correct"
 fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 oracle-java* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install oracle-java on ubuntu "
+  sudo add-apt-repository -y ppa:webupd8team/java
+  sudo apt-get update
+  sudo apt-get install -yq oracle-java8-installer
+  sudo apt-get install -yq oracle-java8-set-default
+  java -version
+  echo " - done."
+else
+  echo "- oracle-java already installed"
+fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 monodevelop-nunit* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install monodevelop-nunit for C# on ubuntu "

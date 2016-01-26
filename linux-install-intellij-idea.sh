@@ -3,7 +3,7 @@ IDEA_PACKAGE=ideaIC-15.0.2.tar.gz
 
 # Assuming we already did this during the previous steps:
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 oracle-java8-installer |grep "install ok installed")
-if ["" == "$PKG_OK" ]; then
+if [ "" == "$PKG_OK" ]; then
 # install essentials
         sudo add-apt-repository ppa:webupd8team/java
         sudo apt-get update
