@@ -120,6 +120,7 @@
     <Compile Include="WebSocket\QueuedStream.cs" />
     <Compile Include="WebSocket\ReadState.cs" />
     <Compile Include="WebSocket\SubProtocolNegotiator.cs" />
+    <Compile Include="WebSocket\Client.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
