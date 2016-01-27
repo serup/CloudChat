@@ -140,7 +140,7 @@ namespace Fleck.Tests
 			mockDOPsServer.Start(); // start mock DOPs Server
 
 			// connect to mock DOPs server
-			Client.Connect ("ws://localhost:8046/websockets/MockServerEndpoint");
+			Client._Connect ("ws://localhost:8046/websockets/MockServerEndpoint");
 
 			Client.SendRandomBLOB ();
 
