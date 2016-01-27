@@ -78,7 +78,7 @@ namespace Fleck.Tests
 		[Ignore]
 		public void ConnectionToMockDOPsServer()
 		{
-			var mockDOPsServer = new MockDOPsServer ();
+			var mockDOPsServer = new MockDOPsServer (8046);
 			mockDOPsServer.Start(); // start mock DOPs Server
 
 			// connect to mock DOPs server
@@ -100,7 +100,7 @@ namespace Fleck.Tests
 		[Ignore]
 		public async void SendBLOBToMockDOPsServer()
 		{
-			var mockDOPsServer = new MockDOPsServer ();
+			var mockDOPsServer = new MockDOPsServer (8046);
 			mockDOPsServer.Start(); // start mock DOPs Server
 
  			// connect to mock DOPs server
@@ -136,7 +136,7 @@ namespace Fleck.Tests
 		[Test]
 		public void SendReceiveBLOBMockDOPsServer()
 		{
-			var mockDOPsServer = new MockDOPsServer ();
+			var mockDOPsServer = new MockDOPsServer (8046);
 			mockDOPsServer.Start(); // start mock DOPs Server
 
 			// connect to mock DOPs server
