@@ -11,6 +11,19 @@ class MockDOPsServer {
 	Worker workerObject;
 	Thread workerThread;
 	public volatile bool bDone;
+	private static int _port;
+	private static string _endpoint;
+
+	public MockDOPsServer(int port)
+	{
+		_port = port;
+	}
+
+	public MockDOPsServer(int port, string endpoint)
+	{
+		_port = port;
+		_endpoint = endpoint;
+	}
 
 	public void WaitSomeTime(int additioncycles)
 	{
@@ -34,7 +47,8 @@ class MockDOPsServer {
 		public void DoWork()
 		{
 			allSockets = new System.Collections.Generic.List<IWebSocketConnection>();
-			server = new WebSocketServer("ws://127.0.0.1:8046/websockets/MockServerEndpoint"); // NB! running as mockserver in java spring project
+//			server = new WebSocketServer("ws://127.0.0.1:8046/websockets/MockServerEndpoint"); // NB! running as mockserver in java spring project
+			server = new WebSocketServer("ws://127.0.0.1:" + _port.ToString() + _endpoint.ToString()); // NB! running as mockserver in java spring project
 
 			server.Start(socket =>
 				{
