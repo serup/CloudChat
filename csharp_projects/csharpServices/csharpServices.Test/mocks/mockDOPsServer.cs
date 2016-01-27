@@ -75,7 +75,7 @@ class MockDOPsServer {
 					socket.OnBinary = blob =>
 					{
 						Console.WriteLine("mockDOPsServer Received blob from WebSocketClient");
-
+						try {
 						short trans_id = 1;
 						bool bAction = true;
 						bool bDecoded = false;
@@ -92,12 +92,22 @@ class MockDOPsServer {
 
 							// Send it back as echo
 							socket.Send(blob).Wait(CancellationToken.None);
-							//socket.Send("hello").Wait(CancellationToken.None);
 							Thread.Sleep(1000);
 						}
-						else
+						else {
 							bDecoded = false;
+							// Send it back as echo
+							socket.Send(blob).Wait(CancellationToken.None);
+							Thread.Sleep(1000);
+						}
 
+						}
+						catch(Exception e){
+							Console.WriteLine("WARNING: Exception while trying to decode possible DED blob");
+							// Send it back as echo
+							socket.Send(blob).Wait(CancellationToken.None);
+							Thread.Sleep(1000);
+						}
 
 					};
 				});
