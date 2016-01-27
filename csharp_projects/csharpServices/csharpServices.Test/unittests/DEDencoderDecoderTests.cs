@@ -165,13 +165,13 @@ namespace DED.UnitTests
 		public void SendReceiveDEDMockDOPsServer()
 		{
 			byte[] ReceiveBuffer = null;
-			var mockDOPsServer = new MockDOPsServer ();
+			var mockDOPsServer = new MockDOPsServer (8046,"/websockets/MockServerEndpoint");
 
 			// start mock DOPs Server
 			mockDOPsServer.Start();
 
 			// connect to DOPs Server
-			Client.Connect ("ws://localhost:8046/websock:ets/MockServerEndpoint");
+			Client.Connect ("ws://localhost:8046/websockets/MockServerEndpoint");
 
 			// setup DED packet to send to Server
 			short trans_id = 1;
