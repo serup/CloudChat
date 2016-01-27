@@ -19,16 +19,10 @@ namespace WebSocketClient
 		private const bool verbose = true;
 		private static readonly TimeSpan delay = TimeSpan.FromMilliseconds(1000);
 		private static ClientWebSocket webSocket = null;
+		private static byte[] receivedBuffer = null;
+		static EventWaitHandle _waitHandle = new AutoResetEvent (false); // is signaled when data has been read
 
-/*		static void Main(string[] args)
-		{
-			Thread.Sleep(1000);
-			Connect("ws://localhost/wsDemo").Wait();
-			Console.WriteLine("Press any key to exit...");
-			Console.ReadKey();
-		}
-*/
-		public static async Task Connect(string uri)
+		public static async Task _Connect(string uri)
 		{
 			//ClientWebSocket webSocket = null;
 
@@ -37,6 +31,36 @@ namespace WebSocketClient
 				webSocket = new ClientWebSocket();
 				webSocket.ConnectAsync(new Uri(uri), CancellationToken.None).Wait();
 				await Task.WhenAll(Receive(webSocket), SendRandom(webSocket));
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine("Exception: {0}", ex);
+			}
+			finally
+			{
+				if (webSocket != null) {
+					if (webSocket.State == WebSocketState.Open || webSocket.State == WebSocketState.CloseReceived)
+						webSocket.Dispose ();
+				}
+				Console.WriteLine("Connection with mockDOPsServer ended for WebSocketClient");
+
+				lock (consoleLock)
+				{
+					Console.ForegroundColor = ConsoleColor.Red;
+					Console.WriteLine("WebSocket closed.");
+					Console.ResetColor();
+				}
+			}
+		}
+
+
+		public static async Task Connect(string uri)
+		{
+			try
+			{
+				webSocket = new ClientWebSocket();
+				webSocket.ConnectAsync(new Uri(uri), CancellationToken.None).Wait();
+				await Task.WhenAll(ReceiveBLOB(webSocket));  
 			}
 			catch (Exception ex)
 			{
@@ -158,6 +182,43 @@ namespace WebSocketClient
 						Console.WriteLine ("WARNING - incomming data is larger than internal buffer !!!");
 					else
 						LogStatus(true, buffer, result.Count);
+				}
+			}
+			Console.WriteLine("WebSocket Receive ending!");
+		}
+
+		public static byte[] WaitForData()
+		{
+			Console.WriteLine ("Waiting...");
+			_waitHandle.WaitOne();                // Wait for notification
+			Console.WriteLine ("Notified");
+			return receivedBuffer;
+		}
+
+		private static async Task ReceiveBLOB(ClientWebSocket webSocket)
+		{
+			byte[] buffer = new byte[1024];
+			Console.WriteLine("WebSocketClient Receive setup");
+			receivedBuffer = null;
+
+			while (webSocket.State == WebSocketState.Open)
+			{                
+				var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+				if (result.MessageType == WebSocketMessageType.Close)
+				{
+					await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
+				}
+				else
+				{
+					if (buffer.Length < result.Count) {
+						Console.WriteLine ("WARNING - incomming data is larger than internal buffer !!!");
+						receivedBuffer = null;
+					}
+					else {
+						receivedBuffer = new byte[result.Count];
+						Buffer.BlockCopy (buffer, 0, receivedBuffer, 0, result.Count);
+						_waitHandle.Set (); // signal that data has been received - this will wake up WaitForData() - which will then return it to user
+					}
 				}
 			}
 			Console.WriteLine("WebSocket Receive ending!");
