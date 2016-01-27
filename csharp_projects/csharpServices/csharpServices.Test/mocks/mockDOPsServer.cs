@@ -9,25 +9,27 @@ using DED;
 
 class handleDOPsProtocol
 {
-	public void DEDDecoder(byte[] blob)
+	public byte[] ReceiveDEDandResponse(byte[] dedpacket)
 	{
 		//TODO: add decoding of DED packets with regards to mock DOPs Server
 
 		/*
 		 * java snippet - please convert 
 		 */
-
-		/*
+		/* - converting in progress
+		bool bDecoded = false;
+		string strMethod, strProtocolTypeID, strUsername, strPassword, strFunctionName, strStatus;
+		short uTrans_id;
 		// 1. decode login packet
 		DEDDecoder DED = new DEDDecoder();
-		DED.PUT_DATA_IN_DECODER( dedpacket, dedpacket.length);
+		DED.PUT_DATA_IN_DECODER( dedpacket, dedpacket.Length);
 		if( DED.GET_STRUCT_START( "WSRequest" )==1 &&
-			(strMethod          = DED.GET_METHOD ( "name" )).length()>0 &&
-			(uTrans_id          = DED.GET_USHORT ( "trans_id")) !=-1 &&
-			(strProtocolTypeID  = DED.GET_STDSTRING ( "protocolTypeID")).length()>0 &&
-			(strFunctionName    = DED.GET_STDSTRING ( "functionName")).length()>0 &&
-			(strUsername        = DED.GET_STDSTRING ( "username")).length()>0 &&
-			(strPassword        = DED.GET_STDSTRING ( "password")).length()>0 &&
+			(strMethod = DED.GET_METHOD ( "name" )).Length>0 &&
+			(uTrans_id = DED.GET_USHORT ( "trans_id")) !=-1 &&
+			(DED.GET_STDSTRING ( "protocolTypeID")).Length>0 &&
+			(DED.GET_STDSTRING ( "functionName")).Length>0 &&
+			(DED.GET_STDSTRING ( "username")).Length>0 &&
+			(DED.GET_STDSTRING ( "password")).Length>0 &&
 			DED.GET_STRUCT_END( "WSRequest" )==1)
 		{
 			bDecoded=true;
@@ -38,57 +40,57 @@ class handleDOPsProtocol
 			String username = "johndoe@email.com";
 			String password = "12345";
 
-			if(!strMethod.equals("JavaConnect")) bDecoded=false;
+			if(!strMethod.Equals("JavaConnect")) bDecoded=false;
 			if(uTrans_id != trans_id) bDecoded=false;
-			if(!strFunctionName.equals(uniqueId)) bDecoded=false;
-			if(!strProtocolTypeID.equals("DED1.00.00")) bDecoded=false;
-			if(!strUsername.equals(username)) bDecoded=false;
-			if(!strPassword.equals(password)) bDecoded=false;
+			if(!strFunctionName.Equals(uniqueId)) bDecoded=false;
+			if(!strProtocolTypeID.Equals("DED1.00.00")) bDecoded=false;
+			if(!strUsername.Equals(username)) bDecoded=false;
+			if(!strPassword.Equals(password)) bDecoded=false;
 		}
 		else
 		{
 			if( DED.GET_STRUCT_START( "DFDRequest" )==1 &&
-				(strMethod          = DED.GET_METHOD ( "Method" )).length()>0 &&
+				(strMethod          = DED.GET_METHOD ( "Method" )).Length>0 &&
 				(uTrans_id          = DED.GET_USHORT ( "TransID")) !=-1 &&
-				(strProtocolTypeID  = DED.GET_STDSTRING ( "protocolTypeID")).length()>0 )
+				(strProtocolTypeID  = DED.GET_STDSTRING ( "protocolTypeID")).Length>0 )
 			{
-				System.out.println("DFDRequest - received - now parse");
+				Console.WriteLine("DFDRequest - received - now parse");
 				String strClientSrc="<unknown>";
-				if((DED.GET_STDSTRING("dest")).contains("DFD_1.1") &&
-					(strClientSrc = DED.GET_STDSTRING("src")).length()>0 &&
-					(DED.GET_STDSTRING("STARTrequest")).contains("EmployeeRequest") &&
-					(DED.GET_STDSTRING("STARTrecord")).contains("record") )
+				if((DED.GET_STDSTRING("dest")).Contains("DFD_1.1") &&
+					(strClientSrc = DED.GET_STDSTRING("src")).Length>0 &&
+					(DED.GET_STDSTRING("STARTrequest")).Contains("EmployeeRequest") &&
+					(DED.GET_STDSTRING("STARTrecord")).Contains("record") )
 				{
-					System.out.println("- EmployeeRequest - received - now parse");
+					Console.WriteLine("- EmployeeRequest - received - now parse");
 					String strProfileID = "", strProfileName = "", strSizeOfProfileData = "", strProfile_chunk_id = "", strAccountStatus = "", strExpireDate = "", strProfileStatus = "";
-					if((strProfileID = DED.GET_STDSTRING("profileID")).length()>0 &&
-						(strProfileName = DED.GET_STDSTRING("profileName")).length()>0 &&
-						(strProtocolTypeID = DED.GET_STDSTRING("protocolTypeID")).length()>0 &&
-						(strSizeOfProfileData = DED.GET_STDSTRING("sizeofProfileData")).length()>0 &&
-						(strProfile_chunk_id = DED.GET_STDSTRING("profile_chunk_id")).length()>0 &&
-						(strAccountStatus = DED.GET_STDSTRING("AccountStatus")).length()>0 &&
-						(strExpireDate = DED.GET_STDSTRING("ExpireDate")).length()>0 &&
-						(strProfileStatus = DED.GET_STDSTRING("ProfileStatus")).length()>0)
+					if((strProfileID = DED.GET_STDSTRING("profileID")).Length>0 &&
+						(strProfileName = DED.GET_STDSTRING("profileName")).Length>0 &&
+						(strProtocolTypeID = DED.GET_STDSTRING("protocolTypeID")).Length>0 &&
+						(strSizeOfProfileData = DED.GET_STDSTRING("sizeofProfileData")).Length>0 &&
+						(strProfile_chunk_id = DED.GET_STDSTRING("profile_chunk_id")).Length>0 &&
+						(strAccountStatus = DED.GET_STDSTRING("AccountStatus")).Length>0 &&
+						(strExpireDate = DED.GET_STDSTRING("ExpireDate")).Length>0 &&
+						(strProfileStatus = DED.GET_STDSTRING("ProfileStatus")).Length>0)
 					{
-						System.out.println("-- Employee record received - now validate TOAST ");
-						if((DED.GET_STDSTRING("STARTtoast")).length()>0 )
+						Console.WriteLine("-- Employee record received - now validate TOAST ");
+						if((DED.GET_STDSTRING("STARTtoast")).Length>0 )
 						{
 							// TOAST area found, now iterate thru all elements
-							System.out.println("--- TOAST area found, now iterate thru all elements");
+							Console.WriteLine("--- TOAST area found, now iterate thru all elements");
 							DEDDecoder._Elements elementvalue = null;
 							while((elementvalue = DED.GET_ELEMENT("profile"))!=null)
 							{
-								System.out.println("--- TOAST element : " + elementvalue.strElementID);
+								Console.WriteLine("--- TOAST element : " + elementvalue.strElementID);
 							}
-							if((DED.GET_STDSTRING("elements-ignore").isEmpty()) &&
-								(DED.GET_STDSTRING("ENDrecord")).contains("record") &&
-								(DED.GET_STDSTRING("ENDrequest")).contains("EmployeeRequest") &&
-								(DED.GET_STDSTRING("DFDRequest")).isEmpty())
+							if((DED.GET_STDSTRING("elements-ignore").Length<=0) &&
+								(DED.GET_STDSTRING("ENDrecord")).Contains("record") &&
+								(DED.GET_STDSTRING("ENDrequest")).Contains("EmployeeRequest") &&
+								(DED.GET_STDSTRING("DFDRequest")).Length<=0)
 							{
-								System.out.println("-- END Employee record");
-								System.out.println("- END EmployeeRequest");
-								System.out.println("END DFDRequest");
-								System.out.println("DFDRequest parsed correct");
+								Console.WriteLine("-- END Employee record");
+								Console.WriteLine("- END EmployeeRequest");
+								Console.WriteLine("END DFDRequest");
+								Console.WriteLine("DFDRequest parsed correct");
 								bDecoded=true;
 							}
 
@@ -109,30 +111,30 @@ class handleDOPsProtocol
 							DED2.PUT_STDSTRING( "status", strStatus );
 							DED2.PUT_STRUCT_END( "DFDResponse" );
 
-							byte[] dedResponsePacket = DED2.GET_ENCODED_BYTEARRAY_DATA();
+							byte[] _dedResponsePacket = DED2.GET_ENCODED_BYTEARRAY_DATA();
 
 							// 4. send response packet
-							if(dedResponsePacket==null) {
-								dedResponsePacket = dedpacket; // echo back original packet, since creation of response packet went wrong!!
-								System.out.println("Internal ERROR [MockServer] - was not capable of creating a DED response packet, thus echoing received back");
+							if(_dedResponsePacket==null) {
+								_dedResponsePacket = dedpacket; // echo back original packet, since creation of response packet went wrong!!
+								Console.WriteLine("Internal ERROR [MockServer] - was not capable of creating a DED response packet, thus echoing received back");
 							}
-							return dedResponsePacket;
+							return _dedResponsePacket;
 						}
 						else
 						{
 							// NO TOAST area found
-							System.out.println("No TOAST area found in request, meaning NO elements added to profile info");
+							Console.WriteLine("No TOAST area found in request, meaning NO elements added to profile info");
 						}
 					}
 				}
 				else
 				{
-					System.out.println("Warning - unknown DFDRequest - accepting basic parsing - header of packet was correct");
+					Console.WriteLine("Warning - unknown DFDRequest - accepting basic parsing - header of packet was correct");
 					bDecoded=true;
 				}
 			}
 			if(!bDecoded)
-				System.out.println("WARNING [MockServer] - was not capable of decoding incoming DED datapacket - could be unknown DED method");
+				Console.WriteLine("WARNING [MockServer] - was not capable of decoding incoming DED datapacket - could be unknown DED method");
 		}
 
 		// 2. determine what to respond
@@ -142,25 +144,28 @@ class handleDOPsProtocol
 			strStatus="NOT ACCEPTED USER";
 
 		// 3. create response packet
-		DEDEncoder DED2 = new DEDEncoder();
-		DED2.PUT_STRUCT_START( "WSResponse" );
-		DED2.PUT_METHOD   ( "name", strMethod );
-		DED2.PUT_USHORT   ( "trans_id", uTrans_id);
-		DED2.PUT_STDSTRING( "protocolTypeID", "DED1.00.00");
-		DED2.PUT_STDSTRING( "functionName", strFunctionName );
-		DED2.PUT_STDSTRING( "status", strStatus );
-		DED2.PUT_STRUCT_END( "WSResponse" );
+		DEDEncoder DED3 = new DEDEncoder();
+		DED3.PUT_STRUCT_START( "WSResponse" );
+		DED3.PUT_METHOD   ( "name", strMethod );
+		DED3.PUT_USHORT   ( "trans_id", uTrans_id);
+		DED3.PUT_STDSTRING( "protocolTypeID", "DED1.00.00");
+		DED3.PUT_STDSTRING( "functionName", strFunctionName );
+		DED3.PUT_STDSTRING( "status", strStatus );
+		DED3.PUT_STRUCT_END( "WSResponse" );
 
-		byte[] dedResponsePacket = DED2.GET_ENCODED_BYTEARRAY_DATA();
+		byte[] dedResponsePacket = DED3.GET_ENCODED_BYTEARRAY_DATA();
 
 		// 4. send response packet
 		if(dedResponsePacket==null) {
 			dedResponsePacket = dedpacket; // echo back original packet, since creation of response packet went wrong!!
-			System.out.println("Internal ERROR [MockServer] - was not capable of creating a DED response packet, thus echoing received back");
+			Console.WriteLine("Internal ERROR [MockServer] - was not capable of creating a DED response packet, thus echoing received back");
 		}
 		return dedResponsePacket;
 		*/
+
+		return null;
 	}
+
 }
 
 class MockDOPsServer {
