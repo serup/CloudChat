@@ -75,83 +75,34 @@ namespace Fleck.Tests
 		}
 
 		[Test]
-		[Ignore]
-		public void ConnectionToMockDOPsServer()
-		{
-			var mockDOPsServer = new MockDOPsServer (8046);
-			mockDOPsServer.Start(); // start mock DOPs Server
-
-			// connect to mock DOPs server
-			ClientWebSocket clientSocket = new ClientWebSocket ();
-			clientSocket.ConnectAsync (new Uri ("ws://localhost:8046/websockets/MockServerEndpoint"), CancellationToken.None);
-
-			bool bStateConnection=false;
-			if(clientSocket.State == WebSocketState.Connecting)
-				bStateConnection = true;
-
-			// wait for release
-			mockDOPsServer.WaitForStop (0); 
-
-			// verify communication with server
-			Assert.IsTrue(bStateConnection); // did we have a connection?
-		}
-
-		[Test]
-		[Ignore]
-		public async void SendBLOBToMockDOPsServer()
-		{
-			var mockDOPsServer = new MockDOPsServer (8046);
-			mockDOPsServer.Start(); // start mock DOPs Server
-
- 			// connect to mock DOPs server
-			ClientWebSocket clientSocket = new ClientWebSocket ();
-			clientSocket.ConnectAsync (new Uri ("ws://localhost:8046/websockets/MockServerEndpoint"), CancellationToken.None);
-
-			bool bStateConnection=false;
-			if(clientSocket.State == WebSocketState.Connecting)
-				bStateConnection = true;
-
-			while (clientSocket.State == WebSocketState.Connecting); // wait until socket is in open state
-
-			bool bStateOpen = false;
-			if (clientSocket.State == WebSocketState.Open)
-				bStateOpen = true;
-
-			// Send blob to server
-			var ob = new ArraySegment<byte>(Encoding.UTF8.GetBytes("hello")); 
-			try {
-				await clientSocket.SendAsync(ob, WebSocketMessageType.Binary, false, CancellationToken.None);
-			}catch(Exception e) {
-				Console.WriteLine ("ERROR: Exception %s", e.ToString());
-			}
-
-			// wait for release
-			mockDOPsServer.WaitForStop (0); 
-
-			// verify communication with server
-			Assert.IsTrue(bStateConnection); 	// did we have a connection?
-			Assert.IsTrue(bStateOpen); 			// did we have an open socket?
-		}
-
-		[Test]
 		public void SendReceiveBLOBMockDOPsServer()
 		{
-			var mockDOPsServer = new MockDOPsServer (8046, "/websockets/MockServerEndpoint");
-			mockDOPsServer.Start(); // start mock DOPs Server
+			// instantiate the mock server
+			var mockDOPsServer = new MockDOPsServer (8046,"/websockets/MockServerEndpoint");
 
-			// connect to mock DOPs server
-			Client._Connect ("ws://localhost:8046/websockets/MockServerEndpoint");
+			// start mock DOPs Server
+			mockDOPsServer.Start();
 
-			Client.SendRandomBLOB ();
+			// connect to DOPs Server
+			Client.Connect ("ws://localhost:8046/websockets/MockServerEndpoint");
 
-			Thread.Sleep (1000);
+			// create random bytes
+			var random = new Random();
+			byte[] byteArray = new byte[64];
+			random.NextBytes(byteArray);
+
+			// Send the blob containing the random bytes to Server
+			Client.SendBLOB (byteArray).Wait(); // NB! Not really necessary to add Wait() in this case since FetchReceived() will wait until data is ready
+
+			// Fetch the return data from the Server - in this case it should be an echo
+			byte[] ReceiveBuffer = Client.FetchReceived ();
+
+			// verify 
+			Assert.IsNotNull (ReceiveBuffer);
+			Assert.IsTrue(byteArray.SequenceEqual(ReceiveBuffer));
 
 			// wait for release
-			mockDOPsServer.WaitForStop (10000); 
-
-			// verify communication with server
-			//Assert.IsTrue(bStateConnection); 	// did we have a connection?
-			//Assert.IsTrue(bStateOpen); 			// did we have an open socket?
+			mockDOPsServer.WaitForStop (1); 
 		}
 
         [Test]
