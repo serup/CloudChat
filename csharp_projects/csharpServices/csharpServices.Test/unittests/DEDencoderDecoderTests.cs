@@ -160,60 +160,20 @@ namespace DED.UnitTests
 			Assert.IsTrue (bDecoded);
 		}
 
-		/*
-		private static async Task Receive(ClientWebSocket webSocket)
-		{
-			byte[] buffer = new byte[256];
-			Console.WriteLine("WebSocketClient Receive setup");
-			while (webSocket.State == WebSocketState.Open)
-			{                
-				var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-				if (result.MessageType == WebSocketMessageType.Close)
-				{
-					await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
-				}
-				else
-				{
-					if (buffer.Length < result.Count)
-						Console.WriteLine ("WARNING - incomming data is larger than internal buffer !!!");
-					else {
-						Console.WriteLine ("unittest received blob - now try to DED decode it");
-
-						short trans_id = 1;
-						bool bAction = true;
-						DEDDecoder DED2 = DEDDecoder.DED_START_DECODER ();
-						DED2.PUT_DATA_IN_DECODER (buffer, buffer.Length);
-						if ((DED2.GET_STRUCT_START ("event")).Equals (1) &&
-						    (DED2.GET_METHOD ("Method")).Contains ("MusicPlayer") &&
-						    (DED2.GET_USHORT ("trans_id")).Equals (trans_id) &&
-						    (DED2.GET_BOOL ("startstop")).Equals (bAction) &&
-						(DED2.GET_STRUCT_END ("event")).Equals (1)) 
-						{
-							Console.WriteLine ("SUCCESS - unittest received from mockDOPsServer a DED blob, and decoded it");
-						} 
-						else
-						{
-							Console.WriteLine ("FAILURE - unittest could NOT decode DED blob");
-						}
-					}
-				}
-			}
-			Console.WriteLine("WebSocket Receive ending!");
-		}
-		*/
 
 		[Test]
 		public void SendReceiveDEDMockDOPsServer()
 		{
 			byte[] ReceiveBuffer = null;
 			var mockDOPsServer = new MockDOPsServer ();
-			mockDOPsServer.Start(); // start mock DOPs Server
 
-			// connect to mock DOPs server
-			//Client._Connect ("ws://localhost:8046/websockets/MockServerEndpoint");
-			//Client.Connect ("ws://localhost:8046/websockets/MockServerEndpoint",Receive);
-			Client.Connect ("ws://localhost:8046/websockets/MockServerEndpoint");
+			// start mock DOPs Server
+			mockDOPsServer.Start();
 
+			// connect to DOPs Server
+			Client.Connect ("ws://localhost:8046/websock:ets/MockServerEndpoint");
+
+			// setup DED packet to send to Server
 			short trans_id = 1;
 			bool bAction = true;
 			DEDEncoder DED = DEDEncoder.DED_START_ENCODER();
@@ -227,11 +187,13 @@ namespace DED.UnitTests
 			byte[] byteArray = DED.GET_ENCODED_BYTEARRAY_DATA ();
 			Assert.IsNotNull (byteArray);
 
+			// Send the DED packet to Server
+			Client.SendBLOB (byteArray).Wait(); // NB! Not really necessary to add Wait() in this case since FetchReceived() will wait until data is ready
 
-			Client.SendBLOB (byteArray);
+			// Fetch the return data from the Server
+			ReceiveBuffer = Client.FetchReceived ();
 
-			ReceiveBuffer = Client.WaitForData ();
-
+			// Decode the DED
 			DEDDecoder DED2 = DEDDecoder.DED_START_DECODER ();
 			DED2.PUT_DATA_IN_DECODER (ReceiveBuffer, ReceiveBuffer.Length);
 			if ((DED2.GET_STRUCT_START ("event")).Equals (1) &&
@@ -250,22 +212,5 @@ namespace DED.UnitTests
 			// wait for release
 			mockDOPsServer.WaitForStop (0); 
 		}
-
-		// An nice way to test for exceptions the class under test should 
-		// throw is:
-
-		/*  
-//	[Test]
-//	[ExpectedException(typeof(ArgumentNullException))]
-//	public void OnValid() {
-//		ConcreteCollection myCollection;
-//		myCollection = new ConcreteCollection();
-//		....
-//		AssertEquals ("#UniqueID", expected, actual);
-//		....
-//		Fail ("Message");
-//	}
-	*/
-
 	}
 }
