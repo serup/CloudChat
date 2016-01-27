@@ -136,7 +136,7 @@ namespace Fleck.Tests
 		[Test]
 		public void SendReceiveBLOBMockDOPsServer()
 		{
-			var mockDOPsServer = new MockDOPsServer (8046);
+			var mockDOPsServer = new MockDOPsServer (8046, "/websockets/MockServerEndpoint");
 			mockDOPsServer.Start(); // start mock DOPs Server
 
 			// connect to mock DOPs server
