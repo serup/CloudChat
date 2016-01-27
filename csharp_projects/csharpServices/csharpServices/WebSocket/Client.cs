@@ -17,7 +17,8 @@ namespace WebSocketClient
 //		private const int receiveChunkSize = 64; // TODO: perhaps implement ringbuffer to handle incomming data
 		private const int receiveChunkSize = 256;
 		private const bool verbose = true;
-		private static readonly TimeSpan delay = TimeSpan.FromMilliseconds(1000);
+//		private static readonly TimeSpan delay = TimeSpan.FromMilliseconds(1000);
+		private static readonly TimeSpan delay = TimeSpan.FromMilliseconds(100);
 		private static ClientWebSocket webSocket = null;
 		private static byte[] receivedBuffer = null;
 		static EventWaitHandle _waitHandle = new AutoResetEvent (false); // is signaled when data has been read
@@ -187,7 +188,7 @@ namespace WebSocketClient
 			Console.WriteLine("WebSocket Receive ending!");
 		}
 
-		public static byte[] WaitForData()
+		public static byte[] FetchReceived()
 		{
 			Console.WriteLine ("Waiting...");
 			_waitHandle.WaitOne();                // Wait for notification
@@ -211,8 +212,18 @@ namespace WebSocketClient
 				else
 				{
 					if (buffer.Length < result.Count) {
-						Console.WriteLine ("WARNING - incomming data is larger than internal buffer !!!");
+						Console.WriteLine ("WARNING - incomming data is larger than internal buffer - trying to receive and merge rest !!!");
 						receivedBuffer = null;
+						/*  DOES NOT WORK - MISSING BYTES IN BETWEEN - FIND A BETTER WAY
+						int restBytes = result.Count - buffer.Length;
+						byte[] restBuffer = new byte[restBytes];
+						receivedBuffer = new byte[result.Count]; // make room for ALL data
+						Buffer.BlockCopy (buffer, 0, receivedBuffer, 0, buffer.Length); // copy first part
+						// try to receive waiting bytes
+						result = await webSocket.ReceiveAsync(new ArraySegment<byte>(restBuffer), CancellationToken.None);
+						Buffer.BlockCopy (restBuffer, 0, receivedBuffer, buffer.Length-1, restBuffer.Length); // copy rest part
+						*/
+						_waitHandle.Set (); // signal that data has been received - this will wake up WaitForData() - which will then return it to user
 					}
 					else {
 						receivedBuffer = new byte[result.Count];
