@@ -257,6 +257,14 @@ if [ "" == "$MODULE_OK" ]; then
 else
   echo "- puppetlabs-apache puppet module installed"
 fi
+MODULE_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep puppetlabs-stdlib)
+if [ "" == "$MODULE_OK" ]; then
+  echo -n "- install puppetlabs-apache"
+  puppet module install puppetlabs-apache  --modulepath ./puppet/trunk/environments/devtest/modules
+  echo " - done."
+else
+  echo "- puppetlabs-apache puppet module installed"
+fi
 
 MODULE_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep puppetlabs-stdlib)
 if [ "" == "$MODULE_OK" ]; then
