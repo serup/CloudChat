@@ -160,6 +160,7 @@ namespace DED.UnitTests
 			Assert.IsTrue (bDecoded);
 		}
 
+		/*
 		private static async Task Receive(ClientWebSocket webSocket)
 		{
 			byte[] buffer = new byte[256];
@@ -199,33 +200,52 @@ namespace DED.UnitTests
 			}
 			Console.WriteLine("WebSocket Receive ending!");
 		}
+		*/
 
 		[Test]
 		public void SendReceiveDEDMockDOPsServer()
 		{
+			byte[] ReceiveBuffer = null;
 			var mockDOPsServer = new MockDOPsServer ();
 			mockDOPsServer.Start(); // start mock DOPs Server
 
 			// connect to mock DOPs server
-			//Client.Connect ("ws://localhost:8046/websockets/MockServerEndpoint");
-			Client.Connect ("ws://localhost:8046/websockets/MockServerEndpoint",Receive);
+			//Client._Connect ("ws://localhost:8046/websockets/MockServerEndpoint");
+			//Client.Connect ("ws://localhost:8046/websockets/MockServerEndpoint",Receive);
+			Client.Connect ("ws://localhost:8046/websockets/MockServerEndpoint");
 
 			short trans_id = 1;
 			bool bAction = true;
 			DEDEncoder DED = DEDEncoder.DED_START_ENCODER();
 			Assert.IsNotNull(DED);
 			DED.PUT_STRUCT_START ("event");
-			DED.PUT_METHOD ("Method", "MusicPlayer");
-			DED.PUT_USHORT ("trans_id", trans_id);
-			DED.PUT_BOOL ("startstop", bAction);
+				DED.PUT_METHOD ("Method", "MusicPlayer");
+				DED.PUT_USHORT ("trans_id", trans_id);
+				DED.PUT_BOOL ("startstop", bAction);
 			DED.PUT_STRUCT_END ("event");
 
 			byte[] byteArray = DED.GET_ENCODED_BYTEARRAY_DATA ();
 			Assert.IsNotNull (byteArray);
 
+
 			Client.SendBLOB (byteArray);
 
-			Thread.Sleep (1000);
+			ReceiveBuffer = Client.WaitForData ();
+
+			DEDDecoder DED2 = DEDDecoder.DED_START_DECODER ();
+			DED2.PUT_DATA_IN_DECODER (ReceiveBuffer, ReceiveBuffer.Length);
+			if ((DED2.GET_STRUCT_START ("event")).Equals (1) &&
+				(DED2.GET_METHOD ("Method")).Contains ("MusicPlayer") &&
+				(DED2.GET_USHORT ("trans_id")).Equals (trans_id) &&
+				(DED2.GET_BOOL ("startstop")).Equals (bAction) &&
+			(DED2.GET_STRUCT_END ("event")).Equals (1)) 
+			{
+				Console.WriteLine ("SUCCESS - unittest received from mockDOPsServer a DED blob, and decoded it");
+			} 
+			else
+			{
+				Console.WriteLine ("FAILURE - unittest could NOT decode DED blob");
+			}
 
 			// wait for release
 			mockDOPsServer.WaitForStop (0); 

@@ -37,6 +37,18 @@ if [ "docker-image-skeleton" == "$image" ]; then
 else
    echo "- docker images NOT installed - please check setup.conf to see if it is correct"
 fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 oracle-java* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install oracle-java on ubuntu "
+  sudo add-apt-repository -y ppa:webupd8team/java
+  sudo apt-get update
+  sudo apt-get install -yq oracle-java8-installer
+  sudo apt-get install -yq oracle-java8-set-default
+  java -version
+  echo " - done."
+else
+  echo "- oracle-java already installed"
+fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 monodevelop-nunit* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install monodevelop-nunit for C# on ubuntu "
@@ -228,11 +240,27 @@ if [ "" == "$MODULE_OK" ]; then
 else
   echo "- leonardothibes-jekyll puppet module installed"
 fi
+MODULE_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep puppetlabs-stdlib)
+if [ "" == "$MODULE_OK" ]; then
+  echo -n "- install puppetlabs-apache"
+  puppet module install puppetlabs-apache  --modulepath ./puppet/trunk/environments/devtest/modules
+  echo " - done."
+else
+  echo "- puppetlabs-apache puppet module installed"
+fi
 
 MODULE_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep puppetlabs-apache)
 if [ "" == "$MODULE_OK" ]; then
   echo -n "- install puppetlabs-apache"
   puppet module install puppetlabs-apache --modulepath ./puppet/trunk/environments/devtest/modules
+  echo " - done."
+else
+  echo "- puppetlabs-apache puppet module installed"
+fi
+MODULE_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep puppetlabs-stdlib)
+if [ "" == "$MODULE_OK" ]; then
+  echo -n "- install puppetlabs-apache"
+  puppet module install puppetlabs-apache  --modulepath ./puppet/trunk/environments/devtest/modules
   echo " - done."
 else
   echo "- puppetlabs-apache puppet module installed"
