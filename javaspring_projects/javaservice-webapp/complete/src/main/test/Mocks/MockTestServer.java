@@ -1,10 +1,9 @@
 package Mocks;
 
 import ClientEndpoint.JavaWebSocketClientEndpoint;
-import WebSocketEchoTestEndpoints.MockServer;
+import mocks.MockServer;
 import org.glassfish.tyrus.server.Server;
 
-import javax.websocket.MessageHandler;
 import javax.websocket.Session;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
