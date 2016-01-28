@@ -23,6 +23,7 @@ namespace WebSocketClient
 		private static byte[] receivedBuffer = null;
 		//static EventWaitHandle _waitHandle = new AutoResetEvent (false); // is signaled when data has been read
 		static EventWaitHandle _waitHandle = null; // is signaled when data has been read
+		static CancellationToken token;
 
 		public static async Task _Connect(string uri)
 		{
@@ -60,9 +61,12 @@ namespace WebSocketClient
 		{
 			try
 			{
+				// Define the cancellation token.
+      			CancellationTokenSource source = new CancellationTokenSource();
+      			token = source.Token;
 				_waitHandle = new AutoResetEvent (false); // is signaled when data has been read
 				webSocket = new ClientWebSocket();
-				webSocket.ConnectAsync(new Uri(uri), CancellationToken.None).Wait();
+				webSocket.ConnectAsync(new Uri(uri), token).Wait();
 				await Task.WhenAll(ReceiveBLOB(webSocket,_waitHandle));  
 			}
 			catch (Exception ex)
@@ -184,6 +188,7 @@ namespace WebSocketClient
 		{
 		 	public ClientWebSocket webSocket;
 			public EventWaitHandle waitHandle;
+			public CancellationToken token;
 		}
 
 		public static wshandles WSConnect (string uri)
@@ -192,6 +197,7 @@ namespace WebSocketClient
 			wshandles _handles = new wshandles();
 			_handles.webSocket = Client.webSocket;
 			_handles.waitHandle = Client._waitHandle;
+			_handles.token = Client.token;
 			return _handles;
 		}
 
@@ -349,11 +355,11 @@ namespace WebSocketClient
 
 			while (webSocket.State == WebSocketState.Open)
 			{                
-				var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+				var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), token);
 				if (result.MessageType == WebSocketMessageType.Close )
 				{
 					if(webSocket.State == WebSocketState.Open)
-						await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
+						await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, token);
 				}
 				else
 				{
