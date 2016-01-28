@@ -167,6 +167,7 @@ namespace DED.UnitTests
 	public class mockDOPsServerTest : Assert
 	{
 		MockDOPsServer mockDOPsServer = null;
+		Client.wshandles _handles = null;
 
 		// this method is run before first [Test] method is called. You can put
 		// variable initialization, etc. here that is common to all tests.
@@ -184,7 +185,10 @@ namespace DED.UnitTests
 		[SetUp]
 		public void GetReady()
 		{
+			// connect to DOPs Server
+			//_handles = Client.WSConnect ("ws://localhost:8046/websockets/MockServerEndpoint");
 		}
+
 		// this method is run after each Test* method is called. You can put
 		// clean-up code, etc. here.  Whatever needs to be done after each test.
 		// Just leave the method empty if you don't need to use it.
@@ -192,17 +196,18 @@ namespace DED.UnitTests
 		[TearDown]
 		public void Clean() 
 		{
-			// wait for release
-			mockDOPsServer.WaitForStop (0); 
+			// Disconnect from server
+			//Client.WSDisconnect(_handles);
 		}
 
 		[TestFixtureTearDown]
 		public void Close ()
 		{
+			// wait for release
+			mockDOPsServer.WaitForStop (0); 
 		}
 
 		[Test]
-		[Ignore]
 		public void SendReceiveDEDMockDOPsServer()
 		{
 			byte[] ReceiveBuffer = null;
@@ -246,6 +251,8 @@ namespace DED.UnitTests
 				Console.WriteLine ("FAILURE - unittest could NOT decode DED blob");
 			}
 
+			// Disconnect from server
+			Client.WSDisconnect(_handles);
 		}
 
 		[Test]
@@ -254,7 +261,7 @@ namespace DED.UnitTests
 			byte[] ReceiveBuffer = null;
 
 			// connect to DOPs Server
-			Client.WSConnect ("ws://localhost:8046/websockets/MockServerEndpoint");
+			Client.wshandles _handles = Client.WSConnect ("ws://localhost:8046/websockets/MockServerEndpoint");
 
 			// setup DED packet to send to Server
 			short trans_id = 1;
@@ -271,10 +278,10 @@ namespace DED.UnitTests
 			Assert.IsNotNull (byteArray);
 
 			// Send the DED packet to Server
-			Client.SendBLOB (byteArray).Wait(); // NB! Not really necessary to add Wait() in this case since FetchReceived() will wait until data is ready
+			Client.SendBLOB (byteArray, _handles.webSocket).Wait(); // NB! Not really necessary to add Wait() in this case since FetchReceived() will wait until data is ready
 
 			// Fetch the return data from the Server
-			ReceiveBuffer = Client.FetchReceived ();
+			ReceiveBuffer = Client.FetchReceived (_handles);
 
 			// Decode the DED
 			DEDDecoder DED2 = DEDDecoder.DED_START_DECODER ();
@@ -292,52 +299,8 @@ namespace DED.UnitTests
 				Console.WriteLine ("FAILURE - unittest could NOT decode DED blob");
 			}
 
-		}
-
-		[Test]
-		public void SendReceiveDEDMockDOPsServer3()
-		{
-			byte[] ReceiveBuffer = null;
-
-			// connect to DOPs Server
-			Client.WSConnect ("ws://localhost:8046/websockets/MockServerEndpoint");
-
-			// setup DED packet to send to Server
-			short trans_id = 1;
-			bool bAction = true;
-			DEDEncoder DED = DEDEncoder.DED_START_ENCODER();
-			Assert.IsNotNull(DED);
-			DED.PUT_STRUCT_START ("event");
-				DED.PUT_METHOD ("Method", "MusicPlayer");
-				DED.PUT_USHORT ("trans_id", trans_id);
-				DED.PUT_BOOL ("startstop", bAction);
-			DED.PUT_STRUCT_END ("event");
-
-			byte[] byteArray = DED.GET_ENCODED_BYTEARRAY_DATA ();
-			Assert.IsNotNull (byteArray);
-
-			// Send the DED packet to Server
-			Client.SendBLOB (byteArray).Wait(); // NB! Not really necessary to add Wait() in this case since FetchReceived() will wait until data is ready
-
-			// Fetch the return data from the Server
-			ReceiveBuffer = Client.FetchReceived ();
-
-			// Decode the DED
-			DEDDecoder DED2 = DEDDecoder.DED_START_DECODER ();
-			DED2.PUT_DATA_IN_DECODER (ReceiveBuffer, ReceiveBuffer.Length);
-			if ((DED2.GET_STRUCT_START ("event")).Equals (1) &&
-				(DED2.GET_METHOD ("Method")).Contains ("MusicPlayer") &&
-				(DED2.GET_USHORT ("trans_id")).Equals (trans_id) &&
-				(DED2.GET_BOOL ("startstop")).Equals (bAction) &&
-			(DED2.GET_STRUCT_END ("event")).Equals (1)) 
-			{
-				Console.WriteLine ("SUCCESS - unittest received from mockDOPsServer a DED blob, and decoded it");
-			} 
-			else
-			{
-				Console.WriteLine ("FAILURE - unittest could NOT decode DED blob");
-			}
-
+			// Disconnect from server
+			Client.WSDisconnect(_handles);
 		}
 
 
