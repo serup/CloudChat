@@ -345,6 +345,7 @@ namespace DED
 //			long sizeofCompressedData;
 //		}
 
+
 		class param
 		{
 			public String name;
@@ -529,10 +530,11 @@ namespace DED
 
 
 		//TODO: 20140724 consider designing _GET_ so that if element is NOT found, then internal pointer is NOT moved as it is NOW!!!
-		public int GET_ELEMENT(String entityname, _Elements elementvalue)
+		public _Elements GET_ELEMENT(String entityname)
 		{
 			int result = -1;
-			if(this.decoder_ptr==null) return -1;
+			if(this.decoder_ptr==null) return null;
+			_Elements elementvalue = new _Elements();
 
 			String strentity_chunk_id = entityname.ToLower() + "_chunk_id";
 			String strentity_chunk_data = entityname.ToLower() + "_chunk_data";
@@ -563,9 +565,11 @@ namespace DED
 			}
 			elementvalue.strElementID = DEDobject1.value.ToString();
 			elementvalue.ElementData = DEDobject2.value;
-			if(result != -1) result = 1;
-			return result;
+			if(result != -1) 
+				return elementvalue;
+			return null;
 		}
+
 
 		////////////////////////////////////////////////////////////////
 		// FETCH ELEMENTS FROM ASN1 DATAENCODER
