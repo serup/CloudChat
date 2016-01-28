@@ -195,6 +195,11 @@ namespace WebSocketClient
 			return _handles;
 		}
 
+		public static void WSDisconnect(wshandles _handles)
+		{
+			_handles.webSocket.Dispose();
+		}
+
 		public static async Task SendBLOB(byte[] buffer)
 		{
 			Console.WriteLine("WebSocketClient SendBLOB starting!");
@@ -345,9 +350,10 @@ namespace WebSocketClient
 			while (webSocket.State == WebSocketState.Open)
 			{                
 				var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-				if (result.MessageType == WebSocketMessageType.Close)
+				if (result.MessageType == WebSocketMessageType.Close )
 				{
-					await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
+					if(webSocket.State == WebSocketState.Open)
+						await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
 				}
 				else
 				{
