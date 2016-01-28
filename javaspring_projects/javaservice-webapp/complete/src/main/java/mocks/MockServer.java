@@ -1,4 +1,4 @@
-package WebSocketEchoTestEndpoints;
+package mocks;
 
 import messaging.simp.ded.DEDDecoder;
 import messaging.simp.ded.DEDEncoder;
