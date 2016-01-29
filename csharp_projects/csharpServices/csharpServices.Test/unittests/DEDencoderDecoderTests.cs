@@ -212,7 +212,6 @@ namespace DED.UnitTests
 		[Test]
 		public void SendReceiveDEDMockDOPsServer()
 		{
-
 			// connect to DOPs Server
 			Client.wshandles _handles = Client.WSConnect ("ws://localhost:8046/websockets/MockServerEndpoint");
 
@@ -221,7 +220,7 @@ namespace DED.UnitTests
 			bool bAction = true;
 			DEDEncoder DED = DEDEncoder.DED_START_ENCODER();
 			Assert.IsNotNull(DED);
-			DED.PUT_STRUCT_START ("event");
+			DED.PUT_STRUCT_START ("event"); // Start struct is NOT validated in server
 				DED.PUT_METHOD ("Method", "MusicPlayer");
 				DED.PUT_USHORT ("trans_id", trans_id);
 				DED.PUT_BOOL ("startstop", bAction);
@@ -250,8 +249,8 @@ namespace DED.UnitTests
 	        // decode data ...
 	        DEDDecoder DED2 = new DEDDecoder();
 			DED2.PUT_DATA_IN_DECODER( ReceiveBuffer, ReceiveBuffer.Length);
-	        if( DED2.GET_STRUCT_START( "WSResponse" )==1 &&
-	                (strMethod   		= DED2.GET_METHOD ( "name" )).Contains("MusicPlayer") &&
+	        if( DED2.GET_STRUCT_START( "WSResponse" )==1 && 
+	                (strMethod   		= DED2.GET_METHOD ( "name" )).Contains("MusicPlayer") && // this means that ded was echo'd back
 	                (uTrans_id     		= DED2.GET_USHORT ( "trans_id")) == -1 &&  // server does NOT know this dedpacket, thus not capable of decoding its trans_id, hence the -1
 	                (strProtocolTypeID  = DED2.GET_STDSTRING ( "protocolTypeID")).Length>0 &&
 	                (strFunctionName    = DED2.GET_STDSTRING ( "functionName")).Length>0 &&
@@ -264,11 +263,11 @@ namespace DED.UnitTests
 			else
 			{
 				Console.WriteLine ("FAILURE - unittest could NOT decode DED blob");
+				Assert.IsTrue(bDecoded);
 			}
 
 			// Disconnect from server
 			Client.WSDisconnect(_handles);
-			Assert.IsTrue(bDecoded);
 		}
 
 		[Test]
