@@ -71,7 +71,7 @@ namespace WebSocketClient
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine("Exception: {0}", ex);
+				//Console.WriteLine("Exception: {0}", ex);
 			}
 			finally
 			{
