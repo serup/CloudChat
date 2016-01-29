@@ -336,6 +336,14 @@ namespace DED
 			return dedDecoder;
 		}
 
+		public static DEDDecoder DED_START_DECODER(byte[] pCompressedData, int sizeofCompressedData)
+		{
+			DEDDecoder dedDecoder = new DEDDecoder();
+			dedDecoder.PUT_DATA_IN_DECODER( pCompressedData, pCompressedData.Length);
+			return dedDecoder;
+		}
+
+
 //		class _DEDobject
 //		{
 //			DEDEncoder encoder_ptr;
