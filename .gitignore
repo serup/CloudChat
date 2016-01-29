@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #################
 ## tmp
 #################
@@ -244,3 +245,16 @@ pip-log.txt
 *.depend
 *.layout
 *.xml
+=======
+*.pyc
+*~
+*\#
+.\#*
+
+build
+dist
+*.egg-info
+
+.cache/
+compliance/reports/
+>>>>>>> ZZZ
