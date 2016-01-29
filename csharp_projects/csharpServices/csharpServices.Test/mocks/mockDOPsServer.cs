@@ -13,7 +13,7 @@ class handleDOPsProtocol
 	public byte[] ReceiveDEDandResponse(byte[] dedpacket)
 	{
 		bool bDecoded = false;
-		string strMethod="", strProtocolTypeID="", strUsername="", strPassword="", strFunctionName="", strStatus="";
+		string strMethod="<unknown>", strProtocolTypeID="<unknown>", strUsername="<unknown>", strPassword="<unknown>", strFunctionName="<unknown>", strStatus="<unknown>";
 		short uTrans_id=0;
 		// 1. decode login packet
 		DEDDecoder DED = new DEDDecoder();

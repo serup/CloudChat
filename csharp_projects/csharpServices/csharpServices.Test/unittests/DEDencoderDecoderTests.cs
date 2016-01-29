@@ -212,7 +212,6 @@ namespace DED.UnitTests
 		[Test]
 		public void SendReceiveDEDMockDOPsServer()
 		{
-			byte[] ReceiveBuffer = null;
 
 			// connect to DOPs Server
 			Client.wshandles _handles = Client.WSConnect ("ws://localhost:8046/websockets/MockServerEndpoint");
@@ -235,18 +234,32 @@ namespace DED.UnitTests
 			Client.SendBLOB (byteArray, _handles.webSocket).Wait(); // NB! Not really necessary to add Wait() in this case since FetchReceived() will wait until data is ready
 
 			// Fetch the return data from the Server
+			byte[] ReceiveBuffer = null;
 			ReceiveBuffer = Client.FetchReceived (_handles);
 
-			// Decode the DED
-			DEDDecoder DED2 = DEDDecoder.DED_START_DECODER ();
-			DED2.PUT_DATA_IN_DECODER (ReceiveBuffer, ReceiveBuffer.Length);
-			if ((DED2.GET_STRUCT_START ("event")).Equals (1) &&
-				(DED2.GET_METHOD ("Method")).Contains ("MusicPlayer") &&
-				(DED2.GET_USHORT ("trans_id")).Equals (trans_id) &&
-				(DED2.GET_BOOL ("startstop")).Equals (bAction) &&
-			(DED2.GET_STRUCT_END ("event")).Equals (1)) 
+			/**
+	         * decode incomming data
+	         */
+	        bool bDecoded=false;
+	        String strMethod="";
+	        String strProtocolTypeID="";
+	        String strFunctionName="";
+	        String strStatus="";
+	        short uTrans_id=0;
+
+	        // decode data ...
+	        DEDDecoder DED2 = new DEDDecoder();
+			DED2.PUT_DATA_IN_DECODER( ReceiveBuffer, ReceiveBuffer.Length);
+	        if( DED2.GET_STRUCT_START( "WSResponse" )==1 &&
+	                (strMethod   		= DED2.GET_METHOD ( "name" )).Contains("MusicPlayer") &&
+	                (uTrans_id     		= DED2.GET_USHORT ( "trans_id")) == -1 &&  // server does NOT know this dedpacket, thus not capable of decoding its trans_id, hence the -1
+	                (strProtocolTypeID  = DED2.GET_STDSTRING ( "protocolTypeID")).Length>0 &&
+	                (strFunctionName    = DED2.GET_STDSTRING ( "functionName")).Length>0 &&
+	                (strStatus  = DED2.GET_STDSTRING ( "status")).Length>0 &&
+	            DED2.GET_STRUCT_END( "WSResponse" )==1)
 			{
 				Console.WriteLine ("SUCCESS - unittest received from mockDOPsServer a DED blob, and decoded it");
+				bDecoded=true;
 			} 
 			else
 			{
@@ -255,6 +268,7 @@ namespace DED.UnitTests
 
 			// Disconnect from server
 			Client.WSDisconnect(_handles);
+			Assert.IsTrue(bDecoded);
 		}
 
 		[Test]
