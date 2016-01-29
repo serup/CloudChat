@@ -336,6 +336,14 @@ namespace DED
 			return dedDecoder;
 		}
 
+		public static DEDDecoder DED_START_DECODER(byte[] pCompressedData, int sizeofCompressedData)
+		{
+			DEDDecoder dedDecoder = new DEDDecoder();
+			dedDecoder.PUT_DATA_IN_DECODER( pCompressedData, pCompressedData.Length);
+			return dedDecoder;
+		}
+
+
 //		class _DEDobject
 //		{
 //			DEDEncoder encoder_ptr;
@@ -518,11 +526,17 @@ namespace DED
 				DEDobject.value = null;
 				DEDobject.length = -1;
 				int found = decoder_ptr._GetElement(DEDobject);
+//				if (found == 1) {
+//					String strtest = BitConverter.ToString(DEDobject.value);
+//					if(strtest.Length > 0)
+//						result = strtest;
+//				}
 				if (found == 1) {
-					String strtest = BitConverter.ToString(DEDobject.value);
-					if(strtest.Length > 0)
-						result = strtest;
+				    result = "";
+					for(int i=0;i<DEDobject.value.Length;i++)
+						result = result + (char)DEDobject.value[i];
 				}
+
 				result = emptycheck(result);
 			}
 			return result;
