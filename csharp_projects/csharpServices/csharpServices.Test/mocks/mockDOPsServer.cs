@@ -19,12 +19,12 @@ class handleDOPsProtocol
 		DEDDecoder DED = new DEDDecoder();
 		DED.PUT_DATA_IN_DECODER( dedpacket, dedpacket.Length);
 		if( DED.GET_STRUCT_START( "WSRequest" )==1 &&
-				(strMethod = DED.GET_METHOD ( "name" )).Length>0 &&
-				(uTrans_id = DED.GET_USHORT ( "trans_id")) !=-1 &&
-				(DED.GET_STDSTRING ( "protocolTypeID")).Length>0 &&
-				(DED.GET_STDSTRING ( "functionName")).Length>0 &&
-				(DED.GET_STDSTRING ( "username")).Length>0 &&
-				(DED.GET_STDSTRING ( "password")).Length>0 &&
+				(strMethod 			= DED.GET_METHOD ( "name" )).Length>0 &&
+				(uTrans_id 			= DED.GET_USHORT ( "trans_id")) !=-1 &&
+				(strProtocolTypeID 	= DED.GET_STDSTRING ( "protocolTypeID")).Length>0 &&
+				(strFunctionName 	= DED.GET_STDSTRING ( "functionName")).Length>0 &&
+				(strUsername 		= DED.GET_STDSTRING ( "username")).Length>0 &&
+				(strPassword 		= DED.GET_STDSTRING ( "password")).Length>0 &&
 			DED.GET_STRUCT_END( "WSRequest" )==1)
 		{
 			bDecoded=true;
@@ -228,13 +228,16 @@ class MockDOPsServer {
 
 							handleDOPsProtocol hDOPs = new handleDOPsProtocol();
 							byte[] dedpacket = hDOPs.ReceiveDEDandResponse(blob);
-								
-							// Send it back as echo - until unittest have changed to handle response DED from above ReceiveDEDandResponse function
-							socket.Send(blob).Wait(CancellationToken.None);
-							//Thread.Sleep(1000);
+							if(null != dedpacket)
+								socket.Send(dedpacket).Wait(CancellationToken.None);
+							else {	
+								// Send it back as echo, since it was possibly not a valid DOPsServer DED blob
+								Console.WriteLine("mockDOPsServer; Send it back as echo, since it was possibly not a valid DOPsServer DED blob");
+								socket.Send(blob).Wait(CancellationToken.None);
+							}
 						}
 						catch(Exception e){
-							Console.WriteLine("WARNING: Exception while trying to decode possible DED blob");
+							Console.WriteLine("mockDOPsServer; WARNING: Exception while trying to decode possible DED blob : " + e.ToString());
 							// Send it back as echo
 							socket.Send(blob).Wait(CancellationToken.None);
 							Thread.Sleep(1000);
@@ -248,7 +251,7 @@ class MockDOPsServer {
 				//Console.WriteLine("worker thread: working...");
 				Console.Title = "WORKING";
 			}
-			Console.WriteLine("worker thread: terminating gracefully.");
+			Console.WriteLine("mockDOPsServer; worker thread: terminating gracefully.");
 			Console.Title = "DONE";
 		}
 
