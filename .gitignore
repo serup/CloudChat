@@ -244,3 +244,14 @@ pip-log.txt
 *.depend
 *.layout
 *.xml
+
+#python
+*.pyc
+*~
+*\#
+.\#*
+build
+dist
+*.egg-info
+.cache/
+compliance/reports/
