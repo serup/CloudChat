@@ -413,7 +413,26 @@ fi
 ## install https://forge.puppetlabs.com/vzach/ambari 
 #puppet module install puppetlabs-stdlib --modulepath ./puppet/trunk/environments/devtest/modules  
 #puppet module install vzach-ambari --modulepath ./puppet/trunk/environments/devtest/modules 
- 
+
+#NB! BELOW example somehow does NOT work running on Ubuntu, even with ubuntu boxes - why I do not know, thus ignore it and build manual
+#installing hadoop using startup script for hadoop node --- work in progress
+# fetch a example hadoop cluster project
+#if [ -d "ambari_provisioning" ]; then
+#   echo -n "- install ambari hadoop example"
+#   mkdir ambari_provisioning
+#   cd ambari_provisioning 
+#   curl "http://vzach.de/data/ambari-provisioning.zip"  -o "ambari-provisioning.zip"
+#   unzip ambari-provisioning.zip
+#   echo " - done. - now vagrant up inside ambari_provisioning folder will start and create an example VM hadoop cluster"
+#else
+#   echo "- ambari hadoop example already installed in folder ambari_provisioning"
+#fi
+
+
+# NB! AMBARI SETUP IS MADE INSTEAD - INSIDE FOLDER hadoop_projects/hadoopServices
+# ABOVE IS DEPRECATED AND SHOULD BE REMOVED
+
+
 
 # install mogrify - to resize extracted profile images, thus making transfer to javascript client performance wice faster
 MOGRIFY_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 imagemagick |grep "install ok installed")
