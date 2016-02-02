@@ -205,8 +205,6 @@ class asn:
     Tag = 0
     data = 0
 
-
-
 class DEDEncoder(object):
     encoder = 0
     pdata = 0
@@ -220,9 +218,6 @@ class DEDEncoder(object):
     def addelement(self, element):
         if element.ElementType == DED_ELEMENT_TYPE_STRUCT:
             # First element in structure
-            iLengthOfData = 0
-            ptotaldata = 0
-            iLengthOfTotalData = 0
             asn1 = CASN1()
             result = asn1.CASN1p1(element.name.length() + 4 + 1)
             LengthOfAsn1 = len(element.name)
@@ -230,17 +225,17 @@ class DEDEncoder(object):
             paramasn1 = data()
             asn1.FetchTotalASN1(paramasn1)
             iLengthOfTotalData = paramasn1.Length
-            iLengthOfData = iLengthOfTotalData # First element in structure
+            iLengthOfData = iLengthOfTotalData  # First element in structure
             pdata = bytearray()
-            for i in range(iLengthOfData): pdata.append(0)
-            #for i in range(paramasn1.Length):
-            #    pdata[i] = paramasn1.data[i]
-            pdata = copy.deepcopy(paramasn1.data)
+            # for i in range(iLengthOfData): pdata.append(0)
+            for i in range(paramasn1.Length):
+                pdata.append(paramasn1.data[i])
+            # pdata = copy.deepcopy(paramasn1.data)
             self.ptotaldata = pdata
         else:
             asn1 = CASN1()
-            result = asn1.CASN1p3(self.iLengthOfTotalData, self.pdata, self.iLengthOfTotalData + len(element.name) + element.length + 1)
-
+            result = asn1.CASN1p3(self.iLengthOfTotalData, self.pdata, self.iLengthOfTotalData + len(element.name) +
+                                  element.length + 1)
             # 1. asn  "name"
             LengthOfAsn1 = len(element.name)
             asn1.AppendASN1(LengthOfAsn1, element.ElementType, element.name.getBytes())
@@ -250,12 +245,12 @@ class DEDEncoder(object):
                 asn1.AppendASN1(LengthOfAsn1, element.ElementType, element.value)
                 paramasn1 = data()
                 asn1.FetchTotalASN1(paramasn1)
-                self.iLengthOfTotalData = paramasn1.Length;
+                self.iLengthOfTotalData = paramasn1.Length
                 if self.iLengthOfTotalData > 0:
                     pdata = bytearray()
                     for i in range(self.iLengthOfTotalData):
                         pdata.append(paramasn1.data[i])
-                    self.ptotaldata = pdata;
+                    self.ptotaldata = pdata
             if self.iLengthOfTotalData > 0:
                 result = self.iLengthOfTotalData
         return result
@@ -275,6 +270,3 @@ class DEDEncoder(object):
 
     def PUT_STRUCT_START(self, name):
         return self.result
-
-
-
