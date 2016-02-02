@@ -39,7 +39,9 @@ from websocket._http import read_headers
 
 
 # Skip test to access the internet.
-TEST_WITH_INTERNET = os.environ.get('TEST_WITH_INTERNET', '0') == '1'
+#TEST_WITH_INTERNET = os.environ.get('TEST_WITH_INTERNET', '0') == '1'
+TEST_WITH_INTERNET = True
+
 
 # Skip Secure WebSocket test.
 TEST_SECURE_WS = True

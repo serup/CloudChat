@@ -1,8 +1,8 @@
 import websocket
 try:
-    import thread
+    import Threading
 except ImportError:  #TODO use Threading instead of _thread in python3
-    import _thread as thread
+    import thread as thread
 import time
 import sys
 
