@@ -80,7 +80,7 @@ class CASN1:
                 pAppendPosition = 0
                 for i in range(iAppendMaxLength):
                     ASN1Data[i] = 0
-                result=1
+                result = 1
         return result
 
     def CASN1p3(self, LengthOfData,data, iAppendMaxLength):
@@ -98,7 +98,7 @@ class CASN1:
             if ASN1Data.length == iLength:
                 for i in range(iLength):
                     ASN1Data[i] = 0
-                pNextASN1 = 0 # First ASN1
+                pNextASN1 = 0  # First ASN1
                 #for n in range(LengthOfData):
                 #   ASN1Data[n] = data[n] # copy data into new allocated space
                 ASN1Data = copy.deepcopy(data)
@@ -124,11 +124,11 @@ class CASN1:
             bresult = False
         else:
             pAppendPosition = self.iLengthOfData
-            self.ASN1Data[pAppendPosition + 0] = (LengthOfNewASN1Data     & 0x000000ff)
-            self.ASN1Data[pAppendPosition + 1] = (LengthOfNewASN1Data>>8  & 0x000000ff)
-            self.ASN1Data[pAppendPosition + 2] = (LengthOfNewASN1Data>>16 & 0x000000ff)
-            self.ASN1Data[pAppendPosition + 3] = (LengthOfNewASN1Data>>24 & 0x000000ff)
-            self.ASN1Data[pAppendPosition + 4] = (Tag & 0x000000FF) # unsigned char 8 bit  -- tag byte
+            self.ASN1Data[pAppendPosition + 0] = (LengthOfNewASN1Data       & 0x000000ff)
+            self.ASN1Data[pAppendPosition + 1] = (LengthOfNewASN1Data >> 8  & 0x000000ff)
+            self.ASN1Data[pAppendPosition + 2] = (LengthOfNewASN1Data >> 16 & 0x000000ff)
+            self.ASN1Data[pAppendPosition + 3] = (LengthOfNewASN1Data >> 24 & 0x000000ff)
+            self.ASN1Data[pAppendPosition + 4] = (Tag & 0x000000FF)  # unsigned char 8 bit  -- tag byte
 
             if data.length > 0:
                 for i in range(LengthOfNewASN1Data):
@@ -200,14 +200,24 @@ class data:
     Length = 0
     data = 0
 
+class asn:
+    Length = 0
+    Tag = 0
+    data = 0
+
+
+
 class DEDEncoder(object):
     encoder = 0
+    pdata = 0
+    iLengthOfData = 0
     ptotaldata = 0
+    iLengthOfTotalData = 0
 
     def __init__(self):
         self.encoder = 0
 
-    def addelement(self,element):
+    def addelement(self, element):
         if element.ElementType == DED_ELEMENT_TYPE_STRUCT:
             # First element in structure
             iLengthOfData = 0
@@ -217,11 +227,9 @@ class DEDEncoder(object):
             result = asn1.CASN1p1(element.name.length() + 4 + 1)
             LengthOfAsn1 = len(element.name)
             asn1.AppendASN1(LengthOfAsn1, element.ElementType, element.name.getBytes())
-
             paramasn1 = data()
             asn1.FetchTotalASN1(paramasn1)
             iLengthOfTotalData = paramasn1.Length
-
             iLengthOfData = iLengthOfTotalData # First element in structure
             pdata = bytearray()
             for i in range(iLengthOfData): pdata.append(0)
@@ -229,11 +237,28 @@ class DEDEncoder(object):
             #    pdata[i] = paramasn1.data[i]
             pdata = copy.deepcopy(paramasn1.data)
             self.ptotaldata = pdata
+        else:
+            asn1 = CASN1()
+            result = asn1.CASN1p3(self.iLengthOfTotalData, self.pdata, self.iLengthOfTotalData + len(element.name) + element.length + 1)
 
-
-
-
-
+            # 1. asn  "name"
+            LengthOfAsn1 = len(element.name)
+            asn1.AppendASN1(LengthOfAsn1, element.ElementType, element.name.getBytes())
+            # 2. asn "value"
+            LengthOfAsn1 = element.length
+            if LengthOfAsn1 > 0:
+                asn1.AppendASN1(LengthOfAsn1, element.ElementType, element.value)
+                paramasn1 = data()
+                asn1.FetchTotalASN1(paramasn1)
+                self.iLengthOfTotalData = paramasn1.Length;
+                if self.iLengthOfTotalData > 0:
+                    pdata = bytearray()
+                    for i in range(self.iLengthOfTotalData):
+                        pdata.append(paramasn1.data[i])
+                    self.ptotaldata = pdata;
+            if self.iLengthOfTotalData > 0:
+                result = self.iLengthOfTotalData
+        return result
 
     def encodestructstart(self, name):
         element = param()
