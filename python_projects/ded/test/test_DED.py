@@ -31,4 +31,4 @@ else:
 class DEDTest(unittest.TestCase):
 
     def testINIT(self):
-        self.assertEqual(True, False)
+        self.assertEqual(True, False) # NOT READY YET
