@@ -354,3 +354,9 @@ class DEDEncoder(object):
         if encoder_ptr != 0:
             result = encoder_ptr.encodestructend(name)
         return result
+
+    def PUT_METHOD(self, encoder_ptr, name, value):
+        result = -1
+        if encoder_ptr != 0:
+            result = self.encodetype(name, value, len(value), "DED_ELEMENT_TYPE_METHOD")
+        return result
