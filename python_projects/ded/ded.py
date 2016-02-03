@@ -14,33 +14,38 @@ import copy
 from array import array
 
 # Element types
-DED_ELEMENT_TYPE_BOOL = 0
-DED_ELEMENT_TYPE_CHAR = 1
-DED_ELEMENT_TYPE_BYTE = 2
-#DED_ELEMENT_TYPE_WCHAR =  3
-#DED_ELEMENT_TYPE_SHORT =  4
-DED_ELEMENT_TYPE_USHORT = 5
-DED_ELEMENT_TYPE_LONG = 6
-DED_ELEMENT_TYPE_ULONG = 7
-DED_ELEMENT_TYPE_FLOAT = 8
-#DED_ELEMENT_TYPE_DOUBLE = 9
-DED_ELEMENT_TYPE_STRING = 10
-#DED_ELEMENT_TYPE_WSTRING = 11
-#DED_ELEMENT_TYPE_URI     = 12
-DED_ELEMENT_TYPE_METHOD = 13
-DED_ELEMENT_TYPE_STRUCT = 14
-#DED_ELEMENT_TYPE_LIST   = 15
-#DED_ELEMENT_TYPE_ARRAY  = 16
-DED_ELEMENT_TYPE_ZERO = 17
-DED_ELEMENT_TYPE_CLASS = 18
-DED_ELEMENT_TYPE_STDSTRING = 19
-DED_ELEMENT_TYPE_SVGFILE = 20
-DED_ELEMENT_TYPE_VA_LIST = 21
-#DED_ELEMENT_TYPE_FILE    = 22
-DED_ELEMENT_TYPE_STDVECTOR = 23
-DED_ELEMENT_TYPE_STRUCT_END = 24
-#...
-DED_ELEMENT_TYPE_UNKNOWN = 0xff
+CONVERSIONS = {
+     "DED_ELEMENT_TYPE_BOOL": 0,
+     "DED_ELEMENT_TYPE_CHAR": 1,
+     "DED_ELEMENT_TYPE_BYTE": 2,
+     "DED_ELEMENT_TYPE_USHORT": 5,
+     "DED_ELEMENT_TYPE_LONG": 6,
+     "DED_ELEMENT_TYPE_ULONG": 7,
+     "DED_ELEMENT_TYPE_FLOAT": 8,
+     #"DED_ELEMENT_TYPE_DOUBLE": 9,
+     "DED_ELEMENT_TYPE_STRING": 10,
+     #"DED_ELEMENT_TYPE_WSTRING": 11,
+     #"DED_ELEMENT_TYPE_URI    ": 12,
+     "DED_ELEMENT_TYPE_METHOD": 13,
+     "DED_ELEMENT_TYPE_STRUCT": 14,
+     #"DED_ELEMENT_TYPE_LIST  ": 15,
+     #"DED_ELEMENT_TYPE_ARRAY ": 16,
+     "DED_ELEMENT_TYPE_ZERO": 17,
+     "DED_ELEMENT_TYPE_CLASS": 18,
+     "DED_ELEMENT_TYPE_STDSTRING": 19,
+     "DED_ELEMENT_TYPE_SVGFILE": 20,
+     "DED_ELEMENT_TYPE_VA_LIST": 21,
+     #"DED_ELEMENT_TYPE_FILE   ": 22,
+     "DED_ELEMENT_TYPE_STDVECTOR": 23,
+     "DED_ELEMENT_TYPE_STRUCT_END": 24,
+     #...
+     "DED_ELEMENT_TYPE_UNKNOWN": 0xff
+}
+
+
+def conversion_factors_for(type):
+    return CONVERSIONS[type]
+
 
 #
 # ASN1 - limited version
@@ -65,48 +70,42 @@ class CASN1:
         CurrentASN1Position = 0
         NextASN1Position = 0
 
-
     def CASN1p1(self, iAppendMaxLength):
         result = -1
         if iAppendMaxLength > 0:
-            pNextASN1 = -1
-            CurrentASN1Position = 0
-            iLengthOfData = 0
-            ASN1Data = bytearray()
-            for i in range(iAppendMaxLength): ASN1Data[i] = 0
-            if ASN1Data.length == iAppendMaxLength:
-                iTotalLengthOfData = iAppendMaxLength
-                pNextASN1 = 0 # First ASN1
-                pAppendPosition = 0
+            self.ASN1Data = bytearray()
+            for i in range(iAppendMaxLength):
+                self.ASN1Data.append(0)
+            if len(self.ASN1Data) == iAppendMaxLength:
+                self.iTotalLengthOfData = iAppendMaxLength
+                self.pNextASN1 = 0  # First ASN1
+                self.pAppendPosition = 0
                 for i in range(iAppendMaxLength):
-                    ASN1Data[i] = 0
+                    self.ASN1Data.append(0)
                 result = 1
         return result
 
-    def CASN1p3(self, LengthOfData,data, iAppendMaxLength):
-        result = -1
-        pNextASN1 = -1
-        CurrentASN1Position = 0
+    def CASN1p3(self, LengthOfData, pdata, iAppendMaxLength):
+        self.pNextASN1 = -1
+        self.CurrentASN1Position = 0
         iLength = iAppendMaxLength + LengthOfData
-        if data == 0:
-            return -1
-        iLengthOfData = LengthOfData
-        iTotalLengthOfData = iLength # max room for data
+        self.iLengthOfData = LengthOfData
+        self.iTotalLengthOfData = iLength  # max room for data
         if iLength != 0:
-            ASN1Data = bytearray()
-            for i in range(iLength): ASN1Data.append(0)
-            if ASN1Data.length == iLength:
+            self.ASN1Data = bytearray()
+            if self.ASN1Data != 0:
                 for i in range(iLength):
-                    ASN1Data[i] = 0
-                pNextASN1 = 0  # First ASN1
-                #for n in range(LengthOfData):
-                #   ASN1Data[n] = data[n] # copy data into new allocated space
-                ASN1Data = copy.deepcopy(data)
-                pAppendPosition = 0
-                result = 1
+                    self.ASN1Data.append(0)
+                self.pNextASN1 = 0  # First ASN1
+                for n in range(LengthOfData):
+                    self.ASN1Data[n] = pdata[n]  # copy data into new allocated space
+                self.pAppendPosition = 0    # make sure next asn appended to this is at the end, this will be calculated
+                # based on current content
             else:
-                result = -2
-        return result
+                return -3
+        else:
+            return -2
+        return 1
 
     def WhatIsReadSize(self):
         return self.iLengthOfData
@@ -130,7 +129,7 @@ class CASN1:
             self.ASN1Data[pAppendPosition + 3] = (LengthOfNewASN1Data >> 24 & 0x000000ff)
             self.ASN1Data[pAppendPosition + 4] = (Tag & 0x000000FF)  # unsigned char 8 bit  -- tag byte
 
-            if data.length > 0:
+            if len(data) > 0:
                 for i in range(LengthOfNewASN1Data):
                     self.ASN1Data[pAppendPosition + 4 + 1 + i] = data[i]
                 self.iLengthOfData = self.iLengthOfData + 4 + 1 + LengthOfNewASN1Data # Add new ASN1 to length : Length+tag+SizeofData
@@ -177,18 +176,18 @@ class CASN1:
         return bResult
 
 
-    def FetchTotalASN1(self, data):
-        bresult = True
-        if self.ASN1Data.length > 0:
-            param.Length = self.iLengthOfData # Array can be larger than amount of valid data inside
-        param.data = bytearray()
-        for n in range(param.Length): param.data.append(0)
-        for i in range(param.Length):
-            param.data[i] = self.ASN1Data[i]
-        else:
-            bresult = False
-
+    def FetchTotalASN1(self, param):
+        bresult = False
+        if len(self.ASN1Data) > 0:
+            bresult = True
+            param.Length = self.iLengthOfData  # Array can be larger than amount of valid data inside
+            param.data = bytearray()
+            for n in range(param.Length):
+                param.data.append(0)
+            for i in range(param.Length):
+                param.data[i] = self.ASN1Data[i]
         return bresult
+
 
 class param:
     name = ""
@@ -196,14 +195,17 @@ class param:
     value = 0
     length = 0
 
+
 class data:
     Length = 0
     data = 0
+
 
 class asn:
     Length = 0
     Tag = 0
     data = 0
+
 
 class DEDEncoder(object):
     encoder = 0
@@ -216,57 +218,145 @@ class DEDEncoder(object):
         self.encoder = 0
 
     def addelement(self, element):
-        if element.ElementType == DED_ELEMENT_TYPE_STRUCT:
+        if element.ElementType == conversion_factors_for("DED_ELEMENT_TYPE_STRUCT"):
             # First element in structure
             asn1 = CASN1()
-            result = asn1.CASN1p1(element.name.length() + 4 + 1)
+            result = asn1.CASN1p1(len(element.name) + 4 + 1)
             LengthOfAsn1 = len(element.name)
-            asn1.AppendASN1(LengthOfAsn1, element.ElementType, element.name.getBytes())
+            asn1.AppendASN1(LengthOfAsn1, element.ElementType, element.name)
             paramasn1 = data()
             asn1.FetchTotalASN1(paramasn1)
-            iLengthOfTotalData = paramasn1.Length
-            iLengthOfData = iLengthOfTotalData  # First element in structure
-            pdata = bytearray()
+            self.iLengthOfTotalData = paramasn1.Length
+            self.iLengthOfData = self.iLengthOfTotalData  # First element in structure
+            self.pdata = bytearray()
             # for i in range(iLengthOfData): pdata.append(0)
             for i in range(paramasn1.Length):
-                pdata.append(paramasn1.data[i])
+                self.pdata.append(paramasn1.data[i])
             # pdata = copy.deepcopy(paramasn1.data)
-            self.ptotaldata = pdata
+            self.ptotaldata = self.pdata
         else:
             asn1 = CASN1()
             result = asn1.CASN1p3(self.iLengthOfTotalData, self.pdata, self.iLengthOfTotalData + len(element.name) +
                                   element.length + 1)
-            # 1. asn  "name"
-            LengthOfAsn1 = len(element.name)
-            asn1.AppendASN1(LengthOfAsn1, element.ElementType, element.name.getBytes())
-            # 2. asn "value"
-            LengthOfAsn1 = element.length
-            if LengthOfAsn1 > 0:
-                asn1.AppendASN1(LengthOfAsn1, element.ElementType, element.value)
-                paramasn1 = data()
-                asn1.FetchTotalASN1(paramasn1)
-                self.iLengthOfTotalData = paramasn1.Length
+            if result != -1:
+                # 1. asn  "name"
+                LengthOfAsn1 = len(element.name)
+                asn1.AppendASN1(LengthOfAsn1, element.ElementType, element.name)
+                # 2. asn "value"
+                LengthOfAsn1 = element.length
+                if LengthOfAsn1 > 0:
+                    asn1.AppendASN1(LengthOfAsn1, element.ElementType, element.value)
+                    paramasn1 = data()
+                    asn1.FetchTotalASN1(paramasn1)
+                    self.iLengthOfTotalData = paramasn1.Length
+                    if self.iLengthOfTotalData > 0:
+                        pdata = bytearray()
+                        for i in range(self.iLengthOfTotalData):
+                            pdata.append(paramasn1.data[i])
+                        self.ptotaldata = pdata
                 if self.iLengthOfTotalData > 0:
-                    pdata = bytearray()
-                    for i in range(self.iLengthOfTotalData):
-                        pdata.append(paramasn1.data[i])
-                    self.ptotaldata = pdata
-            if self.iLengthOfTotalData > 0:
-                result = self.iLengthOfTotalData
+                    result = self.iLengthOfTotalData
         return result
 
-    def encodestructstart(self, name):
+    def encodetypes(self, name, value, length, elementtype):
         element = param()
         element.name = name
-        element.ElementType = DED_ELEMENT_TYPE_STRUCT
-        element.value = 0
-        element.length = 0
+        element.ElementType = conversion_factors_for(elementtype)
+        element.value = value
+        element.length = length
         result = self.addelement(element)
         return result
 
+    def encodetype(self, name, value, length, elementtype):
+        return self.encodetypes(name, value, length, elementtype)
+
+    def encodestructstart(self, name):
+        result = self.encodetype(name, 0, 0, "DED_ELEMENT_TYPE_STRUCT")
+        return result
+
+    def encodestructend(self, name):
+        result = self.encodetype(name, 0, 0, "DED_ELEMENT_TYPE_STRUCT_END")
+        return result
+
+    def encodeelement(self, entityname, elementname, elementvalue):
+        strentity_chunk_id = basestring.lower(entityname) + "_chunk_id"
+        strentity_chunk_data = basestring.lower(entityname) + "_chunk_data"
+        result = self.encodetype(strentity_chunk_id, elementname, len(elementname), "DED_ELEMENT_TYPE_STDSTRING")
+        if result != -1:
+            result = self.encodetype(strentity_chunk_data, elementvalue, len(elementvalue), "DED_ELEMENT_TYPE_STDVECTOR")
+        return result
+
+    class DEDobject():
+        encoder_ptr = 0
+        uncompresseddata = 0
+        iLengthOfTotalData = 0
+        pCompressedData = 0
+        sizeofCompressedData = 0
+
+    class DEDelement():
+        name = ""
+        elementtype = -1
+        value = -1
+
+    def getdata(self, DEDobject):
+        if self.ptotaldata.__len__() > 0:
+            DEDobject.iLengthOfTotalData = self.iLengthOfTotalData
+            result = self.ptotaldata
+        return result
+
+    def getelement(self, DEDelement):
+        if DEDelement.elementtype == conversion_factors_for("DED_ELEMENT_TYPE_STRUCT"):
+            m_asn1 = CASN1()
+            result = m_asn1.CASN1p3(self.iLengthOfTotalData, self.pdata, self.iLengthOfTotalData + 1)
+
+        ElementType = DEDelement.elementtype
+
+        class param():
+            Length = 0
+            Tag = 0
+            pdata = 0
+
+        if m_asn1.FetchNextASN1(param):
+            if param.Tag == ElementType:
+                if DEDelement.name == param.pdata:
+                    if param.Tag == conversion_factors_for("DED_ELEMENT_TYPE_STRUCT") | param.Tag == conversion_factors_for("DED_ELEMENT_TYPE_STRUCT_END"):
+                        # start and end elements does NOT have value, thus no need to go further
+                        result = 1
+                    else:
+                        param.Length = 0
+                        param.Tag = 0
+                        param.pdata = 0
+                        if m_asn1.FetchNextASN1(param):
+                            if param.Tag == ElementType:
+                                if ElementType == conversion_factors_for("DED_ELEMENT_TYPE_METHOD") | ElementType == conversion_factors_for("DED_ELEMENT_TYPE_STRING") | ElementType == conversion_factors_for("DED_ELEMENT_TYPE_STDSTRING"):
+                                    DEDelement.value = param.pdata
+                                else:
+                                    DEDelement.value = param.pdata
+                                result = 1
+        return result
+
+    ###############################################################
+    # DEFINES                                                     #
+    ###############################################################
+
     def DED_START_ENCODER(self):
-        self.encoder = DEDEncoder(self)
+        self.encoder = DEDEncoder()
         return self.encoder
 
-    def PUT_STRUCT_START(self, name):
-        return self.result
+    def PUT_STRUCT_START(self, encoder_ptr, name):
+        result = -1
+        if encoder_ptr != 0:
+            result = encoder_ptr.encodestructstart(name)
+        return result
+
+    def PUT_STRUCT_END(self, encoder_ptr, name):
+        result = -1
+        if encoder_ptr != 0:
+            result = encoder_ptr.encodestructend(name)
+        return result
+
+    def PUT_METHOD(self, encoder_ptr, name, value):
+        result = -1
+        if encoder_ptr != 0:
+            result = self.encodetype(name, value, len(value), "DED_ELEMENT_TYPE_METHOD")
+        return result
