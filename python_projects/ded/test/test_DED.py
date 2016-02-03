@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 #
+from array import array
+from ded import ded
 
 import six
 import sys
@@ -30,5 +32,12 @@ else:
 
 class DEDTest(unittest.TestCase):
 
-    def testINIT(self):
-        self.assertEqual(True, False) # NOT READY YET
+    def testDED_START_ENCODER(self):
+        DED = ded.DEDEncoder()
+        encoder = DED.DED_START_ENCODER()
+        self.assertTrue(True, encoder != 0)
+
+    def testDED_PUT_STRUCT_START(self):
+        DED = ded.DEDEncoder()
+        result = DED.PUT_STRUCT_START(DED, "event")
+        self.assertTrue(result == 1, result)

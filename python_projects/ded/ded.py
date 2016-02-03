@@ -73,40 +73,39 @@ class CASN1:
     def CASN1p1(self, iAppendMaxLength):
         result = -1
         if iAppendMaxLength > 0:
-            pNextASN1 = -1
-            CurrentASN1Position = 0
-            iLengthOfData = 0
-            ASN1Data = bytearray()
-            for i in range(iAppendMaxLength): ASN1Data[i] = 0
-            if ASN1Data.length == iAppendMaxLength:
-                iTotalLengthOfData = iAppendMaxLength
-                pNextASN1 = 0 # First ASN1
-                pAppendPosition = 0
+            self.ASN1Data = bytearray()
+            for i in range(iAppendMaxLength):
+                self.ASN1Data.append(0)
+            if len(self.ASN1Data) == iAppendMaxLength:
+                self.iTotalLengthOfData = iAppendMaxLength
+                self.pNextASN1 = 0  # First ASN1
+                self.pAppendPosition = 0
                 for i in range(iAppendMaxLength):
-                    ASN1Data[i] = 0
+                    self.ASN1Data.append(0)
                 result = 1
         return result
 
     def CASN1p3(self, LengthOfData,data, iAppendMaxLength):
         result = -1
-        pNextASN1 = -1
-        CurrentASN1Position = 0
+        self.pNextASN1 = -1
+        self.CurrentASN1Position = 0
         iLength = iAppendMaxLength + LengthOfData
         if data == 0:
             return -1
-        iLengthOfData = LengthOfData
-        iTotalLengthOfData = iLength # max room for data
+        self.iLengthOfData = LengthOfData
+        self.iTotalLengthOfData = iLength # max room for data
         if iLength != 0:
-            ASN1Data = bytearray()
-            for i in range(iLength): ASN1Data.append(0)
-            if ASN1Data.length == iLength:
+            self.ASN1Data = bytearray()
+            for i in range(iLength):
+                self.ASN1Data.append(0)
+            if len(self.ASN1Data) == iLength:
                 for i in range(iLength):
-                    ASN1Data[i] = 0
-                pNextASN1 = 0  # First ASN1
-                #for n in range(LengthOfData):
-                #   ASN1Data[n] = data[n] # copy data into new allocated space
-                ASN1Data = copy.deepcopy(data)
-                pAppendPosition = 0
+                    self.ASN1Data.append(0)
+                self.pNextASN1 = 0  # First ASN1
+                for n in range(LengthOfData):
+                    self.ASN1Data[n] = data[n]  # copy data into new allocated space
+                # ASN1Data = copy.deepcopy(data)
+                self.pAppendPosition = 0
                 result = 1
             else:
                 result = -2
@@ -134,7 +133,7 @@ class CASN1:
             self.ASN1Data[pAppendPosition + 3] = (LengthOfNewASN1Data >> 24 & 0x000000ff)
             self.ASN1Data[pAppendPosition + 4] = (Tag & 0x000000FF)  # unsigned char 8 bit  -- tag byte
 
-            if data.length > 0:
+            if len(data) > 0:
                 for i in range(LengthOfNewASN1Data):
                     self.ASN1Data[pAppendPosition + 4 + 1 + i] = data[i]
                 self.iLengthOfData = self.iLengthOfData + 4 + 1 + LengthOfNewASN1Data # Add new ASN1 to length : Length+tag+SizeofData
@@ -181,17 +180,16 @@ class CASN1:
         return bResult
 
 
-    def FetchTotalASN1(self, data):
-        bresult = True
-        if self.ASN1Data.length > 0:
-            param.Length = self.iLengthOfData # Array can be larger than amount of valid data inside
-        param.data = bytearray()
-        for n in range(param.Length): param.data.append(0)
-        for i in range(param.Length):
-            param.data[i] = self.ASN1Data[i]
-        else:
-            bresult = False
-
+    def FetchTotalASN1(self, param):
+        bresult = False
+        if len(self.ASN1Data) > 0:
+            bresult = True
+            param.Length = self.iLengthOfData  # Array can be larger than amount of valid data inside
+            param.data = bytearray()
+            for n in range(param.Length):
+                param.data.append(0)
+            for i in range(param.Length):
+                param.data[i] = self.ASN1Data[i]
         return bresult
 
 
@@ -227,9 +225,9 @@ class DEDEncoder(object):
         if element.ElementType == conversion_factors_for("DED_ELEMENT_TYPE_STRUCT"):
             # First element in structure
             asn1 = CASN1()
-            result = asn1.CASN1p1(element.name.length() + 4 + 1)
+            result = asn1.CASN1p1(len(element.name) + 4 + 1)
             LengthOfAsn1 = len(element.name)
-            asn1.AppendASN1(LengthOfAsn1, element.ElementType, element.name.getBytes())
+            asn1.AppendASN1(LengthOfAsn1, element.ElementType, element.name)
             paramasn1 = data()
             asn1.FetchTotalASN1(paramasn1)
             iLengthOfTotalData = paramasn1.Length
@@ -340,9 +338,17 @@ class DEDEncoder(object):
                                 result = 1
         return result
 
+    ###############################################################
+    # DEFINES                                                     #
+    ###############################################################
+
     def DED_START_ENCODER(self):
-        self.encoder = DEDEncoder(self)
+        self.encoder = DEDEncoder()
         return self.encoder
 
-    def PUT_STRUCT_START(self, name):
-        return self.result
+    def PUT_STRUCT_START(self, encoder_ptr, name):
+        result=-1
+        if encoder_ptr != 0:
+            result = encoder_ptr.encodestructstart(name)
+        return result
+
