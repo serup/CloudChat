@@ -41,3 +41,10 @@ class DEDTest(unittest.TestCase):
         DED = ded.DEDEncoder()
         result = DED.PUT_STRUCT_START(DED, "event")
         self.assertTrue(result == 1, result)
+
+    def testDED_PUT_STRUCT_END(self):
+        DED = ded.DEDEncoder()
+        result = DED.PUT_STRUCT_START(DED, "event")
+        self.assertTrue(result == 1, result)
+        result = DED.PUT_STRUCT_END(DED, "event")
+        self.assertTrue(result > 0, result)

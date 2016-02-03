@@ -85,31 +85,27 @@ class CASN1:
                 result = 1
         return result
 
-    def CASN1p3(self, LengthOfData,data, iAppendMaxLength):
-        result = -1
+    def CASN1p3(self, LengthOfData, pdata, iAppendMaxLength):
         self.pNextASN1 = -1
         self.CurrentASN1Position = 0
         iLength = iAppendMaxLength + LengthOfData
-        if data == 0:
-            return -1
         self.iLengthOfData = LengthOfData
-        self.iTotalLengthOfData = iLength # max room for data
+        self.iTotalLengthOfData = iLength  # max room for data
         if iLength != 0:
             self.ASN1Data = bytearray()
-            for i in range(iLength):
-                self.ASN1Data.append(0)
-            if len(self.ASN1Data) == iLength:
+            if self.ASN1Data != 0:
                 for i in range(iLength):
                     self.ASN1Data.append(0)
                 self.pNextASN1 = 0  # First ASN1
                 for n in range(LengthOfData):
-                    self.ASN1Data[n] = data[n]  # copy data into new allocated space
-                # ASN1Data = copy.deepcopy(data)
-                self.pAppendPosition = 0
-                result = 1
+                    self.ASN1Data[n] = pdata[n]  # copy data into new allocated space
+                self.pAppendPosition = 0    # make sure next asn appended to this is at the end, this will be calculated
+                # based on current content
             else:
-                result = -2
-        return result
+                return -3
+        else:
+            return -2
+        return 1
 
     def WhatIsReadSize(self):
         return self.iLengthOfData
@@ -230,35 +226,36 @@ class DEDEncoder(object):
             asn1.AppendASN1(LengthOfAsn1, element.ElementType, element.name)
             paramasn1 = data()
             asn1.FetchTotalASN1(paramasn1)
-            iLengthOfTotalData = paramasn1.Length
-            iLengthOfData = iLengthOfTotalData  # First element in structure
-            pdata = bytearray()
+            self.iLengthOfTotalData = paramasn1.Length
+            self.iLengthOfData = self.iLengthOfTotalData  # First element in structure
+            self.pdata = bytearray()
             # for i in range(iLengthOfData): pdata.append(0)
             for i in range(paramasn1.Length):
-                pdata.append(paramasn1.data[i])
+                self.pdata.append(paramasn1.data[i])
             # pdata = copy.deepcopy(paramasn1.data)
-            self.ptotaldata = pdata
+            self.ptotaldata = self.pdata
         else:
             asn1 = CASN1()
             result = asn1.CASN1p3(self.iLengthOfTotalData, self.pdata, self.iLengthOfTotalData + len(element.name) +
                                   element.length + 1)
-            # 1. asn  "name"
-            LengthOfAsn1 = len(element.name)
-            asn1.AppendASN1(LengthOfAsn1, element.ElementType, element.name.getBytes())
-            # 2. asn "value"
-            LengthOfAsn1 = element.length
-            if LengthOfAsn1 > 0:
-                asn1.AppendASN1(LengthOfAsn1, element.ElementType, element.value)
-                paramasn1 = data()
-                asn1.FetchTotalASN1(paramasn1)
-                self.iLengthOfTotalData = paramasn1.Length
+            if result != -1:
+                # 1. asn  "name"
+                LengthOfAsn1 = len(element.name)
+                asn1.AppendASN1(LengthOfAsn1, element.ElementType, element.name)
+                # 2. asn "value"
+                LengthOfAsn1 = element.length
+                if LengthOfAsn1 > 0:
+                    asn1.AppendASN1(LengthOfAsn1, element.ElementType, element.value)
+                    paramasn1 = data()
+                    asn1.FetchTotalASN1(paramasn1)
+                    self.iLengthOfTotalData = paramasn1.Length
+                    if self.iLengthOfTotalData > 0:
+                        pdata = bytearray()
+                        for i in range(self.iLengthOfTotalData):
+                            pdata.append(paramasn1.data[i])
+                        self.ptotaldata = pdata
                 if self.iLengthOfTotalData > 0:
-                    pdata = bytearray()
-                    for i in range(self.iLengthOfTotalData):
-                        pdata.append(paramasn1.data[i])
-                    self.ptotaldata = pdata
-            if self.iLengthOfTotalData > 0:
-                result = self.iLengthOfTotalData
+                    result = self.iLengthOfTotalData
         return result
 
     def encodetypes(self, name, value, length, elementtype):
@@ -347,8 +344,13 @@ class DEDEncoder(object):
         return self.encoder
 
     def PUT_STRUCT_START(self, encoder_ptr, name):
-        result=-1
+        result = -1
         if encoder_ptr != 0:
             result = encoder_ptr.encodestructstart(name)
         return result
 
+    def PUT_STRUCT_END(self, encoder_ptr, name):
+        result = -1
+        if encoder_ptr != 0:
+            result = encoder_ptr.encodestructend(name)
+        return result
