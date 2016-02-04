@@ -25,13 +25,7 @@ else
     sudo rm -rf /var/lib/puppet/ssl/*
 
     # Configure /etc/hosts file
-    echo "" | sudo tee --append /etc/hosts 2> /dev/null && \
-    echo "# Host config for Puppet Master and Agent Nodes" | sudo tee --append /etc/hosts 2> /dev/null && \
-    echo "192.168.31.8    dops.puppet.master         puppet" | sudo tee --append /etc/hosts 2> /dev/null && \
-    echo "192.168.31.22   cloudchatmanager.com   cloudchatmanager" | sudo tee --append /etc/hosts 2> /dev/null && \
-    echo "192.168.31.23   cloudchatclient.com    cloudchatclient" | sudo tee --append /etc/hosts 2> /dev/null && \
-    echo "192.168.31.20   jenkins.scanva.com     jenkins" | sudo tee --append /etc/hosts 2> /dev/null
-
+    sudo bash /vagrant/confighosts.sh
 
     # Add agent section to /etc/puppet/puppet.conf
     echo "" | sudo tee --append /etc/puppet/puppet.conf 2> /dev/null && \
@@ -73,10 +67,17 @@ else
       echo "CloudChat installed"
       echo "Set up swapfile"
       sudo bash addswapfile.sh
-      echo "Install Jenkins"
-      wget -q -O - https://jenkins-ci.org/debian/jenkins-ci.org.key | sudo apt-key add -
-      sudo sh -c 'echo deb http://pkg.jenkins-ci.org/debian binary/ > /etc/apt/sources.list.d/jenkins.list'
-      sudo apt-get update -yq
-      sudo apt-get install -yq jenkins
+#      echo "Install Jenkins"
+#      wget -q -O - https://jenkins-ci.org/debian/jenkins-ci.org.key | sudo apt-key add -
+#      sudo sh -c 'echo deb http://pkg.jenkins-ci.org/debian binary/ > /etc/apt/sources.list.d/jenkins.list'
+#      sudo apt-get update -yq
+#      sudo apt-get install -yq jenkins
+
+      echo "fetch jenkins-cli"
+      wget -q http://jenkins.dops.scanva.com:8080/jnlpJars/jenkins-cli.jar 
+      echo "install jenkins cucumber plugin"
+      java -jar jenkins-cli.jar -s http://jenkins.dops.scanva.com:8080/ install-plugin cucumber-testresult-plugin
+      echo "restart jenkins"
+      java -jar jenkins-cli.jar -s http://jenkins.dops.scanva.com:8080/ restart
      fi
 fi
