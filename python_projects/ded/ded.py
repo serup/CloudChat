@@ -97,7 +97,8 @@ class CASN1:
                 for i in range(iLength):
                     self.ASN1Data.append(0)
                 self.pNextASN1 = 0  # First ASN1
-                for n in range(LengthOfData):
+                #for n in range(LengthOfData):
+                for n in range(len(pdata)):
                     self.ASN1Data[n] = pdata[n]  # copy data into new allocated space
                 self.pAppendPosition = 0    # make sure next asn appended to this is at the end, this will be calculated
                 # based on current content
@@ -129,12 +130,15 @@ class CASN1:
             self.ASN1Data[pAppendPosition + 3] = (LengthOfNewASN1Data >> 24 & 0x000000ff)
             self.ASN1Data[pAppendPosition + 4] = (Tag & 0x000000FF)  # unsigned char 8 bit  -- tag byte
 
-            if len(data) > 0:
-                for i in range(LengthOfNewASN1Data):
-                    self.ASN1Data[pAppendPosition + 4 + 1 + i] = data[i]
-                self.iLengthOfData = self.iLengthOfData + 4 + 1 + LengthOfNewASN1Data # Add new ASN1 to length : Length+tag+SizeofData
+            if type(data) is int:
+                self.ASN1Data[pAppendPosition + 4 + 1] = data
             else:
-                bresult = False
+                if len(data) > 0:
+                    for i in range(LengthOfNewASN1Data):
+                        self.ASN1Data[pAppendPosition + 4 + 1 + i] = data[i]
+                    self.iLengthOfData = self.iLengthOfData + 4 + 1 + LengthOfNewASN1Data # Add new ASN1 to length : Length+tag+SizeofData
+                else:
+                    bresult = False
         return bresult
 
     def FetchNextASN1(self, param): # Returns true if ASN1 was found, and false if not.
@@ -236,7 +240,7 @@ class DEDEncoder(object):
             self.ptotaldata = self.pdata
         else:
             asn1 = CASN1()
-            result = asn1.CASN1p3(self.iLengthOfTotalData, self.pdata, self.iLengthOfTotalData + len(element.name) +
+            result = asn1.CASN1p3(self.iLengthOfTotalData, self.ptotaldata, self.iLengthOfTotalData + len(element.name) +
                                   element.length + 1)
             if result != -1:
                 # 1. asn  "name"
@@ -279,8 +283,8 @@ class DEDEncoder(object):
         return result
 
     def encodeelement(self, entityname, elementname, elementvalue):
-        strentity_chunk_id = basestring.lower(entityname) + "_chunk_id"
-        strentity_chunk_data = basestring.lower(entityname) + "_chunk_data"
+        strentity_chunk_id = entityname.lower() + "_chunk_id"
+        strentity_chunk_data = entityname.lower() + "_chunk_data"
         result = self.encodetype(strentity_chunk_id, elementname, len(elementname), "DED_ELEMENT_TYPE_STDSTRING")
         if result != -1:
             result = self.encodetype(strentity_chunk_data, elementvalue, len(elementvalue), "DED_ELEMENT_TYPE_STDVECTOR")
@@ -359,4 +363,36 @@ class DEDEncoder(object):
         result = -1
         if encoder_ptr != 0:
             result = self.encodetype(name, value, len(value), "DED_ELEMENT_TYPE_METHOD")
+        return result
+
+    def PUT_USHORT(self, encoder_ptr, name, value):
+        result = -1
+        if encoder_ptr != 0:
+            result = self.encodetype(name, value, 1, "DED_ELEMENT_TYPE_USHORT")
+        return result
+
+    def PUT_LONG(self, encoder_ptr, name, value):
+        result = -1
+        if encoder_ptr != 0:
+            result = self.encodetype(name, value, 1, "DED_ELEMENT_TYPE_LONG")
+        return result
+
+    def PUT_BOOL(self, encoder_ptr, name, value):
+        result = -1
+        if encoder_ptr != 0:
+            result = self.encodetype(name, value, 1, "DED_ELEMENT_TYPE_BOOL")
+        return result
+
+    def PUT_STDSTRING(self, encoder_ptr, name, value):
+        result = -1
+        if encoder_ptr != 0:
+            if value == "":
+                value = "##empty##"
+            result = self.encodetype(name, value, len(value), "DED_ELEMENT_TYPE_STDSTRING")
+        return result
+
+    def PUT_ELEMENT(self, encoder_ptr, entityname, elementname, elementvalue):
+        result = -1
+        if encoder_ptr != 0:
+            result = self.encodeelement(entityname, elementname, elementvalue)
         return result
