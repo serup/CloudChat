@@ -60,3 +60,9 @@ class DEDTest(unittest.TestCase):
         result = DED.PUT_STDSTRING(DED, "stdstring", "hello world")
         self.assertTrue(result > 0, result)
 
+    def testDED_PUT_ELEMENT(self):
+        DED = ded.DEDEncoder()
+        result = DED.PUT_STRUCT_START(DED, "event")
+        self.assertTrue(result == 1, result)
+        result = DED.PUT_ELEMENT(DED, "profile", "username",  "johndoe")
+        self.assertTrue(result > 0, result)
