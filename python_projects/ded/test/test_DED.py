@@ -31,3 +31,12 @@ class DEDTest(unittest.TestCase):
         self.assertTrue(result == 1, result)
         result = DED.PUT_METHOD(DED, "method", "mediaplayer")
         self.assertTrue(result > 0, result)
+
+    def testDED_PUT_USHORT(self):
+        DED = ded.DEDEncoder()
+        result = DED.PUT_STRUCT_START(DED, "event")
+        self.assertTrue(result == 1, result)
+        result = DED.PUT_USHORT(DED, "ushort", 1)
+        self.assertTrue(result > 0, result)
+
+
