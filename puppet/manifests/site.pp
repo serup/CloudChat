@@ -243,12 +243,62 @@ node /^jenkins.*/ {
   # puppet apply /vagrant/puppet/manifests/site.pp --modulepath /vagrant/puppet/trunk/environments/devtest/modules/
 
   class { apache : } 
+ 
+#      wget -q -O - https://jenkins-ci.org/debian/jenkins-ci.org.key | sudo apt-key add -
+#      sudo sh -c 'echo deb http://pkg.jenkins-ci.org/debian binary/ > /etc/apt/sources.list.d/jenkins.list'
+#      sudo apt-get update -yq
+#      sudo apt-get install -yq jenkins
+ 
 
-  # NB! Needed BEFORE docker class, otherwise it will fail during install
+ 
+  exec { 'install_jenkins_package_keys':
+    command => '/usr/bin/wget -q -O - http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key | sudo /usr/bin/apt-key add - ',
+    #command => '/usr/bin/wget -q -O - https://jenkins-ci.org/debian/jenkins-ci.org.key | sudo /usr/bin/apt-key add - ',
+  }
+
+  exec { 'append_to_jenkins_list' :
+    command => '/usr/bin/sudo /bin/sh -c "/bin/echo deb http://pkg.jenkins-ci.org/debian binary/ > /etc/apt/sources.list.d/jenkins.list"',
+    require  => Exec['install_jenkins_package_keys'],
+  }
+
   exec { "apt-update":
-    command => "/usr/bin/apt-get update"
+    command => "/usr/bin/sudo apt-get update",
+    require  => Exec['append_to_jenkins_list'],
   }
   Exec["apt-update"] -> Package <| |>
+
+  exec { 'install_jenkins' :
+    command => '/usr/bin/apt-get install -yq jenkins',
+    require  => Exec['apt-update'],
+  }
+
+  service { 'jenkins':
+    ensure => running,
+    require  => Exec['install_jenkins'],
+  }
+
+#  exec { 'fetch_jenkins_cli' :
+#    path => ['/usr/bin', '/bin', '/sbin'],
+#    command => 'wget -q -O - http://jenkins.dops.scanva.com:8080/jnlpJars/jenkins-cli.jar -',
+#    require  => Exec['install_jenkins'],
+#  }
+
+#  exec { 'install_jenkins_plugin' : 
+#    path => ['/usr/bin', '/bin', '/sbin'],
+#    command => '/usr/bin/java -jar jenkins-cli.jar -s http://jenkins.dops.scanva.com:8080/ install-plugin cucumber-testresult-plugin',
+#    require  => Exec['fetch_jenkins_cli'],
+#  }
+#  
+#  exec { 'restart_jenkins' :
+#    command => '/usr/bin/java -jar jenkins-cli.jar -s http://jenkins.dops.scanva.com:8080/ restart',
+#    require  => Exec['install_jenkins_plugin'],
+#  }
+
+ 
+  class { 'cucumber':
+    version => 'latest',
+    require  => Exec['install_jenkins'],
+  }
 
   include sudo
   # Add adm group to sudoers with NOPASSWD

@@ -191,47 +191,28 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- Virtualbox guest addition installed"
 fi
-
-PKG_OK=$(cd; dpkg-query -W --showformat='${Status}\n' 2>&1 vagrant* |grep "install ok installed")
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 puppet-co* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
-  echo -n "- install vagrant "
-  sudo apt-get install -yq aria2
-  PLATFORM=$(uname -i)
-  if [ "i686" == "$PLATFORM" ]; then
-    aria2c -x 4 https://releases.hashicorp.com/vagrant/1.7.4/vagrant_1.7.4_i686.deb
-    sudo dpkg -i vagrant_1.7.4_i686.deb
-  else
-    #aria2c -x 4 https://dl.bintray.com/mitchellh/vagrant/vagrant_1.7.4_x86_64.deb
-    aria2c -x 4 https://releases.hashicorp.com/vagrant/1.7.4/vagrant_1.7.4_x86_64.deb
-    sudo dpkg -i vagrant_1.7.4_x86_64.deb
-  fi
-  vagrant version
+#  echo "puppetlabs-release was not found, now it will be installed - please wait..."
+  echo -n "- install puppetlabs-release "
+  sudo apt-get install -yq puppet-common
+#  wget https://apt.puppetlabs.com/puppetlabs-release-trusty.deb
+#  sudo dpkg -i puppetlabs-release-trusty.deb
+   wget https://apt.puppetlabs.com/puppetlabs-release-pc1-vivid.deb && \
+   sudo dpkg -i puppetlabs-release-pc1-vivid.deb && \
+   sudo apt-get update 
   echo " - done."
 else
-  echo "- vagrant installed"
-  echo "- destroy old setup, so new can run"
-  vagrant destroy
-  echo "- update vagrant box to newest version"
-  vagrant box update
+  echo "- puppetlabs-release installed"
 fi
-
-PLUGIN_OK=$(vagrant plugin list|grep vagrant-vbguest) 
-if [ "" == "$PLUGIN_OK" ]; then
-  echo -n "- install vagrant plugin vbguest"
-  sudo vagrant plugin install vagrant-vbguest
+MODULE_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep maestrodev-cucumber*)
+if [ "" == "$MODULE_OK" ]; then
+  echo -n "- install puppet-cucumber"
+  puppet module install maestrodev-cucumber --modulepath ./puppet/trunk/environments/devtest/modules
   echo " - done."
 else
-  echo "- vagrant plugin vbguest installed"
+  echo "- maestrodev-cucumber puppet module installed"
 fi
-VBOX_OK=$(vagrant box list|awk 'BEGIN {strtmp=$1} END {print $strtmp}')
-if [ "" == "$VBOX_OK" ]; then
-  echo "vbox not found - installing.."
-  #vagrant box add ubuntu/trusty64 https://atlas.hashicorp.com/ubuntu/boxes/trusty64/versions/14.04/providers/virtualbox.box
-  vagrant box add ubuntu/vivid32 
-else
-  echo "- vbox installed"
-fi
-
 MODULE_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep leonardothibes-jekyll)
 if [ "" == "$MODULE_OK" ]; then
   echo -n "- install leonardothibes-jekyll"
@@ -284,20 +265,6 @@ else
   echo "- puppetlabs-ruby puppet module installed"
 fi
 
-PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 puppet-co* |grep "install ok installed")
-if [ "" == "$PKG_OK" ]; then
-#  echo "puppetlabs-release was not found, now it will be installed - please wait..."
-  echo -n "- install puppetlabs-release "
-  sudo apt-get install -yq puppet-common
-#  wget https://apt.puppetlabs.com/puppetlabs-release-trusty.deb
-#  sudo dpkg -i puppetlabs-release-trusty.deb
-   wget https://apt.puppetlabs.com/puppetlabs-release-pc1-vivid.deb && \
-   sudo dpkg -i puppetlabs-release-pc1-vivid.deb && \
-   sudo apt-get update 
-  echo " - done."
-else
-  echo "- puppetlabs-release installed"
-fi
 SAZ_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep saz-sudo)
 if [ "" == "$SAZ_OK" ]; then
   echo -n "- install saz/sudo"
@@ -444,6 +411,46 @@ else
   echo "- mogrify installed"
 fi
 
+
+PKG_OK=$(cd; dpkg-query -W --showformat='${Status}\n' 2>&1 vagrant* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install vagrant "
+  sudo apt-get install -yq aria2
+  PLATFORM=$(uname -i)
+  if [ "i686" == "$PLATFORM" ]; then
+    aria2c -x 4 https://releases.hashicorp.com/vagrant/1.7.4/vagrant_1.7.4_i686.deb
+    sudo dpkg -i vagrant_1.7.4_i686.deb
+  else
+    #aria2c -x 4 https://dl.bintray.com/mitchellh/vagrant/vagrant_1.7.4_x86_64.deb
+    aria2c -x 4 https://releases.hashicorp.com/vagrant/1.7.4/vagrant_1.7.4_x86_64.deb
+    sudo dpkg -i vagrant_1.7.4_x86_64.deb
+  fi
+  vagrant version
+  echo " - done."
+else
+  echo "- vagrant installed"
+  echo "- destroy old setup, so new can run"
+  vagrant destroy
+  echo "- update vagrant box to newest version"
+  vagrant box update
+fi
+
+PLUGIN_OK=$(vagrant plugin list|grep vagrant-vbguest) 
+if [ "" == "$PLUGIN_OK" ]; then
+  echo -n "- install vagrant plugin vbguest"
+  sudo vagrant plugin install vagrant-vbguest
+  echo " - done."
+else
+  echo "- vagrant plugin vbguest installed"
+fi
+VBOX_OK=$(vagrant box list|awk 'BEGIN {strtmp=$1} END {print $strtmp}')
+if [ "" == "$VBOX_OK" ]; then
+  echo "vbox not found - installing.."
+  #vagrant box add ubuntu/trusty64 https://atlas.hashicorp.com/ubuntu/boxes/trusty64/versions/14.04/providers/virtualbox.box
+  vagrant box add ubuntu/vivid32 
+else
+  echo "- vbox installed"
+fi
 echo "******************************************************************************************************************"
 echo "environment is now ready! you may run vagrant up and then vagrant up cloudchatmanager, vagrant up cloudchatclient"
 echo "******************************************************************************************************************"
