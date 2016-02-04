@@ -381,3 +381,11 @@ class DEDEncoder(object):
         if encoder_ptr != 0:
             result = self.encodetype(name, value, 1, "DED_ELEMENT_TYPE_BOOL")
         return result
+
+    def PUT_STDSTRING(self, encoder_ptr, name, value):
+        result = -1
+        if encoder_ptr != 0:
+            if value == "":
+                value = "##empty##"
+            result = self.encodetype(name, value, len(value), "DED_ELEMENT_TYPE_STDSTRING")
+        return result
