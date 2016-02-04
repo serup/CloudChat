@@ -53,3 +53,10 @@ class DEDTest(unittest.TestCase):
         result = DED.PUT_BOOL(DED, "bool", 1)
         self.assertTrue(result > 0, result)
 
+    def testDED_PUT_STDSTRING(self):
+        DED = ded.DEDEncoder()
+        result = DED.PUT_STRUCT_START(DED, "event")
+        self.assertTrue(result == 1, result)
+        result = DED.PUT_STDSTRING(DED, "stdstring", "hello world")
+        self.assertTrue(result > 0, result)
+
