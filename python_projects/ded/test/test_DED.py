@@ -39,4 +39,11 @@ class DEDTest(unittest.TestCase):
         result = DED.PUT_USHORT(DED, "ushort", 1)
         self.assertTrue(result > 0, result)
 
+    def testDED_PUT_LONG(self):
+        DED = ded.DEDEncoder()
+        result = DED.PUT_STRUCT_START(DED, "event")
+        self.assertTrue(result == 1, result)
+        result = DED.PUT_LONG(DED, "long", 1)
+        self.assertTrue(result > 0, result)
+
 

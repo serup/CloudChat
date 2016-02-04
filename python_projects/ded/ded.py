@@ -370,3 +370,8 @@ class DEDEncoder(object):
             result = self.encodetype(name, value, 1, "DED_ELEMENT_TYPE_USHORT")
         return result
 
+    def PUT_LONG(self, encoder_ptr, name, value):
+        result = -1
+        if encoder_ptr != 0:
+            result = self.encodetype(name, value, 1, "DED_ELEMENT_TYPE_LONG")
+        return result
