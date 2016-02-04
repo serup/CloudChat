@@ -375,3 +375,9 @@ class DEDEncoder(object):
         if encoder_ptr != 0:
             result = self.encodetype(name, value, 1, "DED_ELEMENT_TYPE_LONG")
         return result
+
+    def PUT_BOOL(self, encoder_ptr, name, value):
+        result = -1
+        if encoder_ptr != 0:
+            result = self.encodetype(name, value, 1, "DED_ELEMENT_TYPE_BOOL")
+        return result
