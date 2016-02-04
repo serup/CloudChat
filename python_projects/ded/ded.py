@@ -129,12 +129,15 @@ class CASN1:
             self.ASN1Data[pAppendPosition + 3] = (LengthOfNewASN1Data >> 24 & 0x000000ff)
             self.ASN1Data[pAppendPosition + 4] = (Tag & 0x000000FF)  # unsigned char 8 bit  -- tag byte
 
-            if len(data) > 0:
-                for i in range(LengthOfNewASN1Data):
-                    self.ASN1Data[pAppendPosition + 4 + 1 + i] = data[i]
-                self.iLengthOfData = self.iLengthOfData + 4 + 1 + LengthOfNewASN1Data # Add new ASN1 to length : Length+tag+SizeofData
+            if type(data) is int:
+                self.ASN1Data[pAppendPosition + 4 + 1] = data
             else:
-                bresult = False
+                if len(data) > 0:
+                    for i in range(LengthOfNewASN1Data):
+                        self.ASN1Data[pAppendPosition + 4 + 1 + i] = data[i]
+                    self.iLengthOfData = self.iLengthOfData + 4 + 1 + LengthOfNewASN1Data # Add new ASN1 to length : Length+tag+SizeofData
+                else:
+                    bresult = False
         return bresult
 
     def FetchNextASN1(self, param): # Returns true if ASN1 was found, and false if not.
@@ -360,3 +363,10 @@ class DEDEncoder(object):
         if encoder_ptr != 0:
             result = self.encodetype(name, value, len(value), "DED_ELEMENT_TYPE_METHOD")
         return result
+
+    def PUT_USHORT(self, encoder_ptr, name, value):
+        result = -1
+        if encoder_ptr != 0:
+            result = self.encodetype(name, value, 1, "DED_ELEMENT_TYPE_USHORT")
+        return result
+
