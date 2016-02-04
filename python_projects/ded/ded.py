@@ -97,7 +97,8 @@ class CASN1:
                 for i in range(iLength):
                     self.ASN1Data.append(0)
                 self.pNextASN1 = 0  # First ASN1
-                for n in range(LengthOfData):
+                #for n in range(LengthOfData):
+                for n in range(len(pdata)):
                     self.ASN1Data[n] = pdata[n]  # copy data into new allocated space
                 self.pAppendPosition = 0    # make sure next asn appended to this is at the end, this will be calculated
                 # based on current content
@@ -239,7 +240,7 @@ class DEDEncoder(object):
             self.ptotaldata = self.pdata
         else:
             asn1 = CASN1()
-            result = asn1.CASN1p3(self.iLengthOfTotalData, self.pdata, self.iLengthOfTotalData + len(element.name) +
+            result = asn1.CASN1p3(self.iLengthOfTotalData, self.ptotaldata, self.iLengthOfTotalData + len(element.name) +
                                   element.length + 1)
             if result != -1:
                 # 1. asn  "name"
@@ -282,8 +283,8 @@ class DEDEncoder(object):
         return result
 
     def encodeelement(self, entityname, elementname, elementvalue):
-        strentity_chunk_id = basestring.lower(entityname) + "_chunk_id"
-        strentity_chunk_data = basestring.lower(entityname) + "_chunk_data"
+        strentity_chunk_id = entityname.lower() + "_chunk_id"
+        strentity_chunk_data = entityname.lower() + "_chunk_data"
         result = self.encodetype(strentity_chunk_id, elementname, len(elementname), "DED_ELEMENT_TYPE_STDSTRING")
         if result != -1:
             result = self.encodetype(strentity_chunk_data, elementvalue, len(elementvalue), "DED_ELEMENT_TYPE_STDVECTOR")
@@ -388,4 +389,10 @@ class DEDEncoder(object):
             if value == "":
                 value = "##empty##"
             result = self.encodetype(name, value, len(value), "DED_ELEMENT_TYPE_STDSTRING")
+        return result
+
+    def PUT_ELEMENT(self, encoder_ptr, entityname, elementname, elementvalue):
+        result = -1
+        if encoder_ptr != 0:
+            result = self.encodeelement(entityname, elementname, elementvalue)
         return result
