@@ -72,19 +72,9 @@ fi
     echo "- Result:"
     free -m
 
-    echo "****************"
-    echo "  JEKYLL SETUP"
-    echo "****************"
-    sudo jekyll new jekyll_info_site
-    cd jekyll_info_site
-    sudo jekyll build -d /var/www/html --incremental
-    echo "/usr/local/bin/jekyll build --watch -s /home/vagrant/jekyll_info_site -d /var/www/" | sudo tee --append /etc/rc.local 2> /dev/null 
-
     echo "**********************************************************************************************************************"
 
     sudo ssh-keygen -t dsa -P '' -f ~/.ssh/id_dsa
     sudo cat ~/.ssh/id_dsa.pub >> ~/.ssh/authorized_keys
 
     echo "*******************************"
-
-

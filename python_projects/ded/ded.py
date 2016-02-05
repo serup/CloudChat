@@ -10,7 +10,7 @@
 #    Please send me your improved versions.
 #**************************************************************/
 import copy
-
+from compression import lzss
 from array import array
 
 # Element types
@@ -210,6 +210,12 @@ class asn:
     Tag = 0
     data = 0
 
+class CDataEncoder():
+   pdata = 0
+   iLengthOfData = 0
+   ptotaldata = 0
+   iLengthOfTotalData = 0
+   asn1 = 0  # used in decoder
 
 class DEDEncoder(object):
     encoder = 0
@@ -339,8 +345,16 @@ class DEDEncoder(object):
                                 result = 1
         return result
 
+    def DataEncoder_GetData(self, DEDobject):
+        result = -1
+        if len(self.ptotaldata) > 0:
+            DEDobject.iLengthOfTotalData = self.iLengthOfTotalData
+            DEDobject.uncompresseddata = self.ptotaldata
+            result = self.ptotaldata
+        return result
+
     ###############################################################
-    # DEFINES                                                     #
+    # PUT DEFINES                                                 #
     ###############################################################
 
     def DED_START_ENCODER(self):
@@ -396,3 +410,29 @@ class DEDEncoder(object):
         if encoder_ptr != 0:
             result = self.encodeelement(entityname, elementname, elementvalue)
         return result
+
+    def PUT_DATA_IN_DECODER(self, pCompressedData, sizeofCompressedData):
+        decoder_ptr = self
+        decomprsd = bytearray(lzss.decode(pCompressedData, 0, sizeofCompressedData))
+        if len(decomprsd) > 0:
+            decoder_ptr.ptotaldata = decomprsd
+            decoder_ptr.pdata = decomprsd
+            decoder_ptr.iLengthOfTotalData = len(decomprsd)
+        return decoder_ptr
+
+    ###############################################################
+    # GET DEFINES                                                 #
+    ###############################################################
+
+    def GET_ENCODED_DATA(self):
+        DEDobj = self.DEDobject
+        DEDobj.uncompresseddata = self.DataEncoder_GetData(DEDobj)
+
+        # Do compression - okumura style
+        DEDobj.pCompressedData = bytearray(lzss.encode(DEDobj.uncompresseddata, 0, len(DEDobj.uncompresseddata)))
+        if DEDobj.pCompressedData <= 0:
+            # somehow compression went wrong !!!! ignore and just use uncompressed data - perhaps data was already compressed !?
+            DEDobj.pCompressedData = DEDobj.uncompresseddata
+
+        return DEDobj
+
