@@ -414,8 +414,7 @@ class DEDEncoder(object):
         DEDobj.uncompresseddata = self.DataEncoder_GetData(DEDobj)
 
         # Do compression - okumura style
-        DEDobj.pCompressedData = lzss.encode(DEDobj.uncompresseddata, 0, len(DEDobj.uncompresseddata))
-
+        DEDobj.pCompressedData = bytearray(lzss.encode(DEDobj.uncompresseddata, 0, len(DEDobj.uncompresseddata)))
         if DEDobj.pCompressedData <= 0:
             # somehow compression went wrong !!!! ignore and just use uncompressed data - perhaps data was already compressed !?
             DEDobj.pCompressedData = DEDobj.uncompresseddata
