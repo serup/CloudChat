@@ -191,7 +191,7 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- Virtualbox guest addition installed"
 fi
-PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 puppet-co* |grep "install ok installed")
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 puppetlabs-r* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
 #  echo "puppetlabs-release was not found, now it will be installed - please wait..."
   echo -n "- install puppetlabs-release "
@@ -204,6 +204,30 @@ if [ "" == "$PKG_OK" ]; then
   echo " - done."
 else
   echo "- puppetlabs-release installed"
+fi
+MODULE_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep puppetlabs-stdlib*)
+if [ "" == "$MODULE_OK" ]; then
+  echo -n "- install puppetlabs-stdlib"
+  puppet module install puppetlabs-stdlib  --modulepath ./puppet/trunk/environments/devtest/modules
+  echo " - done."
+else
+  echo "- puppetlabs-stdlib puppet module installed"
+fi
+MODULE_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep puppetlabs-apache*)
+if [ "" == "$MODULE_OK" ]; then
+  echo -n "- install puppetlabs-apache"
+  puppet module install puppetlabs-apache  --modulepath ./puppet/trunk/environments/devtest/modules
+  echo " - done."
+else
+  echo "- puppetlabs-apache puppet module installed"
+fi
+MODULE_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep jfryman-nginx*)
+if [ "" == "$MODULE_OK" ]; then
+  echo -n "- install  jfryman-nginx"
+  puppet module install  jfryman-nginx --modulepath ./puppet/trunk/environments/devtest/modules
+  echo " - done."
+else
+  echo "-  pjfryman-nginx puppet module installed"
 fi
 MODULE_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep maestrodev-cucumber*)
 if [ "" == "$MODULE_OK" ]; then
@@ -221,32 +245,6 @@ if [ "" == "$MODULE_OK" ]; then
 else
   echo "- leonardothibes-jekyll puppet module installed"
 fi
-MODULE_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep puppetlabs-stdlib)
-if [ "" == "$MODULE_OK" ]; then
-  echo -n "- install puppetlabs-apache"
-  puppet module install puppetlabs-apache  --modulepath ./puppet/trunk/environments/devtest/modules
-  echo " - done."
-else
-  echo "- puppetlabs-apache puppet module installed"
-fi
-
-MODULE_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep puppetlabs-apache)
-if [ "" == "$MODULE_OK" ]; then
-  echo -n "- install puppetlabs-apache"
-  puppet module install puppetlabs-apache --modulepath ./puppet/trunk/environments/devtest/modules
-  echo " - done."
-else
-  echo "- puppetlabs-apache puppet module installed"
-fi
-MODULE_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep puppetlabs-stdlib)
-if [ "" == "$MODULE_OK" ]; then
-  echo -n "- install puppetlabs-apache"
-  puppet module install puppetlabs-apache  --modulepath ./puppet/trunk/environments/devtest/modules
-  echo " - done."
-else
-  echo "- puppetlabs-apache puppet module installed"
-fi
-
 MODULE_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep puppetlabs-stdlib)
 if [ "" == "$MODULE_OK" ]; then
   echo -n "- install puppetlabs-stdlib"
