@@ -339,6 +339,13 @@ class DEDEncoder(object):
                                 result = 1
         return result
 
+    def DataEncoder_GetData(self, DEDobject):
+        result = -1
+        if len(self.ptotaldata) > 0:
+            DEDobject.iLengthOfTotalData = self.iLengthOfTotalData
+            result = self.ptotaldata
+        return result
+
     ###############################################################
     # DEFINES                                                     #
     ###############################################################
