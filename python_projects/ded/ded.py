@@ -210,6 +210,12 @@ class asn:
     Tag = 0
     data = 0
 
+class CDataEncoder():
+   pdata = 0
+   iLengthOfData = 0
+   ptotaldata = 0
+   iLengthOfTotalData = 0
+   asn1 = 0  # used in decoder
 
 class DEDEncoder(object):
     encoder = 0
@@ -405,6 +411,15 @@ class DEDEncoder(object):
             result = self.encodeelement(entityname, elementname, elementvalue)
         return result
 
+    def PUT_DATA_IN_DECODER(self, pCompressedData, sizeofCompressedData):
+        decoder_ptr = self
+        decomprsd = bytearray(lzss.decode(pCompressedData, 0, sizeofCompressedData))
+        if len(decomprsd) > 0:
+            decoder_ptr.ptotaldata = decomprsd
+            decoder_ptr.pdata = decomprsd
+            decoder_ptr.iLengthOfTotalData = len(decomprsd)
+        return decoder_ptr
+
     ###############################################################
     # GET DEFINES                                                 #
     ###############################################################
@@ -420,3 +435,4 @@ class DEDEncoder(object):
             DEDobj.pCompressedData = DEDobj.uncompresseddata
 
         return DEDobj
+
