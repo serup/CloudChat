@@ -3,6 +3,7 @@
     echo "# Host config for Puppet Master and Agent Nodes" | sudo tee --append /etc/hosts 2> /dev/null && \
     echo "192.168.31.8    dops.puppet.master               puppet" | sudo tee --append /etc/hosts 2> /dev/null && \
     echo "192.168.31.15   jekyll.dops.scanva.com           jekyll" | sudo tee --append /etc/hosts 2> /dev/null && \
+    echo "192.168.31.16   nginx.dops.scanva.com            nginx" | sudo tee --append /etc/hosts 2> /dev/null && \
     echo "192.168.0.101   one.cluster                      hadoop1" | sudo tee --append /etc/hosts 2> /dev/null && \
     echo "192.168.0.102   two.cluster                      hadoop2" | sudo tee --append /etc/hosts 2> /dev/null && \
     echo "192.168.0.103   three.cluster                    hadoop3" | sudo tee --append /etc/hosts 2> /dev/null && \
