@@ -116,3 +116,21 @@ class DEDTest(unittest.TestCase):
         # verify that data is inside decoder, and that it has been decompressed correct
         self.assertTrue(True, DED2.ptotaldata == DEDobj.uncompresseddata)
 
+    def testGET_STRUCT_START(self):
+        DED = ded.DEDEncoder()
+        result = DED.PUT_STRUCT_START(DED, "event")
+        self.assertTrue(result == 1, result)
+        result = DED.PUT_ELEMENT(DED, "profile", "username",  "johndoe")
+        self.assertTrue(result > 0, result)
+        DEDobj = DED.GET_ENCODED_DATA()
+
+        # simulate transmitting data ....
+        # simulate receiving data ....
+
+        DED2 = ded.DEDEncoder()
+        DED2.PUT_DATA_IN_DECODER(DEDobj.pCompressedData, len(DEDobj.pCompressedData))
+        # verify that data is inside decoder, and that it has been decompressed correct
+        self.assertTrue(True, DED2.ptotaldata == DEDobj.uncompresseddata)
+
+        # start decoding
+        DED2.GET_STRUCT_START("event")  # TODO: - not finished

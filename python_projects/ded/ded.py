@@ -436,3 +436,5 @@ class DEDEncoder(object):
 
         return DEDobj
 
+    def GET_STRUCT_START(self, name):
+        return 0
