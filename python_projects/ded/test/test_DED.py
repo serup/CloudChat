@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 from ded import ded
+from compression import lzss
 import unittest
 import sys
 sys.path[0:0] = [""]
@@ -94,3 +95,7 @@ class DEDTest(unittest.TestCase):
         DEDobj = DED.GET_ENCODED_DATA()
         self.assertTrue(DEDobj.uncompresseddata > 0, DEDobj.uncompresseddata)
         self.assertTrue(DEDobj.pCompressedData > 0, DEDobj.pCompressedData)
+
+        # verify that the compressed data is same as uncompressed when decompressed
+        tmpdecode = bytearray(lzss.decode(DEDobj.pCompressedData, 0, len(DEDobj.pCompressedData)))
+        self.assertTrue(DEDobj.uncompresseddata == tmpdecode, tmpdecode)
