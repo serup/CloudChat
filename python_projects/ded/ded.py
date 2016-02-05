@@ -10,7 +10,7 @@
 #    Please send me your improved versions.
 #**************************************************************/
 import copy
-
+from compression import lzss
 from array import array
 
 # Element types
@@ -343,11 +343,12 @@ class DEDEncoder(object):
         result = -1
         if len(self.ptotaldata) > 0:
             DEDobject.iLengthOfTotalData = self.iLengthOfTotalData
+            DEDobject.uncompresseddata = self.ptotaldata
             result = self.ptotaldata
         return result
 
     ###############################################################
-    # DEFINES                                                     #
+    # PUT DEFINES                                                 #
     ###############################################################
 
     def DED_START_ENCODER(self):
@@ -403,3 +404,20 @@ class DEDEncoder(object):
         if encoder_ptr != 0:
             result = self.encodeelement(entityname, elementname, elementvalue)
         return result
+
+    ###############################################################
+    # GET DEFINES                                                 #
+    ###############################################################
+
+    def GET_ENCODED_DATA(self):
+        DEDobj = self.DEDobject
+        DEDobj.uncompresseddata = self.DataEncoder_GetData(DEDobj)
+
+        # Do compression - okumura style
+        DEDobj.pCompressedData = lzss.encode(DEDobj.uncompresseddata, 0, len(DEDobj.uncompresseddata))
+
+        if DEDobj.pCompressedData <= 0:
+            # somehow compression went wrong !!!! ignore and just use uncompressed data - perhaps data was already compressed !?
+            DEDobj.pCompressedData = DEDobj.uncompresseddata
+
+        return DEDobj

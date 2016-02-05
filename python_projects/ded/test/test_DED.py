@@ -84,3 +84,13 @@ class DEDTest(unittest.TestCase):
         uncompresseddata = DED.DataEncoder_GetData(DEDobj)
 
         self.assertTrue(True, uncompresseddata != 0)
+
+    def testDED_GET_ENCODED_DATA(self):
+        DED = ded.DEDEncoder()
+        result = DED.PUT_STRUCT_START(DED, "event")
+        self.assertTrue(result == 1, result)
+        result = DED.PUT_ELEMENT(DED, "profile", "username",  "johndoe")
+        self.assertTrue(result > 0, result)
+        DEDobj = DED.GET_ENCODED_DATA()
+        self.assertTrue(DEDobj.uncompresseddata > 0, DEDobj.uncompresseddata)
+        self.assertTrue(DEDobj.pCompressedData > 0, DEDobj.pCompressedData)
