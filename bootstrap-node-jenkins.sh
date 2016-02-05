@@ -1,9 +1,6 @@
 #!/bin/sh
 
-# Run on VM to bootstrap Puppet Agent nodes
-
 sudo rm -rf /var/lib/puppet/ssl/*
-
 sudo cp /vagrant/sources.list /etc/apt/sources.list
 
 if ps aux | grep "puppet agent" | grep -v grep 2> /dev/null
@@ -73,8 +70,8 @@ else
 #      sudo apt-get update -yq
 #      sudo apt-get install -yq jenkins
 
-      echo "fetch jenkins-cli"
-      wget -q http://jenkins.dops.scanva.com:8080/jnlpJars/jenkins-cli.jar 
+      echo "fetch jenkins-cli - NB! this file will be fetched, however it will NOT reside on system afterwards"
+      sudo wget -q http://jenkins.dops.scanva.com:8080/jnlpJars/jenkins-cli.jar
       echo "install jenkins cucumber plugin"
       java -jar jenkins-cli.jar -s http://jenkins.dops.scanva.com:8080/ install-plugin cucumber-testresult-plugin
       echo "restart jenkins"

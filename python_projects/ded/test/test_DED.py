@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 from ded import ded
+from compression import lzss
 import unittest
 import sys
 sys.path[0:0] = [""]
@@ -66,3 +67,52 @@ class DEDTest(unittest.TestCase):
         self.assertTrue(result == 1, result)
         result = DED.PUT_ELEMENT(DED, "profile", "username",  "johndoe")
         self.assertTrue(result > 0, result)
+
+    # DEDobject = {
+    #	encoder_ptr: encoder_ptr,
+    #	uncompresseddata: ,
+    #	iLengthOfTotalData: ,
+    #	pCompressedData: ,
+    #	sizeofCompressedData:
+    # }
+    def testDataEncoder_GetData(self):
+        DED = ded.DEDEncoder()
+        result = DED.PUT_STRUCT_START(DED, "event")
+        self.assertTrue(result == 1, result)
+        result = DED.PUT_ELEMENT(DED, "profile", "username",  "johndoe")
+        self.assertTrue(result > 0, result)
+        DEDobj = DED.DEDobject
+        uncompresseddata = DED.DataEncoder_GetData(DEDobj)
+
+        self.assertTrue(True, uncompresseddata != 0)
+
+    def testDED_GET_ENCODED_DATA(self):
+        DED = ded.DEDEncoder()
+        result = DED.PUT_STRUCT_START(DED, "event")
+        self.assertTrue(result == 1, result)
+        result = DED.PUT_ELEMENT(DED, "profile", "username",  "johndoe")
+        self.assertTrue(result > 0, result)
+        DEDobj = DED.GET_ENCODED_DATA()
+        self.assertTrue(DEDobj.uncompresseddata > 0, DEDobj.uncompresseddata)
+        self.assertTrue(DEDobj.pCompressedData > 0, DEDobj.pCompressedData)
+
+        # verify that the compressed data is same as uncompressed when decompressed
+        tmpdecode = bytearray(lzss.decode(DEDobj.pCompressedData, 0, len(DEDobj.pCompressedData)))
+        self.assertTrue(DEDobj.uncompresseddata == tmpdecode, tmpdecode)
+
+    def testPUT_DATA_IN_DECODER(self):
+        DED = ded.DEDEncoder()
+        result = DED.PUT_STRUCT_START(DED, "event")
+        self.assertTrue(result == 1, result)
+        result = DED.PUT_ELEMENT(DED, "profile", "username",  "johndoe")
+        self.assertTrue(result > 0, result)
+        DEDobj = DED.GET_ENCODED_DATA()
+
+        # simulate transmitting data ....
+        # simulate receiving data ....
+
+        DED2 = ded.DEDEncoder()
+        DED2.PUT_DATA_IN_DECODER(DEDobj.pCompressedData, len(DEDobj.pCompressedData))
+        # verify that data is inside decoder, and that it has been decompressed correct
+        self.assertTrue(True, DED2.ptotaldata == DEDobj.uncompresseddata)
+
