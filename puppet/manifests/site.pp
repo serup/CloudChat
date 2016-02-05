@@ -242,6 +242,15 @@ node /^jenkins.*/ {
   # howto manually apply this manifest file -- make sure you are sudo
   # puppet apply /vagrant/puppet/manifests/site.pp --modulepath /vagrant/puppet/trunk/environments/devtest/modules/
 
+  include git
+  include sudo
+  
+  # Add adm group to sudoers with NOPASSWD
+  sudo::conf { 'vagrant':
+    priority => 01,
+    content  => "vagrant ALL=(ALL) NOPASSWD: ALL",
+  }
+
   class { apache : } 
  
 #      wget -q -O - https://jenkins-ci.org/debian/jenkins-ci.org.key | sudo apt-key add -
@@ -249,14 +258,14 @@ node /^jenkins.*/ {
 #      sudo apt-get update -yq
 #      sudo apt-get install -yq jenkins
  
-
- 
   exec { 'install_jenkins_package_keys':
-    command => '/usr/bin/wget -q -O - http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key | sudo /usr/bin/apt-key add - ',
+    path => ['/usr/bin', '/bin', '/sbin'],
+    command => 'wget -q -O - http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key | sudo apt-key add - ',
     #command => '/usr/bin/wget -q -O - https://jenkins-ci.org/debian/jenkins-ci.org.key | sudo /usr/bin/apt-key add - ',
   }
 
   exec { 'append_to_jenkins_list' :
+    path => ['/usr/bin', '/bin', '/sbin'],
     command => '/usr/bin/sudo /bin/sh -c "/bin/echo deb http://pkg.jenkins-ci.org/debian binary/ > /etc/apt/sources.list.d/jenkins.list"',
     require  => Exec['install_jenkins_package_keys'],
   }
@@ -293,21 +302,11 @@ node /^jenkins.*/ {
 #    command => '/usr/bin/java -jar jenkins-cli.jar -s http://jenkins.dops.scanva.com:8080/ restart',
 #    require  => Exec['install_jenkins_plugin'],
 #  }
-
  
   class { 'cucumber':
     version => 'latest',
     require  => Exec['install_jenkins'],
   }
-
-  include sudo
-  # Add adm group to sudoers with NOPASSWD
-  sudo::conf { 'vagrant':
-    priority => 01,
-    content  => "vagrant ALL=(ALL) NOPASSWD: ALL",
-  }
-
-  include git
 
 }
 
