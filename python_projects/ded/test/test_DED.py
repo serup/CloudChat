@@ -99,3 +99,20 @@ class DEDTest(unittest.TestCase):
         # verify that the compressed data is same as uncompressed when decompressed
         tmpdecode = bytearray(lzss.decode(DEDobj.pCompressedData, 0, len(DEDobj.pCompressedData)))
         self.assertTrue(DEDobj.uncompresseddata == tmpdecode, tmpdecode)
+
+    def testPUT_DATA_IN_DECODER(self):
+        DED = ded.DEDEncoder()
+        result = DED.PUT_STRUCT_START(DED, "event")
+        self.assertTrue(result == 1, result)
+        result = DED.PUT_ELEMENT(DED, "profile", "username",  "johndoe")
+        self.assertTrue(result > 0, result)
+        DEDobj = DED.GET_ENCODED_DATA()
+
+        # simulate transmitting data ....
+        # simulate receiving data ....
+
+        DED2 = ded.DEDEncoder()
+        DED2.PUT_DATA_IN_DECODER(DEDobj.pCompressedData, len(DEDobj.pCompressedData))
+        # verify that data is inside decoder, and that it has been decompressed correct
+        self.assertTrue(True, DED2.ptotaldata == DEDobj.uncompresseddata)
+
