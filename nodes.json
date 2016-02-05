@@ -16,29 +16,13 @@
       ":memory": 512,
       ":hostname" :  "jekyll.dops.scanva.com"
     },
-    "hadoop1": {
+    "nginx": {
       "nodeOS": "ubuntu/vivid32",
-      "bootstrap": "bootstrap-node-hadoop_1.sh",
+      "bootstrap": "bootstrap-node-nginx.sh",
       ":ip": "192.168.31.16",
       "ports": [],
       ":memory": 1024,
-      ":hostname":  "hadoop1.dops.scanva.com"
-    },
-    "hadoop2": {
-      "nodeOS": "ubuntu/vivid32",
-      "bootstrap": "bootstrap-node-hadoop_2.sh",
-      ":ip": "192.168.31.17",
-      "ports": [],
-      ":memory": 1024,
-      ":hostname":  "hadoop2.dops.scanva.com"
-    },
-    "hadoop": {
-      "nodeOS": "ubuntu/vivid32",
-      "bootstrap": "bootstrap-node-hadoop.sh",
-      ":ip": "192.168.31.18",
-      "ports": [],
-      ":memory": 1024,
-      ":hostname":  "hadoop.dops.scanva.com"
+      ":hostname":  "nginx.dops.scanva.com"
     },
     "javaservices": {
       "nodeOS": "ubuntu/vivid32",
