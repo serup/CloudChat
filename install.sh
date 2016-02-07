@@ -49,6 +49,14 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- oracle-java already installed"
 fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 pidgin* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install pidgin "
+  sudo apt-get install -yq pidgin 
+  echo " - done."
+else
+  echo "- pidgin already installed"
+fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 monodevelop-nunit* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install monodevelop-nunit for C# on ubuntu "
