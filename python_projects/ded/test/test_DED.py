@@ -133,4 +133,5 @@ class DEDTest(unittest.TestCase):
         self.assertTrue(True, DED2.ptotaldata == DEDobj.uncompresseddata)
 
         # start decoding
-        DED2.GET_STRUCT_START("event")  # TODO: - not finished
+        result = DED2.GET_STRUCT_START("event")
+        self.assertTrue(True, result > 0)
