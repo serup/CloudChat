@@ -10,6 +10,10 @@
 #    Please send me your improved versions.
 #**************************************************************/
 import copy
+import struct
+import sys
+import ctypes
+from math import log
 from compression import lzss
 from array import array
 
@@ -45,6 +49,47 @@ CONVERSIONS = {
 
 def conversion_factors_for(type):
     return CONVERSIONS[type]
+
+
+#  'le' functions are for little-endian and 'be' are for big endian byte order.
+def bytes_needed(n):
+    if n == 0:
+        return 1
+    return int(log(n, 256)) +1
+
+def lePack(n):
+    l = bytes_needed(n)
+
+    """ Converts integer to bytes. If length after conversion
+    is smaller than given as param returned value is right-filled
+    with 0x00 bytes. Use Little-endian byte order."""
+    return b''.join([
+                        chr((n >> ((l - i - 1) * 8)) % 256) for i in xrange(l)
+                        ][::-1])
+
+
+def leUnpack(byte):
+    """ Converts byte string to integer. Use Little-endian byte order."""
+    return sum([
+                   ord(b) << (8 * i) for i, b in enumerate(byte)
+                   ])
+
+
+def bePack(n):
+    l = bytes_needed(n)
+    """ Converts integer to bytes. If length after conversion
+    is smaller than given as param returned value is right-filled
+    with 0x00 bytes. Use Big-endian byte order."""
+    return b''.join([
+                        chr((n >> ((l - i - 1) * 8)) % 256) for i in xrange(l)
+                        ])
+
+
+def beUnpack(byte):
+    """ Converts byte string to integer. Use Big-endian byte order."""
+    return sum([
+                   ord(b) << (8 * i) for i, b in enumerate(byte[::-1])
+                   ])
 
 
 #
@@ -118,6 +163,7 @@ class CASN1:
             result=0
         return result
 
+
     def AppendASN1(self, LengthOfNewASN1Data, Tag, data):
         bresult=True
         if self.iTotalLengthOfData < (self.iLengthOfData + LengthOfNewASN1Data):
@@ -131,18 +177,23 @@ class CASN1:
             self.ASN1Data[pAppendPosition + 4] = (Tag & 0x000000FF)  # unsigned char 8 bit  -- tag byte
 
             if type(data) is int:
-                self.ASN1Data[pAppendPosition + 4 + 1] = data
+                amount = bytes_needed(data)
+                bytesOfint = bePack(data)
+                #unpackbytesofint = beUnpack(bytesOfint)
+                for i in range(amount):
+                    self.ASN1Data[pAppendPosition + 4 + 1 + i] = bytesOfint[i]
+                self.iLengthOfData = self.iLengthOfData + 4 + 1 + LengthOfNewASN1Data  # Add new ASN1 to length : Length+tag+SizeofData
             else:
                 if len(data) > 0:
                     for i in range(LengthOfNewASN1Data):
                         self.ASN1Data[pAppendPosition + 4 + 1 + i] = data[i]
-                    self.iLengthOfData = self.iLengthOfData + 4 + 1 + LengthOfNewASN1Data # Add new ASN1 to length : Length+tag+SizeofData
+                    self.iLengthOfData = self.iLengthOfData + 4 + 1 + LengthOfNewASN1Data  # Add new ASN1 to length : Length+tag+SizeofData
                 else:
                     bresult = False
         return bresult
 
     def FetchNextASN1(self, param): # Returns true if ASN1 was found, and false if not.
-        bresult = True
+        bResult = True
         if self.pNextASN1 >= 0:
                 param.Length = param.Length | (self.ASN1Data[self.pNextASN1 + 0] & 0x000000ff)
                 param.Length = param.Length | (self.ASN1Data[self.pNextASN1 + 1] & 0x000000ff) << 8
@@ -150,24 +201,27 @@ class CASN1:
                 param.Length = param.Length | (self.ASN1Data[self.pNextASN1 + 3] & 0x000000ff) << 24
 
                 self.pNextASN1 += 4 # sizeof(length) 32 bits
-                param.Tag = self.ASN1Data[self.pNextASN1+1] & 0x000000FF # fetch byte tag
+                param.Tag = self.ASN1Data[self.pNextASN1] & 0x000000FF # fetch byte tag
+                self.pNextASN1 += 1 # tag byte
+
 
                 if param.Length == 1:
-                    param.data[0] = self.ASN1Data[self.pNextASN1]
+                    param.data = self.ASN1Data[self.pNextASN1]
                 else:
                     if param.Length == 2:
                         param.data[0] = self.ASN1Data[self.pNextASN1]
                         param.data[1] = self.ASN1Data[self.pNextASN1 + 1]
                     else:
                         param.data = bytearray()
-                        for n in range(param.Length): param.data.append(0)
+                        # for n in range(param.Length): param.data.append(0)
                         for i in range(param.Length):
-                            param.data[i] = self.ASN1Data[self.pNextASN1 + i]
+                            # param.data[i] = self.ASN1Data[self.pNextASN1 + i]
+                            param.data.append(self.ASN1Data[self.pNextASN1 + i])
 
                 NextASN1Position = self.CurrentASN1Position + param.Length + 1 + 4
-                if NextASN1Position > self.iTotalLengthOfData | NextASN1Position < 0:
+                if NextASN1Position > self.iTotalLengthOfData or NextASN1Position < 0:
                     pNextASN1 = 0
-                    bResult = False; # ASN1 says it is longer than ASN1 allocated space ??? ASN1 has illegal size.
+                    bResult = False # ASN1 says it is longer than ASN1 allocated space ??? ASN1 has illegal size.
                 else:
                     CurrentASN1Position = NextASN1Position
                     if CurrentASN1Position >= self.iTotalLengthOfData:
@@ -223,6 +277,7 @@ class DEDEncoder(object):
     iLengthOfData = 0
     ptotaldata = 0
     iLengthOfTotalData = 0
+    asn1 = 0  # used in decoder
 
     def __init__(self):
         self.encoder = 0
@@ -315,33 +370,34 @@ class DEDEncoder(object):
         return result
 
     def getelement(self, DEDelement):
+        result = -1
         if DEDelement.elementtype == conversion_factors_for("DED_ELEMENT_TYPE_STRUCT"):
-            m_asn1 = CASN1()
-            result = m_asn1.CASN1p3(self.iLengthOfTotalData, self.pdata, self.iLengthOfTotalData + 1)
+            self.asn1 = CASN1()
+            result = self.asn1.CASN1p3(self.iLengthOfTotalData, self.pdata, self.iLengthOfTotalData + 1)
 
         ElementType = DEDelement.elementtype
 
         class param():
             Length = 0
             Tag = 0
-            pdata = 0
+            data = 0
 
-        if m_asn1.FetchNextASN1(param):
+        if self.asn1.FetchNextASN1(param):
             if param.Tag == ElementType:
-                if DEDelement.name == param.pdata:
-                    if param.Tag == conversion_factors_for("DED_ELEMENT_TYPE_STRUCT") | param.Tag == conversion_factors_for("DED_ELEMENT_TYPE_STRUCT_END"):
+                if DEDelement.name == param.data:
+                    if param.Tag == conversion_factors_for("DED_ELEMENT_TYPE_STRUCT") or param.Tag == conversion_factors_for("DED_ELEMENT_TYPE_STRUCT_END"):
                         # start and end elements does NOT have value, thus no need to go further
                         result = 1
                     else:
                         param.Length = 0
                         param.Tag = 0
-                        param.pdata = 0
-                        if m_asn1.FetchNextASN1(param):
+                        param.data = 0
+                        if self.asn1.FetchNextASN1(param):
                             if param.Tag == ElementType:
-                                if ElementType == conversion_factors_for("DED_ELEMENT_TYPE_METHOD") | ElementType == conversion_factors_for("DED_ELEMENT_TYPE_STRING") | ElementType == conversion_factors_for("DED_ELEMENT_TYPE_STDSTRING"):
-                                    DEDelement.value = param.pdata
+                                if ElementType == conversion_factors_for("DED_ELEMENT_TYPE_METHOD") or ElementType == conversion_factors_for("DED_ELEMENT_TYPE_STRING") or ElementType == conversion_factors_for("DED_ELEMENT_TYPE_STDSTRING"):
+                                    DEDelement.value = param.data
                                 else:
-                                    DEDelement.value = param.pdata
+                                    DEDelement.value = param.data
                                 result = 1
         return result
 
@@ -388,7 +444,7 @@ class DEDEncoder(object):
     def PUT_LONG(self, encoder_ptr, name, value):
         result = -1
         if encoder_ptr != 0:
-            result = self.encodetype(name, value, 1, "DED_ELEMENT_TYPE_LONG")
+            result = self.encodetype(name, value, 8, "DED_ELEMENT_TYPE_LONG")
         return result
 
     def PUT_BOOL(self, encoder_ptr, name, value):
@@ -437,4 +493,41 @@ class DEDEncoder(object):
         return DEDobj
 
     def GET_STRUCT_START(self, name):
-        return 0
+        DEDelmnt = self.DEDelement
+        DEDelmnt.name = name
+        DEDelmnt.elementtype = conversion_factors_for("DED_ELEMENT_TYPE_STRUCT")
+        result = self.getelement(DEDelmnt)
+        return result
+
+    def GET_METHOD(self, name):
+        DEDelmnt = self.DEDelement
+        DEDelmnt.name = name
+        DEDelmnt.elementtype = conversion_factors_for("DED_ELEMENT_TYPE_METHOD")
+        result = self.getelement(DEDelmnt)
+        if result == 1:
+            result = DEDelmnt.value
+        else:
+            result = -1
+        return result
+
+    def GET_USHORT(self, name):
+        DEDelmnt = self.DEDelement
+        DEDelmnt.name = name
+        DEDelmnt.elementtype = conversion_factors_for("DED_ELEMENT_TYPE_USHORT")
+        result = self.getelement(DEDelmnt)
+        if result == 1:
+            result = DEDelmnt.value
+        else:
+            result = -1
+        return result
+
+    def GET_LONG(self, name):
+        DEDelmnt = self.DEDelement
+        DEDelmnt.name = name
+        DEDelmnt.elementtype = conversion_factors_for("DED_ELEMENT_TYPE_LONG")
+        result = self.getelement(DEDelmnt)
+        if result == 1:
+            result = beUnpack(bytes(DEDelmnt.value))
+        else:
+            result = -1
+        return result

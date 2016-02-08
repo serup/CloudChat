@@ -130,8 +130,79 @@ class DEDTest(unittest.TestCase):
         DED2 = ded.DEDEncoder()
         DED2.PUT_DATA_IN_DECODER(DEDobj.pCompressedData, len(DEDobj.pCompressedData))
         # verify that data is inside decoder, and that it has been decompressed correct
+        self.assertTrue(DED2.ptotaldata, DEDobj.uncompresseddata)
+
+        # start decoding
+        result = DED2.GET_STRUCT_START("event")
+        self.assertTrue(result > 0, result)
+
+    def testGET_METHOD(self):
+        DED = ded.DEDEncoder()
+        result = DED.PUT_STRUCT_START(DED, "event")
+        self.assertTrue(result == 1, result)
+        result = DED.PUT_METHOD(DED, "method", "mediaplayer")
+        self.assertTrue(result > 0, result)
+        DEDobj = DED.GET_ENCODED_DATA()
+
+        # simulate transmitting data ....
+        # simulate receiving data ....
+
+        DED2 = ded.DEDEncoder()
+        DED2.PUT_DATA_IN_DECODER(DEDobj.pCompressedData, len(DEDobj.pCompressedData))
+        # verify that data is inside decoder, and that it has been decompressed correct
         self.assertTrue(True, DED2.ptotaldata == DEDobj.uncompresseddata)
 
         # start decoding
         result = DED2.GET_STRUCT_START("event")
         self.assertTrue(True, result > 0)
+
+        result = DED2.GET_METHOD("method")
+        self.assertEquals("mediaplayer", result)
+
+    def testGET_USHORT(self):
+        DED = ded.DEDEncoder()
+        result = DED.PUT_STRUCT_START(DED, "event")
+        self.assertTrue(result == 1, result)
+        result = DED.PUT_USHORT(DED, "ushort", 4)
+        self.assertTrue(result > 0, result)
+        DEDobj = DED.GET_ENCODED_DATA()
+
+        # simulate transmitting data ....
+        # simulate receiving data ....
+
+        DED2 = ded.DEDEncoder()
+        DED2.PUT_DATA_IN_DECODER(DEDobj.pCompressedData, len(DEDobj.pCompressedData))
+        # verify that data is inside decoder, and that it has been decompressed correct
+        self.assertTrue(True, DED2.ptotaldata == DEDobj.uncompresseddata)
+
+        # start decoding
+        result = DED2.GET_STRUCT_START("event")
+        self.assertTrue(True, result > 0)
+
+        result = DED2.GET_USHORT("ushort")
+        self.assertEquals(4, result)
+
+    def testGET_LONG(self):
+        DED = ded.DEDEncoder()
+        result = DED.PUT_STRUCT_START(DED, "event")
+        self.assertTrue(result == 1, result)
+        number = 9223372036854775807
+        result = DED.PUT_LONG(DED, "long", number)
+        self.assertTrue(result > 0, result)
+        DEDobj = DED.GET_ENCODED_DATA()
+
+        # simulate transmitting data ....
+        # simulate receiving data ....
+
+        DED2 = ded.DEDEncoder()
+        DED2.PUT_DATA_IN_DECODER(DEDobj.pCompressedData, len(DEDobj.pCompressedData))
+        # verify that data is inside decoder, and that it has been decompressed correct
+        self.assertTrue(True, DED2.ptotaldata == DEDobj.uncompresseddata)
+
+        # start decoding
+        result = DED2.GET_STRUCT_START("event")
+        self.assertTrue(True, result > 0)
+
+        result = DED2.GET_LONG("long")
+        self.assertEquals(number, result)
+
