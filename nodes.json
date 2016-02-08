@@ -50,7 +50,7 @@
         {":host": 7777, ":guest": 7777, ":id": "database"}
       ],
       ":memory": 1024,
-      ":hostname":  "backend.dops.scanva.com"
+      ":hostname":  "backend.scanva.com"
     },
     "cloudchatmanager": {
       "nodeOS": "ubuntu/vivid32",
