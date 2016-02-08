@@ -176,20 +176,27 @@ class CASN1:
             self.ASN1Data[pAppendPosition + 3] = (LengthOfNewASN1Data >> 24 & 0x000000ff)
             self.ASN1Data[pAppendPosition + 4] = (Tag & 0x000000FF)  # unsigned char 8 bit  -- tag byte
 
-            if type(data) is int:
-                amount = bytes_needed(data)
-                bytesOfint = bePack(data)
-                #unpackbytesofint = beUnpack(bytesOfint)
-                for i in range(amount):
-                    self.ASN1Data[pAppendPosition + 4 + 1 + i] = bytesOfint[i]
+            if type(data) is bool:
+                if(data == True):
+                    self.ASN1Data[pAppendPosition + 4 + 1] = 1
+                else:
+                    self.ASN1Data[pAppendPosition + 4 + 1] = 0
                 self.iLengthOfData = self.iLengthOfData + 4 + 1 + LengthOfNewASN1Data  # Add new ASN1 to length : Length+tag+SizeofData
             else:
-                if len(data) > 0:
-                    for i in range(LengthOfNewASN1Data):
-                        self.ASN1Data[pAppendPosition + 4 + 1 + i] = data[i]
+                if type(data) is int:
+                    amount = bytes_needed(data)
+                    bytesOfint = bePack(data)
+                    #unpackbytesofint = beUnpack(bytesOfint)
+                    for i in range(amount):
+                        self.ASN1Data[pAppendPosition + 4 + 1 + i] = bytesOfint[i]
                     self.iLengthOfData = self.iLengthOfData + 4 + 1 + LengthOfNewASN1Data  # Add new ASN1 to length : Length+tag+SizeofData
                 else:
-                    bresult = False
+                    if len(data) > 0:
+                        for i in range(LengthOfNewASN1Data):
+                            self.ASN1Data[pAppendPosition + 4 + 1 + i] = data[i]
+                        self.iLengthOfData = self.iLengthOfData + 4 + 1 + LengthOfNewASN1Data  # Add new ASN1 to length : Length+tag+SizeofData
+                    else:
+                        bresult = False
         return bresult
 
     def FetchNextASN1(self, param): # Returns true if ASN1 was found, and false if not.
@@ -528,6 +535,17 @@ class DEDEncoder(object):
         result = self.getelement(DEDelmnt)
         if result == 1:
             result = beUnpack(bytes(DEDelmnt.value))
+        else:
+            result = -1
+        return result
+
+    def GET_BOOL(self, name):
+        DEDelmnt = self.DEDelement
+        DEDelmnt.name = name
+        DEDelmnt.elementtype = conversion_factors_for("DED_ELEMENT_TYPE_BOOL")
+        result = self.getelement(DEDelmnt)
+        if result == 1:
+            result = bool(DEDelmnt.value)
         else:
             result = -1
         return result
