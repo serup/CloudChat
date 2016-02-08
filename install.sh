@@ -208,7 +208,7 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- Virtualbox guest addition installed"
 fi
-PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 puppetlabs-r* |grep "install ok installed")
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 puppet-co* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
 #  echo "puppetlabs-release was not found, now it will be installed - please wait..."
   echo -n "- install puppetlabs-release "
