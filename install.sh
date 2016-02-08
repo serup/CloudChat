@@ -49,6 +49,22 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- oracle-java already installed"
 fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 lcov* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install lcov "
+  sudo apt-get install -yq lcov 
+  echo " - done."
+else
+  echo "- lcov already installed"
+fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 nodejs* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install nodejs-legacy "
+  sudo apt-get install -yq nodejs-legacy 
+  echo " - done."
+else
+  echo "- nodejs-legacy already installed"
+fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 pidgin* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install pidgin "
@@ -179,7 +195,15 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- xsltproc already installed"
 fi
-PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 libboost* |grep "install ok installed")
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 g++* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install g++ "
+  sudo apt-get install -yq g++ 
+  echo " - done."
+else
+  echo "- g++ already installed"
+fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 libboost-all* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install libboost "
   sudo apt-get install -yq libboost-all-dev 

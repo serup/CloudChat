@@ -85,6 +85,7 @@ else
       echo "****************"
       echo "First time build"
       echo "****************"
+      #alias make="/usr/bin/make -j 8"
       echo "Building CloudChat project takes a long time - results are in file build.log - PLEASE WAIT!"
       ./run.sh > build.log 2> tmp3
       echo "done build - see detailed info in file build.log"
