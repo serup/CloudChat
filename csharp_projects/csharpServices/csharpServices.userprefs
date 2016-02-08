@@ -15,9 +15,8 @@
           <Node name="csharpServices.Test" expanded="True">
             <Node name="DED" expanded="True">
               <Node name="UnitTests" expanded="True">
-                <Node name="EncodeDecodeTest" expanded="True" />
                 <Node name="mockDOPsServerTest" expanded="True">
-                  <Node name="loginToMockDOPsServer" selected="True" />
+                  <Node name="SendReceiveDEDMockDOPsServer" selected="True" />
                 </Node>
               </Node>
             </Node>

@@ -49,6 +49,14 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- oracle-java already installed"
 fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 pidgin* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install pidgin "
+  sudo apt-get install -yq pidgin 
+  echo " - done."
+else
+  echo "- pidgin already installed"
+fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 monodevelop-nunit* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install monodevelop-nunit for C# on ubuntu "
@@ -72,6 +80,15 @@ if [ "" == "$PKG_OK" ]; then
   echo " - done."
 else
   echo "- monodevelop already installed"
+fi
+
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 python-pip* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install python-pip "
+  sudo apt-get install -yq python-pip
+  echo " - done."
+else
+  echo "- python-pip already installed"
 fi
 
 # somehow not working on ubuntu 15.04 vivid  -- use pyCharm in intellij instead : https://confluence.jetbrains.com/display/PYH/PyCharm+IDE+and+Python+Plugin+for+IntelliJ+IDEA
