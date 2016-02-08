@@ -279,25 +279,18 @@ class DEDTest(unittest.TestCase):
         self.assertEquals("johndoe", result.ElementData)
 
     def testGET_STRUCT_END(self):
-        DED = ded.DEDEncoder()
-        result = DED.PUT_STRUCT_START(DED, "event")
-        self.assertTrue(result == 1, result)
-        result = DED.PUT_METHOD(DED, "method", "mediaplayer")
-        self.assertTrue(result > 0, result)
-        result = DED.PUT_ELEMENT(DED, "profile", "username",  "johndoe")
-        self.assertTrue(result > 0, result)
-        result = DED.PUT_STDSTRING(DED, "stdstring", "hello world")
-        self.assertTrue(result > 0, result)
         _bool = True
-        result = DED.PUT_BOOL(DED, "bool", _bool)
-        self.assertTrue(result > 0, result)
         number = 9223372036854775807
-        result = DED.PUT_LONG(DED, "long", number)
-        self.assertTrue(result > 0, result)
-        result = DED.PUT_USHORT(DED, "ushort", 4)
-        self.assertTrue(result > 0, result)
-        result = DED.PUT_STRUCT_END(DED, "event")
-        self.assertTrue(result > 0, result)
+
+        DED = ded.DEDEncoder()
+        if DED.PUT_STRUCT_START(DED, "event"):
+            DED.PUT_METHOD(DED, "method", "mediaplayer")
+            DED.PUT_ELEMENT(DED, "profile", "username",  "johndoe")
+            DED.PUT_STDSTRING(DED, "stdstring", "hello world")
+            DED.PUT_BOOL(DED, "bool", _bool)
+            DED.PUT_LONG(DED, "long", number)
+            DED.PUT_USHORT(DED, "ushort", 4)
+        DED.PUT_STRUCT_END(DED, "event")
         DEDobj = DED.GET_ENCODED_DATA()
 
         # simulate transmitting data ....
@@ -309,27 +302,12 @@ class DEDTest(unittest.TestCase):
         self.assertTrue(DED2.ptotaldata, DEDobj.uncompresseddata)
 
         # start decoding
-        result = DED2.GET_STRUCT_START("event")
-        self.assertTrue(result > 0, result)
-
-        result = DED2.GET_METHOD("method")
-        self.assertEquals("mediaplayer", result)
-
-        result = DED2.GET_ELEMENT("profile")
-        self.assertEquals("username", result.strElementID)
-        self.assertEquals("johndoe", result.ElementData)
-
-        result = DED2.GET_STDSTRING("stdstring")
-        self.assertEquals("hello world", result)
-
-        result = DED2.GET_BOOL("bool")
-        self.assertEquals(_bool, result)
-
-        result = DED2.GET_LONG("long")
-        self.assertEquals(number, result)
-
-        result = DED2.GET_USHORT("ushort")
-        self.assertEquals(4, result)
-
+        if DED2.GET_STRUCT_START("event"):
+            DED2.GET_METHOD("method")
+            DED2.GET_ELEMENT("profile")
+            DED2.GET_STDSTRING("stdstring")
+            DED2.GET_BOOL("bool")
+            DED2.GET_LONG("long")
+            DED2.GET_USHORT("ushort")
         result = DED2.GET_STRUCT_END("event")
         self.assertEquals(result > 0, result)
