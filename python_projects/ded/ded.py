@@ -318,17 +318,19 @@ class DEDEncoder(object):
                 LengthOfAsn1 = len(element.name)
                 asn1.AppendASN1(LengthOfAsn1, element.ElementType, element.name)
                 # 2. asn "value"
-                LengthOfAsn1 = element.length
-                if LengthOfAsn1 > 0:
-                    asn1.AppendASN1(LengthOfAsn1, element.ElementType, element.value)
-                    paramasn1 = data()
-                    asn1.FetchTotalASN1(paramasn1)
-                    self.iLengthOfTotalData = paramasn1.Length
-                    if self.iLengthOfTotalData > 0:
-                        pdata = bytearray()
-                        for i in range(self.iLengthOfTotalData):
-                            pdata.append(paramasn1.data[i])
-                        self.ptotaldata = pdata
+                LengthOfValueAsn1 = element.length
+                if LengthOfValueAsn1 > 0:
+                    asn1.AppendASN1(LengthOfValueAsn1, element.ElementType, element.value)
+
+                paramasn1 = data()
+                asn1.FetchTotalASN1(paramasn1)
+                self.iLengthOfTotalData = paramasn1.Length
+                if self.iLengthOfTotalData > 0:
+                    pdata = bytearray()
+                    for i in range(self.iLengthOfTotalData):
+                        pdata.append(paramasn1.data[i])
+                    self.ptotaldata = pdata
+
                 if self.iLengthOfTotalData > 0:
                     result = self.iLengthOfTotalData
         return result
@@ -586,3 +588,11 @@ class DEDEncoder(object):
             return elementvalue
         else:
             return result
+
+    def GET_STRUCT_END(self, name):
+        DEDelmnt = self.DEDelement
+        DEDelmnt.name = name
+        DEDelmnt.elementtype = conversion_factors_for("DED_ELEMENT_TYPE_STRUCT_END")
+        result = self.getelement(DEDelmnt)
+        return result
+
