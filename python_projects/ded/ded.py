@@ -549,3 +549,15 @@ class DEDEncoder(object):
         else:
             result = -1
         return result
+
+    def GET_STDSTRING(self, name):
+        DEDelmnt = self.DEDelement
+        DEDelmnt.name = name
+        DEDelmnt.elementtype = conversion_factors_for("DED_ELEMENT_TYPE_STDSTRING")
+        result = self.getelement(DEDelmnt)
+        if result == 1:
+            result = DEDelmnt.value
+        else:
+            result = -1
+        return result
+
