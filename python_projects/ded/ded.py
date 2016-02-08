@@ -265,6 +265,9 @@ class data:
     Length = 0
     data = 0
 
+class _Elements:
+    strElementID = ""
+    ElementData = 0
 
 class asn:
     Length = 0
@@ -549,3 +552,37 @@ class DEDEncoder(object):
         else:
             result = -1
         return result
+
+    def GET_STDSTRING(self, name):
+        DEDelmnt = self.DEDelement
+        DEDelmnt.name = name
+        DEDelmnt.elementtype = conversion_factors_for("DED_ELEMENT_TYPE_STDSTRING")
+        result = self.getelement(DEDelmnt)
+        if result == 1:
+            result = DEDelmnt.value
+        else:
+            result = -1
+        return result
+
+    def GET_ELEMENT(self, entityname):
+        result = -1
+        elementvalue = _Elements()
+
+        strentity_chunk_id = entityname.lower() + "_chunk_id"
+        strentity_chunk_data = entityname.lower() + "_chunk_data"
+
+        DEDelmnt = self.DEDelement
+        DEDelmnt.name = strentity_chunk_id
+        DEDelmnt.elementtype = conversion_factors_for("DED_ELEMENT_TYPE_STDSTRING")
+        result = self.getelement(DEDelmnt)
+        elementvalue.strElementID = DEDelmnt.value
+
+        DEDelmnt.name = strentity_chunk_data
+        DEDelmnt.elementtype = conversion_factors_for("DED_ELEMENT_TYPE_STDVECTOR")
+        result = self.getelement(DEDelmnt)
+        elementvalue.ElementData = DEDelmnt.value
+
+        if result != -1:
+            return elementvalue
+        else:
+            return result
