@@ -10,6 +10,10 @@
 #    Please send me your improved versions.
 #**************************************************************/
 import copy
+import struct
+import sys
+import ctypes
+from math import log
 from compression import lzss
 from array import array
 
@@ -45,6 +49,47 @@ CONVERSIONS = {
 
 def conversion_factors_for(type):
     return CONVERSIONS[type]
+
+
+#  'le' functions are for little-endian and 'be' are for big endian byte order.
+def bytes_needed(n):
+    if n == 0:
+        return 1
+    return int(log(n, 256)) +1
+
+def lePack(n):
+    l = bytes_needed(n)
+
+    """ Converts integer to bytes. If length after conversion
+    is smaller than given as param returned value is right-filled
+    with 0x00 bytes. Use Little-endian byte order."""
+    return b''.join([
+                        chr((n >> ((l - i - 1) * 8)) % 256) for i in xrange(l)
+                        ][::-1])
+
+
+def leUnpack(byte):
+    """ Converts byte string to integer. Use Little-endian byte order."""
+    return sum([
+                   ord(b) << (8 * i) for i, b in enumerate(byte)
+                   ])
+
+
+def bePack(n):
+    l = bytes_needed(n)
+    """ Converts integer to bytes. If length after conversion
+    is smaller than given as param returned value is right-filled
+    with 0x00 bytes. Use Big-endian byte order."""
+    return b''.join([
+                        chr((n >> ((l - i - 1) * 8)) % 256) for i in xrange(l)
+                        ])
+
+
+def beUnpack(byte):
+    """ Converts byte string to integer. Use Big-endian byte order."""
+    return sum([
+                   ord(b) << (8 * i) for i, b in enumerate(byte[::-1])
+                   ])
 
 
 #
@@ -118,6 +163,7 @@ class CASN1:
             result=0
         return result
 
+
     def AppendASN1(self, LengthOfNewASN1Data, Tag, data):
         bresult=True
         if self.iTotalLengthOfData < (self.iLengthOfData + LengthOfNewASN1Data):
@@ -131,13 +177,17 @@ class CASN1:
             self.ASN1Data[pAppendPosition + 4] = (Tag & 0x000000FF)  # unsigned char 8 bit  -- tag byte
 
             if type(data) is int:
-                self.ASN1Data[pAppendPosition + 4 + 1] = data
-                self.iLengthOfData = self.iLengthOfData + 4 + 1 + LengthOfNewASN1Data # Add new ASN1 to length : Length+tag+SizeofData
+                amount = bytes_needed(data)
+                bytesOfint = bePack(data)
+                #unpackbytesofint = beUnpack(bytesOfint)
+                for i in range(amount):
+                    self.ASN1Data[pAppendPosition + 4 + 1 + i] = bytesOfint[i]
+                self.iLengthOfData = self.iLengthOfData + 4 + 1 + LengthOfNewASN1Data  # Add new ASN1 to length : Length+tag+SizeofData
             else:
                 if len(data) > 0:
                     for i in range(LengthOfNewASN1Data):
                         self.ASN1Data[pAppendPosition + 4 + 1 + i] = data[i]
-                    self.iLengthOfData = self.iLengthOfData + 4 + 1 + LengthOfNewASN1Data # Add new ASN1 to length : Length+tag+SizeofData
+                    self.iLengthOfData = self.iLengthOfData + 4 + 1 + LengthOfNewASN1Data  # Add new ASN1 to length : Length+tag+SizeofData
                 else:
                     bresult = False
         return bresult
@@ -394,7 +444,7 @@ class DEDEncoder(object):
     def PUT_LONG(self, encoder_ptr, name, value):
         result = -1
         if encoder_ptr != 0:
-            result = self.encodetype(name, value, 1, "DED_ELEMENT_TYPE_LONG")
+            result = self.encodetype(name, value, 8, "DED_ELEMENT_TYPE_LONG")
         return result
 
     def PUT_BOOL(self, encoder_ptr, name, value):
@@ -467,6 +517,17 @@ class DEDEncoder(object):
         result = self.getelement(DEDelmnt)
         if result == 1:
             result = DEDelmnt.value
+        else:
+            result = -1
+        return result
+
+    def GET_LONG(self, name):
+        DEDelmnt = self.DEDelement
+        DEDelmnt.name = name
+        DEDelmnt.elementtype = conversion_factors_for("DED_ELEMENT_TYPE_LONG")
+        result = self.getelement(DEDelmnt)
+        if result == 1:
+            result = beUnpack(bytes(DEDelmnt.value))
         else:
             result = -1
         return result
