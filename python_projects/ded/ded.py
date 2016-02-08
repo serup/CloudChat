@@ -132,6 +132,7 @@ class CASN1:
 
             if type(data) is int:
                 self.ASN1Data[pAppendPosition + 4 + 1] = data
+                self.iLengthOfData = self.iLengthOfData + 4 + 1 + LengthOfNewASN1Data # Add new ASN1 to length : Length+tag+SizeofData
             else:
                 if len(data) > 0:
                     for i in range(LengthOfNewASN1Data):
@@ -155,7 +156,7 @@ class CASN1:
 
 
                 if param.Length == 1:
-                    param.data[0] = self.ASN1Data[self.pNextASN1]
+                    param.data = self.ASN1Data[self.pNextASN1]
                 else:
                     if param.Length == 2:
                         param.data[0] = self.ASN1Data[self.pNextASN1]
@@ -329,7 +330,7 @@ class DEDEncoder(object):
         class param():
             Length = 0
             Tag = 0
-            pdata = 0
+            data = 0
 
         if self.asn1.FetchNextASN1(param):
             if param.Tag == ElementType:
@@ -340,7 +341,7 @@ class DEDEncoder(object):
                     else:
                         param.Length = 0
                         param.Tag = 0
-                        param.pdata = 0
+                        param.data = 0
                         if self.asn1.FetchNextASN1(param):
                             if param.Tag == ElementType:
                                 if ElementType == conversion_factors_for("DED_ELEMENT_TYPE_METHOD") or ElementType == conversion_factors_for("DED_ELEMENT_TYPE_STRING") or ElementType == conversion_factors_for("DED_ELEMENT_TYPE_STDSTRING"):
@@ -459,3 +460,13 @@ class DEDEncoder(object):
             result = -1
         return result
 
+    def GET_USHORT(self, name):
+        DEDelmnt = self.DEDelement
+        DEDelmnt.name = name
+        DEDelmnt.elementtype = conversion_factors_for("DED_ELEMENT_TYPE_USHORT")
+        result = self.getelement(DEDelmnt)
+        if result == 1:
+            result = DEDelmnt.value
+        else:
+            result = -1
+        return result
