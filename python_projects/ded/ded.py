@@ -183,7 +183,7 @@ class CASN1:
                     self.ASN1Data[pAppendPosition + 4 + 1] = 0
                 self.iLengthOfData = self.iLengthOfData + 4 + 1 + LengthOfNewASN1Data  # Add new ASN1 to length : Length+tag+SizeofData
             else:
-                if type(data) is int:
+                if type(data) is int or type(data) is long:
                     amount = bytes_needed(data)
                     bytesOfint = bePack(data)
                     #unpackbytesofint = beUnpack(bytesOfint)
