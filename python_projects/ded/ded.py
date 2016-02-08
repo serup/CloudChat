@@ -142,7 +142,7 @@ class CASN1:
         return bresult
 
     def FetchNextASN1(self, param): # Returns true if ASN1 was found, and false if not.
-        bresult = True
+        bResult = True
         if self.pNextASN1 >= 0:
                 param.Length = param.Length | (self.ASN1Data[self.pNextASN1 + 0] & 0x000000ff)
                 param.Length = param.Length | (self.ASN1Data[self.pNextASN1 + 1] & 0x000000ff) << 8
@@ -150,7 +150,9 @@ class CASN1:
                 param.Length = param.Length | (self.ASN1Data[self.pNextASN1 + 3] & 0x000000ff) << 24
 
                 self.pNextASN1 += 4 # sizeof(length) 32 bits
-                param.Tag = self.ASN1Data[self.pNextASN1+1] & 0x000000FF # fetch byte tag
+                param.Tag = self.ASN1Data[self.pNextASN1] & 0x000000FF # fetch byte tag
+                self.pNextASN1 += 1 # tag byte
+
 
                 if param.Length == 1:
                     param.data[0] = self.ASN1Data[self.pNextASN1]
@@ -160,14 +162,15 @@ class CASN1:
                         param.data[1] = self.ASN1Data[self.pNextASN1 + 1]
                     else:
                         param.data = bytearray()
-                        for n in range(param.Length): param.data.append(0)
+                        # for n in range(param.Length): param.data.append(0)
                         for i in range(param.Length):
-                            param.data[i] = self.ASN1Data[self.pNextASN1 + i]
+                            # param.data[i] = self.ASN1Data[self.pNextASN1 + i]
+                            param.data.append(self.ASN1Data[self.pNextASN1 + i])
 
                 NextASN1Position = self.CurrentASN1Position + param.Length + 1 + 4
-                if NextASN1Position > self.iTotalLengthOfData | NextASN1Position < 0:
+                if NextASN1Position > self.iTotalLengthOfData or NextASN1Position < 0:
                     pNextASN1 = 0
-                    bResult = False; # ASN1 says it is longer than ASN1 allocated space ??? ASN1 has illegal size.
+                    bResult = False # ASN1 says it is longer than ASN1 allocated space ??? ASN1 has illegal size.
                 else:
                     CurrentASN1Position = NextASN1Position
                     if CurrentASN1Position >= self.iTotalLengthOfData:
@@ -223,6 +226,7 @@ class DEDEncoder(object):
     iLengthOfData = 0
     ptotaldata = 0
     iLengthOfTotalData = 0
+    asn1 = 0  # used in decoder
 
     def __init__(self):
         self.encoder = 0
@@ -315,9 +319,10 @@ class DEDEncoder(object):
         return result
 
     def getelement(self, DEDelement):
+        result = -1
         if DEDelement.elementtype == conversion_factors_for("DED_ELEMENT_TYPE_STRUCT"):
-            m_asn1 = CASN1()
-            result = m_asn1.CASN1p3(self.iLengthOfTotalData, self.pdata, self.iLengthOfTotalData + 1)
+            self.asn1 = CASN1()
+            result = self.asn1.CASN1p3(self.iLengthOfTotalData, self.pdata, self.iLengthOfTotalData + 1)
 
         ElementType = DEDelement.elementtype
 
@@ -326,22 +331,22 @@ class DEDEncoder(object):
             Tag = 0
             pdata = 0
 
-        if m_asn1.FetchNextASN1(param):
+        if self.asn1.FetchNextASN1(param):
             if param.Tag == ElementType:
-                if DEDelement.name == param.pdata:
-                    if param.Tag == conversion_factors_for("DED_ELEMENT_TYPE_STRUCT") | param.Tag == conversion_factors_for("DED_ELEMENT_TYPE_STRUCT_END"):
+                if DEDelement.name == param.data:
+                    if param.Tag == conversion_factors_for("DED_ELEMENT_TYPE_STRUCT") or param.Tag == conversion_factors_for("DED_ELEMENT_TYPE_STRUCT_END"):
                         # start and end elements does NOT have value, thus no need to go further
                         result = 1
                     else:
                         param.Length = 0
                         param.Tag = 0
                         param.pdata = 0
-                        if m_asn1.FetchNextASN1(param):
+                        if self.asn1.FetchNextASN1(param):
                             if param.Tag == ElementType:
-                                if ElementType == conversion_factors_for("DED_ELEMENT_TYPE_METHOD") | ElementType == conversion_factors_for("DED_ELEMENT_TYPE_STRING") | ElementType == conversion_factors_for("DED_ELEMENT_TYPE_STDSTRING"):
-                                    DEDelement.value = param.pdata
+                                if ElementType == conversion_factors_for("DED_ELEMENT_TYPE_METHOD") or ElementType == conversion_factors_for("DED_ELEMENT_TYPE_STRING") or ElementType == conversion_factors_for("DED_ELEMENT_TYPE_STDSTRING"):
+                                    DEDelement.value = param.data
                                 else:
-                                    DEDelement.value = param.pdata
+                                    DEDelement.value = param.data
                                 result = 1
         return result
 
@@ -437,4 +442,20 @@ class DEDEncoder(object):
         return DEDobj
 
     def GET_STRUCT_START(self, name):
-        return 0
+        DEDelmnt = self.DEDelement
+        DEDelmnt.name = name
+        DEDelmnt.elementtype = conversion_factors_for("DED_ELEMENT_TYPE_STRUCT")
+        result = self.getelement(DEDelmnt)
+        return result
+
+    def GET_METHOD(self, name):
+        DEDelmnt = self.DEDelement
+        DEDelmnt.name = name
+        DEDelmnt.elementtype = conversion_factors_for("DED_ELEMENT_TYPE_METHOD")
+        result = self.getelement(DEDelmnt)
+        if result == 1:
+            result = DEDelmnt.value
+        else:
+            result = -1
+        return result
+
