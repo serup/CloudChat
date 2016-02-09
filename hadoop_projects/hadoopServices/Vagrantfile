@@ -14,9 +14,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #config.vm.box = "centos6.3"
   #config.vm.box_url = "https://dl.dropbox.com/sh/9rldlpj3cmdtntc/chqwU6EYaZ/centos-63-32bit-puppet.box"
 
-  config.vm.box = "centos6.0"
-  config.vm.box_url = "http://sourceforge.net/projects/virtualboximage/files/CentOS/6.0/CentOS-6-i386.7z/download"
-  
+#-  config.vm.box = "centos6.0"
+#-  config.vm.box_url = "http://sourceforge.net/projects/virtualboximage/files/CentOS/6.0/CentOS-6-i386.7z/download"
+ 
+  config.vm.box = "linux"
+  config.vm.box_url = "http://downloads.sourceforge.net/virtualboximage/dsl-4.2.5-x86.7z"
+ 
   config.vm.define :one do |one| 
     one.vm.hostname = "one.cluster"
     one.vm.network :private_network, ip: "192.168.0.101"

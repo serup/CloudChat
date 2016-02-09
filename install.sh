@@ -49,6 +49,14 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- oracle-java already installed"
 fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 LZMA* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install LZMA "
+  sudo apt-get install -yq LZMA 
+  echo " - done."
+else
+  echo "- LZMA already installed"
+fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 lcov* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install lcov "
