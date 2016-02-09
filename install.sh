@@ -49,6 +49,22 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- oracle-java already installed"
 fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 p7zip* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install p7zip-full "
+  sudo apt-get install -yq p7zip-full 
+  echo " - done."
+else
+  echo "- p7zip already installed"
+fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 p7zip-rar* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install p7zip-rar "
+  sudo apt-get install -yq p7zip-rar 
+  echo " - done."
+else
+  echo "- p7zip-rar already installed"
+fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 LZMA* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install LZMA "
