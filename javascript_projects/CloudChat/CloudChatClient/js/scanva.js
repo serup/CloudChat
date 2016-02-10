@@ -33,7 +33,7 @@ function getURLParameter(name) {
 function insertChatWidget(homepageAlias,managerID,urlManagerImg, ypxpos,xpxpos, title)
 {
 	
-category = getURLParameter('category');managerid = getURLParameter('managerid');if(managerid==""){managerid="DADER2D26BAA30E8AD733671370FECFC"};imageurl = getURLParameter('imageurl');if(imageurl == null){imageurl="http://77.75.165.130/DOPS/CloudChat/CloudChatManager/images/"};ypos = getURLParameter('ypos');if(ypos == null){ypos = 0};xpos = getURLParameter('xpos');if(xpos == null){xpos = 0};
+category = getURLParameter('category');managerid = getURLParameter('managerid');if(managerid==""){managerid="DADER2D26BAA30E8AD733671370FECFC"};imageurl = getURLParameter('imageurl');if(imageurl == null){imageurl="http://cloudchatmanager.com/CloudChatManager/images/"};ypos = getURLParameter('ypos');if(ypos == null){ypos = 0};xpos = getURLParameter('xpos');if(xpos == null){xpos = 0};
 
 	if(ypos !== null || xpos !== null) {
 		ypxpos = ypos;
@@ -54,7 +54,7 @@ category = getURLParameter('category');managerid = getURLParameter('managerid');
 	else {
 		strUrlManager = "REMOTE";
 		if(imageurl == null)
-			urlManagerImg = "http://77.75.165.130/DOPS/CloudChat/CloudChatManager/images/"
+			urlManagerImg = "http://cloudchatmanager.com/CloudChatManager/images/"
 	}
         clientID = guid();
         var stringAliasClientID = clientID;

@@ -45,8 +45,10 @@ else
     else
       git clone https://review.gerrithub.io/serup/CloudChat
       echo "CloudChat installed"
+      cd CloudChat
     fi
-
+    git checkout serup
+    git pull
     echo "Deploy to www"
     sudo bash deploy_client_www.sh
      
