@@ -43,7 +43,7 @@ category = getURLParameter('category');managerid = getURLParameter('managerid');
 		managerID = managerid;
 	if(homepageAlias=="")
 		homepageAlias=category;
-	var strUrlManager = "REMOTE";
+	var strUrlManager = "BACKEND";
 	if(imageurl !== null)
 		urlManagerImg = imageurl;
 	if(urlManagerImg == "LOCAL") // used when testing local, then write LOCL in urlManagerImg parameter - client will then login to localhost server
@@ -52,7 +52,7 @@ category = getURLParameter('category');managerid = getURLParameter('managerid');
 		urlManagerImg = "";
 	}
 	else {
-		strUrlManager = "REMOTE";
+		strUrlManager = "BACKEND";
 		if(imageurl == null)
 			urlManagerImg = "http://cloudchatmanager.com/CloudChatManager/images/"
 	}
@@ -90,7 +90,7 @@ category = getURLParameter('category');managerid = getURLParameter('managerid');
         strLoginHiddenSection = "<div > <input class=\"hidden\" type=\"text\" size=\"32\" id=\"destination_address\" value=\""+managerID+"\" /> \
             <button id=\"connectBtn\"  class=\"hidden btn btn-default btn-block serverconnect\" > connect with server </button></div> \
             <div class=\"hidden\"> \
-                <input type=\"text\" placeholder=\"REMOTE\" id=\"wsUri\" value=\""+strUrlManager+"\" > \
+                <input type=\"text\" placeholder=\"BACKEND\" id=\"wsUri\" value=\""+strUrlManager+"\" > \
             </div> \
             <div class=\"hidden\"> \
                 <input type=\"text\" placeholder=\"uniqueId\" id=\"uniqueId\" value=\""+clientID+"\"> \
