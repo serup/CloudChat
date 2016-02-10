@@ -85,11 +85,11 @@ else
       echo "done build - see info in file build.log"
       echo "Deploy to www"
       sudo bash deploy_www.sh
-      mkdir -p /var/www/CloudChatManager/img
+      mkdir -p /var/www/html/CloudChatManager/img
       echo "**************************" 
       echo " cron job for cleaning "
       echo "**************************" 
-      sudo chown vagrant:vagrant /var/www/CloudChatManager/img
+      sudo chown vagrant:vagrant /var/www/html/CloudChatManager/img
       echo "copy cron job; clean old images to /usr/local/bin - the job is started by incron"
       sudo cp ./cleanoldimages.sh /usr/local/bin/cleanoldimages.sh
       sudo chmod +x /usr/local/bin/cleanoldimages.sh
