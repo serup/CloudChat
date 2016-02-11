@@ -70,7 +70,6 @@ class MyThread(Thread):
             time.sleep(secondsToSleep)
 
 
-
 class SimpleEcho(WebSocket):
 
     def handleMessage(self):
@@ -83,6 +82,7 @@ class SimpleEcho(WebSocket):
         self.server.close()  #  hmmm - maybe not a solution
         pass
 
+
 class DOPsServerHandling(WebSocket):
 
     def handleMessage(self):
@@ -93,7 +93,6 @@ class DOPsServerHandling(WebSocket):
 
     def handleClose(self):
         pass
-
 
 class MyThread_DOPsServer(Thread):
 
@@ -124,7 +123,8 @@ class MyThread_DOPsServer(Thread):
         self.server.stopServeForMe()
         # self.server.close()
         # self.server.bContinueToServe = False
-        
+
+
 class mockDOPsServer(object):
 
     def __init__(self, host, port):
