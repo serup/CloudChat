@@ -94,14 +94,16 @@ class DOPsServerHandling(WebSocket):
     def handleClose(self):
         pass
 
+
 class MyThread_DOPsServer(Thread):
+
     def __init__(self, host, port):
         ''' Constructor. '''
 
         Thread.__init__(self)
         self.port = port
         self.host = host
-        self.server = 0
+        self.server = SimpleWebSocketServer(self.host, self.port, DOPsServerHandling)
 
     def run(self):
         #websocket.enableTrace(True)
@@ -115,11 +117,14 @@ class MyThread_DOPsServer(Thread):
         #ws.run_forever()
 
         # self.server = SimpleWebSocketServer(self.host, self.port, SimpleEcho)
-        self.server = SimpleWebSocketServer(self.host, self.port, DOPsServerHandling)
-        self.server.serveforever()
+        # self.server = SimpleWebSocketServer(self.host, self.port, DOPsServerHandling)
+        self.server.serveforMe()
 
-
-
+    def stop(self):
+        self.server.stopServeForMe()
+        # self.server.close()
+        # self.server.bContinueToServe = False
+        
 class mockDOPsServer(object):
 
     def __init__(self, host, port):
@@ -132,9 +137,11 @@ class mockDOPsServer(object):
         # Wait for the thread to finish...
         # myThreadOb1.join()
 
-        myThreadServer = MyThread_DOPsServer(host, port)
-        myThreadServer.setName('Thread DOPs Server')
-        myThreadServer.start()
+        self.myThreadServer = MyThread_DOPsServer(host, port)
+        self.myThreadServer.setName('Thread DOPs Server')
+        self.myThreadServer.start()
 
         super(mockDOPsServer, self).__init__()
 
+    def stopmockServer(self):
+        self.myThreadServer.stop()

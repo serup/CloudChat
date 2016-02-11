@@ -580,6 +580,7 @@ class SimpleWebSocketServer(object):
         self.selectInterval = selectInterval
         self.connections = {}
         self.listeners = [self.serversocket]
+        self.bContinueToServe = True
 
     def _decorateSocket(self, sock):
         return sock
@@ -596,6 +597,125 @@ class SimpleWebSocketServer(object):
                 conn.handleClose()
             except:
                 pass
+
+    def stopServeForMe(self):
+        self.close()
+        self.bContinueToServe = False
+
+    def serveforMe(self):
+        while self.bContinueToServe:
+            writers = []
+            for fileno in self.listeners:
+                try:
+                    client = self.connections[fileno]
+                    if client.sendq:
+                        writers.append(fileno)
+                except Exception as n:
+                    pass
+
+            if self.selectInterval:
+                rList, wList, xList = select(self.listeners, writers, self.listeners, self.selectInterval)
+            else:
+                rList, wList, xList = select(self.listeners, writers, self.listeners)
+
+            for ready in wList:
+                client = None
+                try:
+                    client = self.connections[ready]
+                    while client.sendq:
+                        opcode, payload = client.sendq.popleft()
+                        remaining = client._sendBuffer(payload)
+                        if remaining is not None:
+                            client.sendq.appendleft((opcode, remaining))
+                            break
+                        else:
+                            if opcode == CLOSE:
+                                raise Exception("received client close")
+
+                except Exception as n:
+
+                    if client:
+                        client.client.close()
+
+                    try:
+                        if client:
+                            client.handleClose()
+                    except:
+                        pass
+
+                    try:
+                        del self.connections[ready]
+                    except:
+                        pass
+
+                    try:
+                        self.listeners.remove(ready)
+                    except:
+                        pass
+
+            for ready in rList:
+                if ready == self.serversocket:
+                    try:
+                        sock, address = self.serversocket.accept()
+                        newsock = self._decorateSocket(sock)
+                        newsock.setblocking(0)
+                        fileno = newsock.fileno()
+                        self.listeners.append(fileno)
+                        self.connections[fileno] = self._constructWebSocket(newsock, address)
+                    except Exception as n:
+                        if sock is not None:
+                            sock.close()
+                else:
+                    client = None
+                    try:
+                        client = self.connections[ready]
+                        client._handleData()
+                    except Exception as n:
+                        if client:
+                            client.client.close()
+
+                        try:
+                            if client:
+                                client.handleClose()
+                        except:
+                            pass
+
+                        try:
+                            del self.connections[ready]
+                        except:
+                            pass
+
+                        try:
+                            self.listeners.remove(ready)
+                        except:
+                            pass
+
+            for failed in xList:
+                if failed == self.serversocket:
+                    self.close()
+                    raise Exception("server socket failed")
+                else:
+                    client = None
+                    try:
+                        client = self.connections[failed]
+                        client.client.close()
+
+                        try:
+                            client.handleClose()
+                        except:
+                            pass
+
+                        try:
+                            self.listeners.remove(failed)
+                        except:
+                            pass
+
+                    except:
+                        pass
+
+                    finally:
+                        if client:
+                            del self.connections[failed]
 
     def serveforever(self):
         while True:
