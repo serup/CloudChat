@@ -5,6 +5,7 @@ from mocks import mockDOPsServer
 #from websocketserver import websocketclient as wsclient
 import sys
 import websocket
+import time
 
 sys.path[0:0] = [""]
 
@@ -27,6 +28,7 @@ class DOPsServerTest(unittest.TestCase):
     def tearDown(self):
         self.DOPsServer.stopmockServer()
         super(DOPsServerTest, self).tearDown()
+        time.sleep(3)
 
     def testInitDOPsServer(self):
         _bool = True
@@ -52,19 +54,20 @@ class DOPsServerTest(unittest.TestCase):
 
         ws = websocket.WebSocket()
         ws.connect("ws://127.0.0.1:9876")
-        ws.send("Hello world")
-        result = ws.recv()
-        print("Received '%s'" % result)
+        # ws.send("Hello world")
+        # result = ws.recv()
+        # print("Received '%s'" % result)
         ws.send_binary(DEDobj.pCompressedData)
         result = ws.recv()
         print("Received '%s'" % result)
         ws.close()
 
-        self.assertTrue(True == False, False)  #  NOT READY YET
+        # self.assertTrue(True == False, False)  #  NOT READY YET
 
 
         DED2 = ded.DEDEncoder()
-        DED2.PUT_DATA_IN_DECODER(DEDobj.pCompressedData, len(DEDobj.pCompressedData))
+        # DED2.PUT_DATA_IN_DECODER(DEDobj.pCompressedData, len(DEDobj.pCompressedData))
+        DED2.PUT_DATA_IN_DECODER(bytearray(result), len(bytearray(result)))
         # verify that data is inside decoder, and that it has been decompressed correct
         self.assertTrue(DED2.ptotaldata, DEDobj.uncompresseddata)
 

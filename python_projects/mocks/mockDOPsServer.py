@@ -94,6 +94,7 @@ class DOPsServerHandling(WebSocket):
     def handleClose(self):
         pass
 
+
 class MyThread_DOPsServer(Thread):
 
     def __init__(self, host, port):
@@ -105,24 +106,13 @@ class MyThread_DOPsServer(Thread):
         self.server = SimpleWebSocketServer(self.host, self.port, DOPsServerHandling)
 
     def run(self):
-        #websocket.enableTrace(True)
-        # host = "ws://127.0.0.1:9876/"
-        #host = self.host
-        #ws = websocket.WebSocketApp(host,
-        #                            on_message=on_message,
-        #                            on_error=on_error,
-        #                            on_close=on_close)
-        #ws.on_open = on_open
-        #ws.run_forever()
-
-        # self.server = SimpleWebSocketServer(self.host, self.port, SimpleEcho)
-        # self.server = SimpleWebSocketServer(self.host, self.port, DOPsServerHandling)
         self.server.serveforMe()
 
     def stop(self):
         self.server.stopServeForMe()
-        # self.server.close()
-        # self.server.bContinueToServe = False
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        pass
 
 
 class mockDOPsServer(object):
