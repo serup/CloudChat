@@ -12,7 +12,11 @@
 # **********************************************************************************************************************/
 
 #from websocketserver import websocketserver as ws
-import websocket
+
+from simplewebsocketserver import WebSocket, SimpleWebSocketServer, SimpleSSLWebSocketServer
+from optparse import OptionParser
+
+#import websocket
 from random import randint
 from threading import Thread
 import sys
@@ -23,7 +27,7 @@ try:
 except ImportError:  #TODO use Threading instead of _thread in python3
     import thread as thread
 import time
-import sys
+import signal, ssl
 
 sys.path[0:0] = [""]
 
@@ -94,6 +98,18 @@ def on_open(ws):
     thread.start_new_thread(run, ())
 
 
+class SimpleEcho(WebSocket):
+
+    def handleMessage(self):
+        self.sendMessage(self.data)
+
+    def handleConnected(self):
+        pass
+
+    def handleClose(self):
+        pass
+
+
 class MyThread_DOPsServer(Thread):
     def __init__(self, host, port):
         ''' Constructor. '''
@@ -103,15 +119,18 @@ class MyThread_DOPsServer(Thread):
         self.host = host
 
     def run(self):
-        websocket.enableTrace(True)
+        #websocket.enableTrace(True)
         # host = "ws://127.0.0.1:9876/"
-        host = self.host
-        ws = websocket.WebSocketApp(host,
-                                    on_message=on_message,
-                                    on_error=on_error,
-                                    on_close=on_close)
-        ws.on_open = on_open
-        ws.run_forever()
+        #host = self.host
+        #ws = websocket.WebSocketApp(host,
+        #                            on_message=on_message,
+        #                            on_error=on_error,
+        #                            on_close=on_close)
+        #ws.on_open = on_open
+        #ws.run_forever()
+
+        server = SimpleWebSocketServer(self.host, self.port, SimpleEcho)
+        server.serveforever()
 
 
 class mockDOPsServer(object):
@@ -129,7 +148,7 @@ class mockDOPsServer(object):
         myThreadServer = MyThread_DOPsServer(host, port)
         myThreadServer.setName('Thread DOPs Server')
         myThreadServer.start()
-        myThreadServer.join(15000)
+        #myThreadServer.join(15000)
 
         super(mockDOPsServer, self).__init__()
 
