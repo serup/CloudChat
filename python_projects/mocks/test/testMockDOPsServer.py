@@ -16,7 +16,8 @@ else:
 
 class DOPsServerTest(unittest.TestCase):
     DOPsServer = 0
-    host = 'ws://127.0.0.1:9876/'
+    #host = 'ws://127.0.0.1:9876'
+    host = '127.0.0.1'
     port = 9876
 
     def setUp(self):
@@ -49,8 +50,8 @@ class DOPsServerTest(unittest.TestCase):
         #ws.close()
 
         ws = websocket.WebSocket()
-        #ws.connect("ws://127.0.0.1:9876")
-        ws.connect("ws://echo.websocket.org")
+        ws.connect("ws://127.0.0.1:9876")
+        #ws.connect("ws://echo.websocket.org")
         ws.send("Hello world")
         ws.recv()
         ws.close()
