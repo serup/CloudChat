@@ -25,6 +25,7 @@ class DOPsServerTest(unittest.TestCase):
         super(DOPsServerTest, self).setUp()
 
     def tearDown(self):
+        self.DOPsServer.stopmockServer()
         super(DOPsServerTest, self).tearDown()
 
     def testInitDOPsServer(self):
@@ -54,7 +55,7 @@ class DOPsServerTest(unittest.TestCase):
         ws.send("Hello world")
         result = ws.recv()
         print("Received '%s'" % result)
-        ws.send(DEDobj.pCompressedData)
+        ws.send_binary(DEDobj.pCompressedData)
         result = ws.recv()
         print("Received '%s'" % result)
         ws.close()
