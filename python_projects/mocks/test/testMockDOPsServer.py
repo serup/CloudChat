@@ -51,9 +51,12 @@ class DOPsServerTest(unittest.TestCase):
 
         ws = websocket.WebSocket()
         ws.connect("ws://127.0.0.1:9876")
-        #ws.connect("ws://echo.websocket.org")
         ws.send("Hello world")
-        ws.recv()
+        result = ws.recv()
+        print("Received '%s'" % result)
+        ws.send(DEDobj.pCompressedData)
+        result = ws.recv()
+        print("Received '%s'" % result)
         ws.close()
 
         self.assertTrue(True == False, False)  #  NOT READY YET

@@ -70,33 +70,6 @@ class MyThread(Thread):
             time.sleep(secondsToSleep)
 
 
-def on_message(ws, message):
-    print(message)
-
-
-def on_error(ws, error):
-    print(error)
-
-
-def on_close(ws):
-    print("### closed ###")
-
-
-def on_open(ws):
-    def run(*args):
-        for i in range(3):
-            # send the message, then wait
-            # so thread doesn't exit and socket
-            # isn't closed
-            ws.send("Hello %d" % i)
-            time.sleep(1)
-
-        time.sleep(1)
-        ws.close()
-        print("Thread terminating...")
-
-    thread.start_new_thread(run, ())
-
 
 class SimpleEcho(WebSocket):
 
@@ -107,8 +80,19 @@ class SimpleEcho(WebSocket):
         pass
 
     def handleClose(self):
+        self.server.close()  #  hmmm - maybe not a solution
         pass
 
+class DOPsServerHandling(WebSocket):
+
+    def handleMessage(self):
+        self.sendMessage(self.data)
+
+    def handleConnected(self):
+        pass
+
+    def handleClose(self):
+        pass
 
 class MyThread_DOPsServer(Thread):
     def __init__(self, host, port):
@@ -117,6 +101,7 @@ class MyThread_DOPsServer(Thread):
         Thread.__init__(self)
         self.port = port
         self.host = host
+        self.server = 0
 
     def run(self):
         #websocket.enableTrace(True)
@@ -129,8 +114,10 @@ class MyThread_DOPsServer(Thread):
         #ws.on_open = on_open
         #ws.run_forever()
 
-        server = SimpleWebSocketServer(self.host, self.port, SimpleEcho)
-        server.serveforever()
+        # self.server = SimpleWebSocketServer(self.host, self.port, SimpleEcho)
+        self.server = SimpleWebSocketServer(self.host, self.port, DOPsServerHandling)
+        self.server.serveforever()
+
 
 
 class mockDOPsServer(object):
@@ -148,7 +135,6 @@ class mockDOPsServer(object):
         myThreadServer = MyThread_DOPsServer(host, port)
         myThreadServer.setName('Thread DOPs Server')
         myThreadServer.start()
-        #myThreadServer.join(15000)
 
         super(mockDOPsServer, self).__init__()
 
