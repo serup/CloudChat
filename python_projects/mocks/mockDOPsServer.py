@@ -13,21 +13,17 @@
 
 #from websocketserver import websocketserver as ws
 
-from simplewebsocketserver import WebSocket, SimpleWebSocketServer, SimpleSSLWebSocketServer
-from optparse import OptionParser
-
-#import websocket
-from random import randint
-from threading import Thread
 import sys
-import time
+from threading import Thread
+from ded import ded
 import six
+
+from ded import ded
+from websocketserver.simplewebsocketserver import WebSocket, SimpleWebSocketServer
 try:
     import Threading
 except ImportError:  #TODO use Threading instead of _thread in python3
     import thread as thread
-import time
-import signal, ssl
 
 sys.path[0:0] = [""]
 
@@ -53,45 +49,19 @@ def _check_unicode(val):
         return isinstance(val, unicode)
 
 
-class MyThread(Thread):
-    def __init__(self, val):
-        ''' Constructor. '''
-
-        Thread.__init__(self)
-        self.val = val
-
-    def run(self):
-        for i in range(1, self.val):
-            print('Value %d in thread %s' % (i, self.getName()))
-
-            # Sleep for random time between 1 ~ 3 second
-            secondsToSleep = randint(1, 5)
-            print('%s sleeping fo %d seconds...' % (self.getName(), secondsToSleep))
-            time.sleep(secondsToSleep)
-
-
-class SimpleEcho(WebSocket):
-
-    def handleMessage(self):
-        self.sendMessage(self.data)
-
-    def handleConnected(self):
-        pass
-
-    def handleClose(self):
-        pass
-
-
 class DOPsServerHandling(WebSocket):
 
     def handleMessage(self):
-        self.sendMessage(self.data)
+        # check if data received is a DED packet
+        DED = ded.DEDEncoder()
+        DED.PUT_DATA_IN_DECODER(self.data, len(self.data))
+        self.sendMessage(self.data)  # echo back the message
 
     def handleConnected(self):
         pass
 
     def handleClose(self):
-        self.sendMessage('exit')
+        pass
 
 
 class MyThread_DOPsServer(Thread):
@@ -121,21 +91,9 @@ class mockDOPsServer(object):
         super(mockDOPsServer, self).__init__()
 
     def startmockServer(self):
-        # Declare objects of MyThread class
-        # myThreadOb1 = MyThread(4)
-        # myThreadOb1.setName('Thread 1')
-        # Start running the threads!
-        # myThreadOb1.start()
-        # Wait for the thread to finish...
-        # myThreadOb1.join()
-
         self.myThreadServer = MyThread_DOPsServer(self.host, self.port)
         self.myThreadServer.setName('Thread DOPs Server')
         self.myThreadServer.start()
-
-        # self.myThreadServer = MyThread(4)
-        # self.myThreadServer.setName('Tread 1')
-        # self.myThreadServer.start()
 
     def stopmockServer(self):
         self.myThreadServer.stop()

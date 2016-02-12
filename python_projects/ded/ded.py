@@ -429,54 +429,46 @@ class DEDEncoder(object):
         self.encoder = DEDEncoder()
         return self.encoder
 
-    def PUT_STRUCT_START(self, encoder_ptr, name):
+    def PUT_STRUCT_START(self, name):
         result = -1
-        if encoder_ptr != 0:
-            result = encoder_ptr.encodestructstart(name)
+        result = self.encodestructstart(name)
         return result
 
-    def PUT_STRUCT_END(self, encoder_ptr, name):
+    def PUT_STRUCT_END(self, name):
         result = -1
-        if encoder_ptr != 0:
-            result = encoder_ptr.encodestructend(name)
+        result = self.encodestructend(name)
         return result
 
-    def PUT_METHOD(self, encoder_ptr, name, value):
+    def PUT_METHOD(self, name, value):
         result = -1
-        if encoder_ptr != 0:
-            result = self.encodetype(name, value, len(value), "DED_ELEMENT_TYPE_METHOD")
+        result = self.encodetype(name, value, len(value), "DED_ELEMENT_TYPE_METHOD")
         return result
 
-    def PUT_USHORT(self, encoder_ptr, name, value):
+    def PUT_USHORT(self, name, value):
         result = -1
-        if encoder_ptr != 0:
-            result = self.encodetype(name, value, 1, "DED_ELEMENT_TYPE_USHORT")
+        result = self.encodetype(name, value, 1, "DED_ELEMENT_TYPE_USHORT")
         return result
 
-    def PUT_LONG(self, encoder_ptr, name, value):
+    def PUT_LONG(self, name, value):
         result = -1
-        if encoder_ptr != 0:
-            result = self.encodetype(name, value, 8, "DED_ELEMENT_TYPE_LONG")
+        result = self.encodetype(name, value, 8, "DED_ELEMENT_TYPE_LONG")
         return result
 
-    def PUT_BOOL(self, encoder_ptr, name, value):
+    def PUT_BOOL(self, name, value):
         result = -1
-        if encoder_ptr != 0:
-            result = self.encodetype(name, value, 1, "DED_ELEMENT_TYPE_BOOL")
+        result = self.encodetype(name, value, 1, "DED_ELEMENT_TYPE_BOOL")
         return result
 
-    def PUT_STDSTRING(self, encoder_ptr, name, value):
+    def PUT_STDSTRING(self, name, value):
         result = -1
-        if encoder_ptr != 0:
-            if value == "":
-                value = "##empty##"
-            result = self.encodetype(name, value, len(value), "DED_ELEMENT_TYPE_STDSTRING")
+        if value == "":
+            value = "##empty##"
+        result = self.encodetype(name, value, len(value), "DED_ELEMENT_TYPE_STDSTRING")
         return result
 
-    def PUT_ELEMENT(self, encoder_ptr, entityname, elementname, elementvalue):
+    def PUT_ELEMENT(self, entityname, elementname, elementvalue):
         result = -1
-        if encoder_ptr != 0:
-            result = self.encodeelement(entityname, elementname, elementvalue)
+        result = self.encodeelement(entityname, elementname, elementvalue)
         return result
 
     def PUT_DATA_IN_DECODER(self, pCompressedData, sizeofCompressedData):
