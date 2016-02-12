@@ -23,12 +23,12 @@ class DOPsServerTest(unittest.TestCase):
 
     def setUp(self):
         self.DOPsServer = mockDOPsServer.mockDOPsServer(self.host, self.port)
+        self.DOPsServer.startmockServer()
         super(DOPsServerTest, self).setUp()
 
     def tearDown(self):
         self.DOPsServer.stopmockServer()
         super(DOPsServerTest, self).tearDown()
-        time.sleep(3)
 
     def testInitDOPsServer(self):
         _bool = True
@@ -63,7 +63,6 @@ class DOPsServerTest(unittest.TestCase):
         ws.close()
 
         # self.assertTrue(True == False, False)  #  NOT READY YET
-
 
         DED2 = ded.DEDEncoder()
         # DED2.PUT_DATA_IN_DECODER(DEDobj.pCompressedData, len(DEDobj.pCompressedData))
