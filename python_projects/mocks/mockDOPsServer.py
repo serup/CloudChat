@@ -139,4 +139,8 @@ class mockDOPsServer(object):
 
     def stopmockServer(self):
         self.myThreadServer.stop()
-        self.myThreadServer.join(0)
+        # self.myThreadServer.join(0)
+        # brute force kill thread -- dirty hack
+        import subprocess
+        cmdkill = "kill $(ps aux|grep 'DOPsServer true'|grep -v 'grep'|awk '{print $2}') 2> /dev/null"
+        subprocess.Popen(cmdkill, stdout=subprocess.PIPE, shell=True)
