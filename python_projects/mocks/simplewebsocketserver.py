@@ -605,10 +605,10 @@ class SimpleWebSocketServer(object):
         self.serversocket.shutdown(2)
         self.close()
         while self.bExit:  # until serveforMe is exit
-            pass
-
+            self.serversocket.shutdown(2)
 
     def serveforMe(self):
+        self.bExit = False
         while self.bContinueToServe:
             writers = []
             for fileno in self.listeners:
@@ -663,6 +663,10 @@ class SimpleWebSocketServer(object):
                         pass
 
             for ready in rList:
+                if self.bContinueToServe == False:
+                    # raise Exception("User request shutdown")
+                    break
+
                 if ready == self.serversocket:
                     try:
                         sock, address = self.serversocket.accept()
@@ -700,6 +704,9 @@ class SimpleWebSocketServer(object):
                             pass
 
             for failed in xList:
+                if self.bContinueToServe == False:
+                    raise Exception("User request shutdown")
+
                 if failed == self.serversocket:
                     self.close()
                     raise Exception("server socket failed")
