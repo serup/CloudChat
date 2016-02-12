@@ -28,6 +28,10 @@ class DOPsServerTest(unittest.TestCase):
 
     def tearDown(self):
         self.DOPsServer.stopmockServer()
+        # brute force kill the utrunner.py thread (DOPsServerTest) -- dirty hack
+        import subprocess
+        cmdkill = "kill $(ps aux|grep 'DOPsServerTest'|grep -v 'grep'|awk '{print $2}') 2> /dev/null"
+        subprocess.Popen(cmdkill, stdout=subprocess.PIPE, shell=True)
         super(DOPsServerTest, self).tearDown()
 
     def testInitDOPsServer(self):
