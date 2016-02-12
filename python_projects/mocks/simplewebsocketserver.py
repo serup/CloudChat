@@ -581,6 +581,7 @@ class SimpleWebSocketServer(object):
         self.connections = {}
         self.listeners = [self.serversocket]
         self.bContinueToServe = True
+        self.bExit = False
 
     def _decorateSocket(self, sock):
         return sock
@@ -599,8 +600,13 @@ class SimpleWebSocketServer(object):
                 pass
 
     def stopServeForMe(self):
-        self.close()
         self.bContinueToServe = False
+        self.serversocket.setblocking(False)
+        self.serversocket.shutdown(2)
+        self.close()
+        while self.bExit:  # until serveforMe is exit
+            pass
+
 
     def serveforMe(self):
         while self.bContinueToServe:
@@ -623,6 +629,9 @@ class SimpleWebSocketServer(object):
                 try:
                     client = self.connections[ready]
                     while client.sendq:
+                        if self.bContinueToServe == False:
+                            raise Exception("User request shutdown")
+
                         opcode, payload = client.sendq.popleft()
                         remaining = client._sendBuffer(payload)
                         if remaining is not None:
@@ -716,6 +725,7 @@ class SimpleWebSocketServer(object):
                     finally:
                         if client:
                             del self.connections[failed]
+        self.bExit = True
 
     def serveforever(self):
         while True:

@@ -79,7 +79,6 @@ class SimpleEcho(WebSocket):
         pass
 
     def handleClose(self):
-        self.server.close()  #  hmmm - maybe not a solution
         pass
 
 
@@ -92,7 +91,7 @@ class DOPsServerHandling(WebSocket):
         pass
 
     def handleClose(self):
-        pass
+        self.sendMessage('exit')
 
 
 class MyThread_DOPsServer(Thread):
@@ -111,14 +110,17 @@ class MyThread_DOPsServer(Thread):
     def stop(self):
         self.server.stopServeForMe()
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        pass
-
 
 class mockDOPsServer(object):
 
-    def __init__(self, host, port):
+    myThreadServer = 0
 
+    def __init__(self, host, port):
+        self.host = host
+        self.port = port
+        super(mockDOPsServer, self).__init__()
+
+    def startmockServer(self):
         # Declare objects of MyThread class
         # myThreadOb1 = MyThread(4)
         # myThreadOb1.setName('Thread 1')
@@ -127,11 +129,14 @@ class mockDOPsServer(object):
         # Wait for the thread to finish...
         # myThreadOb1.join()
 
-        self.myThreadServer = MyThread_DOPsServer(host, port)
+        self.myThreadServer = MyThread_DOPsServer(self.host, self.port)
         self.myThreadServer.setName('Thread DOPs Server')
         self.myThreadServer.start()
 
-        super(mockDOPsServer, self).__init__()
+        # self.myThreadServer = MyThread(4)
+        # self.myThreadServer.setName('Tread 1')
+        # self.myThreadServer.start()
 
     def stopmockServer(self):
         self.myThreadServer.stop()
+        self.myThreadServer.join(0)
