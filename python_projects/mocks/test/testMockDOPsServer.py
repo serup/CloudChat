@@ -50,26 +50,14 @@ class DOPsServerTest(unittest.TestCase):
         DEDobj = DED.GET_ENCODED_DATA()
 
         # transmitting data to mock DOPs Server
-        #ws = websocket.WebSocket()
-        #ws.connect("ws://127.0.0.1:9876")
-        #ws.send("Hello, Server")
-        #ws.recv()
-        #ws.close()
-
         ws = websocket.WebSocket()
         ws.connect("ws://127.0.0.1:9876")
-        # ws.send("Hello world")
-        # result = ws.recv()
-        # print("Received '%s'" % result)
         ws.send_binary(DEDobj.pCompressedData)
         result = ws.recv()
         print("Received '%s'" % result)
         ws.close()
 
-        # self.assertTrue(True == False, False)  #  NOT READY YET
-
         DED2 = ded.DEDEncoder()
-        # DED2.PUT_DATA_IN_DECODER(DEDobj.pCompressedData, len(DEDobj.pCompressedData))
         DED2.PUT_DATA_IN_DECODER(bytearray(result), len(bytearray(result)))
         # verify that data is inside decoder, and that it has been decompressed correct
         self.assertTrue(DED2.ptotaldata, DEDobj.uncompresseddata)
@@ -118,11 +106,21 @@ class DOPsServerTest(unittest.TestCase):
         # TODO: make a test on real response from a DOPs Server on create profile request
         # start decoding
         if DED2.GET_STRUCT_START("event"):
-            DED2.GET_METHOD("method")
-            DED2.GET_ELEMENT("profile")
-            DED2.GET_STDSTRING("stdstring")
-            DED2.GET_BOOL("bool")
-            DED2.GET_LONG("long")
-            DED2.GET_USHORT("ushort")
+            a = DED2.GET_METHOD("method")
+            b = DED2.GET_ELEMENT("profile")
+            c = DED2.GET_STDSTRING("stdstring")
+            d = DED2.GET_BOOL("bool")
+            e = DED2.GET_LONG("long")
+            f = DED2.GET_USHORT("ushort")
         result = DED2.GET_STRUCT_END("event")
         self.assertEquals(result > 0, result)
+        self.assertEquals(a,"mediaplayer")
+        self.assertEquals(b.strElementID, "username")
+        self.assertEquals(b.ElementData, "johndoe")
+        self.assertEquals(c, "hello world")
+        self.assertEquals(d, True)
+        self.assertEquals(e, number)
+        self.assertEquals(f, 4)
+
+
+
