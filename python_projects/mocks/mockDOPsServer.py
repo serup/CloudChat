@@ -77,7 +77,7 @@ class DOPsServerHandling(WebSocket):
 
     def handleMessage(self):
         DED = ded.DEDEncoder()
-        DED.PUT_DATA_IN_DECODER(self.data, len(self.data))
+        DED.PUT_DATA_IN_DECODER(self.data)
         if DED.GET_STRUCT_START("WSRequest") > 0:
             # 1. find out which request
             strMethod = DED.GET_METHOD("name")
