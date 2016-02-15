@@ -33,8 +33,8 @@ class DOPsServerTest(unittest.TestCase):
 
     def tearDown(self):
         self.DOPsServer.stopmockServer()
-        self.doCleanups()
         super(DOPsServerTest, self).tearDown()
+        # self.doCleanups()
 
     def testInitDOPsServer(self):
         _bool = True

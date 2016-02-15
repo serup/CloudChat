@@ -82,7 +82,7 @@ class DOPsServerHandling(WebSocket):
         # self.sendMessage(self.data)  # echo back the message
 
         DED = ded.DEDEncoder()
-        DED.PUT_DATA_IN_DECODER( self.data, len(self.data))
+        DED.PUT_DATA_IN_DECODER(self.data, len(self.data))
 
         if DED.GET_STRUCT_START("WSRequest") :
             strMethod = DED.GET_METHOD("name")
@@ -132,6 +132,7 @@ class DOPsServerHandling(WebSocket):
                     break
                 if case():  # default, could also just omit condition or 'if True'
                     print "Warning - Unknown WSRequest"
+                    self.sendMessage(self.data)  # echo back the incoming message
                     # No need to break here, it'll stop anyway
         else:
             if DED.GET_STRUCT_START("DFDRequest"):
