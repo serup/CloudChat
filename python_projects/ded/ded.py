@@ -396,7 +396,7 @@ class DEDEncoder(object):
 
         if self.asn1.FetchNextASN1(param):
             if param.Tag == ElementType:
-                if DEDelement.name == param.data:
+                if DEDelement.name == str(param.data):
                     if param.Tag == conversion_factors_for("DED_ELEMENT_TYPE_STRUCT") or param.Tag == conversion_factors_for("DED_ELEMENT_TYPE_STRUCT_END"):
                         # start and end elements does NOT have value, thus no need to go further
                         result = 1
@@ -411,6 +411,8 @@ class DEDEncoder(object):
                                 else:
                                     DEDelement.value = param.data
                                 result = 1
+                else:
+                    result = -1
         return result
 
     def DataEncoder_GetData(self, DEDobject):
@@ -471,7 +473,7 @@ class DEDEncoder(object):
         result = self.encodeelement(entityname, elementname, elementvalue)
         return result
 
-    def PUT_DATA_IN_DECODER(self, pCompressedData, sizeofCompressedData):
+    def _PUT_DATA_IN_DECODER(self, pCompressedData, sizeofCompressedData):
         decoder_ptr = self
         decomprsd = bytearray(lzss.decode(pCompressedData, 0, sizeofCompressedData))
         if len(decomprsd) > 0:
@@ -479,6 +481,9 @@ class DEDEncoder(object):
             decoder_ptr.pdata = decomprsd
             decoder_ptr.iLengthOfTotalData = len(decomprsd)
         return decoder_ptr
+
+    def PUT_DATA_IN_DECODER(self, receivedData):
+        self._PUT_DATA_IN_DECODER(bytearray(receivedData), len(bytearray(receivedData)))
 
     ###############################################################
     # GET DEFINES                                                 #
