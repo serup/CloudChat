@@ -605,7 +605,7 @@ class SimpleWebSocketServer(object):
         self.serversocket.shutdown(2)
         self.close()
         while self.bExit:  # until serveforMe is exit
-            self.serversocket.shutdown(2)
+            pass
 
     def serveforMe(self):
         self.bExit = False
