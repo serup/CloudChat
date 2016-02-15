@@ -17,24 +17,17 @@ else:
 
 
 class DOPsServerTest(unittest.TestCase):
-    cmdkill = "kill $(ps aux|grep 'DOPsServerTest\|mock'|grep -v 'grep'|awk '{print $2}') 2> /dev/null"
-    DOPsServer = 0
-    #host = 'ws://127.0.0.1:9876'
+
+    # 'ws://127.0.0.1:9876'
     host = '127.0.0.1'
     port = 9876
+    # start the mock server
+    DOPsServer = mockDOPsServer.mockDOPsServer(host, port)
+    DOPsServer.startmockServer()
 
     def doCleanups(self):
-        subprocess.Popen(self.cmdkill, stdout=subprocess.PIPE, shell=True)
-
-    def setUp(self):
-        self.DOPsServer = mockDOPsServer.mockDOPsServer(self.host, self.port)
-        self.DOPsServer.startmockServer()
-        super(DOPsServerTest, self).setUp()
-
-    def tearDown(self):
-        self.DOPsServer.stopmockServer()
-        super(DOPsServerTest, self).tearDown()
-        # self.doCleanups()
+        cmdkill = "kill $(ps aux|grep 'DOPsServerTest\|mock'|grep -v 'grep'|awk '{print $2}') 2> /dev/null"
+        subprocess.Popen(cmdkill, stdout=subprocess.PIPE, shell=True)
 
     def testInitDOPsServer(self):
         _bool = True
@@ -82,7 +75,7 @@ class DOPsServerTest(unittest.TestCase):
         self.assertEquals(e, number)
         self.assertEquals(f, 4)
 
-    def testCreateProfile(self):
+    def testPythonConnectToDOPsServer(self):
         trans_id = 69
         # hardcoded user in mock server
         uniqueId = "985998707DF048B2A796B44C89345494"
@@ -138,3 +131,4 @@ class DOPsServerTest(unittest.TestCase):
                 print("DED packet validated - OK")
         else:
             bDecoded = False
+
