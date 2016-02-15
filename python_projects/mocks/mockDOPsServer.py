@@ -76,14 +76,8 @@ class switch(object):
 class DOPsServerHandling(WebSocket):
 
     def handleMessage(self):
-        # check if data received is a DED packet
-        # DED = ded.DEDEncoder()
-        # DED.PUT_DATA_IN_DECODER(self.data, len(self.data))
-        # self.sendMessage(self.data)  # echo back the message
-
         DED = ded.DEDEncoder()
         DED.PUT_DATA_IN_DECODER(self.data, len(self.data))
-
         if DED.GET_STRUCT_START("WSRequest") :
             strMethod = DED.GET_METHOD("name")
             for case in switch(strMethod):
@@ -103,7 +97,7 @@ class DOPsServerHandling(WebSocket):
                         password = "12345"
 
                         if uTrans_id != trans_id: bDecoded = False
-                        if strFunctionName !=  uniqueId: bDecoded = False
+                        if strFunctionName != uniqueId: bDecoded = False
                         if strProtocolTypeID != "DED1.00.00": bDecoded = False
                         if strUsername != username: bDecoded = False
                         if strPassword != password: bDecoded = False
@@ -140,11 +134,11 @@ class DOPsServerHandling(WebSocket):
                 strMethod = DED.GET_METHOD("Method")
                 for case in switch(strMethod):
                     if case('CreateProfile'):
-                        Trans_id = DED.GET_USHORT("TransID")
+                        uTrans_id = DED.GET_USHORT("TransID")
                         strProtocolTypeID = DED.GET_STDSTRING("protocolTypeID")
                         for destination_case in switch(DED.GET_STDSTRING("dest")):
                             if destination_case('DFD_1.1'):
-                                strSource = DED.GET_STDSTRING("src")
+                                strClientSrc = DED.GET_STDSTRING("src")
                                 if (DED.GET_STDSTRING("STARTrequest").__eq__("EmployeeRequest") and
                                     DED.GET_STDSTRING("STARTrecord").__eq__("record")):
                                     print "- EmployeeRequest - received - now parse"
@@ -160,97 +154,56 @@ class DOPsServerHandling(WebSocket):
                                         if DED.GET_STDSTRING("STARTtoast").__sizeof__() > 0:
                                             # TOAST area found, now iterate thru all elements
                                             print "--- TOAST area found, now iterate thru all elements"
-                                            # TODO: continue ...
+                                            bFoundElement = True
+                                            bDecoded = False
+                                            while bFoundElement:
+                                                elementvalue = DED.GET_ELEMENT("profile")
+                                                if elementvalue != -1:
+                                                    bFoundElement = True
+                                                    print "--- TOAST element : " + elementvalue.strElementID
+                                                    if ((DED.GET_STDSTRING("elements-ignore").isEmpty()) and
+                                                         DED.GET_STDSTRING("ENDrecord").__eq__("record") and
+                                                         DED.GET_STDSTRING("ENDrequest").__eq__("EmployeeRequest") and
+                                                         DED.GET_STDSTRING("DFDRequest").isEmpty()):
+                                                         print "-- END Employee record"
+                                                         print "- END EmployeeRequest"
+                                                         print "END DFDRequest"
+                                                         print "DFDRequest parsed correct"
+                                                         bDecoded = True
+                                                else:
+                                                    bFoundElement = False
+
+                                                # 2. determine what to respond
+                                                if bDecoded:
+                                                    strStatus = "Profile Saved in database";
+                                                else:
+                                                    strStatus = "Error in creating profile";
+
+                                                # 3. create response packet
+                                                DED2 = ded.DEDEncoder()
+                                                DED2.PUT_STRUCT_START("DFDResponse")
+                                                DED2.PUT_METHOD("Method", "CreateProfile")
+                                                DED2.PUT_USHORT("TransID", uTrans_id)
+                                                DED2.PUT_STDSTRING("protocolTypeID", "DED1.00.00")
+                                                DED2.PUT_STDSTRING("dest", strClientSrc)
+                                                DED2.PUT_STDSTRING("src", "DFD_1.1")
+                                                DED2.PUT_STDSTRING("status", strStatus)
+                                                DED2.PUT_STRUCT_END("DFDResponse")
+                                                DEDobj = DED2.GET_ENCODED_DATA()
+
+                                                # 4. send response
+                                                self.sendMessage(DEDobj.pCompressedData)  # echo back the message
+                                        else:
+                                            print "No TOAST area found in request, meaning NO elements added to profile info"
                                 break
+                            if destination_case():  # default, could also just omit condition or 'if True'
+                                print "Warning - unknown DFDRequest - accepting basic parsing - header of packet was correct "
+                                # No need to break here, it'll stop anyway
                         break
                     if case():  # default, could also just omit condition or 'if True'
                         print "Warning - Unknown DFDRequest - this version of mockDOPsServer does NOT understand"
+                        self.sendMessage(self.data)  # echo back the incoming message
                         # No need to break here, it'll stop anyway
-
-
-# continue...                                            DEDDecoder._Elements elementvalue = null;
-#                                            while((elementvalue = DED.GET_ELEMENT("profile"))!=null)
-#                                            {
-#                                                System.out.println("--- TOAST element : " + elementvalue.strElementID);
-#                                            }
-#                                            if((DED.GET_STDSTRING("elements-ignore").isEmpty()) &&
-#                                               (DED.GET_STDSTRING("ENDrecord")).contains("record") &&
-#                                               (DED.GET_STDSTRING("ENDrequest")).contains("EmployeeRequest") &&
-#                                               (DED.GET_STDSTRING("DFDRequest")).isEmpty())
-#                                            {
-#                                                System.out.println("-- END Employee record");
-#                                                System.out.println("- END EmployeeRequest");
-#                                                System.out.println("END DFDRequest");
-#                                                System.out.println("DFDRequest parsed correct");
-#                                                bDecoded=true;
-#                                            }
-#
-#                                            // 2. determine what to respond
-#                                            if(bDecoded)
-#                                                strStatus="Profile Saved in database";
-#                                            else
-#                                                strStatus="Error in creating profile";
-#
-#                                            // 3. create response packet
-#                                            DEDEncoder DED2 = new DEDEncoder();
-#                                            DED2.PUT_STRUCT_START( "DFDResponse" );
-#                                            DED2.PUT_METHOD   ( "Method", "CreateProfile" );
-#                                            DED2.PUT_USHORT   ( "TransID", uTrans_id);
-#                                            DED2.PUT_STDSTRING( "protocolTypeID", "DED1.00.00");
-#                                            DED2.PUT_STDSTRING( "dest", strClientSrc );
-#                                            DED2.PUT_STDSTRING( "src", "DFD_1.1" );
-#                                            DED2.PUT_STDSTRING( "status", strStatus );
-#                                            DED2.PUT_STRUCT_END( "DFDResponse" );
-#
-#                                            byte[] dedResponsePacket = DED2.GET_ENCODED_BYTEARRAY_DATA();
-#
-#                                            // 4. send response packet
-#                                            if(dedResponsePacket==null) {
-#                                                dedResponsePacket = dedpacket; // echo back original packet, since creation of response packet went wrong!!
-#                                                System.out.println("Internal ERROR [MockServer] - was not capable of creating a DED response packet, thus echoing received back");
-#                                            }
-#                                            return dedResponsePacket;
-#                                        }
-        #                            else
-#                            {
-#                                // NO TOAST area found
-#                                System.out.println("No TOAST area found in request, meaning NO elements added to profile info");
-#                            }
-#                        }
-#                    }
-#                    else
-#                    {
-#                        System.out.println("Warning - unknown DFDRequest - accepting basic parsing - header of packet was correct");
-#                        bDecoded=true;
-#                    }
-#                }
-#                if(!bDecoded)
-#                    System.out.println("WARNING [MockServer] - was not capable of decoding incoming DED datapacket - could be unknown DED method");
-#            }
-#
-#            // 2. determine what to respond
-#            if(bDecoded)
-#                strStatus="ACCEPTED";
-#            else
-#                strStatus="NOT ACCEPTED USER";
-#
-#            // 3. create response packet
-#            DEDEncoder DED2 = new DEDEncoder();
-#            DED2.PUT_STRUCT_START( "WSResponse" );
-#                DED2.PUT_METHOD   ( "name", strMethod );
-#                DED2.PUT_USHORT   ( "trans_id", uTrans_id);
-#                DED2.PUT_STDSTRING( "protocolTypeID", "DED1.00.00");
-#                DED2.PUT_STDSTRING( "functionName", strFunctionName );
-#                DED2.PUT_STDSTRING( "status", strStatus );
-#            DED2.PUT_STRUCT_END( "WSResponse" );
-#
-#            byte[] dedResponsePacket = DED2.GET_ENCODED_BYTEARRAY_DATA();
-#
-#            // 4. send response packet
-#            if(dedResponsePacket==null) {
-#                dedResponsePacket = dedpacket; // echo back original packet, since creation of response packet went wrong!!
-#                System.out.println("Internal ERROR [MockServer] - was not capable of creating a DED response packet, thus echoing received back");
-#            }
 
     def handleConnected(self):
         pass
