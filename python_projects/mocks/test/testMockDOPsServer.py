@@ -59,21 +59,16 @@ class DOPsServerTest(unittest.TestCase):
 
         # start decoding
         if DED2.GET_STRUCT_START("event"):
-            a = DED2.GET_METHOD("method")
+            self.assertEquals(DED2.GET_METHOD("method"), "mediaplayer")
             b = DED2.GET_ELEMENT("profile")
-            c = DED2.GET_STDSTRING("stdstring")
-            d = DED2.GET_BOOL("bool")
-            e = DED2.GET_LONG("long")
-            f = DED2.GET_USHORT("ushort")
+            self.assertEquals(b.strElementID, "username")
+            self.assertEquals(b.ElementData, "johndoe")
+            self.assertEquals(DED2.GET_STDSTRING("stdstring"), "hello world")
+            self.assertEquals(DED2.GET_BOOL("bool"), True)
+            self.assertEquals(DED2.GET_LONG("long"), number)
+            self.assertEquals(DED2.GET_USHORT("ushort"), 4)
         result = DED2.GET_STRUCT_END("event")
         self.assertEquals(result > 0, result)
-        self.assertEquals(a,"mediaplayer")
-        self.assertEquals(b.strElementID, "username")
-        self.assertEquals(b.ElementData, "johndoe")
-        self.assertEquals(c, "hello world")
-        self.assertEquals(d, True)
-        self.assertEquals(e, number)
-        self.assertEquals(f, 4)
 
     def testPythonConnectToDOPsServer(self):
         trans_id = 69
