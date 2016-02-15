@@ -211,6 +211,9 @@ class DOPsServerHandling(WebSocket):
                         print "Warning - Unknown DFDRequest - this version of mockDOPsServer does NOT understand"
                         self.sendMessage(self.data)  # echo back the incoming message
                         # No need to break here, it'll stop anyway
+            else:
+                print "Warning - Unknown incomming data - this version of mockDOPsServer does NOT understand"
+                self.sendMessage(self.data)  # echo back the incoming message
 
     def handleConnected(self):
         pass
