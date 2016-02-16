@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 #
 import uuid
-
+import time
 from ded import ded
 from mocks import mockDOPsServer
-#from websocketserver import websocketclient as wsclient
 import sys
 import websocket
 import subprocess
-import time
 
 sys.path[0:0] = [""]
 
@@ -18,18 +16,44 @@ else:
     import unittest
 
 
+def suite():
+    suite = unittest.TestSuite()
+    suite.addTest(DOPsServerTest)
+    return suite
+
+
 class DOPsServerTest(unittest.TestCase):
 
-    # 'ws://127.0.0.1:9876'
     host = '127.0.0.1'
     port = 9876
-    # start the mock server
-    DOPsServer = mockDOPsServer.mockDOPsServer(host, port)
-    DOPsServer.startmockServer()
+    connectStr = 'ws://' + host + ':' + str(port)
+    DOPsServer = 0
 
     def doCleanups(self):
-        cmdkill = "kill $(ps aux|grep 'DOPsServerTest\|mock'|grep -v 'grep'|awk '{print $2}') 2> /dev/null"
+        cmdkill = "sleep 3; kill $(ps aux|grep 'DOPsServerTest\|mock'|grep -v 'grep'|awk '{print $2}') 2> /dev/null"
         subprocess.Popen(cmdkill, stdout=subprocess.PIPE, shell=True)
+        self.DOPsServer = 0
+
+    def setUp(self):
+        print "*******************************************"
+        print "*** START TEST CASE                     ***"
+        print "*******************************************"
+        self.connectToServer()
+
+    def tearDown(self):
+        print "*******************************************"
+        print "*** END TEST CASE                       ***"
+        print "*******************************************"
+        self.disconnectFromServer()
+
+    def connectToServer(self):
+        # start the mock server
+        self.connectStr = 'ws://' + self.host + ':' + str(self.port)
+        self.DOPsServer = mockDOPsServer.mockDOPsServer(self.host, self.port)
+        self.DOPsServer.startmockServer()
+
+    def disconnectFromServer(self):
+        self.DOPsServer.stopmockServer()
 
     def testInitDOPsServer(self):
         _bool = True
@@ -100,7 +124,6 @@ class DOPsServerTest(unittest.TestCase):
         DED2 = ded.DEDEncoder()
         DED2.PUT_DATA_IN_DECODER(receivedData)
         # verify that data is inside decoder, and that it has been decompressed correct
-        # self.assertTrue(DED2.ptotaldata, DEDobj.uncompresseddata)  # only if echo
 
         # start decoding
         if DED2.GET_STRUCT_START("WSResponse"):
