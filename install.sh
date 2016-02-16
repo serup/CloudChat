@@ -60,6 +60,31 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- oracle-java already installed"
 fi
+
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 scene* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install javaFX Scene builder "
+   echo "PLEASE manually download http://download.oracle.com/otn-pub/java/javafx_scenebuilder/2.0-b20/javafx_scenebuilder-2_0-linux-i586.deb"
+   #wget http://download.oracle.com/otn-pub/java/javafx_scenebuilder/2.0-b20/javafx_scenebuilder-2_0-linux-i586.deb && \
+   #sudo dpkg -i javafx_scenebuilder-2_0-linux-i586.deb && \
+   #sudo dpkg -i javafx_scenebuilder-2_0-linux-x64.deb && \
+   # find it using this command: dpkg-query  -S scene*
+   # then add in intellij under settings/language.../JavaFX/path to scenebuilder
+   sudo apt-get install scenebuilder
+   sudo apt-get update 
+  echo " - done."
+else
+  echo "- JavaFX Scene builder already installed"
+fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 p7zip-rar* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install p7zip-rar "
+  sudo apt-get install -yq p7zip-rar 
+  echo " - done."
+else
+  echo "- p7zip-rar already installed"
+fi
+
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 p7zip* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install p7zip-full "
