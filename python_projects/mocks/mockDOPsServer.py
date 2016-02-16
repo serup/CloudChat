@@ -182,9 +182,9 @@ class DOPsServerHandling(WebSocket):
 
                                             # 2. determine what to respond
                                             if bDecoded:
-                                                strStatus = "Profile Saved in database";
+                                                strStatus = "Profile Saved in database"
                                             else:
-                                                strStatus = "Error in creating profile";
+                                                strStatus = "Error in creating profile"
 
                                             # 3. create response packet
                                             DED2 = ded.DEDEncoder()
@@ -255,5 +255,5 @@ class mockDOPsServer(object):
 
     def stopmockServer(self):
         self.myThreadServer.stop()
-        self.myThreadServer.join(0)
+        #self.myThreadServer.join(-1)
 

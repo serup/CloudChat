@@ -304,7 +304,6 @@ class WebSocket(object):
         finally:
             self.closed = True
 
-
     def _sendBuffer(self, buff):
         size = len(buff)
         tosend = size
