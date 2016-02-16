@@ -30,7 +30,7 @@ class DOPsServerTest(unittest.TestCase):
     DOPsServer = 0
 
     def doCleanups(self):
-        cmdkill = "sleep 3; kill $(ps aux|grep 'DOPsServerTest\|mock'|grep -v 'grep'|awk '{print $2}') 2> /dev/null"
+        cmdkill = "sleep 3; kill -1 $(ps aux|grep 'DOPsServerTest\|mock'|grep -v 'grep'|awk '{print $2}') 2> /dev/null"
         subprocess.Popen(cmdkill, stdout=subprocess.PIPE, shell=True)
         self.DOPsServer = 0
 
@@ -58,6 +58,9 @@ class DOPsServerTest(unittest.TestCase):
     def testInitDOPsServer(self):
         _bool = True
         number = 9223372036854775807
+
+        print "Testing echo of sending DED datapacket to mock DOPsServer"
+        print "---------------------------------------------------------"
 
         DED = ded.DEDEncoder()
         if DED.PUT_STRUCT_START("event"):
@@ -95,6 +98,7 @@ class DOPsServerTest(unittest.TestCase):
             self.assertEquals(DED2.GET_USHORT("ushort"), 4)
         result = DED2.GET_STRUCT_END("event")
         self.assertEquals(result > 0, result)
+        print "ECHO - from DOPsServer - SUCCESS"
 
     def testPythonConnectToDOPsServer(self):
         trans_id = 69
@@ -102,6 +106,9 @@ class DOPsServerTest(unittest.TestCase):
         uniqueId = "985998707DF048B2A796B44C89345494"
         username = "johndoe@email.com"
         password = "12345"
+
+        print "Testing if mock DOPs Server can handle a pythonConnect DED datapacket"
+        print "---------------------------------------------------------------------"
 
         DED = ded.DEDEncoder()
         if DED.PUT_STRUCT_START("WSRequest"):
@@ -157,6 +164,9 @@ class DOPsServerTest(unittest.TestCase):
         trans_id = 66
         EntityFileName = str(uuid.uuid4()).replace("-", "")
         EntityTOASTFileName = str(uuid.uuid4()).replace("-", "")
+
+        print "Testing if mock DOPsServer can handle create profile DED request datapacket"
+        print "---------------------------------------------------------------------------"
 
         DED = ded.DEDEncoder()
         if DED.PUT_STRUCT_START("DFDRequest"):
