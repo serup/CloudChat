@@ -13,6 +13,11 @@ function set-title() {
 
 set-title environment for DOPS ok
 
+if [ ! -f ~/.gradle/gradle.properties ]; then
+	echo "enabling the gradle deamon to make gradle builds faster"
+	touch ~/.gradle/gradle.properties && echo "org.gradle.daemon=true" >> ~/.gradle/gradle.properties
+fi
+
 DIR=$(cd . && pwd)
 export DOPS_PUPPET_PATH="$DIR""/puppet/trunk/environments/"
 export DOCKER_PUPPET_PATH="$DIR""/puppet/trunk/environments/"
@@ -85,7 +90,7 @@ else
   echo "- p7zip-rar already installed"
 fi
 
-PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 p7zip* |grep "install ok installed")
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 p7zip-full* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install p7zip-full "
   sudo apt-get install -yq p7zip-full 
@@ -101,7 +106,7 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- p7zip-rar already installed"
 fi
-PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 LZMA* |grep "install ok installed")
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 lzma* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install LZMA "
   sudo apt-get install -yq LZMA 
@@ -338,7 +343,7 @@ if [ "" == "$MODULE_OK" ]; then
   puppet module install  jfryman-nginx --modulepath ./puppet/trunk/environments/devtest/modules
   echo " - done."
 else
-  echo "-  pjfryman-nginx puppet module installed"
+  echo "- pjfryman-nginx puppet module installed"
 fi
 MODULE_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep maestrodev-cucumber*)
 if [ "" == "$MODULE_OK" ]; then
