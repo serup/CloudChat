@@ -70,6 +70,7 @@ if [ "" == "$PKG_OK" ]; then
   echo -n "- install eclipse on ubuntu "
   sudo apt-get install -yq eclipse 
   echo " - done."
+  sudo bash eclipse_plugin_install.sh
 else
   echo "- eclipse already installed"
 fi
