@@ -1,0 +1,40 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'maven'
+apply plugin: 'application'
+
+task createPom << {
+    pom {
+        project {
+            groupId 'org.example'
+            artifactId 'test'
+            version '1.0.0'
+
+            inceptionYear '2008'
+            licenses {
+                license {
+                    name 'The Apache Software License, Version 2.0'
+                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    distribution 'repo'
+                }
+            }
+        }
+    }.writeTo("pom.xml")
+}
+
+mainClassName = 'Main'
+
+group='exampleDialogFxml'
+version = '0.0.1'
+
+repositories {
+	mavenCentral()
+}
+
+def javaHome = System.env['JAVA_HOME']
+
+dependencies {
+	testCompile group: 'junit', name: 'junit', version: '4.10'
+}
+
+
