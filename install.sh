@@ -13,6 +13,11 @@ function set-title() {
 
 set-title environment for DOPS ok
 
+if [ ! -f ~/.gradle/gradle.properties ]; then
+	echo "enabling the gradle deamon to make gradle builds faster"
+	touch ~/.gradle/gradle.properties && echo "org.gradle.daemon=true" >> ~/.gradle/gradle.properties
+fi
+
 DIR=$(cd . && pwd)
 export DOPS_PUPPET_PATH="$DIR""/puppet/trunk/environments/"
 export DOCKER_PUPPET_PATH="$DIR""/puppet/trunk/environments/"
@@ -60,7 +65,49 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- oracle-java already installed"
 fi
-PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 p7zip* |grep "install ok installed")
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 eclipse* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install eclipse on ubuntu "
+  sudo apt-get install -yq eclipse 
+  echo " - done."
+else
+  echo "- eclipse already installed"
+fi
+
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 openjdk* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install eclipse dependencies on ubuntu "
+  sudo apt-get install -yq openjdk-6-jdk openjdk-6-source openjdk-6-demo openjdk-6-doc openjdk-6-jre-headless openjdk-6-jre-lib 
+  echo " - done."
+else
+  echo "- eclipse dependencies already installed"
+fi
+
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 scene* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install javaFX Scene builder "
+   echo "PLEASE manually download http://download.oracle.com/otn-pub/java/javafx_scenebuilder/2.0-b20/javafx_scenebuilder-2_0-linux-i586.deb"
+   #wget http://download.oracle.com/otn-pub/java/javafx_scenebuilder/2.0-b20/javafx_scenebuilder-2_0-linux-i586.deb && \
+   #sudo dpkg -i javafx_scenebuilder-2_0-linux-i586.deb && \
+   #sudo dpkg -i javafx_scenebuilder-2_0-linux-x64.deb && \
+   # find it using this command: dpkg-query  -S scene*
+   # then add in intellij under settings/language.../JavaFX/path to scenebuilder
+   sudo apt-get install scenebuilder
+   sudo apt-get update 
+  echo " - done."
+else
+  echo "- JavaFX Scene builder already installed"
+fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 p7zip-rar* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install p7zip-rar "
+  sudo apt-get install -yq p7zip-rar 
+  echo " - done."
+else
+  echo "- p7zip-rar already installed"
+fi
+
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 p7zip-full* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install p7zip-full "
   sudo apt-get install -yq p7zip-full 
@@ -76,7 +123,7 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- p7zip-rar already installed"
 fi
-PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 LZMA* |grep "install ok installed")
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 lzma* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install LZMA "
   sudo apt-get install -yq LZMA 
@@ -313,7 +360,7 @@ if [ "" == "$MODULE_OK" ]; then
   puppet module install  jfryman-nginx --modulepath ./puppet/trunk/environments/devtest/modules
   echo " - done."
 else
-  echo "-  pjfryman-nginx puppet module installed"
+  echo "- pjfryman-nginx puppet module installed"
 fi
 MODULE_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep maestrodev-cucumber*)
 if [ "" == "$MODULE_OK" ]; then
