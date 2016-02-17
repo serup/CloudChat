@@ -77,8 +77,9 @@ class DOPsServerHandling(WebSocket):
 
     def handleMessage(self):
         DED = ded.DEDEncoder()
-        DED.PUT_DATA_IN_DECODER(self.data, len(self.data))
-        if DED.GET_STRUCT_START("WSRequest") :
+        DED.PUT_DATA_IN_DECODER(self.data)
+        if DED.GET_STRUCT_START("WSRequest") > 0:
+            # 1. find out which request
             strMethod = DED.GET_METHOD("name")
             for case in switch(strMethod):
                 if case('PythonConnect'):
@@ -102,6 +103,7 @@ class DOPsServerHandling(WebSocket):
                         if strUsername != username: bDecoded = False
                         if strPassword != password: bDecoded = False
 
+                        # 2. determine what to respond
                         if bDecoded:
                            strStatus="ACCEPTED"
                         else:
@@ -129,11 +131,12 @@ class DOPsServerHandling(WebSocket):
                     self.sendMessage(self.data)  # echo back the incoming message
                     # No need to break here, it'll stop anyway
         else:
-            if DED.GET_STRUCT_START("DFDRequest"):
+            if DED.GET_STRUCT_START("DFDRequest") > 0:
                 print "DFDRequest - received - now parse"
+                # 1. find out which request
                 strMethod = DED.GET_METHOD("Method")
                 for case in switch(strMethod):
-                    if case('CreateProfile'):
+                    if case('1_1_1_CreateProfile'):
                         uTrans_id = DED.GET_USHORT("TransID")
                         strProtocolTypeID = DED.GET_STDSTRING("protocolTypeID")
                         for destination_case in switch(DED.GET_STDSTRING("dest")):
@@ -161,38 +164,42 @@ class DOPsServerHandling(WebSocket):
                                                 if elementvalue != -1:
                                                     bFoundElement = True
                                                     print "--- TOAST element : " + elementvalue.strElementID
-                                                    if ((DED.GET_STDSTRING("elements-ignore").isEmpty()) and
-                                                         DED.GET_STDSTRING("ENDrecord").__eq__("record") and
+
+                                                else:
+                                                    bFoundElement = False
+                                                    # Fetch end of record
+                                                    # DED.GET_STDSTRING("elements-ignore")
+                                                    if (DED.GET_STDSTRING("ENDrecord").__eq__("record") and
                                                          DED.GET_STDSTRING("ENDrequest").__eq__("EmployeeRequest") and
-                                                         DED.GET_STDSTRING("DFDRequest").isEmpty()):
+                                                         DED.GET_STRUCT_END("DFDRequest") > 0):
                                                          print "-- END Employee record"
                                                          print "- END EmployeeRequest"
                                                          print "END DFDRequest"
                                                          print "DFDRequest parsed correct"
                                                          bDecoded = True
-                                                else:
-                                                    bFoundElement = False
+                                                    else:
+                                                        bDecoded = False
 
-                                                # 2. determine what to respond
-                                                if bDecoded:
-                                                    strStatus = "Profile Saved in database";
-                                                else:
-                                                    strStatus = "Error in creating profile";
+                                            # 2. determine what to respond
+                                            if bDecoded:
+                                                strStatus = "Profile Saved in database"
+                                            else:
+                                                strStatus = "Error in creating profile"
 
-                                                # 3. create response packet
-                                                DED2 = ded.DEDEncoder()
-                                                DED2.PUT_STRUCT_START("DFDResponse")
-                                                DED2.PUT_METHOD("Method", "CreateProfile")
-                                                DED2.PUT_USHORT("TransID", uTrans_id)
-                                                DED2.PUT_STDSTRING("protocolTypeID", "DED1.00.00")
-                                                DED2.PUT_STDSTRING("dest", strClientSrc)
-                                                DED2.PUT_STDSTRING("src", "DFD_1.1")
-                                                DED2.PUT_STDSTRING("status", strStatus)
-                                                DED2.PUT_STRUCT_END("DFDResponse")
-                                                DEDobj = DED2.GET_ENCODED_DATA()
+                                            # 3. create response packet
+                                            DED2 = ded.DEDEncoder()
+                                            DED2.PUT_STRUCT_START("DFDResponse")
+                                            DED2.PUT_METHOD("Method", "CreateProfile")
+                                            DED2.PUT_USHORT("TransID", uTrans_id)
+                                            DED2.PUT_STDSTRING("protocolTypeID", "DED1.00.00")
+                                            DED2.PUT_STDSTRING("dest", strClientSrc)
+                                            DED2.PUT_STDSTRING("src", "DFD_1.1")
+                                            DED2.PUT_STDSTRING("status", strStatus)
+                                            DED2.PUT_STRUCT_END("DFDResponse")
+                                            DEDobj = DED2.GET_ENCODED_DATA()
 
-                                                # 4. send response
-                                                self.sendMessage(DEDobj.pCompressedData)  # echo back the message
+                                            # 4. send response
+                                            self.sendMessage(DEDobj.pCompressedData)  # echo back the message
                                         else:
                                             print "No TOAST area found in request, meaning NO elements added to profile info"
                                 break
@@ -204,6 +211,9 @@ class DOPsServerHandling(WebSocket):
                         print "Warning - Unknown DFDRequest - this version of mockDOPsServer does NOT understand"
                         self.sendMessage(self.data)  # echo back the incoming message
                         # No need to break here, it'll stop anyway
+            else:
+                print "Warning - Unknown incomming data - this version of mockDOPsServer does NOT understand"
+                self.sendMessage(self.data)  # echo back the incoming message
 
     def handleConnected(self):
         pass
@@ -245,5 +255,5 @@ class mockDOPsServer(object):
 
     def stopmockServer(self):
         self.myThreadServer.stop()
-        self.myThreadServer.join(0)
+        #self.myThreadServer.join(-1)
 
