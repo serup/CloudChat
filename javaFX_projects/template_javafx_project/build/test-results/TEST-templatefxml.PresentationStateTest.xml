@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="templatefxml.PresentationStateTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2016-02-17T11:36:29" hostname="serup-ThinkPad-T440s" time="0.083">
+  <properties/>
+  <testcase name="new_name_changes_greeting" classname="templatefxml.PresentationStateTest" time="0.083"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
