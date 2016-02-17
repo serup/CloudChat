@@ -65,6 +65,23 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- oracle-java already installed"
 fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 eclipse* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install eclipse on ubuntu "
+  sudo apt-get install -yq eclipse 
+  echo " - done."
+else
+  echo "- eclipse already installed"
+fi
+
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 openjdk* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install eclipse dependencies on ubuntu "
+  sudo apt-get install -yq openjdk-6-jdk openjdk-6-source openjdk-6-demo openjdk-6-doc openjdk-6-jre-headless openjdk-6-jre-lib 
+  echo " - done."
+else
+  echo "- eclipse dependencies already installed"
+fi
 
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 scene* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
