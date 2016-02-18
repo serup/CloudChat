@@ -1,3 +1,19 @@
+class role_nexus_server {
+
+  # puppetlabs-java
+  # NOTE: Nexus requires
+  class{ '::java': }
+
+  class{ '::nexus':
+    version    => '2.8.0',
+    revision   => '05',
+    nexus_root => '/srv', # All directories and files will be relative to this
+  }
+
+  Class['::java'] ->
+  Class['::nexus']
+}
+
 class bamboo (
   $version = '4.4.0',
   $extension = 'tar.gz',
@@ -429,6 +445,18 @@ node /^bamboo.*/ {
   # bamboo.dops.scanva.com:8085   - Atlassian Bamboo 
   class { bamboo : } 
 
+}
+
+node /^nexus.*/ {
+
+  include grails_springboot
+  class { role_nexus_server: }  
+  # it will run here : 
+  # http://nexus.dops.scanva.com:8081/nexus
+  # username : admin, password : admin123
+  # after change of password, then to change back to admin123 then change in file nexus/conf/security.xml to following:
+  # $shiro1$SHA-512$1024$G+rxqm4Qw5/J54twR6BrSQ==$2ZUS4aBHbGGZkNzLugcQqhea7uPOXhoY4kugop4r4oSAYlJTyJ9RyZYLuFBmNzDr16Ii1Q+O6Mn1QpyBA1QphA==
+  # this equals admin123
 }
 
 
