@@ -1,0 +1,5 @@
+#Wed Feb 17 15:33:51 CET 2016
+__DEFAULT__=false
+org.eclipse.sdk.Eclipse.master=true
+org.eclipse.help.ui.localSearch.master=true
+expression=Import into Folder

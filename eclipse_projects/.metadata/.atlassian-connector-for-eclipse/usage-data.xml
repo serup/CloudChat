@@ -1,0 +1,241 @@
+<interactionEvent>
+  <kind>PREFERENCE</kind>
+  <date>2016-02-17 14:36:28.743 CET</date>
+  <pluginId>com.atlassian.connector.eclipse.monitor.core</pluginId>
+  <eventId>system info: os-arch</eventId>
+  <details>x86_64</details>
+</interactionEvent><interactionEvent>
+  <kind>PREFERENCE</kind>
+  <date>2016-02-17 14:36:28.761 CET</date>
+  <pluginId>com.atlassian.connector.eclipse.monitor.core</pluginId>
+  <eventId>system info: os</eventId>
+  <details>linux</details>
+</interactionEvent><interactionEvent>
+  <kind>PREFERENCE</kind>
+  <date>2016-02-17 14:36:28.765 CET</date>
+  <pluginId>com.atlassian.connector.eclipse.monitor.core</pluginId>
+  <eventId>system info: org.eclipse.core.runtime</eventId>
+  <details>3.8.0.dist</details>
+</interactionEvent><interactionEvent>
+  <kind>PREFERENCE</kind>
+  <date>2016-02-17 14:36:28.765 CET</date>
+  <pluginId>com.atlassian.connector.eclipse.monitor.core</pluginId>
+  <eventId>system info: connector-version</eventId>
+  <details>3.0.8.v20130328</details>
+</interactionEvent><interactionEvent>
+  <kind>PREFERENCE</kind>
+  <date>2016-02-17 14:36:28.767 CET</date>
+  <pluginId>com.atlassian.connector.eclipse.monitor.core</pluginId>
+  <eventId>system info: plugins</eventId>
+  <details>{ui=3.0.8.v20130328, fisheye.ui=3.0.7.v20130328, commons.ui=3.0.8.v20130328, crucible.core=3.0.7.v20130328, crucible.ui=3.0.7.v20130328, monitor.ui=3.0.8.v20130328, fisheye.core=3.0.7.v20130328, branding.ui=3.0.8.v20130328, bamboo.ui=3.0.8.v20130328, monitor.core=3.0.8.v20130328, help=3.0.8.v20130328, commons.core=3.0.8.v20130328, bamboo.core=3.0.8.v20130328, directclickthrough.ui=3.0.8.v20130328, core=3.0.8.v20130328, jira.ui=3.0.8.v20130328, jira.core=3.0.8.v20130328}</details>
+</interactionEvent><interactionEvent>
+  <kind>PREFERENCE</kind>
+  <date>2016-02-17 15:30:48.277 CET</date>
+  <pluginId>com.atlassian.connector.eclipse.monitor.core</pluginId>
+  <eventId>system info: os-arch</eventId>
+  <details>x86_64</details>
+</interactionEvent><interactionEvent>
+  <kind>PREFERENCE</kind>
+  <date>2016-02-17 15:30:48.287 CET</date>
+  <pluginId>com.atlassian.connector.eclipse.monitor.core</pluginId>
+  <eventId>system info: os</eventId>
+  <details>linux</details>
+</interactionEvent><interactionEvent>
+  <kind>PREFERENCE</kind>
+  <date>2016-02-17 15:30:48.288 CET</date>
+  <pluginId>com.atlassian.connector.eclipse.monitor.core</pluginId>
+  <eventId>system info: org.eclipse.core.runtime</eventId>
+  <details>3.8.0.dist</details>
+</interactionEvent><interactionEvent>
+  <kind>PREFERENCE</kind>
+  <date>2016-02-17 15:30:48.288 CET</date>
+  <pluginId>com.atlassian.connector.eclipse.monitor.core</pluginId>
+  <eventId>system info: connector-version</eventId>
+  <details>3.0.8.v20130328</details>
+</interactionEvent><interactionEvent>
+  <kind>PREFERENCE</kind>
+  <date>2016-02-17 15:30:48.289 CET</date>
+  <pluginId>com.atlassian.connector.eclipse.monitor.core</pluginId>
+  <eventId>system info: plugins</eventId>
+  <details>{ui=3.0.8.v20130328, fisheye.ui=3.0.7.v20130328, commons.ui=3.0.8.v20130328, crucible.core=3.0.7.v20130328, crucible.ui=3.0.7.v20130328, monitor.ui=3.0.8.v20130328, fisheye.core=3.0.7.v20130328, branding.ui=3.0.8.v20130328, bamboo.ui=3.0.8.v20130328, monitor.core=3.0.8.v20130328, help=3.0.8.v20130328, commons.core=3.0.8.v20130328, bamboo.core=3.0.8.v20130328, directclickthrough.ui=3.0.8.v20130328, core=3.0.8.v20130328, jira.ui=3.0.8.v20130328, jira.core=3.0.8.v20130328}</details>
+</interactionEvent><interactionEvent>
+  <kind>PREFERENCE</kind>
+  <date>2016-02-17 15:33:09.264 CET</date>
+  <pluginId>com.atlassian.connector.eclipse.monitor.core</pluginId>
+  <eventId>system info: os-arch</eventId>
+  <details>x86_64</details>
+</interactionEvent><interactionEvent>
+  <kind>PREFERENCE</kind>
+  <date>2016-02-17 15:33:09.277 CET</date>
+  <pluginId>com.atlassian.connector.eclipse.monitor.core</pluginId>
+  <eventId>system info: os</eventId>
+  <details>linux</details>
+</interactionEvent><interactionEvent>
+  <kind>PREFERENCE</kind>
+  <date>2016-02-17 15:33:09.278 CET</date>
+  <pluginId>com.atlassian.connector.eclipse.monitor.core</pluginId>
+  <eventId>system info: org.eclipse.core.runtime</eventId>
+  <details>3.8.0.dist</details>
+</interactionEvent><interactionEvent>
+  <kind>PREFERENCE</kind>
+  <date>2016-02-17 15:33:09.278 CET</date>
+  <pluginId>com.atlassian.connector.eclipse.monitor.core</pluginId>
+  <eventId>system info: connector-version</eventId>
+  <details>3.0.8.v20130328</details>
+</interactionEvent><interactionEvent>
+  <kind>PREFERENCE</kind>
+  <date>2016-02-17 15:33:09.279 CET</date>
+  <pluginId>com.atlassian.connector.eclipse.monitor.core</pluginId>
+  <eventId>system info: plugins</eventId>
+  <details>{ui=3.0.8.v20130328, fisheye.ui=3.0.7.v20130328, commons.ui=3.0.8.v20130328, crucible.core=3.0.7.v20130328, crucible.ui=3.0.7.v20130328, monitor.ui=3.0.8.v20130328, fisheye.core=3.0.7.v20130328, branding.ui=3.0.8.v20130328, bamboo.ui=3.0.8.v20130328, monitor.core=3.0.8.v20130328, help=3.0.8.v20130328, commons.core=3.0.8.v20130328, bamboo.core=3.0.8.v20130328, directclickthrough.ui=3.0.8.v20130328, core=3.0.8.v20130328, jira.ui=3.0.8.v20130328, jira.core=3.0.8.v20130328}</details>
+</interactionEvent><interactionEvent>
+  <kind>PREFERENCE</kind>
+  <date>2016-02-17 15:47:08.378 CET</date>
+  <pluginId>com.atlassian.connector.eclipse.monitor.core</pluginId>
+  <eventId>system info: os-arch</eventId>
+  <details>x86_64</details>
+</interactionEvent><interactionEvent>
+  <kind>PREFERENCE</kind>
+  <date>2016-02-17 15:47:08.386 CET</date>
+  <pluginId>com.atlassian.connector.eclipse.monitor.core</pluginId>
+  <eventId>system info: os</eventId>
+  <details>linux</details>
+</interactionEvent><interactionEvent>
+  <kind>PREFERENCE</kind>
+  <date>2016-02-17 15:47:08.386 CET</date>
+  <pluginId>com.atlassian.connector.eclipse.monitor.core</pluginId>
+  <eventId>system info: org.eclipse.core.runtime</eventId>
+  <details>3.8.0.dist</details>
+</interactionEvent><interactionEvent>
+  <kind>PREFERENCE</kind>
+  <date>2016-02-17 15:47:08.387 CET</date>
+  <pluginId>com.atlassian.connector.eclipse.monitor.core</pluginId>
+  <eventId>system info: connector-version</eventId>
+  <details>3.0.8.v20130328</details>
+</interactionEvent><interactionEvent>
+  <kind>PREFERENCE</kind>
+  <date>2016-02-17 15:47:08.387 CET</date>
+  <pluginId>com.atlassian.connector.eclipse.monitor.core</pluginId>
+  <eventId>system info: plugins</eventId>
+  <details>{ui=3.0.8.v20130328, fisheye.ui=3.0.7.v20130328, commons.ui=3.0.8.v20130328, crucible.core=3.0.7.v20130328, crucible.ui=3.0.7.v20130328, monitor.ui=3.0.8.v20130328, fisheye.core=3.0.7.v20130328, branding.ui=3.0.8.v20130328, bamboo.ui=3.0.8.v20130328, monitor.core=3.0.8.v20130328, help=3.0.8.v20130328, commons.core=3.0.8.v20130328, bamboo.core=3.0.8.v20130328, directclickthrough.ui=3.0.8.v20130328, core=3.0.8.v20130328, jira.ui=3.0.8.v20130328, jira.core=3.0.8.v20130328}</details>
+</interactionEvent><interactionEvent>
+  <kind>PREFERENCE</kind>
+  <date>2016-02-17 15:52:30.731 CET</date>
+  <pluginId>com.atlassian.connector.eclipse.monitor.core</pluginId>
+  <eventId>system info: os-arch</eventId>
+  <details>x86_64</details>
+</interactionEvent><interactionEvent>
+  <kind>PREFERENCE</kind>
+  <date>2016-02-17 15:52:30.773 CET</date>
+  <pluginId>com.atlassian.connector.eclipse.monitor.core</pluginId>
+  <eventId>system info: os</eventId>
+  <details>linux</details>
+</interactionEvent><interactionEvent>
+  <kind>PREFERENCE</kind>
+  <date>2016-02-17 15:52:30.774 CET</date>
+  <pluginId>com.atlassian.connector.eclipse.monitor.core</pluginId>
+  <eventId>system info: org.eclipse.core.runtime</eventId>
+  <details>3.8.0.dist</details>
+</interactionEvent><interactionEvent>
+  <kind>PREFERENCE</kind>
+  <date>2016-02-17 15:52:30.775 CET</date>
+  <pluginId>com.atlassian.connector.eclipse.monitor.core</pluginId>
+  <eventId>system info: connector-version</eventId>
+  <details>3.0.8.v20130328</details>
+</interactionEvent><interactionEvent>
+  <kind>PREFERENCE</kind>
+  <date>2016-02-17 15:52:30.777 CET</date>
+  <pluginId>com.atlassian.connector.eclipse.monitor.core</pluginId>
+  <eventId>system info: plugins</eventId>
+  <details>{ui=3.0.8.v20130328, fisheye.ui=3.0.7.v20130328, commons.ui=3.0.8.v20130328, crucible.core=3.0.7.v20130328, crucible.ui=3.0.7.v20130328, monitor.ui=3.0.8.v20130328, fisheye.core=3.0.7.v20130328, branding.ui=3.0.8.v20130328, bamboo.ui=3.0.8.v20130328, monitor.core=3.0.8.v20130328, help=3.0.8.v20130328, commons.core=3.0.8.v20130328, bamboo.core=3.0.8.v20130328, directclickthrough.ui=3.0.8.v20130328, core=3.0.8.v20130328, jira.ui=3.0.8.v20130328, jira.core=3.0.8.v20130328}</details>
+</interactionEvent><interactionEvent>
+  <kind>PREFERENCE</kind>
+  <date>2016-02-18 07:43:07.66 CET</date>
+  <pluginId>com.atlassian.connector.eclipse.monitor.core</pluginId>
+  <eventId>system info: os-arch</eventId>
+  <details>x86_64</details>
+</interactionEvent><interactionEvent>
+  <kind>PREFERENCE</kind>
+  <date>2016-02-18 07:43:07.77 CET</date>
+  <pluginId>com.atlassian.connector.eclipse.monitor.core</pluginId>
+  <eventId>system info: os</eventId>
+  <details>linux</details>
+</interactionEvent><interactionEvent>
+  <kind>PREFERENCE</kind>
+  <date>2016-02-18 07:43:07.77 CET</date>
+  <pluginId>com.atlassian.connector.eclipse.monitor.core</pluginId>
+  <eventId>system info: org.eclipse.core.runtime</eventId>
+  <details>3.8.0.dist</details>
+</interactionEvent><interactionEvent>
+  <kind>PREFERENCE</kind>
+  <date>2016-02-18 07:43:07.78 CET</date>
+  <pluginId>com.atlassian.connector.eclipse.monitor.core</pluginId>
+  <eventId>system info: connector-version</eventId>
+  <details>3.0.8.v20130328</details>
+</interactionEvent><interactionEvent>
+  <kind>PREFERENCE</kind>
+  <date>2016-02-18 07:43:07.78 CET</date>
+  <pluginId>com.atlassian.connector.eclipse.monitor.core</pluginId>
+  <eventId>system info: plugins</eventId>
+  <details>{ui=3.0.8.v20130328, fisheye.ui=3.0.7.v20130328, commons.ui=3.0.8.v20130328, crucible.core=3.0.7.v20130328, crucible.ui=3.0.7.v20130328, monitor.ui=3.0.8.v20130328, fisheye.core=3.0.7.v20130328, branding.ui=3.0.8.v20130328, bamboo.ui=3.0.8.v20130328, monitor.core=3.0.8.v20130328, help=3.0.8.v20130328, commons.core=3.0.8.v20130328, bamboo.core=3.0.8.v20130328, directclickthrough.ui=3.0.8.v20130328, core=3.0.8.v20130328, jira.ui=3.0.8.v20130328, jira.core=3.0.8.v20130328}</details>
+</interactionEvent><interactionEvent>
+  <kind>PREFERENCE</kind>
+  <date>2016-02-18 13:56:25.289 CET</date>
+  <pluginId>com.atlassian.connector.eclipse.monitor.core</pluginId>
+  <eventId>system info: os-arch</eventId>
+  <details>x86_64</details>
+</interactionEvent><interactionEvent>
+  <kind>PREFERENCE</kind>
+  <date>2016-02-18 13:56:25.361 CET</date>
+  <pluginId>com.atlassian.connector.eclipse.monitor.core</pluginId>
+  <eventId>system info: os</eventId>
+  <details>linux</details>
+</interactionEvent><interactionEvent>
+  <kind>PREFERENCE</kind>
+  <date>2016-02-18 13:56:25.363 CET</date>
+  <pluginId>com.atlassian.connector.eclipse.monitor.core</pluginId>
+  <eventId>system info: org.eclipse.core.runtime</eventId>
+  <details>3.8.0.dist</details>
+</interactionEvent><interactionEvent>
+  <kind>PREFERENCE</kind>
+  <date>2016-02-18 13:56:25.364 CET</date>
+  <pluginId>com.atlassian.connector.eclipse.monitor.core</pluginId>
+  <eventId>system info: connector-version</eventId>
+  <details>3.0.8.v20130328</details>
+</interactionEvent><interactionEvent>
+  <kind>PREFERENCE</kind>
+  <date>2016-02-18 13:56:25.365 CET</date>
+  <pluginId>com.atlassian.connector.eclipse.monitor.core</pluginId>
+  <eventId>system info: plugins</eventId>
+  <details>{ui=3.0.8.v20130328, fisheye.ui=3.0.7.v20130328, commons.ui=3.0.8.v20130328, crucible.core=3.0.7.v20130328, crucible.ui=3.0.7.v20130328, monitor.ui=3.0.8.v20130328, fisheye.core=3.0.7.v20130328, branding.ui=3.0.8.v20130328, bamboo.ui=3.0.8.v20130328, monitor.core=3.0.8.v20130328, help=3.0.8.v20130328, commons.core=3.0.8.v20130328, bamboo.core=3.0.8.v20130328, directclickthrough.ui=3.0.8.v20130328, core=3.0.8.v20130328, jira.ui=3.0.8.v20130328, jira.core=3.0.8.v20130328}</details>
+</interactionEvent><interactionEvent>
+  <kind>PREFERENCE</kind>
+  <date>2016-02-18 13:58:23.649 CET</date>
+  <pluginId>com.atlassian.connector.eclipse.monitor.core</pluginId>
+  <eventId>system info: os-arch</eventId>
+  <details>x86_64</details>
+</interactionEvent><interactionEvent>
+  <kind>PREFERENCE</kind>
+  <date>2016-02-18 13:58:23.667 CET</date>
+  <pluginId>com.atlassian.connector.eclipse.monitor.core</pluginId>
+  <eventId>system info: os</eventId>
+  <details>linux</details>
+</interactionEvent><interactionEvent>
+  <kind>PREFERENCE</kind>
+  <date>2016-02-18 13:58:23.669 CET</date>
+  <pluginId>com.atlassian.connector.eclipse.monitor.core</pluginId>
+  <eventId>system info: org.eclipse.core.runtime</eventId>
+  <details>3.8.0.dist</details>
+</interactionEvent><interactionEvent>
+  <kind>PREFERENCE</kind>
+  <date>2016-02-18 13:58:23.669 CET</date>
+  <pluginId>com.atlassian.connector.eclipse.monitor.core</pluginId>
+  <eventId>system info: connector-version</eventId>
+  <details>3.0.8.v20130328</details>
+</interactionEvent><interactionEvent>
+  <kind>PREFERENCE</kind>
+  <date>2016-02-18 13:58:23.670 CET</date>
+  <pluginId>com.atlassian.connector.eclipse.monitor.core</pluginId>
+  <eventId>system info: plugins</eventId>
+  <details>{ui=3.0.8.v20130328, fisheye.ui=3.0.7.v20130328, commons.ui=3.0.8.v20130328, crucible.core=3.0.7.v20130328, crucible.ui=3.0.7.v20130328, monitor.ui=3.0.8.v20130328, fisheye.core=3.0.7.v20130328, branding.ui=3.0.8.v20130328, bamboo.ui=3.0.8.v20130328, monitor.core=3.0.8.v20130328, help=3.0.8.v20130328, commons.core=3.0.8.v20130328, bamboo.core=3.0.8.v20130328, directclickthrough.ui=3.0.8.v20130328, core=3.0.8.v20130328, jira.ui=3.0.8.v20130328, jira.core=3.0.8.v20130328}</details>
+</interactionEvent>
