@@ -5,6 +5,7 @@
     echo "192.168.31.15   jekyll.dops.scanva.com           jekyll" | sudo tee --append /etc/hosts 2> /dev/null && \
     echo "192.168.31.16   nginx.dops.scanva.com            nginx" | sudo tee --append /etc/hosts 2> /dev/null && \
     echo "192.168.31.17   bamboo.dops.scanva.com           bamboo" | sudo tee --append /etc/hosts 2> /dev/null && \
+    echo "192.168.31.18   nexus.dops.scanva.com            nexus" | sudo tee --append /etc/hosts 2> /dev/null && \
     echo "192.168.0.101   one.cluster                      hadoop1" | sudo tee --append /etc/hosts 2> /dev/null && \
     echo "192.168.0.102   two.cluster                      hadoop2" | sudo tee --append /etc/hosts 2> /dev/null && \
     echo "192.168.0.103   three.cluster                    hadoop3" | sudo tee --append /etc/hosts 2> /dev/null && \
