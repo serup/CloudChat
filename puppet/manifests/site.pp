@@ -1,3 +1,68 @@
+class bamboo (
+  $version = '4.4.0',
+  $extension = 'tar.gz',
+  $installdir = '/usr/local',
+  $home = '/home/vagrant',
+  $user = 'vagrant'){
+  
+  include wget
+
+  $srcdir = '/usr/local/src'
+  $dir = "${installdir}/bamboo-${version}"
+
+  File {
+    owner  => $user,
+    group  => $user,
+  }
+
+  if !defined(User[$user]) {
+    user { $user:
+      ensure     => present,
+      home       => $home,
+      managehome => false,
+      system     => true,
+    }
+  }
+
+  wget::fetch { 'bamboo':
+    source      => "http://www.atlassian.com/software/bamboo/downloads/binary/atlassian-bamboo-${version}.${extension}",
+    destination => "${srcdir}/atlassian-bamboo-${version}.tar.gz",
+  } ->
+  exec { 'bamboo':
+    path => ['/usr/bin','/usr/sbin','/bin' ],
+    command => "tar zxvf ${srcdir}/atlassian-bamboo-${version}.tar.gz && mv atlassian-bamboo-${version} bamboo-${version} && chown -R ${user} bamboo-${version}",
+    creates => "${installdir}/bamboo-${version}",
+    cwd     => $installdir,
+    logoutput => "on_failure",
+  } ->
+  file { $home:
+    ensure => directory,
+  } ->
+  file { "${home}/logs":
+    ensure => directory,
+  } ->
+  file { "${dir}/webapp/WEB-INF/classes/bamboo-init.properties":
+    content => "bamboo.home=${home}/data",
+  } ->
+  file { '/etc/init.d/bamboo':
+    ensure => link,
+    target => "${dir}/bamboo.sh",
+  } ~>
+  file { '/etc/default/bamboo':
+    ensure  => present,
+    content => "RUN_AS_USER=${user}
+BAMBOO_PID=${home}/bamboo.pid
+BAMBOO_LOG_FILE=${home}/logs/bamboo.log",
+  } ~>
+  service { 'bamboo':
+    ensure     => running,
+    enable     => false, # service bamboo does not support chkconfig
+    hasrestart => true,
+    hasstatus  => true,
+  }
+
+}
+
 class grails_springboot {
     include maven
     include apt
@@ -354,6 +419,15 @@ node /^hadoop.*/ {
 #    class { 'ambari::server':
 #	  ownhostname => 'hadoop.scanva.com'
 #    }
+
+}
+
+node /^bamboo.*/ {
+
+  include grails_springboot
+  #class { apache : }
+  # bamboo.dops.scanva.com:8085   - Atlassian Bamboo 
+  class { bamboo : } 
 
 }
 
