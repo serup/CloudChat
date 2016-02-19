@@ -1,3 +1,5 @@
+package websocket;
+
 import dops.ClientEndpoint.JavaWebSocketClientEndpoint;
 import dops.mocks.setupMockServer;
 import WebSocketEchoTestEndpoints.EchoByteArrayEndpoint;
@@ -17,7 +19,7 @@ import static junit.framework.TestCase.assertEquals;
 /**
  * Created by serup on 22-12-15.
  */
-public class WebSocketTests {
+public class MockDOPsServerTests {
 
     private static setupMockServer setupMockServer =null;
     private static Thread serverThread;
