@@ -56,14 +56,18 @@
             <artifactId>tyrus-container-grizzly-server</artifactId>
             <version>1.12</version>
         </dependency>
+        <!-- Spring Data Apache Hadoop -->
         <dependency>
-            <groupId>org.glassfish.tyrus</groupId>
-            <artifactId>tyrus-server</artifactId>
-            <version>1.12</version>
-            <scope>test</scope>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-hadoop</artifactId>
+            <version>1.0.0.RELEASE</version>
         </dependency>
-
-
+        <!-- Apache Hadoop Core -->
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-core</artifactId>
+            <version>1.0.3</version>
+        </dependency>
     </dependencies>
 
     <properties>
