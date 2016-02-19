@@ -24,6 +24,17 @@ public class SMSCDRMapperReducerTest {
     ReduceDriver<Text, IntWritable, Text, IntWritable> reduceDriver;
     MapReduceDriver<LongWritable, Text, Text, IntWritable, Text, IntWritable> mapReduceDriver;
 
+    /*
+    Following is an example to use MRUnit to unit test a Map Reduce program that does SMS CDR (call details record) analysis.
+
+    The records look like
+
+    CDRID;CDRType;Phone1;Phone2;SMS Status Code
+    655209;1;796764372490213;804422938115889;6
+            353415;0;356857119806206;287572231184798;4
+            835699;1;252280313968413;889717902341635;0
+    */
+
     @Before
     public void setUp() {
         SMSCDRMapper mapper = new SMSCDRMapper();
