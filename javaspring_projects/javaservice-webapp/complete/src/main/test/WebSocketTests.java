@@ -1,5 +1,5 @@
 import dops.ClientEndpoint.JavaWebSocketClientEndpoint;
-import dops.mocks.MockTestServer;
+import dops.mocks.setupMockServer;
 import WebSocketEchoTestEndpoints.EchoByteArrayEndpoint;
 import messaging.simp.ded.DEDDecoder;
 import messaging.simp.ded.DEDEncoder;
@@ -19,7 +19,7 @@ import static junit.framework.TestCase.assertEquals;
  */
 public class WebSocketTests {
 
-    private static MockTestServer mockTestServer=null;
+    private static setupMockServer setupMockServer =null;
     private static Thread serverThread;
 
     private void runByteArrayServer() {
@@ -48,17 +48,17 @@ public class WebSocketTests {
         /**
          * Start and connect to a MOCK server which can act as a Server and receive a DED packet and return a DED packet with result
          */
-        if(mockTestServer==null)
-            mockTestServer = new MockTestServer(8046,"MockServerEndpoint");
+        if(setupMockServer ==null)
+            setupMockServer = new setupMockServer(8046,"MockServerEndpoint");
     }
 
     @Test
     @Ignore // some how it is not possible to run multiple servers even if port is different - hmm !?!?!
     public void testClientServerBinaryEcho() throws Exception {
 
-        // no need for mockTestServer, so close it down if running - there is however issues when localhost has a running server - normally there could be more servers on seperate ports, however in Java there seems to be some issues
-        if(mockTestServer!=null)
-            mockTestServer.stopServer();
+        // no need for setupMockServer, so close it down if running - there is however issues when localhost has a running server - normally there could be more servers on seperate ports, however in Java there seems to be some issues
+        if(setupMockServer !=null)
+            setupMockServer.stopServer();
 
         /**
          * First start a server which can receive and echo back a binary array
@@ -136,7 +136,7 @@ public class WebSocketTests {
     public void testCreateProfileInMockServer()
     {
         boolean bCreatedProfile=false;
-        assertEquals(true,mockTestServer.isOpen());
+        assertEquals(true, setupMockServer.isOpen());
 
         /**
          * prepare data to be send
@@ -197,13 +197,13 @@ public class WebSocketTests {
         /**
          * send to server with client current client session connection
          */
-        mockTestServer.sendToServer(data);
+        setupMockServer.sendToServer(data);
 
 
         /**
          * wait for incomming data response, then receive data - or timeout
          */
-        byte[] receivedData = mockTestServer.receiveFromServer();
+        byte[] receivedData = setupMockServer.receiveFromServer();
 
 
         /**
@@ -238,7 +238,7 @@ public class WebSocketTests {
 
     @Test
     public void testLoginToMockServer() throws Exception {
-        assertEquals(true,mockTestServer.isOpen());
+        assertEquals(true, setupMockServer.isOpen());
 
         /**
          * prepare data to be send
@@ -267,13 +267,13 @@ public class WebSocketTests {
         /**
          * send to server with client current client session connection
          */
-        mockTestServer.sendToServer(data);
+        setupMockServer.sendToServer(data);
 
 
         /**
          * wait for incomming data response, then receive data - or timeout
          */
-        byte[] receivedData = mockTestServer.receiveFromServer();
+        byte[] receivedData = setupMockServer.receiveFromServer();
 
 
         /**
@@ -324,7 +324,7 @@ public class WebSocketTests {
     @Test
     @Ignore
     public void testCSharpWithLoginToMockServer() throws Exception {
-        assertEquals(true, mockTestServer.isOpen());
+        assertEquals(true, setupMockServer.isOpen());
 
         // Try to start a html page with javascript websocket and connect to this running test case - example:
         /*

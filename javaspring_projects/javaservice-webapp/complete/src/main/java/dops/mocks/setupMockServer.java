@@ -11,7 +11,7 @@ import java.nio.ByteBuffer;
 /**
  * Created by serup on 08-01-16.
  */
-public class MockTestServer{
+public class setupMockServer {
 
     public boolean bIsRunning=false;
     private Thread MockserverThread;
@@ -62,7 +62,7 @@ public class MockTestServer{
             server.stop();
     }
 
-    public MockTestServer(int ServerPort, String ServerEndpoint)
+    public setupMockServer(int ServerPort, String ServerEndpoint)
     {
         /**
          * start the MOCK server
