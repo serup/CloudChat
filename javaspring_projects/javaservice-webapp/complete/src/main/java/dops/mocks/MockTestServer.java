@@ -1,7 +1,6 @@
-package Mocks;
+package dops.mocks;
 
 import dops.ClientEndpoint.JavaWebSocketClientEndpoint;
-import mocks.MockServer;
 import org.glassfish.tyrus.server.Server;
 
 import javax.websocket.Session;

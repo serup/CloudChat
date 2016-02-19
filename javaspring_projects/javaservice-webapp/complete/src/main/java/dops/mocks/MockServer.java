@@ -1,4 +1,4 @@
-package mocks;
+package dops.mocks;
 
 import messaging.simp.ded.DEDDecoder;
 import messaging.simp.ded.DEDEncoder;

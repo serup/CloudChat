@@ -1,5 +1,5 @@
 import dops.ClientEndpoint.JavaWebSocketClientEndpoint;
-import Mocks.MockTestServer;
+import dops.mocks.MockTestServer;
 import WebSocketEchoTestEndpoints.EchoByteArrayEndpoint;
 import messaging.simp.ded.DEDDecoder;
 import messaging.simp.ded.DEDEncoder;
