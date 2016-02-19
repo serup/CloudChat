@@ -1,10 +1,8 @@
-package messaging.simp.ded.compression;
+package dops.protocol.compression;
 
-import messaging.simp.ded.DEDDecoder;
-import messaging.simp.ded.DEDEncoder;
+import dops.protocol.ded.DEDDecoder;
+import dops.protocol.ded.DEDEncoder;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
