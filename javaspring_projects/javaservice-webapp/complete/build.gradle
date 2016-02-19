@@ -39,3 +39,36 @@ dependencies {
 task wrapper(type: Wrapper) {
     gradleVersion = '2.3'
 }
+
+apply plugin: 'maven'
+apply plugin: 'java'
+
+sourceCompatibility = 7
+targetCompatibility = 7
+
+dependencies {
+    compile            'com.google.guava:guava:13.0.1'
+    compile            'joda-time:joda-time:2.1'
+
+    testCompile        'junit:junit:4.11'
+    testCompile        'org.mockito:mockito-core:1.9.5'
+}
+
+task writeNewPom << {
+    pom {
+        project {
+            groupId 'org.example'
+            artifactId 'test'
+            version '1.0.0'
+
+            inceptionYear '2008'
+            licenses {
+                license {
+                    name 'The Apache Software License, Version 2.0'
+                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    distribution 'repo'
+                }
+            }
+        }
+    }.writeTo("$buildDir/newpom.xml")
+}
