@@ -1,8 +1,8 @@
 package integrationTests;
 
-import ClientEndpoint.JavaWebSocketClientEndpoint;
-import messaging.simp.ded.DEDDecoder;
-import messaging.simp.ded.DEDEncoder;
+import dops.ClientEndpoint.JavaWebSocketClientEndpoint;
+import dops.protocol.ded.DEDDecoder;
+import dops.protocol.ded.DEDEncoder;
 import org.junit.Test;
 
 import java.nio.ByteBuffer;
