@@ -65,7 +65,7 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- oracle-java already installed"
 fi
-PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 eclipse* |grep "install ok installed")
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 eclipse |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install eclipse on ubuntu "
   sudo apt-get install -yq eclipse 
@@ -338,6 +338,27 @@ if [ "" == "$PKG_OK" ]; then
   echo " - done."
 else
   echo "- puppetlabs-release installed"
+fi
+MODULE_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep maestrodev-bamboo*)
+if [ "" == "$MODULE_OK" ]; then
+  echo -n "- install maestrodev-bamboo and nexus"
+  puppet module install maestrodev-bamboo  --modulepath ./puppet/trunk/environments/devtest/modules
+  puppet module install maestrodev-wget --modulepath ./puppet/trunk/environments/devtest/modules 
+  MODULE_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep hubspot-nexus*)
+  if [ "" == "$MODULE_OK" ]; then
+     puppet module install hubspot-nexus --modulepath ./puppet/trunk/environments/devtest/modules  
+  fi
+  echo " - done."
+else
+  echo "- maestrodev-bamboo puppet module installed"
+fi
+MODULE_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep hubspot-nexus*)
+if [ "" == "$MODULE_OK" ]; then
+  echo -n "- install nexus"
+  puppet module install hubspot-nexus --modulepath ./puppet/trunk/environments/devtest/modules  
+  echo " - done."
+else
+  echo "- nexus puppet module installed"
 fi
 MODULE_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep puppetlabs-stdlib*)
 if [ "" == "$MODULE_OK" ]; then

@@ -24,6 +24,24 @@
       ":memory": 1024,
       ":hostname":  "nginx.dops.scanva.com"
     },
+    "bamboo": {
+      "nodeOS": "ubuntu/vivid32",
+      "bootstrap": "bootstrap-node-bamboo.sh",
+      ":ip": "192.168.31.17",
+      "ports": [
+        {":host": 8085, ":guest": 8085, ":id": "bamboo"}
+      ],
+      ":memory": 1024,
+      ":hostname":  "bamboo.dops.scanva.com"
+    },
+    "nexus": {
+      "nodeOS": "ubuntu/vivid32",
+      "bootstrap": "bootstrap-node-nexus.sh",
+      ":ip": "192.168.31.18",
+      "ports": [],
+      ":memory": 1024,
+      ":hostname":  "nexus.dops.scanva.com"
+    },
     "javaservices": {
       "nodeOS": "ubuntu/vivid32",
       "bootstrap": "bootstrap-node-javaservices.sh",
