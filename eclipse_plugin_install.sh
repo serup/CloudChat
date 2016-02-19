@@ -6,6 +6,7 @@ eclipse \
 -application org.eclipse.equinox.p2.director \
 -noSplash \
 -repository \
+http://download.eclipse.org/technology/m2e/milestones/1.0,\
 http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/,\
 http://download.eclipse.org/releases/juno,\
 http://download.eclipse.org/windowbuilder/WB/release/R201406251200/4.2/,\
