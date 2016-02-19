@@ -56,6 +56,12 @@
             <artifactId>tyrus-container-grizzly-server</artifactId>
             <version>1.12</version>
         </dependency>
+        <dependency>
+            <groupId>org.glassfish.tyrus</groupId>
+            <artifactId>tyrus-server</artifactId>
+            <version>1.12</version>
+            <scope>test</scope>
+        </dependency>
 
 
     </dependencies>
