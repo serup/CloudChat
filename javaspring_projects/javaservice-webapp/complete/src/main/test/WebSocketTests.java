@@ -1,8 +1,8 @@
 import dops.ClientEndpoint.JavaWebSocketClientEndpoint;
 import dops.mocks.setupMockServer;
 import WebSocketEchoTestEndpoints.EchoByteArrayEndpoint;
-import messaging.simp.ded.DEDDecoder;
-import messaging.simp.ded.DEDEncoder;
+import dops.protocol.ded.DEDDecoder;
+import dops.protocol.ded.DEDEncoder;
 import org.glassfish.tyrus.server.Server;
 import org.junit.Before;
 import org.junit.Ignore;

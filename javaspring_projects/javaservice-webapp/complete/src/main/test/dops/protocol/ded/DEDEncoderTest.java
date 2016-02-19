@@ -1,9 +1,6 @@
-package messaging.simp.ded;
+package dops.protocol.ded;
 
 import org.junit.Test;
-import org.springframework.util.Assert;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by serup on 15-12-15.

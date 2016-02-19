@@ -21,7 +21,7 @@
  */
 
 //package org.crosswire.common.compress;
-package messaging.simp.ded.compression;
+package dops.protocol.compression;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

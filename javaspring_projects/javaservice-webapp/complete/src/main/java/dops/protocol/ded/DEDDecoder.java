@@ -4,9 +4,9 @@
  * This Decoder follows same structure as the Decoder for STOMP, however it is NOT the same
  * - DED is a completely different protocol
  */
-package messaging.simp.ded;
+package dops.protocol.ded;
 
-import messaging.simp.ded.compression.LZSS;
+import dops.protocol.compression.LZSS;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

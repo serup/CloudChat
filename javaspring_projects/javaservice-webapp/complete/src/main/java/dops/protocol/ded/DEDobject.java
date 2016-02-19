@@ -1,4 +1,4 @@
-package messaging.simp.ded;
+package dops.protocol.ded;
 
 /**
  * Created by serup on 23-12-15.

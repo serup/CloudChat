@@ -20,7 +20,7 @@
  * ID: $Id: CompressorType.java 1573 2007-07-27 17:18:17Z dmsmith $
  */
 //package org.crosswire.common.compress;
-package messaging.simp.ded.compression;
+package dops.protocol.compression;
 
 import java.io.ByteArrayInputStream;
 import java.io.Serializable;

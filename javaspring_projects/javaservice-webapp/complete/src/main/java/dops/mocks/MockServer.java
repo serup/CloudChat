@@ -1,7 +1,7 @@
 package dops.mocks;
 
-import messaging.simp.ded.DEDDecoder;
-import messaging.simp.ded.DEDEncoder;
+import dops.protocol.ded.DEDDecoder;
+import dops.protocol.ded.DEDEncoder;
 
 import javax.websocket.MessageHandler;
 import javax.websocket.OnMessage;

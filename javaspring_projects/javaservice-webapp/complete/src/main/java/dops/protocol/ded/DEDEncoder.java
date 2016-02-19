@@ -6,28 +6,16 @@
  * - DED is a completely different protocol
  */
 
-package messaging.simp.ded;
+package dops.protocol.ded;
 
-import java.io.*;
-import java.nio.*;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import messaging.simp.ded.compression.LZSS;
+import dops.protocol.compression.LZSS;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.springframework.messaging.Message;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
-import org.springframework.messaging.simp.SimpMessageType;
-import org.springframework.messaging.support.NativeMessageHeaderAccessor;
-import org.springframework.util.Assert;
-import org.springframework.util.ExceptionTypeFilter;
-import org.springframework.util.SystemPropertyUtils;
-
-
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 
 /**
