@@ -1,4 +1,4 @@
-import ClientEndpoint.JavaWebSocketClientEndpoint;
+import dops.ClientEndpoint.JavaWebSocketClientEndpoint;
 import Mocks.MockTestServer;
 import WebSocketEchoTestEndpoints.EchoByteArrayEndpoint;
 import messaging.simp.ded.DEDDecoder;
@@ -8,7 +8,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import javax.websocket.MessageHandler;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
