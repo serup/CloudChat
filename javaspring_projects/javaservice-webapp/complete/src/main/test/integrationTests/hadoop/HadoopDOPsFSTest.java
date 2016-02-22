@@ -51,7 +51,7 @@ public class HadoopDOPsFSTest {
         itemsToAdd.add("hdfs://one.cluster:8020/mapred");
         itemsToAdd.add("hdfs://one.cluster:8020/tmp");
         itemsToAdd.add("hdfs://one.cluster:8020/user");
-        assertEquals("Expected <empty> files in hdfs ls list", itemsToAdd, fshandlerDriver.hadoopFS_ls());
+        assertEquals("Expected <empty> files in hdfs ls list", itemsToAdd, fshandlerDriver.ls("/"));
     }
 
 }
