@@ -22,7 +22,7 @@ import static junit.framework.TestCase.assertEquals;
 /**
  * Created by serup on 22-02-16.
  */
-public class HandleHadoopFSTest {
+public class HadoopDOPsFSTest {
 
     MapDriver<LongWritable, Text, Text, IntWritable> mapDriver;
     ReduceDriver<Text, IntWritable, Text, IntWritable> reduceDriver;
