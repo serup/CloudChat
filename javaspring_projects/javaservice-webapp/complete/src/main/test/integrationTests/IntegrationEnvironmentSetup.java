@@ -14,6 +14,7 @@ import static org.junit.Assert.assertEquals;
 public class IntegrationEnvironmentSetup {
 
     boolean bIntegrationEnvironmentAlreadySetup=false;
+    boolean bHadoopIntegrationEnvironmentAlreadySetup=false;
 
     public static boolean containsAny(String str, String[] words)
     {
@@ -95,6 +96,39 @@ public class IntegrationEnvironmentSetup {
         }
         else
             System.out.println("- Integration Environment already setup");
+
+        return bResult;
+    }
+
+    public boolean setupHadoopIntegrationEnvironment()
+    {
+        boolean bResult=true;
+        if (!bHadoopIntegrationEnvironmentAlreadySetup) {
+            try {
+                // Make sure VM is running for this test
+                System.out.println("Waiting for VM hadoop cluster to start ...");
+
+                String path = new File(".").getCanonicalPath();
+                path = trimOffLastFileSeperator(path, 3);
+                path = path.concat("/hadoop_projects/hadoopServices");
+
+                String cmd = "vagrant --version";
+                String result = executeCommand(cmd, path);
+                assertEquals(true, result.contains("Vagrant"));
+
+                cmd = "vagrant up";
+                result = executeCommand(cmd, path);
+                assertEquals(true, containsAny(result, new String[]{"VM is already running", "Machine booted and ready"}));
+
+                System.out.println("VM hadoop cluster is started - now run test");
+            }catch(Exception e){
+                e.printStackTrace();
+                bResult = false;
+            }
+            bHadoopIntegrationEnvironmentAlreadySetup = bResult;
+        }
+        else
+            System.out.println("- Hadoop Integration Environment already setup");
 
         return bResult;
     }
