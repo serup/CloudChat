@@ -1,14 +1,16 @@
 package integrationTests.hadoop;
 
+import hadoop.hadoopFSHandlers.hadoopDOPsFSHandler;
 import hadoop.hadoopMappers.hadoopDOPsFSMapper;
 import hadoop.hadoopReducers.hadoopDOPsFSReducer;
-import hadoop.hadoopFSHandlers.hadoopDOPsFSHandler;
+import integrationTests.IntegrationEnvironmentSetup;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mrunit.mapreduce.MapDriver;
 import org.apache.hadoop.mrunit.mapreduce.MapReduceDriver;
 import org.apache.hadoop.mrunit.mapreduce.ReduceDriver;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -29,9 +31,11 @@ public class HandleHadoopFSTest {
 
     /*
     */
+    IntegrationEnvironmentSetup env = new IntegrationEnvironmentSetup();
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
+        Assert.assertEquals(true,env.setupHadoopIntegrationEnvironment());
         hadoopDOPsFSMapper mapper = new hadoopDOPsFSMapper();
         hadoopDOPsFSReducer reducer = new hadoopDOPsFSReducer();
         mapDriver = MapDriver.newMapDriver(mapper);
