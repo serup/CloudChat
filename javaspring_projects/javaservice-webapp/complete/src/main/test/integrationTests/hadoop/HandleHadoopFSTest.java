@@ -1,4 +1,4 @@
-package hadoop;
+package integrationTests.hadoop;
 
 import hadoop.hadoopMappers.hadoopDOPsFSMapper;
 import hadoop.hadoopReducers.hadoopDOPsFSReducer;
@@ -25,6 +25,7 @@ public class HandleHadoopFSTest {
     MapDriver<LongWritable, Text, Text, IntWritable> mapDriver;
     ReduceDriver<Text, IntWritable, Text, IntWritable> reduceDriver;
     MapReduceDriver<LongWritable, Text, Text, IntWritable, Text, IntWritable> mapReduceDriver;
+    hadoopDOPsFSHandler fshandlerDriver;
 
     /*
     */
@@ -36,13 +37,17 @@ public class HandleHadoopFSTest {
         mapDriver = MapDriver.newMapDriver(mapper);
         reduceDriver = ReduceDriver.newReduceDriver(reducer);
         mapReduceDriver = MapReduceDriver.newMapReduceDriver(mapper, reducer);
+        fshandlerDriver = new hadoopDOPsFSHandler();
     }
 
     @Test
     public void test_hdfs_ls() {
         List<String> itemsToAdd = new ArrayList<String>();
-        itemsToAdd.add("<empty>");
-        assertEquals("Expected <empty> files in hdfs ls list", itemsToAdd, hadoopDOPsFSHandler.hadoopFS_ls());
+        itemsToAdd.add("hdfs://one.cluster:8020/apps");
+        itemsToAdd.add("hdfs://one.cluster:8020/mapred");
+        itemsToAdd.add("hdfs://one.cluster:8020/tmp");
+        itemsToAdd.add("hdfs://one.cluster:8020/user");
+        assertEquals("Expected <empty> files in hdfs ls list", itemsToAdd, fshandlerDriver.hadoopFS_ls());
     }
 
 }
