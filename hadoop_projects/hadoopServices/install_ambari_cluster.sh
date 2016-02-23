@@ -1,3 +1,5 @@
+#!/bin/bash
+
 if [ -d "ambari-vagrant" ]; then
 	echo "ambari-vagrant cluster already installed"
 else
@@ -6,8 +8,7 @@ else
 	echo "Do you wish to append cluster nodes to hosts file? should be done first time or else it will not work [Yes=1|No=2]"
 	select yn in "Yes" "No"; do
 	    case $yn in
-		Yes ) 
-			echo "append the cluster nodes to your hosts file";
+		Yes )   echo "append the cluster nodes to your hosts file";
 			sudo -s 'cat ambari-vagrant/append-to-etc-hosts.txt >> /etc/hosts';
  			echo "nodes appended to /etc/hosts file";
 			break;;
@@ -16,7 +17,7 @@ else
 	    esac
 	done
 # start vagrant to create a private key as ~/.vagrant.d/insecure_private_key	
-	vagrant 2>/dev/null
+	vagrant &>/dev/null 
 fi
 
 # starting 3 VMs
