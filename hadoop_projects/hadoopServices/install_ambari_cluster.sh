@@ -11,6 +11,8 @@ else
 		Yes )   echo "append the cluster nodes to your hosts file";
 			cat ambari-vagrant/append-to-etc-hosts.txt >> /etc/hosts;
  			echo "nodes appended to /etc/hosts file";
+			echo "add ambari server start to bootstrap.sh script"
+			cat extended_bootstrap.txt >> ambari-vagrant/centos6.4/bootstrap.sh 
 			break;;
 		No ) 	echo "nodes NOT appended to /etc/hosts file";
 			break;;
@@ -37,6 +39,6 @@ select yn in "Yes" "No"; do
 done
 echo "prepare insecure_private_key"
 cp ~/.vagrant.d/insecure_private_key .
-echo "start the nodes"
+cho "start the nodes"
 ./up.sh 3
 echo "Done."
