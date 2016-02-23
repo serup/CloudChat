@@ -32,7 +32,6 @@ public class hadoopDOPsFSHandler {
     }
 
 
-
     public List<String> ls(String strPath){
         List<String> itemsToAdd = new ArrayList<String>();
 
@@ -54,5 +53,13 @@ public class hadoopDOPsFSHandler {
         }
 
         return itemsToAdd;
+    }
+
+    public boolean touch(String strFilepathname) throws IOException {
+        boolean bResult;
+        fs = FileSystem.get(uri, conf);
+        Path f = new Path(strFilepathname);
+        bResult = fs.createNewFile(f);
+        return bResult;
     }
 }
