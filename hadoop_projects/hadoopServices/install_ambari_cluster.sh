@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# run as:  sudo ./install_ambari_cluster.sh 
 if [ -d "ambari-vagrant" ]; then
 	echo "ambari-vagrant cluster already installed"
 else
@@ -9,7 +9,7 @@ else
 	select yn in "Yes" "No"; do
 	    case $yn in
 		Yes )   echo "append the cluster nodes to your hosts file";
-			sudo -s 'cat ambari-vagrant/append-to-etc-hosts.txt >> /etc/hosts';
+			cat ambari-vagrant/append-to-etc-hosts.txt >> /etc/hosts;
  			echo "nodes appended to /etc/hosts file";
 			break;;
 		No ) 	echo "nodes NOT appended to /etc/hosts file";
