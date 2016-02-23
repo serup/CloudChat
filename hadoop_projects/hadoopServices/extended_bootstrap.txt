@@ -1,0 +1,10 @@
+#  to test the trunk build - updated on every commit to trunk
+echo "fetch ambari-server"
+wget -O /etc/apt/sources.list.d/ambari.list http://s3.amazonaws.com/dev.hortonworks.com/ambari/ubuntu12/2.x/latest/trunk/ambaribn.list
+apt-key adv --recv-keys --keyserver keyserver.ubuntu.com B9733A7A07513CAD
+apt-get update
+apt-get install ambari-server -y
+
+echo "start ambari-server"
+ambari-server setup -s
+ambari-server start
