@@ -1,5 +1,11 @@
 #!/bin/bash
 # run as:  sudo ./install_ambari_cluster.sh 
+
+# this declares that current user is a sudoer
+sudo tee /etc/sudoers.d/$USER <<END
+END
+
+
 if [ -d "ambari-vagrant" ]; then
 	echo "ambari-vagrant cluster already installed"
 else
@@ -9,7 +15,7 @@ else
 	select yn in "Yes" "No"; do
 	    case $yn in
 		Yes )   echo "append the cluster nodes to your hosts file";
-			cat ambari-vagrant/append-to-etc-hosts.txt >> /etc/hosts;
+			sudo bash install_hosts.sh;
  			echo "nodes appended to /etc/hosts file";
 			echo "add ambari server start to bootstrap.sh script"
 			cat extended_bootstrap.txt >> ambari-vagrant/centos6.4/bootstrap.sh 
@@ -42,3 +48,7 @@ cp ~/.vagrant.d/insecure_private_key .
 cho "start the nodes"
 ./up.sh 3
 echo "Done."
+
+# then to remove the sudo access from the current user
+sudo /bin/rm /etc/sudoers.d/$USER
+sudo -k
