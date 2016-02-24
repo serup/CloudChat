@@ -27,8 +27,8 @@ public class hadoopDOPsFSHandler {
     {
         //fileSystem = new org.apache.hadoop.fs.FsShell();
         conf = new Configuration();
-        conf.set("fs.defaultFS", "hdfs://one.cluster:8020/");
-        uri = URI.create ("hdfs://one.cluster:8020/");
+        conf.set("fs.defaultFS", "hdfs://c6401:8020/");
+        uri = URI.create ("hdfs://c6401:8020/");
     }
 
 
