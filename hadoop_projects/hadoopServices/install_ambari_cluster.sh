@@ -6,6 +6,9 @@ if [ -d "ambari-vagrant" ]; then
 else
 	echo "clone ambari-vagrant from github"
 	git clone https://github.com/u39kun/ambari-vagrant.git
+	# insert lines in Vagrantfile - should only be done once
+	echo "add virtualbox names to nodes"
+	bash insertVBnameForNode.sh
 	echo "Do you wish to append cluster nodes to hosts file? should be done first time or else it will not work [Yes=1|No=2]"
 	select yn in "Yes" "No"; do
 	    case $yn in
@@ -23,9 +26,6 @@ else
 	vagrant &>/dev/null 
 fi
 
-# insert lines in Vagrantfile
-echo "add virtualbox names to nodes"
-bash insertVBnameForNode.sh
 # starting 3 VMs
 echo "starting 3 cluster nodes in VM"
 cd ambari-vagrant
