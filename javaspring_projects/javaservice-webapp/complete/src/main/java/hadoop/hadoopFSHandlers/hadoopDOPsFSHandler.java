@@ -32,8 +32,7 @@ public class hadoopDOPsFSHandler {
     }
 
 
-
-    public List<String> hadoopFS_ls(){
+    public List<String> ls(String strPath){
         List<String> itemsToAdd = new ArrayList<String>();
 
         FileSystem fs = null;
@@ -42,7 +41,7 @@ public class hadoopDOPsFSHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Path filePath = new Path("/");
+        Path filePath = new Path(strPath); // root = "/"
         FileStatus[] fileStatuses = null;
         try {
             fileStatuses = fs.listStatus(filePath);
@@ -54,5 +53,13 @@ public class hadoopDOPsFSHandler {
         }
 
         return itemsToAdd;
+    }
+
+    public boolean touch(String strFilepathname) throws IOException {
+        boolean bResult;
+        fs = FileSystem.get(uri, conf);
+        Path f = new Path(strFilepathname);
+        bResult = fs.createNewFile(f);
+        return bResult;
     }
 }
