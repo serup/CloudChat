@@ -110,17 +110,25 @@ public class IntegrationEnvironmentSetup {
 
                 String path = new File(".").getCanonicalPath();
                 path = trimOffLastFileSeperator(path, 3);
-                path = path.concat("/hadoop_projects/hadoopServices");
+                path = path.concat("/hadoop_projects/hadoopServices/ambari-vagrant/centos6.4");
 
                 String cmd = "vagrant --version";
                 String result = executeCommand(cmd, path);
                 assertEquals(true, result.contains("Vagrant"));
 
-                cmd = "vagrant up";
+                cmd = "vagrant status c6401";
                 result = executeCommand(cmd, path);
-                assertEquals(true, containsAny(result, new String[]{"VM is already running", "Machine booted and ready"}));
-
-                System.out.println("VM hadoop cluster is started - now run test");
+                if (result.isEmpty() || !result.contains("running"))
+                {
+                    // cmd = "vagrant up"; // will start all nodes described in Vagrantfile
+                    cmd = "./up.sh 3"; // will start 3 nodes
+                    result = executeCommand(cmd, path);
+                    assertEquals(true, containsAny(result, new String[]{"VM is already running", "Machine booted and ready"}));
+                    System.out.println("VM hadoop cluster is started - now run test");
+                }
+                else {
+                    System.out.println("VM hadoop cluster already started - now run test");
+                }
             }catch(Exception e){
                 e.printStackTrace();
                 bResult = false;
