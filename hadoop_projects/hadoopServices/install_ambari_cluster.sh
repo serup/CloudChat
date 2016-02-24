@@ -1,11 +1,6 @@
 #!/bin/bash
 # run as:  sudo ./install_ambari_cluster.sh 
 
-# this declares that current user is a sudoer
-sudo tee /etc/sudoers.d/$USER <<END
-END
-
-
 if [ -d "ambari-vagrant" ]; then
 	echo "ambari-vagrant cluster already installed"
 else
@@ -28,6 +23,9 @@ else
 	vagrant &>/dev/null 
 fi
 
+# insert lines in Vagrantfile
+echo "add virtualbox names to nodes"
+bash insertVBnameForNode.sh
 # starting 3 VMs
 echo "starting 3 cluster nodes in VM"
 cd ambari-vagrant
@@ -49,6 +47,3 @@ echo "start the nodes"
 ./up.sh 3
 echo "Done."
 
-# then to remove the sudo access from the current user
-sudo /bin/rm /etc/sudoers.d/$USER
-sudo -k

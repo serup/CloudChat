@@ -1,7 +1,7 @@
 #!/bin/bash
 #sed -n 'H;${x;s/^\n//;s/c6401.vm.network .*\n/c6401.vm.provider :virtualbox do |vb| vb.name="c6401" end\n    &/;p;}' Vagrantfile
 echo "change to ambari-vagrant/centos6.4"
-cd hadoop_projects/hadoopServices/ambari-vagrant/centos6.4
+cd ambari-vagrant/centos6.4
 
 cp Vagrantfile prevVagrantfile
 cp Vagrantfile newVagrantfile0
