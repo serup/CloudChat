@@ -14,6 +14,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,7 +52,17 @@ public class HadoopDOPsFSTest {
         itemsToAdd.add("hdfs://one.cluster:8020/mapred");
         itemsToAdd.add("hdfs://one.cluster:8020/tmp");
         itemsToAdd.add("hdfs://one.cluster:8020/user");
-        assertEquals("Expected <empty> files in hdfs ls list", itemsToAdd, fshandlerDriver.hadoopFS_ls());
+        assertEquals("Expected 4 items in hdfs ls list", itemsToAdd, fshandlerDriver.ls("/"));
+    }
+
+    @Test
+    public void test_hdfs_touch() {
+        try {
+            fshandlerDriver.touch("/tmp/newfile2.txt");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }
