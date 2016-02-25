@@ -9,13 +9,17 @@ echo "install java..."
 sudo yum -y install java
 fi
 
-#  to test the trunk build - updated on every commit to trunk
+if [ ! -f installdone ]; then
 echo "fetch ambari-server"
-sudo wget -O /etc/yum.repos.d/ambari.repo http://public-repo-1.hortonworks.com/ambari/centos6/2.x/updates/2.2.0.0/ambari.repo
+#sudo wget -O /etc/yum.repos.d/ambari.repo http://public-repo-1.hortonworks.com/ambari/centos6/2.x/updates/2.2.0.0/ambari.repo
+#sudo yum install ambari-server -y
+sudo wget http://public-repo-1.hortonworks.com/ambari/centos6/1.x/updates/1.2.3.7/ambari.repo
+sudo cp ambari.repo /etc/yum.repos.d/ambari.repo
 sudo yum install ambari-server -y
 
 echo "start ambari-server"
 sudo ambari-server setup -s
 sudo ambari-server start
+touch installdone
+fi
 echo "it is now possible to open Ambari administration in webbrowser: http://c6401:8080 - remember to add private key generated during install -- add it inside the Ambari install"
-
