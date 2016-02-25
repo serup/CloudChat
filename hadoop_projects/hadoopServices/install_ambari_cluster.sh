@@ -9,14 +9,14 @@ else
 	# insert lines in Vagrantfile - should only be done once
 	echo "add virtualbox names to nodes"
 	bash insertVBnameForNode.sh
+	echo "add ambari server start to bootstrap.sh script"
+	cat extended_bootstrap.txt >> ambari-vagrant/centos6.4/bootstrap.sh 
 	echo "Do you wish to append cluster nodes to hosts file? should be done first time or else it will not work [Yes=1|No=2]"
 	select yn in "Yes" "No"; do
 	    case $yn in
 		Yes )   echo "append the cluster nodes to your hosts file";
 			sudo bash install_hosts.sh;
  			echo "nodes appended to /etc/hosts file";
-			echo "add ambari server start to bootstrap.sh script"
-			cat extended_bootstrap.txt >> ambari-vagrant/centos6.4/bootstrap.sh 
 			break;;
 		No ) 	echo "nodes NOT appended to /etc/hosts file";
 			break;;
