@@ -1,3 +1,14 @@
+
+PLATFORM=$(uname -i)
+if [ "x86_64" != $PLATFORM ]; then
+echo "yum upgrade -- please wait..."
+sudo yum -y clean all
+sudo yum -y check
+sudo yum -y upgrade
+echo "install java..."
+sudo yum -y install java
+fi
+
 #  to test the trunk build - updated on every commit to trunk
 echo "fetch ambari-server"
 sudo wget -O /etc/yum.repos.d/ambari.repo http://public-repo-1.hortonworks.com/ambari/centos6/2.x/updates/2.2.0.0/ambari.repo
