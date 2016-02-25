@@ -5,15 +5,25 @@ cd ambari-vagrant/centos6.4
 
 cp Vagrantfile prevVagrantfile
 cp Vagrantfile newVagrantfile0
-for ((i=1; i < 11; i++))
+
+#for ((i=1; i < 11; i++))
+#do
+#	if  ((i < 10)) ; then 
+#        	tmp1="sed -n 'H;\${x;s/^\n//;s/c640${i}.vm.network .*\n/c640${i}.vm.provider :virtualbox do |vb| vb.name=\"c640${i}\" end\n    &/;p;}' newVagrantfile$((i-1)) > newVagrantfile${i}";
+#	else
+#        	tmp1="sed -n 'H;\${x;s/^\n//;s/c64${i}.vm.network .*\n/c64${i}.vm.provider :virtualbox do |vb| vb.name=\"c64${i}\" end\n    &/;p;}' newVagrantfile$((i-1)) > newVagrantfile${i}";
+#        fi 
+#	echo "$tmp1" >> tmpsubst.sh
+#done
+
+# another way to do above:
+for c in `seq -f '%02g' 10`;
 do
-	if  ((i < 10)) ; then 
-        	tmp1="sed -n 'H;\${x;s/^\n//;s/c640${i}.vm.network .*\n/c640${i}.vm.provider :virtualbox do |vb| vb.name=\"c640${i}\" end\n    &/;p;}' newVagrantfile$((i-1)) > newVagrantfile${i}";
-	else
-        	tmp1="sed -n 'H;\${x;s/^\n//;s/c64${i}.vm.network .*\n/c64${i}.vm.provider :virtualbox do |vb| vb.name=\"c64${i}\" end\n    &/;p;}' newVagrantfile$((i-1)) > newVagrantfile${i}";
-        fi 
-	echo "$tmp1" >> tmpsubst.sh
+	i=10#$c  # change from octal, since 0 infront signals it is octal, to base 10 inorder to calculate 
+     	tmp1="sed -n 'H;\${x;s/^\n//;s/c64${c}.vm.network .*\n/c64${c}.vm.provider :virtualbox do |vb| vb.name=\"c64${c}\" end\n    &/;p;}' newVagrantfile$((i-1)) > newVagrantfile$((i))";
+	echo "$tmp1" >> tmpsubst.h
 done
+	
 echo "inserting vb.name(s)"
 #cat tmpsubst.sh
 bash tmpsubst.sh
