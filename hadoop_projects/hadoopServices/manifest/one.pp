@@ -26,6 +26,7 @@ class { 'ambari_agent':
 include hadoop
 
 # Establish ordering
-Class['interfering_services'] -> Class['ntp'] -> Class['etchosts'] -> Class['ambari_server'] -> Class['ambari_agent'] -> Class['hadoop']
+Class['interfering_services'] -> Class['ntp'] -> Class['etchosts'] -> Class['ambari_server'] -> Class['ambari_agent']
+#Class['interfering_services'] -> Class['ntp'] -> Class['etchosts'] -> Class['ambari_server'] -> Class['ambari_agent'] -> Class['java'] -> Class['hadoop']
 #Class['interfering_services'] -> Class['ntp'] -> Class['etchosts']
 
