@@ -370,6 +370,16 @@ else
   echo "- bcarpio-hadoop puppet module installed"
 fi
 
+MODULE_OK=$(puppet module list --modulepath ./hadoop_projects/hadoopServices/modules | grep puppetlabs-java*)
+if [ "" == "$MODULE_OK" ]; then
+  echo -n "- install puppetlabs-java puppet module"
+  puppet module install puppetlabs-java --modulepath ./hadoop_projects/hadoopServices/modules
+  echo " - done."
+else
+  echo "- puppetlabs-java puppet module installed"
+fi
+
+
 MODULE_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep hubspot-nexus*)
 if [ "" == "$MODULE_OK" ]; then
   echo -n "- install nexus"
