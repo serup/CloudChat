@@ -21,14 +21,14 @@ for c in `seq -f '%02g' 10`;
 do
 	i=10#$c  # change from octal, since 0 infront signals it is octal, to base 10 inorder to calculate 
      	tmp1="sed -n 'H;\${x;s/^\n//;s/c64${c}.vm.network .*\n/c64${c}.vm.provider :virtualbox do |vb| vb.name=\"c64${c}\" end\n    &/;p;}' newVagrantfile$((i-1)) > newVagrantfile$((i))";
-	echo "$tmp1" >> tmpsubst.h
+	echo "$tmp1" >> tmpsubst.sh
 done
 	
 echo "inserting vb.name(s)"
 #cat tmpsubst.sh
 bash tmpsubst.sh
 rm tmpsubst.sh
-mv Vagrantfile oldVagrantfile
+#mv Vagrantfile oldVagrantfile
 mv newVagrantfile10 Vagrantfile
 rm newVagrantfile*
 echo "done - Vagrantfile in ambari-vagrant/centos6.4 is updated - old version is in prevVagrantfile - you can delete it if result is ok"
