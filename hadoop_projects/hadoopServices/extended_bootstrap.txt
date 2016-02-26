@@ -15,6 +15,7 @@ echo "fetch ambari-server"
 #sudo wget -O /etc/yum.repos.d/ambari.repo http://public-repo-1.hortonworks.com/ambari/centos6/2.x/updates/2.2.0.0/ambari.repo
 #sudo wget -O /etc/yum.repos.d/ambari.repo http://public-repo-1.hortonworks.com/ambari/centos6/1.x/updates/1.2.3.7/ambari.repo
 sudo wget http://public-repo-1.hortonworks.com/ambari/centos6/1.x/updates/1.6.0/ambari.repo -O /etc/yum.repos.d/ambari.repo
+sudo sed -i 's/https/http/g' /etc/yum.repos.d/ambari.repo
 
 echo "install ambari-server"
 sudo yum install ambari-server -y
