@@ -43,7 +43,7 @@ select yn in "Yes" "No"; do
 done
 echo "prepare insecure_private_key"
 cp ~/.vagrant.d/insecure_private_key .
-echo "start the nodes"
-./up.sh 3
+echo "start first node "
+./up.sh 1
 echo "Done."
 
