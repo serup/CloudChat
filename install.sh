@@ -360,6 +360,16 @@ if [ "" == "$MODULE_OK" ]; then
 else
   echo "- maestrodev-bamboo puppet module installed"
 fi
+
+MODULE_OK=$(puppet module list --modulepath ./hadoop_projects/hadoopServices/modules | grep bcarpio-hadoop*)
+if [ "" == "$MODULE_OK" ]; then
+  echo -n "- install hadoop puppet module"
+  puppet module install bcarpio-hadoop --modulepath ./hadoop_projects/hadoopServices/modules
+  echo " - done."
+else
+  echo "- bcarpio-hadoop puppet module installed"
+fi
+
 MODULE_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep hubspot-nexus*)
 if [ "" == "$MODULE_OK" ]; then
   echo -n "- install nexus"
