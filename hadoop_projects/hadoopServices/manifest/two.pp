@@ -17,6 +17,9 @@ class { 'ambari_agent':
   ownhostname    => "two.cluster"
 }
 
+# Install hadoop
+include hadoop
+
 # Establish ordering
-Class['interfering_services'] -> Class['ntp'] -> Class['etchosts'] -> Class['ambari_agent']
+Class['interfering_services'] -> Class['ntp'] -> Class['etchosts'] -> Class['ambari_agent'] -> Class['hadoop']
 
