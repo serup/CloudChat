@@ -22,7 +22,10 @@ class { 'etchosts':
 #  serverhostname => 'one.cluster'
 #}
 
+# Install hadoop
+include hadoop
+
 # Establish ordering
 #Class['interfering_services'] -> Class['ntp'] -> Class['etchosts'] -> Class['ambari_server'] -> Class['ambari_agent']
-Class['interfering_services'] -> Class['ntp'] -> Class['etchosts']
+Class['interfering_services'] -> Class['ntp'] -> Class['etchosts'] -> Class['hadoop']
 

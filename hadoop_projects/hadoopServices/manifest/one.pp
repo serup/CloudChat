@@ -22,7 +22,10 @@ class { 'ambari_agent':
   serverhostname => 'one.cluster'
 }
 
+# Install hadoop hdfs
+include hadoop
+
 # Establish ordering
-Class['interfering_services'] -> Class['ntp'] -> Class['etchosts'] -> Class['ambari_server'] -> Class['ambari_agent']
+Class['interfering_services'] -> Class['ntp'] -> Class['etchosts'] -> Class['ambari_server'] -> Class['ambari_agent'] -> Class['hadoop']
 #Class['interfering_services'] -> Class['ntp'] -> Class['etchosts']
 
