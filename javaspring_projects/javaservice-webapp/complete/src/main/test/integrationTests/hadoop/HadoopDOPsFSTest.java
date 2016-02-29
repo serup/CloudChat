@@ -48,7 +48,10 @@ public class HadoopDOPsFSTest {
     @Test
     public void test_hdfs_ls() {
         List<String> itemsToAdd = new ArrayList<String>();
-        itemsToAdd.add("hdfs://one.cluster:8020/apps");
+//        itemsToAdd.add("hdfs://one.cluster:8020/apps");
+//        itemsToAdd.add("hdfs://one.cluster:8020/mapred");
+//        itemsToAdd.add("hdfs://one.cluster:8020/tmp");
+//        itemsToAdd.add("hdfs://one.cluster:8020/user");
         itemsToAdd.add("hdfs://one.cluster:8020/mapred");
         itemsToAdd.add("hdfs://one.cluster:8020/tmp");
         itemsToAdd.add("hdfs://one.cluster:8020/user");
@@ -56,9 +59,10 @@ public class HadoopDOPsFSTest {
     }
 
     @Test
-    public void test_hdfs_touch() {
+    public void test_hdfs_touch_and_remove() {
         try {
             fshandlerDriver.touch("/tmp/newfile2.txt");
+            fshandlerDriver.remove("/tmp/newfile2.txt");
         } catch (IOException e) {
             e.printStackTrace();
         }
