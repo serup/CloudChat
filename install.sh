@@ -361,23 +361,42 @@ else
   echo "- maestrodev-bamboo puppet module installed"
 fi
 
-MODULE_OK=$(puppet module list --modulepath ./hadoop_projects/hadoopServices/modules | grep bcarpio-hadoop*)
-if [ "" == "$MODULE_OK" ]; then
-  echo -n "- install hadoop puppet module"
-  puppet module install bcarpio-hadoop --modulepath ./hadoop_projects/hadoopServices/modules
-  echo " - done."
-else
-  echo "- bcarpio-hadoop puppet module installed"
-fi
+#MODULE_OK=$(puppet module list --modulepath ./hadoop_projects/hadoopServices/modules | grep bcarpio-hadoop*)
+#if [ "" == "$MODULE_OK" ]; then
+#  echo -n "- install hadoop puppet module"
+#  puppet module install bcarpio-hadoop --modulepath ./hadoop_projects/hadoopServices/modules
+#  echo " - done."
+#else
+#  echo "- bcarpio-hadoop puppet module installed"
+#fi
 
-MODULE_OK=$(puppet module list --modulepath ./hadoop_projects/hadoopServices/modules | grep puppetlabs-java*)
-if [ "" == "$MODULE_OK" ]; then
-  echo -n "- install puppetlabs-java puppet module"
-  puppet module install puppetlabs-java --modulepath ./hadoop_projects/hadoopServices/modules
-  echo " - done."
-else
-  echo "- puppetlabs-java puppet module installed"
-fi
+#MODULE_OK=$(puppet module list --modulepath ./hadoop_projects/hadoopServices/modules | grep viirya-hadoop*)
+#if [ "" == "$MODULE_OK" ]; then
+#  echo -n "- install hadoop puppet module"
+#  puppet module install viirya-hadoop --modulepath ./hadoop_projects/hadoopServices/modules
+#  echo " - done."
+#else
+#  echo "- viirya-hadoop based on bcarpio-hadoop puppet module installed"
+#fi
+
+#MODULE_OK=$(puppet module list --modulepath ./hadoop_projects/hadoopServices/modules | grep viirya-java*)
+#if [ "" == "$MODULE_OK" ]; then
+#  echo -n "- install viirya-java puppet module"
+#  puppet module install viirya-java --modulepath ./hadoop_projects/hadoopServices/modules
+#  echo " - done."
+#else
+#  echo "- viirya-java puppet module installed"
+#fi
+
+
+#MODULE_OK=$(puppet module list --modulepath ./hadoop_projects/hadoopServices/modules | grep puppetlabs-java*)
+#if [ "" == "$MODULE_OK" ]; then
+#  echo -n "- install puppetlabs-java puppet module"
+#  puppet module install puppetlabs-java --modulepath ./hadoop_projects/hadoopServices/modules
+#  echo " - done."
+#else
+#  echo "- puppetlabs-java puppet module installed"
+#fi
 
 
 MODULE_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep hubspot-nexus*)
