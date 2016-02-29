@@ -62,4 +62,12 @@ public class hadoopDOPsFSHandler {
         bResult = fs.createNewFile(f);
         return bResult;
     }
+
+    public boolean remove(String strFilepathname) throws IOException {
+        boolean bResult;
+        fs = FileSystem.get(uri, conf);
+        Path f = new Path(strFilepathname);
+        bResult = fs.deleteOnExit(f);
+        return bResult;
+    }
 }
