@@ -30,7 +30,7 @@ class DOPsServerTest(unittest.TestCase):
     DOPsServer = 0
 
     def doCleanups(self):
-        cmdkill = "sleep 3; kill -1 $(ps aux|grep 'DOPsServerTest\|mock'|grep -v 'grep'|awk '{print $2}') 2> /dev/null"
+        cmdkill = "sleep 3; kill -1 $(ps aux|grep 'DOPsServerTest\|websocket'|grep -v 'grep'|awk '{print $2}') 2> /dev/null"
         subprocess.Popen(cmdkill, stdout=subprocess.PIPE, shell=True)
         self.DOPsServer = 0
 
