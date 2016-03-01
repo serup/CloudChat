@@ -75,6 +75,11 @@ public class HadoopDOPsFSTest {
         try {
             URL fileResourceUrl = this.getClass().getClassLoader().getResource("helloworld.txt");
             fshandlerDriver.copyTo(fileResourceUrl.getPath(), "/tmp");
+
+            // cleanup - when testing
+            String newfileName = "/tmp" + "/" + "helloworld.txt";
+            fshandlerDriver.remove(newfileName);
+
         } catch (IOException e) {
             e.printStackTrace();
         }

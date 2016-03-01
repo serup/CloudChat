@@ -121,9 +121,9 @@ public class hadoopDOPsFSHandler {
         fs.copyFromLocalFile(new Path(inputfile), dest);
 
         // cleanup - when testing
-        String newfileName = destinationHDFSPath + "/" + fileName;
-        //fs.deleteOnExit(new Path(newfileName));
-        remove(newfileName);
+        //String newfileName = destinationHDFSPath + "/" + fileName;
+        ////fs.deleteOnExit(new Path(newfileName));
+        //remove(newfileName);
 
         return bResult;
     }
