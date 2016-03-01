@@ -15,6 +15,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,6 +64,17 @@ public class HadoopDOPsFSTest {
         try {
             fshandlerDriver.touch("/tmp/newfile2.txt");
             fshandlerDriver.remove("/tmp/newfile2.txt");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Test
+    public void test_copy_file_to_hdfs() {
+        try {
+            URL fileResourceUrl = this.getClass().getClassLoader().getResource("helloworld.txt");
+            fshandlerDriver.copyTo(fileResourceUrl.getPath(), "/tmp");
         } catch (IOException e) {
             e.printStackTrace();
         }
