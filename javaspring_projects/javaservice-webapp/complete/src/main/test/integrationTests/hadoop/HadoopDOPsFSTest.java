@@ -49,10 +49,6 @@ public class HadoopDOPsFSTest {
     @Test
     public void test_hdfs_ls() {
         List<String> itemsToAdd = new ArrayList<String>();
-//        itemsToAdd.add("hdfs://one.cluster:8020/apps");
-//        itemsToAdd.add("hdfs://one.cluster:8020/mapred");
-//        itemsToAdd.add("hdfs://one.cluster:8020/tmp");
-//        itemsToAdd.add("hdfs://one.cluster:8020/user");
         itemsToAdd.add("hdfs://one.cluster:8020/mapred");
         itemsToAdd.add("hdfs://one.cluster:8020/tmp");
         itemsToAdd.add("hdfs://one.cluster:8020/user");
