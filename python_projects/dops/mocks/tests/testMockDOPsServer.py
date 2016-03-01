@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 #
-import uuid
-import time
-from ded import ded
-from mocks import mockDOPsServer
-import sys
-import websocket
 import subprocess
+import sys
+import uuid
+
+import websocket
+from dops.mocks import mockDOPsServer
+from dops.protocol.ded import ded
 
 sys.path[0:0] = [""]
 
