@@ -280,6 +280,16 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- ssh already installed"
 fi
+
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 sshpass* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install sshpass "
+  sudo apt-get install -yq sshpass
+  echo " - done."
+else
+  echo "- sshpass already installed"
+fi
+
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 taskwarrior* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install taskwarrior "
