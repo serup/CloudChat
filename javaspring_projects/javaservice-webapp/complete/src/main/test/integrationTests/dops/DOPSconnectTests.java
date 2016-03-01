@@ -1,4 +1,4 @@
-package integrationTests;
+package integrationTests.dops;
 
 import dops.ClientEndpoint.JavaWebSocketClientEndpoint;
 import dops.protocol.ded.DEDDecoder;
