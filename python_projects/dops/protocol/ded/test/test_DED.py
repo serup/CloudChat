@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 #
-from ded import ded
-from compression import lzss
-import unittest
 import sys
+import unittest
+
+from dops.protocol.compression import lzss
+from dops.protocol.ded import ded
+
 sys.path[0:0] = [""]
 
 
