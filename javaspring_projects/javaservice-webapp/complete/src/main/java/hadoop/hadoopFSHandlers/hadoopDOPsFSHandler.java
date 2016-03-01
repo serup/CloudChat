@@ -21,7 +21,7 @@ public class hadoopDOPsFSHandler {
      * Should handle all commands going to the hdfs
      */
     Configuration conf;
-    URI uri;
+    public URI uri;
     FileSystem fs;
 
     private String executeCommand(String command, String path) {
