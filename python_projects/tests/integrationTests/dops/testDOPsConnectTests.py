@@ -31,6 +31,7 @@ class DOPsIntegrationTest(unittest.TestCase):
         # transmitting data to mock DOPs Server
         ws = websocket.WebSocket()
         ws.connect("ws://backend.scanva.com:7777")
+        self.assertEquals(True, ws.connected)
         ws.send_binary(DEDobj.pCompressedData)
         receivedData = ws.recv()
         ws.close()
