@@ -15,11 +15,11 @@
 
 import sys
 from threading import Thread
-from ded import ded
-import six
 
-from ded import ded
+import six
+from dops.protocol.ded import ded
 from websocketserver.simplewebsocketserver import WebSocket, SimpleWebSocketServer
+
 try:
     import Threading
 except ImportError:  #TODO use Threading instead of _thread in python3

@@ -17,6 +17,11 @@ class { 'ambari_agent':
   ownhostname    => "two.cluster"
 }
 
+#node /^two.cluster*/ {
+#  include java
+#  include hadoop::cluster::slave
+#}
+
+
 # Establish ordering
 Class['interfering_services'] -> Class['ntp'] -> Class['etchosts'] -> Class['ambari_agent']
-

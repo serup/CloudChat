@@ -9,13 +9,9 @@
 #    Use, distribute, and modify this program freely.
 #    Please send me your improved versions.
 #**************************************************************/
-import copy
-import struct
-import sys
-import ctypes
 from math import log
-from compression import lzss
-from array import array
+
+from dops.protocol.compression import lzss
 
 # Element types
 CONVERSIONS = {

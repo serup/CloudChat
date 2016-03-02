@@ -1,18 +1,11 @@
-package integrationTests;
+package integrationTests.dops;
 
 import dops.protocol.DOPS;
+import integrationTests.IntegrationEnvironmentSetup;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * INTEGRATION TESTS

@@ -65,6 +65,14 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- oracle-java already installed"
 fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 nmap |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install nmap on ubuntu "
+  sudo apt-get install -yq nmap 
+  echo " - done."
+else
+  echo "- nmap already installed"
+fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 eclipse |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install eclipse on ubuntu "
@@ -272,6 +280,16 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- ssh already installed"
 fi
+
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 sshpass* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install sshpass "
+  sudo apt-get install -yq sshpass
+  echo " - done."
+else
+  echo "- sshpass already installed"
+fi
+
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 taskwarrior* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install taskwarrior "
@@ -352,6 +370,45 @@ if [ "" == "$MODULE_OK" ]; then
 else
   echo "- maestrodev-bamboo puppet module installed"
 fi
+
+#MODULE_OK=$(puppet module list --modulepath ./hadoop_projects/hadoopServices/modules | grep bcarpio-hadoop*)
+#if [ "" == "$MODULE_OK" ]; then
+#  echo -n "- install hadoop puppet module"
+#  puppet module install bcarpio-hadoop --modulepath ./hadoop_projects/hadoopServices/modules
+#  echo " - done."
+#else
+#  echo "- bcarpio-hadoop puppet module installed"
+#fi
+
+#MODULE_OK=$(puppet module list --modulepath ./hadoop_projects/hadoopServices/modules | grep viirya-hadoop*)
+#if [ "" == "$MODULE_OK" ]; then
+#  echo -n "- install hadoop puppet module"
+#  puppet module install viirya-hadoop --modulepath ./hadoop_projects/hadoopServices/modules
+#  echo " - done."
+#else
+#  echo "- viirya-hadoop based on bcarpio-hadoop puppet module installed"
+#fi
+
+#MODULE_OK=$(puppet module list --modulepath ./hadoop_projects/hadoopServices/modules | grep viirya-java*)
+#if [ "" == "$MODULE_OK" ]; then
+#  echo -n "- install viirya-java puppet module"
+#  puppet module install viirya-java --modulepath ./hadoop_projects/hadoopServices/modules
+#  echo " - done."
+#else
+#  echo "- viirya-java puppet module installed"
+#fi
+
+
+#MODULE_OK=$(puppet module list --modulepath ./hadoop_projects/hadoopServices/modules | grep puppetlabs-java*)
+#if [ "" == "$MODULE_OK" ]; then
+#  echo -n "- install puppetlabs-java puppet module"
+#  puppet module install puppetlabs-java --modulepath ./hadoop_projects/hadoopServices/modules
+#  echo " - done."
+#else
+#  echo "- puppetlabs-java puppet module installed"
+#fi
+
+
 MODULE_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep hubspot-nexus*)
 if [ "" == "$MODULE_OK" ]; then
   echo -n "- install nexus"

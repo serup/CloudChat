@@ -22,7 +22,13 @@ class { 'ambari_agent':
   serverhostname => 'one.cluster'
 }
 
+#node /^one.cluster*/ {
+#  include java
+#  include hadoop::cluster::master
+#  
+#}
+
 # Establish ordering
 Class['interfering_services'] -> Class['ntp'] -> Class['etchosts'] -> Class['ambari_server'] -> Class['ambari_agent']
-#Class['interfering_services'] -> Class['ntp'] -> Class['etchosts']
+#Class['interfering_services'] -> Class['ntp'] -> Class['etchosts'] -> Class['ambari_server'] -> Class['ambari_agent'] -> Class['java'] -> Class['hadoop']
 
