@@ -106,8 +106,11 @@ public class IntegrationEnvironmentSetup {
         if (!bHadoopIntegrationEnvironmentAlreadySetup) {
             try {
                 // Make sure VM is running for this test
-                System.out.println("Waiting for VM hadoop cluster to start ...");
-
+                System.out.println("Waiting for VM hadoop one.cluster to start ... - perhaps you should start a minimum of three yourself, and make sure ambari-server and ambari-agent on all nodes is running - please " +
+                        "wait it " +
+                        "takes a long time...");
+                System.out.println("NB! DO NOT use vagrant halt, when shutting down a cluster - use vagrant suspend and vagrant resume - otherwise you will have to use ambari-server one.cluster:8080 admin admin to " +
+                        "reestablish connection between all nodes in cluster - its takes long time");
                 String path = new File(".").getCanonicalPath();
                 path = trimOffLastFileSeperator(path, 3);
                 path = path.concat("/hadoop_projects/hadoopServices");
@@ -124,7 +127,10 @@ public class IntegrationEnvironmentSetup {
                     cmd = "vagrant up one"; // will start 1 nodes
                     result = executeCommand(cmd, path);
                     assertEquals(true, containsAny(result, new String[]{"VM is already running", "Machine booted and ready"}));
-                    System.out.println("VM hadoop cluster is started - now run test");
+                    cmd = "vagrant up two"; // will start 1 nodes
+                    result = executeCommand(cmd, path);
+                    assertEquals(true, containsAny(result, new String[]{"VM is already running", "Machine booted and ready"}));
+                     System.out.println("VM hadoop cluster is started - now run test");
                 }
                 else {
                     System.out.println("VM hadoop cluster already started - now run test");

@@ -77,6 +77,7 @@ else
       git clone https://review.gerrithub.io/serup/CloudChat
       cd CloudChat
       git checkout serup
+      git pull
       echo "CloudChat installed - from GitHub"
       echo "****************"
       echo "Set up swapfile"
