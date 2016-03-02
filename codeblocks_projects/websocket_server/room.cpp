@@ -585,9 +585,7 @@ namespace websocket {
                                                 /// TODO: if DFD is NOT online then do something smart - perhaps restart it !?
                                                 std::cout << "[webserver] ERROR DFD_1.1 is NOT online " << "\n";
 
- /*
- //TODO: MAKE WSRESPONSE PROTOCOL FOLLOW BASIC PART OF DATAFRAME PROTOCOL -- TOP FIXED PART !!!!
- */                                               /// Create a dataframe for response to new participant
+                                                /// Create a dataframe for response to new participant
                                                 DED_START_ENCODER(encoder_ptr);
                                                 DED_PUT_STRUCT_START( encoder_ptr, "WSResponse" );
                                                 DED_PUT_METHOD	( encoder_ptr, "Method",  "PythonConnect" );
@@ -595,21 +593,12 @@ namespace websocket {
                                                 DED_PUT_STDSTRING	( encoder_ptr, "protocolTypeID", (std::string)strProtocolTypeID );
                                                 DED_PUT_STDSTRING	( encoder_ptr, "functionName", (std::string)strFunctionName );
                                                 DED_PUT_STDSTRING	( encoder_ptr, "status", (std::string)"ACCEPTED" );
-                                                DED_PUT_BOOL	    ( encoder_ptr, "testbool_false", false );
-                                                DED_PUT_BOOL	    ( encoder_ptr, "testbool_true", true );
                                                 DED_PUT_STRUCT_END( encoder_ptr, "WSResponse" );
+
                                                 /// Create a binary dataframe with above DED inside payload
                                                 dataframe tempframe;
                                                 DED_GET_ENCODED_DATAFRAME(encoder_ptr, tempframe);
-/*
-                                                DED_GET_ENCODED_DATA(encoder_ptr,data_ptr,iLengthOfTotalData,ptmpCompressedData,sizeoftmpCompressedData);
-                                                /// Create a binary dataframe with above DED inside payload
-                                                dataframe tempframe;
-                                                //tempframe.opcode = dataframe::text_frame; // javascript has issues with converting from blob to arraybuffer
-                                                tempframe.opcode = dataframe::binary_frame;
-                                                if(sizeoftmpCompressedData==0) sizeoftmpCompressedData = iLengthOfTotalData; // if sizeofcompresseddata is 0 then compression was not possible and size is the same as for uncompressed
-                                                tempframe.putBinaryInPayload(ptmpCompressedData,sizeoftmpCompressedData); // Put DED structure in dataframe payload
-*/
+
                                                 /// set dataframe as response frame
                                                 frmResponse=tempframe;
                                                 destination=source; // since reply have to go back to source, then destination becomes source
