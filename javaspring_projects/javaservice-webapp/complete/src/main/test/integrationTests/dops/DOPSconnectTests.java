@@ -1,8 +1,11 @@
-package integrationTests;
+package integrationTests.dops;
 
 import dops.ClientEndpoint.JavaWebSocketClientEndpoint;
 import dops.protocol.ded.DEDDecoder;
 import dops.protocol.ded.DEDEncoder;
+import integrationTests.IntegrationEnvironmentSetup;
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.nio.ByteBuffer;
@@ -13,6 +16,13 @@ import static junit.framework.TestCase.assertEquals;
  * Created by serup on 31-12-15.
  */
 public class DOPSconnectTests {
+
+    IntegrationEnvironmentSetup env = new IntegrationEnvironmentSetup();
+
+    @Before
+    public void setup() throws Exception {
+        Assert.assertEquals(true,env.setupIntegrationEnvironment());
+    }
 
     @Test
     public void testConnectToDFD()

@@ -3,10 +3,12 @@ package hadoop.hadoopFSHandlers;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.FsShell;
 import org.apache.hadoop.fs.Path;
 
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,16 +21,54 @@ public class hadoopDOPsFSHandler {
      * Should handle all commands going to the hdfs
      */
     Configuration conf;
-    URI uri;
-    FsShell fileSystem;
+    public URI uri;
     FileSystem fs;
+
+    private String executeCommand(String command, String path) {
+
+        StringBuffer output = new StringBuffer();
+        File dir = new File(path);
+
+        // create a process and execute cmd
+        try {
+            Process process = Runtime.getRuntime().exec(command, null, dir);
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            process.waitFor();
+
+            String line = "";
+            while ((line = reader.readLine())!= null) {
+                output.append(line + "\n");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            output.append(e.getMessage());
+        }
+
+        return output.toString();
+    }
+
+    public String trimOffLastFileSeperator(String path, int amountToTrimOff)
+    {
+        String separator = System.getProperty("file.separator");
+
+        String strtmp = path;
+        int lastSeparatorIndex;
+        for(int i=amountToTrimOff; i>0; i--)
+        {
+            lastSeparatorIndex = strtmp.lastIndexOf(separator);
+            strtmp = strtmp.substring(0,lastSeparatorIndex);
+        }
+        return strtmp;
+    }
+
 
     public hadoopDOPsFSHandler() // constructor
     {
-        //fileSystem = new org.apache.hadoop.fs.FsShell();
         conf = new Configuration();
-        conf.set("fs.defaultFS", "hdfs://c6401:8020/");
-        uri = URI.create ("hdfs://c6401:8020/");
+        conf.set("fs.defaultFS", "hdfs://one.cluster:8020/");
+        uri = URI.create ("hdfs://one.cluster:8020/");
     }
 
 
@@ -60,6 +100,31 @@ public class hadoopDOPsFSHandler {
         fs = FileSystem.get(uri, conf);
         Path f = new Path(strFilepathname);
         bResult = fs.createNewFile(f);
+        return bResult;
+    }
+
+    public boolean remove(String strFilepathname) throws IOException {
+        boolean bResult;
+        fs = FileSystem.get(uri, conf);
+        Path f = new Path(strFilepathname);
+        bResult = fs.deleteOnExit(f);
+        return bResult;
+    }
+
+    public boolean copyTo(String inputfile, String destinationHDFSPath) throws IOException {
+        boolean bResult = false;
+
+        String fileName = inputfile.substring( inputfile.lastIndexOf('/')+1, inputfile.length() );
+        // put file into hdfs at destinationHDFSPath
+        fs = FileSystem.get(uri, conf); // fetch filesystem handle for hdfs on one.cluster server
+        Path dest = new Path(destinationHDFSPath);
+        fs.copyFromLocalFile(new Path(inputfile), dest);
+
+        // cleanup - when testing
+        //String newfileName = destinationHDFSPath + "/" + fileName;
+        ////fs.deleteOnExit(new Path(newfileName));
+        //remove(newfileName);
+
         return bResult;
     }
 }

@@ -1,16 +1,13 @@
 # -*- coding: utf-8 -*-
 #
-from array import array
-from compression import lzss
-
 import sys
+from array import array
 
 import six
 
-sys.path[0:0] = [""]
+from dops.protocol.compression import lzss
 
-import codecs
-import compression
+sys.path[0:0] = [""]
 
 try:
     from ssl import SSLError

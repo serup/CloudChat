@@ -6,6 +6,8 @@ sudo yum -y check
 sudo yum -y upgrade 
 echo "install java..."
 sudo yum -y install java
+sudo ambari-server start
+
 #sudo wget http://public-repo-1.hortonworks.com/ambari/centos6/1.x/GA/ambari.repo
 #sudo cp ambari.repo /etc/yum.repos.d
 #sudo yum repolist
