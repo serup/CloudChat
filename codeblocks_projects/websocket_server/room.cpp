@@ -558,7 +558,7 @@ namespace websocket {
                         }
                         break;
                         case PythonConnect:
-                        { // NB! There are no unsigned integers in Java (all are signed and in Big Endian).
+                        {
                             /// Handle protocol DED1.00.00
                             if( DED_GET_USHORT( decoder_ptr, "TransID", iTransID) &&
                                     DED_GET_STDSTRING( decoder_ptr, "protocolTypeID", strProtocolTypeID ) && strProtocolTypeID == (std::string)"DED1.00.00" )
@@ -566,7 +566,7 @@ namespace websocket {
                                 if( DED_GET_STDSTRING( decoder_ptr, "functionName", strFunctionName ) )
                                 {
                                     /// A connect request following protocol version DED1.00.00 has been received
-                                    std::cout << "[webserver] A javaclient connect request following protocol version DED1.00.00 has been received\n";
+                                    std::cout << "[webserver] A javaScriptclient connect request following protocol version DED1.00.00 has been received\n";
 
                                     /// fetch username and password
                                     if( DED_GET_STDSTRING( decoder_ptr, "username", strUserName ) && DED_GET_STDSTRING( decoder_ptr, "password", strPassword ))
@@ -595,11 +595,21 @@ namespace websocket {
                                                 DED_PUT_STDSTRING	( encoder_ptr, "protocolTypeID", (std::string)strProtocolTypeID );
                                                 DED_PUT_STDSTRING	( encoder_ptr, "functionName", (std::string)strFunctionName );
                                                 DED_PUT_STDSTRING	( encoder_ptr, "status", (std::string)"ACCEPTED" );
+                                                DED_PUT_BOOL	    ( encoder_ptr, "testbool_false", false );
+                                                DED_PUT_BOOL	    ( encoder_ptr, "testbool_true", true );
                                                 DED_PUT_STRUCT_END( encoder_ptr, "WSResponse" );
                                                 /// Create a binary dataframe with above DED inside payload
                                                 dataframe tempframe;
                                                 DED_GET_ENCODED_DATAFRAME(encoder_ptr, tempframe);
-
+/*
+                                                DED_GET_ENCODED_DATA(encoder_ptr,data_ptr,iLengthOfTotalData,ptmpCompressedData,sizeoftmpCompressedData);
+                                                /// Create a binary dataframe with above DED inside payload
+                                                dataframe tempframe;
+                                                //tempframe.opcode = dataframe::text_frame; // javascript has issues with converting from blob to arraybuffer
+                                                tempframe.opcode = dataframe::binary_frame;
+                                                if(sizeoftmpCompressedData==0) sizeoftmpCompressedData = iLengthOfTotalData; // if sizeofcompresseddata is 0 then compression was not possible and size is the same as for uncompressed
+                                                tempframe.putBinaryInPayload(ptmpCompressedData,sizeoftmpCompressedData); // Put DED structure in dataframe payload
+*/
                                                 /// set dataframe as response frame
                                                 frmResponse=tempframe;
                                                 destination=source; // since reply have to go back to source, then destination becomes source
@@ -608,7 +618,7 @@ namespace websocket {
                                             }
                                             else
                                             {
-                                                /// Python client is now connected and accepted, however now it needs to login to its profile
+                                                /// client is now connected and accepted, however now it needs to login to its profile
 
                                                 /// Send Request Login to profile - profile will send response dataframe to Client with status
                                                 dataframe dfRequest;
@@ -619,7 +629,7 @@ namespace websocket {
                                                 DED_PUT_USHORT	( encoder_ptr2, "TransID",	(unsigned short)iTransID);
                                                 DED_PUT_STDSTRING	( encoder_ptr2, "protocolTypeID", (std::string)"DED1.00.00" );
                                                 DED_PUT_STDSTRING	( encoder_ptr2, "dest", (std::string)"DFD_1.1" ); // destination is profile DFD
-                                                DED_PUT_STDSTRING	( encoder_ptr2, "src", (std::string)strFunctionName ); /// destination is a Python client
+                                                DED_PUT_STDSTRING	( encoder_ptr2, "src", (std::string)strFunctionName ); /// destination is a client
                                                 //+ Profile request area start
                                                 DED_PUT_STDSTRING	( encoder_ptr2, "STARTrequest", (std::string)"LoginProfileRequest" );
                                                 DED_PUT_STDSTRING	( encoder_ptr2, "STARTDATAstream", (std::string)"116" ); // TODO: add datadictionary id for the datastream
