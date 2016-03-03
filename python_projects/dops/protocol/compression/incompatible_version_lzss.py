@@ -14,13 +14,17 @@
 #**************************************************************/
 
 from array import array
+try:
+    import c_lzss
+except:
+    c_lzss = False
 
 
 llen = len
 
-N = 4096
-F = 18
-THRESHOLD = 2
+N = 2048
+F = 33
+THRESHOLD = 1
 
 NIL = N
 
@@ -121,6 +125,14 @@ def deleteNode(p):
     dad[p] = NIL
 
 def encode(inputBuf, offset, length):
+    #    print length
+    if c_lzss:
+        inputBufStr = inputBuf.tostring()
+        #        print llen(c_lzss.encode(inputBufStr, offset, length))
+        #        array('B', c_lzss.encode(inputBufStr, offset, length)).tofile(open('d:/temp/c.lzss','wb'))
+        #        raise self
+        return array('B', c_lzss.encode(inputBufStr, offset, length))
+
 
     global N, F, THRESHOLD, NIL, maskl, mask2, text_buf, lson, rson, dad, textsize, codesize, printcount, match_length, match_position
     #codesize=0
@@ -167,7 +179,7 @@ def encode(inputBuf, offset, length):
         else:
             code_buf[code_buf_ptr] = match_position & 0xff
             code_buf_ptr += 1
-            code_buf[code_buf_ptr] = (((match_position >> 4) & 0xf0)
+            code_buf[code_buf_ptr] = (((match_position >> 3) & mask1)
                                       | (match_length - (THRESHOLD + 1))) & 0xff
             code_buf_ptr += 1
         mask <<= 1
@@ -226,9 +238,16 @@ def encode(inputBuf, offset, length):
     #    raise self
     return outputBuf
 
-
 def decode(inputBuf, offset, length):
-
+    #    print length
+    if c_lzss:
+        inputBufStr = inputBuf.tostring()
+        #        print llen(c_lzss.decode(inputBufStr, offset, length))
+        #        array('B', c_lzss.decode(inputBufStr, offset, length)).tofile(open('d:/temp/c.lzss','wb'))
+        #        raise self
+        #        array('B', c_lzss.encode(inputBufStr, offset, length)).tofile(open('d:/temp/c.lzss','wb'))
+        #        raise self
+        return array('B', c_lzss.decode(inputBufStr, offset, length))
     global N, F, THRESHOLD, NIL, maskl, mask2, text_buf, lson, rson, dad, textsize, codesize, printcount, match_length, match_position
     i = 0
     j = 0
@@ -243,7 +262,7 @@ def decode(inputBuf, offset, length):
 
     while(1):
         flags = flags >> 1
-        if flags & 0x100 == 0:
+        if flags & 256 == 0:
             if p >= length + offset:
                 break
             c = inputBuf[p]
@@ -267,8 +286,8 @@ def decode(inputBuf, offset, length):
                 break
             j = inputBuf[p]
             p += 1
-            i |= ((j & 0xf0) << 4)
-            j = (j & 0x0f) + THRESHOLD
+            i |= ((j & mask1) << 3)
+            j = (j & mask2) + THRESHOLD
             for k in xrange(0, j + 1):
                 c = text_buf[(i + k) & (N - 1)]
                 outputBuf.append(c)

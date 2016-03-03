@@ -11,10 +11,8 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="0.0.0.0 7777" />
+				<Option parameters="0.0.0.0 7778" />
 				<Compiler>
-					<Add option="-std=c++0x" />
-					<Add option="-Wextra" />
 					<Add option="-g" />
 					<Add option="-std=gnu++11" />
 					<Add option="-D__MSABI_LONG=long" />
@@ -54,6 +52,7 @@
 			<Add library="pthread" />
 			<Add library="rt" />
 		</Linker>
+		<Unit filename="../DataEncoderDecoder/DataEncoderDecoder/ASN1.h" />
 		<Unit filename="../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.cpp" />
 		<Unit filename="../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.h" />
 		<Unit filename="../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.cpp" />

@@ -30,7 +30,7 @@ else:
 class LZSSTest(unittest.TestCase):
 
     def testCompression(self):
-        s = array('B', 'ab\0cdeeeeeeeeeeefffffffffggggggggg')
+        s = array('B', 'ab\0\0\0cdeeeeeeeeeeefffffffffggggggggg')
         print 'Before compress  : ' + s.tostring()
         sEncoded = lzss.encode(s, 0, len(s))
         print 'After compress   : ' + sEncoded.tostring()

@@ -78,7 +78,7 @@ int kext_tools59::decompress_lzss(__u_int8_t *dst, __u_int8_t *src, __u_int32_t 
     dst = dststart;
     srcend = src + srclen;
     for (i = 0; i < cN - cF; i++)
-        text_buf[i] = ' ';
+        text_buf[i] = 0;
     r = cN - cF;
     flags = 0;
     for ( ; ; ) {
