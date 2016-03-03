@@ -22,7 +22,7 @@ class DOPsIntegrationTest(unittest.TestCase):
 
         DED = ded.DEDEncoder()
         if DED.PUT_STRUCT_START("WSRequest"):
-            DED.PUT_METHOD("Method",  "JavaConnect")
+            DED.PUT_METHOD("Method",  "PythonConnect")
             DED.PUT_USHORT("TransID",  trans_id)
             DED.PUT_STDSTRING("protocolTypeID", "DED1.00.00")
             DED.PUT_STDSTRING("functionName", uniqueId)

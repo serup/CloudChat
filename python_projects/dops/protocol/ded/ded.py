@@ -12,7 +12,7 @@
 from array import array
 from math import log
 
-import binascii
+import struct
 
 from dops.protocol.compression import lzss
 
@@ -208,21 +208,16 @@ class CASN1:
 
                 self.pNextASN1 += 4 # sizeof(length) 32 bits
                 param.Tag = self.ASN1Data[self.pNextASN1] & 0x000000FF # fetch byte tag
-                self.pNextASN1 += 1 # tag byte
-
+                self.pNextASN1 += 1  # tag byte
 
                 if param.Length == 1:
                     param.data = self.ASN1Data[self.pNextASN1]
                 else:
-                    if param.Length == 2:
-                        param.data[0] = self.ASN1Data[self.pNextASN1]
-                        param.data[1] = self.ASN1Data[self.pNextASN1 + 1]
-                    else:
-                        param.data = bytearray()
-                        # for n in range(param.Length): param.data.append(0)
-                        for i in range(param.Length):
-                            # param.data[i] = self.ASN1Data[self.pNextASN1 + i]
-                            param.data.append(self.ASN1Data[self.pNextASN1 + i])
+                    param.data = bytearray()
+                    # for n in range(param.Length): param.data.append(0)
+                    for i in range(param.Length):
+                        # param.data[i] = self.ASN1Data[self.pNextASN1 + i]
+                        param.data.append(self.ASN1Data[self.pNextASN1 + i])
 
                 NextASN1Position = self.CurrentASN1Position + param.Length + 1 + 4
                 if NextASN1Position > self.iTotalLengthOfData or NextASN1Position < 0:
@@ -287,9 +282,11 @@ class DEDEncoder(object):
     ptotaldata = 0
     iLengthOfTotalData = 0
     asn1 = 0  # used in decoder
+    endianness = "le"  # default coming from C++ server which is Little Endian - if JavaSpring, then set to "be"  TODO: add for all values endianness
 
     def __init__(self):
         self.encoder = 0
+        self.endianness = "le"
 
     def addelement(self, element):
         if element.ElementType == conversion_factors_for("DED_ELEMENT_TYPE_STRUCT"):
@@ -529,7 +526,10 @@ class DEDEncoder(object):
         DEDelmnt.elementtype = conversion_factors_for("DED_ELEMENT_TYPE_USHORT")
         result = self.getelement(DEDelmnt)
         if result == 1:
-            result = DEDelmnt.value
+            if self.endianness == "le":
+                result = leUnpack(bytes(DEDelmnt.value))  # coming from C++ server on linux
+            else:
+                result = beUnpack(bytes(DEDelmnt.value))  # fx. coming from JavaSpring
         else:
             result = -1
         return result
@@ -540,7 +540,10 @@ class DEDEncoder(object):
         DEDelmnt.elementtype = conversion_factors_for("DED_ELEMENT_TYPE_LONG")
         result = self.getelement(DEDelmnt)
         if result == 1:
-            result = beUnpack(bytes(DEDelmnt.value))
+            if self.endianness == "le":
+                result = leUnpack(bytes(DEDelmnt.value))  # coming from C++ server on linux
+            else:
+                result = beUnpack(bytes(DEDelmnt.value))  # fx. coming from JavaSpring
         else:
             result = -1
         return result
