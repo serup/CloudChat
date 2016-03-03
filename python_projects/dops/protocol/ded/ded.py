@@ -9,7 +9,10 @@
 #    Use, distribute, and modify this program freely.
 #    Please send me your improved versions.
 #**************************************************************/
+from array import array
 from math import log
+
+import binascii
 
 from dops.protocol.compression import lzss
 
@@ -490,10 +493,15 @@ class DEDEncoder(object):
         DEDobj.uncompresseddata = self.DataEncoder_GetData(DEDobj)
 
         # Do compression - okumura style
-        DEDobj.pCompressedData = bytearray(lzss.encode(DEDobj.uncompresseddata, 0, len(DEDobj.uncompresseddata)))
+        #DEDobj.pCompressedData = bytearray(lzss.encode(DEDobj.uncompresseddata, 0, len(DEDobj.uncompresseddata)))
+        DEDobj.pCompressedData = array('B', lzss.encode(DEDobj.uncompresseddata, 0, len(DEDobj.uncompresseddata)))
+        # DEDobj.pCompressedData = lzss.encode(DEDobj.uncompresseddata, 0, len(DEDobj.uncompresseddata))
+        # DEDobj.pCompressedData = bytearray(binascii.a2b_uu(lzss.encode(DEDobj.uncompresseddata, 0, len(DEDobj.uncompresseddata))))
+        # tmp = binascii.a2b_uu(DEDobj.uncompresseddata)
+        # DEDobj.pCompressedData = 0  # TEST without compression - DOES NOT WORK on receiving end at present time 2016-03-03
         if DEDobj.pCompressedData <= 0:
             # somehow compression went wrong !!!! ignore and just use uncompressed data - perhaps data was already compressed !?
-            DEDobj.pCompressedData = DEDobj.uncompresseddata
+            DEDobj.pCompressedData = array('B',bytes(DEDobj.uncompresseddata))
 
         return DEDobj
 
