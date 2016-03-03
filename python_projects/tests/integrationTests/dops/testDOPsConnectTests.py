@@ -10,8 +10,11 @@ class DOPsIntegrationTest(unittest.TestCase):
     def testPythonConnectToDOPsServer(self):
         trans_id = 69
         # TODO: hardcoded user in server
+#        uniqueId = "985998707DF048B2A796B44C89345494"
+#        username = "johndoe@email.com"
+#        password = "12345"
         uniqueId = "985998707DF048B2A796B44C89345494"
-        username = "johndoe@email.com"
+        username = "johndoe@email.com" #  TODO: find a way to safely handle retrieval of username,password - should NOT be stored in source code
         password = "12345"
 
         print "Testing if DOPs Server can handle a pythonConnect DED datapacket"
@@ -19,8 +22,8 @@ class DOPsIntegrationTest(unittest.TestCase):
 
         DED = ded.DEDEncoder()
         if DED.PUT_STRUCT_START("WSRequest"):
-            DED.PUT_METHOD("name",  "PythonConnect")
-            DED.PUT_USHORT("trans_id",  trans_id)
+            DED.PUT_METHOD("Method",  "PythonConnect")
+            DED.PUT_USHORT("TransID",  trans_id)
             DED.PUT_STDSTRING("protocolTypeID", "DED1.00.00")
             DED.PUT_STDSTRING("functionName", uniqueId)
             DED.PUT_STDSTRING("username", username)
@@ -31,6 +34,7 @@ class DOPsIntegrationTest(unittest.TestCase):
         # transmitting data to mock DOPs Server
         ws = websocket.WebSocket()
         ws.connect("ws://backend.scanva.com:7777")
+        # ws.connect("ws://localhost:7778")  # NB! make sure backend VM is NOT running or start local server with port 7778 - then you can debug server :-)
         self.assertEquals(True, ws.connected)
         ws.send_binary(DEDobj.pCompressedData)
         receivedData = ws.recv()
@@ -42,8 +46,8 @@ class DOPsIntegrationTest(unittest.TestCase):
 
         # start decoding
         if DED2.GET_STRUCT_START("WSResponse"):
-            strMethod = DED2.GET_METHOD("name")
-            uTrans_id = DED2.GET_USHORT("trans_id")
+            strMethod = DED2.GET_METHOD("Method")
+            uTrans_id = DED2.GET_USHORT("TransID")
             strProtocolTypeID = DED2.GET_STDSTRING("protocolTypeID")
             strFunctionName = DED2.GET_STDSTRING("functionName")
             strStatus = DED2.GET_STDSTRING ("status")
