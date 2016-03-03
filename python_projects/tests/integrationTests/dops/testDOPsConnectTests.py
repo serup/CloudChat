@@ -46,8 +46,8 @@ class DOPsIntegrationTest(unittest.TestCase):
 
         # start decoding
         if DED2.GET_STRUCT_START("WSResponse"):
-            strMethod = DED2.GET_METHOD("name")
-            uTrans_id = DED2.GET_USHORT("trans_id")
+            strMethod = DED2.GET_METHOD("Method")
+            uTrans_id = DED2.GET_USHORT("TransID")
             strProtocolTypeID = DED2.GET_STDSTRING("protocolTypeID")
             strFunctionName = DED2.GET_STDSTRING("functionName")
             strStatus = DED2.GET_STDSTRING ("status")
