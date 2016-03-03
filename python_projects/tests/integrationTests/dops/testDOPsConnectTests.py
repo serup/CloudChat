@@ -33,8 +33,8 @@ class DOPsIntegrationTest(unittest.TestCase):
 
         # transmitting data to mock DOPs Server
         ws = websocket.WebSocket()
-        # ws.connect("ws://backend.scanva.com:7777")
-        ws.connect("ws://localhost:7778")  # NB! make sure backend VM is NOT running or start local server with port 7778 - then you can debug server :-)
+        ws.connect("ws://backend.scanva.com:7777")
+        # ws.connect("ws://localhost:7778")  # NB! make sure backend VM is NOT running or start local server with port 7778 - then you can debug server :-)
         self.assertEquals(True, ws.connected)
         ws.send_binary(DEDobj.pCompressedData)
         receivedData = ws.recv()

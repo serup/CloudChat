@@ -35,7 +35,7 @@ public class DOPSconnectTests {
         /**
          * connect client -- Make sure the backend is running -- example start: vagrant up backend
          */
-        //clientEndpoint.connectToServer("ws://localhost:7777");
+//        clientEndpoint.connectToServer("ws://localhost:7778");  // NB! make sure backend VM is NOT running or start local server with port 7778 - then you can debug server :-)
         clientEndpoint.connectToServer("ws://backend.scanva.com:7777");
 
         /**
