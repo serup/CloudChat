@@ -198,6 +198,18 @@ else
   echo "- python-pip already installed"
 fi
 
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 python-fs* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install python-fs "
+  sudo apt-get install -yq python-fs
+  echo " - done."
+else
+  echo "- python-fs already installed"
+fi
+
+
+# NB! INCASE pip is broken then repair it like this:
+# sudo easy_install --upgrade pip
 PIPPKG_OK=$(pip list| grep "http")
 if [ "" == "$PIPPKG_OK" ]; then
   echo -n "- install python package http "
@@ -206,7 +218,6 @@ if [ "" == "$PIPPKG_OK" ]; then
 else
   echo "- python package http already installed"
 fi
-
 
 # somehow not working on ubuntu 15.04 vivid  -- use pyCharm in intellij instead : https://confluence.jetbrains.com/display/PYH/PyCharm+IDE+and+Python+Plugin+for+IntelliJ+IDEA
 # install the http://plugins.jetbrains.com/plugin/631
@@ -222,6 +233,15 @@ fi
 #else
 #  echo "- monodevelop-python already installed"
 #fi
+
+PIPPKG_OK=$(pip list | grep python-hdfs*)
+if [ "" == "$PIPPKG_OK" ]; then
+  echo -n "- install python-hdfs on ubuntu "
+  pip install python-hdfs 
+  echo " - done."
+else
+  echo "- python-hdfs already installed"
+fi
 
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 libwebkit-c* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
