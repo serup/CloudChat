@@ -465,11 +465,11 @@ namespace csharpServices
 
 	    public new_LZSS(InputStream input)
 	    {
-	    	input = input;
-			ringBuffer = new byte[RING_SIZE + MAX_STORE_LENGTH - 1];
-	        dad = new short[RING_SIZE + 1];
-	        leftSon = new short[RING_SIZE + 1];
-	        rightSon = new short[RING_SIZE + 257];
+	    	this.input = input;
+			this.ringBuffer = new byte[RING_SIZE + MAX_STORE_LENGTH - 1];
+	        this.dad = new short[RING_SIZE + 1];
+	        this.leftSon = new short[RING_SIZE + 1];
+	        this.rightSon = new short[RING_SIZE + 257];
 	    }
 
 		/*
