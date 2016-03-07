@@ -38,7 +38,8 @@ namespace DED.UnitTests
 			String originaltxt = "ATATAAAFFFF";
 			InputStream input = new ByteArrayInputStream(UTF8Encoding.ASCII.GetBytes(originaltxt.ToCharArray()));
 			new_LZSS lzssCompress = new new_LZSS(input);
-			Assert.IsNotNull(lzssCompress);
+			ByteArrayOutputStream _out = lzssCompress.compress();
+			Assert.IsNotNull(_out);
 		}
 
 	}
