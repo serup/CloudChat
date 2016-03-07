@@ -525,8 +525,7 @@ namespace csharpServices
 	        // This is because those MAX_STORE_LENGTH bytes will be filled in
 	        // immediately
 	        // with bytes from the input stream.
-			//Arrays.fill(ringBuffer, 0, r, (byte) ' ');
-			Arrays.fill(ringBuffer.Cast<short>().ToArray(), 0, r, (byte) ' ');
+			Arrays.fill(ringBuffer, 0, r, (byte) ' ');
 
 	        // Read MAX_STORE_LENGTH bytes into the last MAX_STORE_LENGTH bytes of
 	        // the ring buffer.
