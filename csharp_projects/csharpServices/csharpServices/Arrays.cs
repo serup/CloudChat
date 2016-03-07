@@ -72,6 +72,41 @@ namespace csharpServices
 	            a[i] = val;
 	    }
 
+		/**
+	     * Assigns the specified byte value to each element of the specified array
+	     * of bytes.
+	     *
+	     * @param a the array to be filled
+	     * @param val the value to be stored in all elements of the array
+	     */
+	    public static void fill(byte[] a, byte val) {
+	        for (int i = 0, len = a.Length; i < len; i++)
+	            a[i] = val;
+	    }
+
+		/**
+	     * Assigns the specified byte value to each element of the specified
+	     * range of the specified array of bytes.  The range to be filled
+	     * extends from index <tt>fromIndex</tt>, inclusive, to index
+	     * <tt>toIndex</tt>, exclusive.  (If <tt>fromIndex==toIndex</tt>, the
+	     * range to be filled is empty.)
+	     *
+	     * @param a the array to be filled
+	     * @param fromIndex the index of the first element (inclusive) to be
+	     *        filled with the specified value
+	     * @param toIndex the index of the last element (exclusive) to be
+	     *        filled with the specified value
+	     * @param val the value to be stored in all elements of the array
+	     * @throws IllegalArgumentException if <tt>fromIndex &gt; toIndex</tt>
+	     * @throws ArrayIndexOutOfBoundsException if <tt>fromIndex &lt; 0</tt> or
+	     *         <tt>toIndex &gt; a.length</tt>
+	     */
+	    public static void fill(byte[] a, int fromIndex, int toIndex, byte val) {
+	        rangeCheck(a.Length, fromIndex, toIndex);
+	        for (int i = fromIndex; i < toIndex; i++)
+	            a[i] = val;
+	    }
+
 	}
 }
 
