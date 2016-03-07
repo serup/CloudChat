@@ -172,7 +172,7 @@ namespace csharpServices
 
 
 	// this version is a conversion from java implementation
-	class new_LZSS
+	public class new_LZSS
 	{
 
 		/**
