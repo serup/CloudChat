@@ -2,6 +2,10 @@
 using NUnit.Framework;
 using DED;
 using WebSocketClient;
+using csharpServices;
+using System.Collections;
+using System.IO;
+using System.Text;
 
 // all test namespaces start with "MonoTests."  Append the Namespace that
 // contains the class you are testing, e.g. MonoTests.System.Collections
@@ -12,6 +16,32 @@ using System.Net.WebSockets;
 
 namespace DED.UnitTests
 {
+	[TestFixture]
+	public class lzssTests : Assert {
+
+		// this method is run before each [Test] method is called. You can put
+		// variable initialization, etc. here that is common to each test.
+		// Just leave the method empty if you don't need to use it.
+		// The name of the method does not matter; the attribute does.
+		[SetUp]
+		public void GetReady() {}
+
+		// this method is run after each Test* method is called. You can put
+		// clean-up code, etc. here.  Whatever needs to be done after each test.
+		// Just leave the method empty if you don't need to use it.
+		// The name of the method does not matter; the attribute does.
+		[TearDown]
+		public void Clean() {}
+
+		[Test]
+		public void lzssCompression() {
+			String originaltxt = "ATATAAAFFFF";
+			InputStream input = new ByteArrayInputStream(UTF8Encoding.ASCII.GetBytes(originaltxt.ToCharArray()));
+			new_LZSS lzssCompress = new new_LZSS(input);
+			Assert.IsNotNull(lzssCompress);
+		}
+
+	}
 
 	[TestFixture]
 	public class EncodeDecodeTest : Assert {
