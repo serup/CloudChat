@@ -40,7 +40,7 @@ namespace Fleck.IntegrationTests
 	        DED.PUT_STRUCT_START ( "WSRequest" );
 		//		DED.PUT_METHOD   ( "Method",  "CSharpConnect" );
 				DED.PUT_METHOD   ( "Method",  "JavaConnect" );
-	            DED.PUT_USHORT   ( "trans_id",  trans_id);
+	            DED.PUT_USHORT   ( "TransID",  trans_id);
 	            DED.PUT_STDSTRING( "protocolTypeID", "DED1.00.00");
 	            DED.PUT_STDSTRING( "functionName", uniqueId );
 				DED.PUT_STDSTRING( "username", username );
@@ -70,9 +70,10 @@ namespace Fleck.IntegrationTests
 	        // decode data ...
 	        DEDDecoder DED2 = new DEDDecoder();
 	        DED2.PUT_DATA_IN_DECODER( receivedData, receivedData.Length);
-	        if( DED2.GET_STRUCT_START( "WSResponse" )==1 &&
-	                (strMethod   		= DED2.GET_METHOD ( "name" )).Length>0 &&
-	                (uTrans_id     		= DED2.GET_USHORT ( "trans_id")) != -1 &&
+//			if( DED2.GET_STRUCT_START( "WSResponse" )==1 &&
+	        if( DED2.GET_STRUCT_START( "WSRequest" )==1 &&
+	                (strMethod   		= DED2.GET_METHOD ( "Method" )).Length>0 &&
+	                (uTrans_id     		= DED2.GET_USHORT ( "TransID")) != -1 &&
 	                (strProtocolTypeID  = DED2.GET_STDSTRING ( "protocolTypeID")).Length>0 &&
 	                (strFunctionName    = DED2.GET_STDSTRING ( "functionName")).Length>0 &&
 	                (strStatus  = DED2.GET_STDSTRING ( "status")).Length>0 &&
