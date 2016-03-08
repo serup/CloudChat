@@ -339,7 +339,7 @@ namespace DED.UnitTests
 	        String password = "12345";
 
 	        /**
-	         * create DED connect datapacket for DOPS for java clients
+	         * create DED connect datapacket for DOPS for csharp clients
 	         */
 	        DEDEncoder DED = new DEDEncoder();
 	        DED.PUT_STRUCT_START ( "WSRequest" );

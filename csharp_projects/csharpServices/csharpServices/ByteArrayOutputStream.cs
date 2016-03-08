@@ -167,9 +167,7 @@ namespace csharpServices
 	     *
 	     * <p> This method always replaces malformed-input and unmappable-character
 	     * sequences with the default replacement string for the platform's
-	     * default character set. The {@linkplain java.nio.charset.CharsetDecoder}
-	     * class should be used when more control over the decoding process is
-	     * required.
+	     * default character set. 
 	     *
 	     * @return String decoded from the buffer's contents.
 	     */

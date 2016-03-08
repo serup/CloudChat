@@ -29,9 +29,6 @@ namespace csharpServices
 	     * implementation for this method.
 	     *
 	     * @param      b   the <code>byte</code>.
-	     * @exception  IOException  if an I/O error occurs. In particular,
-	     *             an <code>IOException</code> may be thrown if the
-	     *             output stream has been closed.
 	     */
 	    public abstract void write(int b);
 
@@ -42,8 +39,6 @@ namespace csharpServices
 	     * <code>write(b, 0, b.length)</code>.
 	     *
 	     * @param      b   the data.
-	     * @exception  IOException  if an I/O error occurs.
-	     * @see        java.io.OutputStream#write(byte[], int, int)
 	     */
 	    public void write(byte[] b) {
 	        write(b, 0, b.Length);
