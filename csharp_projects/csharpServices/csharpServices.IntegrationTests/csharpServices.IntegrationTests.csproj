@@ -35,6 +35,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="unittests\DOPsConnectTests.cs" />
+    <Compile Include="unittests\hadoopTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Moq">
