@@ -691,6 +691,106 @@ namespace csharpServices
 	        return _out;
 	    }
 
+		/*
+	     * (non-Javadoc)
+	     *
+	     * @see org.crosswire.common.compress.Compressor#uncompress()
+	     */
+	    public ByteArrayOutputStream uncompress() {
+	        return uncompress(BUF_SIZE);
+	    }
+
+	    /*
+	     * (non-Javadoc)
+	     *
+	     * @see org.crosswire.common.compress.Compressor#uncompress(int)
+	     */
+	    public ByteArrayOutputStream uncompress(int expectedSize) {
+	        _out = new ByteArrayOutputStream(expectedSize);
+
+	        byte[] c = new byte[MAX_STORE_LENGTH]; // an array of chars
+	        byte flags; // 8 bits of flags
+
+	        // Initialize the ring buffer with a common string.
+	        //
+	        // Note that the last MAX_STORE_LENGTH bytes of the ring buffer are not
+	        // filled.
+	        // r is a nodeNumber
+	        int r = RING_SIZE - MAX_STORE_LENGTH;
+	        Arrays.fill(ringBuffer, 0, r, (byte) ' ');
+
+	        flags = 0;
+	        int flagCount = 0; // which flag we're on
+
+	        while (true) {
+	            // If there are more bits of interest in this flag, then
+	            // shift that next interesting bit into the 1's position.
+	            //
+	            // If this flag has been exhausted, the next byte must be a flag.
+	            if (flagCount > 0) {
+	                flags = (byte) (flags >> 1);
+	                flagCount--;
+	            } else {
+	                // Next byte must be a flag.
+	                int readResult = input.read();
+	                if (readResult == -1) {
+	                    break;
+	                }
+
+	                flags = (byte) (readResult & 0xFF);
+
+	                // Set the flag counter. While at first it might appear
+	                // that this should be an 8 since there are 8 bits in the
+	                // flag, it should really be a 7 because the shift must
+	                // be performed 7 times in order to see all 8 bits.
+	                flagCount = 7;
+	            }
+
+	            // If the low order bit of the flag is now set, then we know
+	            // that the next byte is a single, unencoded character.
+	            if ((flags & 1) != 0) {
+	                if (input.read(c, 0, 1) != 1) {
+	                    break;
+	                }
+
+	                _out.write(c[0]);
+
+	                // Add to buffer, and increment to next spot. Wrap at end.
+	                ringBuffer[r] = c[0];
+	                r = (short) ((r + 1) & RING_WRAP);
+	            } else {
+	                // Otherwise, we know that the next two bytes are a
+	                // <position,length> pair. The position is in 12 bits and
+	                // the length is in 4 bits.
+	                if (input.read(c, 0, 2) != 2) {
+	                    break;
+	                }
+
+	                // Convert these two characters into the position and
+	                // length in the ringBuffer. Note that the length is always at
+	                // least
+	                // THRESHOLD, which is why we're able to get a length
+	                // of 18 out of only 4 bits.
+	                short pos = (short) ((c[0] & 0xFF) | ((c[1] & 0xF0) << 4));
+	                short len = (short) ((c[1] & 0x0F) + THRESHOLD);
+
+	                // There are now "len" characters at position "pos" in
+	                // the ring buffer that can be pulled out. Note that
+	                // len is never more than MAX_STORE_LENGTH.
+	                for (int k = 0; k < len; k++) {
+	                    c[k] = ringBuffer[(pos + k) & RING_WRAP];
+
+	                    // Add to buffer, and increment to next spot. Wrap at end.
+	                    ringBuffer[r] = c[k];
+	                    r = (r + 1) & RING_WRAP;
+	                }
+
+	                // Add the "len" characters to the output stream.
+	                _out.write(c, 0, len);
+	            }
+	        }
+	        return _out;
+	    }
 
 	}
 }

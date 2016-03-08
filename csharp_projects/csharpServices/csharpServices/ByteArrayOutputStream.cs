@@ -2,7 +2,7 @@
 
 namespace csharpServices
 {
-	public class ByteArrayOutputStream
+	public class ByteArrayOutputStream : OutputStream 
 	{
 		/**
 	     * The buffer where data is stored.
@@ -92,7 +92,7 @@ namespace csharpServices
 	     *
 	     * @param   b   the byte to be written.
 	     */
-	    public void write(int b) {
+	    public override void write(int b) {
 	        ensureCapacity(count + 1);
 	        buf[count] = (byte) b;
 	        count += 1;
@@ -112,9 +112,81 @@ namespace csharpServices
 	            throw new  IndexOutOfRangeException();
 	        }
 	        ensureCapacity(count + len);
-	        //System.arraycopy(b, off, buf, count, len);
-	        System.Array.Copy(b, buf, len);
+			System.Array.Copy(b, off, buf, count, len);
 	        count += len;
+	    }
+
+		/**
+	     * Writes the complete contents of this byte array output stream to
+	     * the specified output stream argument, as if by calling the output
+	     * stream's write method using <code>out.write(buf, 0, count)</code>.
+	     *
+	     * @param      out   the output stream to which to write the data.
+	     */
+	    public void writeTo(OutputStream __out) {
+	        __out.write(buf, 0, count);
+	    }
+
+	    /**
+	     * Resets the <code>count</code> field of this byte array output
+	     * stream to zero, so that all currently accumulated output in the
+	     * output stream is discarded. The output stream can be used again,
+	     * reusing the already allocated buffer space.
+	     *
+	     */
+	    public void reset() {
+	        count = 0;
+	    }
+
+	    /**
+	     * Creates a newly allocated byte array. Its size is the current
+	     * size of this output stream and the valid contents of the buffer
+	     * have been copied into it.
+	     *
+	     * @return  the current contents of this output stream, as a byte array.
+	     */
+	    public byte[] toByteArray() {
+	        return Arrays.copyOf(buf, count);
+	    }
+
+	    /**
+	     * Returns the current size of the buffer.
+	     *
+	     * @return  the value of the <code>count</code> field, which is the number
+	     *          of valid bytes in this output stream.
+	     */
+	    public int size() {
+	        return this.count;
+	    }
+
+	    /**
+	     * Converts the buffer's contents into a string decoding bytes using the
+	     * platform's default character set. The length of the new <tt>String</tt>
+	     * is a function of the character set, and hence may not be equal to the
+	     * size of the buffer.
+	     *
+	     * <p> This method always replaces malformed-input and unmappable-character
+	     * sequences with the default replacement string for the platform's
+	     * default character set. The {@linkplain java.nio.charset.CharsetDecoder}
+	     * class should be used when more control over the decoding process is
+	     * required.
+	     *
+	     * @return String decoded from the buffer's contents.
+	     */
+	    public String toString() {
+			byte[] array = new byte[this.count];
+			System.Array.Copy(this.buf, array, this.count);
+			String result = System.Text.Encoding.UTF8.GetString(array);
+			//return this.buf.ToString(); // somehow fails
+			return result;
+	    }
+
+	    /**
+	     * Closing a <tt>ByteArrayOutputStream</tt> has no effect. The methods in
+	     * this class can be called after the stream has been closed without
+	     * generating an <tt>IOException</tt>.
+	     */
+	    public void close() {
 	    }
 
 	}
