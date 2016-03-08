@@ -21,8 +21,8 @@ namespace Fleck.IntegrationTests
 		public void connectToDOPsServer()
 		{
 			// connect to DOPs Server
-//			Client.wshandles _handles = Client.WSConnect ("ws://backend.scanva.com:7777");
-			Client.wshandles _handles = Client.WSConnect ("ws://127.0.0.1:7778");
+			Client.wshandles _handles = Client.WSConnect ("ws://backend.scanva.com:7777");
+//			Client.wshandles _handles = Client.WSConnect ("ws://127.0.0.1:7778");
 
 			/**
 	         * prepare data to be send
