@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Net.WebSockets;
 
-namespace Fleck.IntegrationTests
+namespace DOPSTests
 {
 	[TestFixture]
 	public class DOPsWebSocketConnectionTests

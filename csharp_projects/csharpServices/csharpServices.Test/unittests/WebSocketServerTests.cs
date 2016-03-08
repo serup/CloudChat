@@ -13,8 +13,10 @@ using System.Threading;
 using System.Net.WebSockets;
 using System.Text;
 using WebSocketClient;
+using Fleck;
 
-namespace Fleck.Tests
+
+namespace WebSocketTests
 {
     [TestFixture]
     public class WebSocketServerTests
