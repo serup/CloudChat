@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 using System.Net.WebSockets;
 
 
-namespace DED.UnitTests
+namespace DEDTests
 {
 	[TestFixture]
 	public class lzssTests : Assert {

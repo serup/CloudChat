@@ -1,8 +1,9 @@
 ﻿using System;
 using Moq;
 using NUnit.Framework;
+using Fleck;
 
-namespace Fleck.Tests
+namespace WebSocketTests
 {
     [TestFixture]
     public class WebSocketConnectionTests
