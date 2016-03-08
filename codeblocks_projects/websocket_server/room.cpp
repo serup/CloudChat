@@ -730,7 +730,7 @@ namespace websocket {
                                             }
                                             else
                                             {
-                                                /// Java client is now connected and accepted, however now it needs to login to its profile
+                                                /// Client is now connected and accepted, however now it needs to login to its profile
 
                                                 /// Send Request Login to profile - profile will send response dataframe to Java Client with status
                                                 dataframe dfRequest;
