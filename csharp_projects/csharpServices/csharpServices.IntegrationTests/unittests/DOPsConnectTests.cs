@@ -28,7 +28,7 @@ namespace Fleck.IntegrationTests
 	         * prepare data to be send
 	         */
 	        short trans_id = 69;
-	        bool action = true;
+	        //bool action = true;
 	        String uniqueId = "985998707DF048B2A796B44C89345494";
 	        String username = "johndoe@email.com"; // TODO: find a way to safely handle retrieval of username,password - should NOT be stored in source code
 	        String password = "12345";
@@ -38,8 +38,7 @@ namespace Fleck.IntegrationTests
 	         */
 	        DEDEncoder DED = new DEDEncoder();
 	        DED.PUT_STRUCT_START ( "WSRequest" );
-		//		DED.PUT_METHOD   ( "Method",  "CSharpConnect" );
-				DED.PUT_METHOD   ( "Method",  "JavaConnect" );
+				DED.PUT_METHOD   ( "Method",  "CSharpConnect" );
 	            DED.PUT_USHORT   ( "TransID",  trans_id);
 	            DED.PUT_STDSTRING( "protocolTypeID", "DED1.00.00");
 	            DED.PUT_STDSTRING( "functionName", uniqueId );
@@ -70,8 +69,7 @@ namespace Fleck.IntegrationTests
 	        // decode data ...
 	        DEDDecoder DED2 = new DEDDecoder();
 	        DED2.PUT_DATA_IN_DECODER( receivedData, receivedData.Length);
-//			if( DED2.GET_STRUCT_START( "WSResponse" )==1 &&
-	        if( DED2.GET_STRUCT_START( "WSRequest" )==1 &&
+			if( DED2.GET_STRUCT_START( "WSResponse" )==1 &&
 	                (strMethod   		= DED2.GET_METHOD ( "Method" )).Length>0 &&
 	                (uTrans_id     		= DED2.GET_USHORT ( "TransID")) != -1 &&
 	                (strProtocolTypeID  = DED2.GET_STDSTRING ( "protocolTypeID")).Length>0 &&
