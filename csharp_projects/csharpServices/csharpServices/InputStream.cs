@@ -306,8 +306,6 @@ namespace csharpServices
 	     *
 	     * @return  <code>true</code> if this stream instance supports the mark
 	     *          and reset methods; <code>false</code> otherwise.
-	     * @see     java.io.InputStream#mark(int)
-	     * @see     java.io.InputStream#reset()
 	     */
 	    public Boolean markSupported() {
 	        return false;

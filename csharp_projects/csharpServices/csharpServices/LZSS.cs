@@ -473,9 +473,7 @@ namespace csharpServices
 	    }
 
 		/*
-	     * (non-Javadoc)
 	     *
-	     * @see org.crosswire.common.compress.Compressor#compress()
 	     */
 	    public ByteArrayOutputStream compress() {
 	        _out = new ByteArrayOutputStream(BUF_SIZE);
@@ -692,18 +690,14 @@ namespace csharpServices
 	    }
 
 		/*
-	     * (non-Javadoc)
 	     *
-	     * @see org.crosswire.common.compress.Compressor#uncompress()
 	     */
 	    public ByteArrayOutputStream uncompress() {
 	        return uncompress(BUF_SIZE);
 	    }
 
 	    /*
-	     * (non-Javadoc)
 	     *
-	     * @see org.crosswire.common.compress.Compressor#uncompress(int)
 	     */
 	    public ByteArrayOutputStream uncompress(int expectedSize) {
 	        _out = new ByteArrayOutputStream(expectedSize);
