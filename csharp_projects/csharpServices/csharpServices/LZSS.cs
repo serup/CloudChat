@@ -6,7 +6,7 @@ using System.Linq;
 namespace csharpServices
 {
 	// working LZSS however it is not aligned with LZSS on DOPs Server - somehow compress/decompress on DOPs server is NOT a true LZSS or this is NOT a true LZSS
-	class LZSS/*<TDataType> where TDataType : IComparable<TDataType>*/
+	class oldLZSS/*<TDataType> where TDataType : IComparable<TDataType>*/
 	{
 		public static float Procent;
 
@@ -172,7 +172,7 @@ namespace csharpServices
 
 
 	// this version is a conversion from java implementation
-	public class new_LZSS
+	public class LZSS
 	{
 
 		/**
@@ -463,7 +463,11 @@ namespace csharpServices
      	 */
     	int BUF_SIZE = 2048;
 
-	    public new_LZSS(InputStream input)
+    	public LZSS ()
+		{
+		}
+
+	    public LZSS(InputStream input)
 	    {
 	    	this.input = input;
 			this.ringBuffer = new byte[RING_SIZE + MAX_STORE_LENGTH - 1];
@@ -785,6 +789,31 @@ namespace csharpServices
 	        }
 	        return _out;
 	    }
+
+
+		public byte[] BitArrayToByteArray(BitArray bits)
+		{
+			byte[] ret = new byte[(bits.Length - 1) / 8 + 1];
+			bits.CopyTo(ret, 0);
+			return ret;
+		}
+
+		public BitArray Compress (IList<Byte> source)
+		{
+			InputStream _is = new ByteArrayInputStream(source.ToArray());
+			LZSS lzss = new LZSS(_is);
+			ByteArrayOutputStream _os = lzss.compress();
+			return new BitArray(_os.toByteArray());
+		}
+
+		public Byte[] UnCompress (BitArray source, Int32 bitsCount)
+		{
+			byte[] barray = BitArrayToByteArray(source);
+			InputStream _is = new ByteArrayInputStream(barray);
+			LZSS lzss = new LZSS(_is);
+			ByteArrayOutputStream _os = lzss.uncompress();
+			return _os.toByteArray();
+		}
 
 	}
 }

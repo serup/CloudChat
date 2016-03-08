@@ -37,7 +37,7 @@ namespace DED.UnitTests
 		public void lzssCompression() {
 			String originaltxt = "ATATAAAFFFF";
 			InputStream input = new ByteArrayInputStream(UTF8Encoding.ASCII.GetBytes(originaltxt.ToCharArray()));
-			new_LZSS lzssCompress = new new_LZSS(input);
+			LZSS lzssCompress = new LZSS(input);
 			ByteArrayOutputStream _out = lzssCompress.compress();
 			Assert.IsNotNull(_out);
 		}
@@ -46,14 +46,14 @@ namespace DED.UnitTests
 		public void lzssDeCompression() {
 			String originaltxt = "ATATAAAFFFF";
 			InputStream input = new ByteArrayInputStream(UTF8Encoding.ASCII.GetBytes(originaltxt.ToCharArray()));
-			new_LZSS lzssCompress = new new_LZSS(input);
+			LZSS lzssCompress = new LZSS(input);
 			ByteArrayOutputStream _out = lzssCompress.compress();
 			Assert.IsNotNull(_out);
 
 			//... 
 
 			InputStream data = new ByteArrayInputStream(_out.toByteArray());
-			new_LZSS lzssDecompress = new new_LZSS(data);
+			LZSS lzssDecompress = new LZSS(data);
 			ByteArrayOutputStream result = lzssDecompress.uncompress();
 			Assert.IsNotNull(result);
 
