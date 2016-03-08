@@ -126,6 +126,7 @@
     <Compile Include="Math.cs" />
     <Compile Include="InputStream.cs" />
     <Compile Include="ByteArrayInputStream.cs" />
+    <Compile Include="OutputStream.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
