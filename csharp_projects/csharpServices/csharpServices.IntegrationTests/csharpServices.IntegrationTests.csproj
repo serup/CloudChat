@@ -63,9 +63,31 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Collections" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Hadoop.Client">
+      <HintPath>..\packages\Microsoft.Hadoop.MapReduce.0.12.5807.28193\lib\net40\Microsoft.Hadoop.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Hadoop.MapReduce">
+      <HintPath>..\packages\Microsoft.Hadoop.MapReduce.0.12.5807.28193\lib\net40\Microsoft.Hadoop.MapReduce.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Hadoop.WebClient">
+      <HintPath>..\packages\Microsoft.Hadoop.MapReduce.0.12.5807.28193\lib\net40\Microsoft.Hadoop.WebClient.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAzure.Management.Framework">
+      <HintPath>..\packages\Microsoft.Hadoop.MapReduce.0.12.5807.28193\lib\net40\Microsoft.WindowsAzure.Management.Framework.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="MRLib\Microsoft.Hadoop.Client.dll" />
+    <None Include="MRLib\Microsoft.Hadoop.CombineDriver.exe" />
+    <None Include="MRLib\Microsoft.Hadoop.MapDriver.exe" />
+    <None Include="MRLib\Microsoft.Hadoop.MapReduce.dll" />
+    <None Include="MRLib\Microsoft.Hadoop.ReduceDriver.exe" />
+    <None Include="MRLib\Microsoft.WindowsAzure.Management.Framework.Threading.dll" />
+    <None Include="MRLib\MRRunner.exe" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\csharpServices\csharpServices.csproj">
