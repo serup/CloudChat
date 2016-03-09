@@ -172,6 +172,14 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- monodevelop-nunit already installed"
 fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 mono-complete* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install mono-complete for C# on ubuntu "
+  sudo apt-get install -yq mono-complete 
+  echo " - done."
+else
+  echo "- mono-complete already installed"
+fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 libnunit-cil-dev* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install libnunit-cil-dev for C# on ubuntu "
@@ -234,14 +242,15 @@ fi
 #  echo "- monodevelop-python already installed"
 #fi
 
-PIPPKG_OK=$(pip list | grep python-hdfs*)
-if [ "" == "$PIPPKG_OK" ]; then
-  echo -n "- install python-hdfs on ubuntu "
-  pip install python-hdfs 
-  echo " - done."
-else
-  echo "- python-hdfs already installed"
-fi
+# PT. NOT working...
+#PIPPKG_OK=$(pip list | grep python-hdfs*)
+#if [ "" == "$PIPPKG_OK" ]; then
+#  echo -n "- install python-hdfs on ubuntu "
+#  pip install python-hdfs 
+#  echo " - done."
+#else
+#  echo "- python-hdfs already installed"
+#fi
 
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 libwebkit-c* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
