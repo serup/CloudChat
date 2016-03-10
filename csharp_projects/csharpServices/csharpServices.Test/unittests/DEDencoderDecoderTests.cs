@@ -327,7 +327,8 @@ namespace DEDTests
 		public void loginToMockDOPsServer()
 		{
 			// connect to DOPs Server
-			Client.wshandles _handles = Client.WSConnect ("ws://localhost:8046/websockets/MockServerEndpoint");
+//			Client.wshandles _handles = Client.WSConnect ("ws://localhost:8046/websockets/MockServerEndpoint");
+			Client.wshandles _handles = Client.WSConnect ("ws://127.0.0.1:8046/websockets/MockServerEndpoint");
 
 			/**
 	         * prepare data to be send
