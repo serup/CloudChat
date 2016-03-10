@@ -257,9 +257,6 @@ class MockDOPsServer {
 
 		public void RequestStop()
 		{
-			// close all sockets, if any
-			//allSockets.ToList().ForEach(s => s.Close());
-
 			_shouldStop = true;
 		}
 

@@ -9,17 +9,17 @@ using System.Collections.Generic;
 using System.Linq;
 
 // MapReduce example: http://www.codeproject.com/Articles/524233/MapReduceplus-fplusMapplusReductionplusStrategies
-namespace hadoopTests
+namespace HadoopTests
 {
 	[TestFixture]
-	public class hadoopConnectionTests
+	public class HadoopConnectionTests
 	{
 		[Test]
-		public void connectTohadoop ()
+		public void ConnectTohadoop ()
 		{
 			// TODO: use following to make a test for connecting to hadoop VM cluster
 			// http://www.codeguru.com/columns/experts/how-to-create-mapreduce-jobs-for-hadoop-using-c.htm
-
+			/*
 			HadoopJobConfiguration hadoopConfiguration = new HadoopJobConfiguration();  //TODO: require a new version og NuGet Packet Manager to install Microsoft MapReduce hadoop
 	        hadoopConfiguration.InputPath = "/input";
 	        hadoopConfiguration.OutputFolder = "/output";
@@ -27,7 +27,7 @@ namespace hadoopTests
 	        IHadoop hadoop = Hadoop.Connect(myUri, "vagrant", "vagrant");
 	 
 	    //    hadoop.MapReduceJob.Execute<ErrorTextMapper, ErrorTextReducerCombiner>(hadoopConfiguration);
-	 
+	 */
 			Assert.IsTrue (false);
 		}
 	}

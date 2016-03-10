@@ -1,9 +1,74 @@
 ﻿using NUnit.Framework;
 using System;
 using Fleck;
+using System.Threading;
+using System.Text;
+
+using System;
+using NUnit.Framework;
+using DED;
+using WebSocketClient;
+using csharpServices;
+using System.Collections;
+using System.IO;
+using System.Text;
+
+using System.Threading;
+using System.Threading.Tasks;
+using System.Net.WebSockets;
 
 namespace WebSocketTests
 {
+
+
+	[TestFixture]
+	public class EventWaitHandleTests
+	{
+		class Worker {
+			private volatile bool _shouldStop;
+			public EventWaitHandle WaitHandleExternal;
+
+			public void DoWork ()
+			{
+				while (!_shouldStop)
+				{
+					Console.WriteLine("worker thread: working...");
+					Thread.Sleep(1000);
+					WaitHandleExternal.Set();
+				}
+			}
+
+			public void RequestStop()
+			{
+				_shouldStop = true;
+			}
+
+		}
+
+		[Test]
+		public void WaitForHandleEventTest()
+		{
+			EventWaitHandle _waitHandle = new AutoResetEvent (false); // is signaled value change to true
+
+			// start a thread which will after a small time set an event
+			Worker workerObject = new Worker ();
+			workerObject.WaitHandleExternal = _waitHandle;
+			Thread workerThread = new Thread(workerObject.DoWork);
+
+			// Start the worker thread.
+			workerThread.Start();
+
+			Console.WriteLine ("Waiting...");
+			_waitHandle.WaitOne();                // Wait for notification
+			Console.WriteLine ("Notified");
+
+			// Stop the worker thread.
+			workerObject.RequestStop();
+
+		}
+
+	}
+
     [TestFixture]
     public class WebSocketConnectionInfoTests
     {
