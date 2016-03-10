@@ -25,11 +25,28 @@ namespace HadoopTests
 		        hadoopConfiguration.OutputFolder = "/output";
 		        Uri myUri = new Uri("one.cluster:8020");
 		        IHadoop hadoop = Hadoop.Connect(myUri, "vagrant", "vagrant");  // NB! if System.Net.Http fails, then set System.Web and System.Net.Http to copy local -- right click on reference and change
- 
+
 	    		hadoop.MapReduceJob.Execute<ErrorTextMapper, ErrorTextReducerCombiner>(hadoopConfiguration);
 	 
 			Assert.IsTrue (false);
 		}
+
+		[Test]
+		public void ListFilesOnHadoop ()
+		{
+			//Uri myUri = new Uri("hdfs://one.cluster:8020/");
+			//Uri myUri = new Uri("http://one.cluster:8020/");
+			Uri myUri = new Uri("one.cluster:8020/");
+		        IHadoop hadoop = Hadoop.Connect(myUri, "vagrant", "vagrant");  // NB! if System.Net.Http fails, then set System.Web and System.Net.Http to copy local -- right click on reference and change
+
+		        string absolutePath = hadoop.StorageSystem.GetAbsolutePath("/");
+
+			string[] lstFiles = hadoop.StorageSystem.LsFiles(absolutePath);
+		  
+	 
+			Assert.IsTrue (false);
+		}
+
 	}
 
 
