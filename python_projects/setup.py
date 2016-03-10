@@ -4,7 +4,7 @@ import sys
 VERSION = "0.35.0"
 NAME="websocket_client"
 
-install_requires = ["six"]
+install_requires = ["six", 'pyhdfs']
 tests_require = []
 if sys.version_info[0] == 2:
     if sys.version_info[1] < 7 or (sys.version_info[1] == 7 and sys.version_info[2]< 9):

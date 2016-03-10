@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/01/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.Hadoop.MapReduce</id>
+    <version>0.12.5807.28193</version>
+    <title>Microsoft .NET Map Reduce API For Hadoop</title>
+    <authors>Microsoft</authors>
+    <owners>Microsoft</owners>
+    <projectUrl>http://hadoopsdk.codeplex.com/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Provides a .NET API for the Map/Reduce functionality of Hadoop Streaming.</description>
+    <dependencies>
+      <dependency id="Newtonsoft.Json" version="4.5.11" />
+    </dependencies>
+    <references>
+      <group targetFramework=".NETFramework4.0">
+        <reference file="Microsoft.Hadoop.Client.dll" />
+        <reference file="Microsoft.Hadoop.MapReduce.dll" />
+        <reference file="Microsoft.Hadoop.WebClient.dll" />
+        <reference file="Microsoft.WindowsAzure.Management.Framework.dll" />
+      </group>
+    </references>
+  </metadata>
+</package>

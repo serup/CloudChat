@@ -71,7 +71,7 @@ namespace WebSocketClient
 			}
 			catch (Exception ex)
 			{
-				//Console.WriteLine("Exception: {0}", ex);
+				Console.WriteLine("Exception: {0}", ex);
 			}
 			finally
 			{
@@ -197,6 +197,7 @@ namespace WebSocketClient
 			wshandles _handles = new wshandles();
 			_handles.webSocket = Client.webSocket;
 			_handles.waitHandle = Client._waitHandle;
+			//_handles.waitHandle = Client.token.WaitHandle;
 			_handles.token = Client.token;
 			return _handles;
 		}
@@ -226,7 +227,8 @@ namespace WebSocketClient
 
 			if (webSocket.State == WebSocketState.Open)
 			{
-				webSocket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Binary, false, CancellationToken.None).Wait();
+//				webSocket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Binary, false, CancellationToken.None).Wait();
+				webSocket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Binary, true, CancellationToken.None).Wait();
 				LogStatus(false, buffer, buffer.Length);
 
 				await Task.Delay(delay);
@@ -300,7 +302,7 @@ namespace WebSocketClient
 			return receivedBuffer;
 		}
 
-		public static byte[] FetchReceived(wshandles _handles)
+		public static byte[] FetchReceived (wshandles _handles)
 		{
 			Console.WriteLine ("Waiting...");
 			_handles.waitHandle.WaitOne();                // Wait for notification
@@ -346,6 +348,7 @@ namespace WebSocketClient
 			}
 			Console.WriteLine("WebSocket Receive ending!");
 		}
+
 
 		private static async Task ReceiveBLOB(ClientWebSocket webSocket, EventWaitHandle WaitHandle)
 		{
