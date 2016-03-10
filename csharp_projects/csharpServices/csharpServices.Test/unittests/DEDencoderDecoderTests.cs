@@ -2,6 +2,10 @@
 using NUnit.Framework;
 using DED;
 using WebSocketClient;
+using csharpServices;
+using System.Collections;
+using System.IO;
+using System.Text;
 
 // all test namespaces start with "MonoTests."  Append the Namespace that
 // contains the class you are testing, e.g. MonoTests.System.Collections
@@ -10,8 +14,57 @@ using System.Threading.Tasks;
 using System.Net.WebSockets;
 
 
-namespace DED.UnitTests
+namespace DEDTests
 {
+	[TestFixture]
+	public class lzssTests : Assert {
+
+		// this method is run before each [Test] method is called. You can put
+		// variable initialization, etc. here that is common to each test.
+		// Just leave the method empty if you don't need to use it.
+		// The name of the method does not matter; the attribute does.
+		[SetUp]
+		public void GetReady() {}
+
+		// this method is run after each Test* method is called. You can put
+		// clean-up code, etc. here.  Whatever needs to be done after each test.
+		// Just leave the method empty if you don't need to use it.
+		// The name of the method does not matter; the attribute does.
+		[TearDown]
+		public void Clean() {}
+
+		[Test]
+		public void lzssCompression() {
+			String originaltxt = "ATATAAAFFFF";
+			InputStream input = new ByteArrayInputStream(UTF8Encoding.ASCII.GetBytes(originaltxt.ToCharArray()));
+			LZSS lzssCompress = new LZSS(input);
+			ByteArrayOutputStream _out = lzssCompress.compress();
+			Assert.IsNotNull(_out);
+		}
+
+		[Test]
+		public void lzssDeCompression() {
+			String originaltxt = "ATATAAAFFFF";
+			InputStream input = new ByteArrayInputStream(UTF8Encoding.ASCII.GetBytes(originaltxt.ToCharArray()));
+			LZSS lzssCompress = new LZSS(input);
+			ByteArrayOutputStream _out = lzssCompress.compress();
+			Assert.IsNotNull(_out);
+
+			//... 
+
+			InputStream data = new ByteArrayInputStream(_out.toByteArray());
+			LZSS lzssDecompress = new LZSS(data);
+			ByteArrayOutputStream result = lzssDecompress.uncompress();
+			Assert.IsNotNull(result);
+
+
+			String decodedTxt = result.toString();
+			Assert.IsTrue((originaltxt == decodedTxt));
+
+
+		}
+
+	}
 
 	[TestFixture]
 	public class EncodeDecodeTest : Assert {
@@ -274,7 +327,8 @@ namespace DED.UnitTests
 		public void loginToMockDOPsServer()
 		{
 			// connect to DOPs Server
-			Client.wshandles _handles = Client.WSConnect ("ws://localhost:8046/websockets/MockServerEndpoint");
+//			Client.wshandles _handles = Client.WSConnect ("ws://localhost:8046/websockets/MockServerEndpoint");
+			Client.wshandles _handles = Client.WSConnect ("ws://127.0.0.1:8046/websockets/MockServerEndpoint");
 
 			/**
 	         * prepare data to be send
@@ -286,7 +340,7 @@ namespace DED.UnitTests
 	        String password = "12345";
 
 	        /**
-	         * create DED connect datapacket for DOPS for java clients
+	         * create DED connect datapacket for DOPS for csharp clients
 	         */
 	        DEDEncoder DED = new DEDEncoder();
 	        DED.PUT_STRUCT_START ( "WSRequest" );

@@ -13,8 +13,10 @@ using System.Threading;
 using System.Net.WebSockets;
 using System.Text;
 using WebSocketClient;
+using Fleck;
 
-namespace Fleck.Tests
+
+namespace WebSocketTests
 {
     [TestFixture]
     public class WebSocketServerTests
@@ -84,18 +86,20 @@ namespace Fleck.Tests
 			mockDOPsServer.Start();
 
 			// connect to DOPs Server
-			Client.Connect ("ws://localhost:8046/websockets/MockServerEndpoint");
+			Client.wshandles _handles = Client.WSConnect ("ws://127.0.0.1:8046/websockets/MockServerEndpoint");
 
 			// create random bytes
 			var random = new Random();
 			byte[] byteArray = new byte[64];
 			random.NextBytes(byteArray);
 
+			while(_handles.webSocket.State != WebSocketState.Open);
+
 			// Send the blob containing the random bytes to Server
-			Client.SendBLOB (byteArray).Wait(); // NB! Not really necessary to add Wait() in this case since FetchReceived() will wait until data is ready
+			Client.SendBLOB (byteArray,_handles.webSocket); 
 
 			// Fetch the return data from the Server - in this case it should be an echo
-			byte[] ReceiveBuffer = Client.FetchReceived ();
+			byte[] ReceiveBuffer = Client.FetchReceived (_handles);
 
 			// verify 
 			Assert.IsNotNull (ReceiveBuffer);
