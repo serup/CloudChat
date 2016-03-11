@@ -1,8 +1,9 @@
 import unittest
-import os
 import subprocess
 # import hadoop  # only used if app is running on a hadoop node
-import pydoop.hdfs
+# import pydoop.hdfs
+from webhdfs.webhdfs import WebHDFS
+import os, tempfile
 
 import pyhdfs
 from pyhdfs import HdfsClient
@@ -75,3 +76,22 @@ class HadoopTest(unittest.TestCase):
         hdfs = 0
         self.assertTrue(False, hdfs != 0)  # TODO: hadoop fs -ls /
 
+    def test_hdfs_webhdfs_upload_file(self):
+
+        webhdfs = WebHDFS("one.cluster", 50070, "vagrant")
+        webhdfs.mkdir("/tmp/hello-world/")
+
+        # create a temporary file
+        f = tempfile.NamedTemporaryFile()
+        f.write(b'Hello world!\n')
+        f.flush()
+
+        print "Upload file: " + f.name
+
+        webhdfs.copyFromLocal(f.name, "/tmp/test.txt")
+        webhdfs.copyToLocal("/hello-world/test.txt", "/tmp/test1.txt")
+
+        for i in webhdfs.listdir("/hello-world/"):
+            print str(i)
+
+        f.close()
