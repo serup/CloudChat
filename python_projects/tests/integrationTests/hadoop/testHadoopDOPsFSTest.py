@@ -88,10 +88,17 @@ class HadoopTest(unittest.TestCase):
 
         print "Upload file: " + f.name
 
-        webhdfs.copyFromLocal(f.name, "/tmp/test.txt")
-        webhdfs.copyToLocal("/hello-world/test.txt", "/tmp/test1.txt")
+        webhdfs.copyFromLocal(f.name, "/hello-world/test3.txt")
+        webhdfs.copyToLocal("/hello-world/test3.txt", "/tmp/test3.txt")
 
         for i in webhdfs.listdir("/hello-world/"):
             print str(i)
 
         f.close()
+
+    def test_hdfs_webhdfs_ls(self):
+
+        webhdfs = WebHDFS("one.cluster", 50070, "vagrant")
+        for i in webhdfs.listdir("/tmp"):
+            print str(i)
+
