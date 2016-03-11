@@ -114,6 +114,8 @@
     <Compile Include="InputStream.cs" />
     <Compile Include="ByteArrayInputStream.cs" />
     <Compile Include="OutputStream.cs" />
+    <Compile Include="WebHDFS.cs" />
+    <Compile Include="BetterWebClient.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
