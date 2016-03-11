@@ -263,6 +263,16 @@ fi
 #  echo "- python-hdfs already installed"
 #fi
 
+PIPPKG_OK=$(pip list | grep webhdfs*)
+if [ "" == "$PIPPKG_OK" ]; then
+  echo -n "- install python webhdfs on ubuntu "
+  sudo easy_install webhdfs 
+  echo " - done."
+else
+  echo "- python webhdfs already installed"
+fi
+
+
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 libwebkit-c* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install libwebkit-cil-dev for C# on ubuntu "
