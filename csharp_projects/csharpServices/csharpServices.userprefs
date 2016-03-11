@@ -1,33 +1,24 @@
 ﻿<Properties StartupItem="csharpServices/csharpServices.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="csharpServices.IntegrationTests/unittests/hadoopTests.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="csharpServices/WebHDFS.cs">
     <Files>
-      <File FileName="csharpServices.IntegrationTests/unittests/hadoopTests.cs" Line="37" Column="4" />
+      <File FileName="csharpServices.IntegrationTests/unittests/hadoopTests.cs" Line="62" Column="24" />
       <File FileName="csharpServices.IntegrationTests/packages.config" Line="1" Column="1" />
+      <File FileName="csharpServices/WebHDFS.cs" Line="9" Column="68" />
+      <File FileName="csharpServices/BetterWebClient.cs" Line="9" Column="17" />
     </Files>
     <Pads>
       <Pad Id="MonoDevelop.NUnit.TestPad">
         <State name="__root__">
           <Node name="csharpServices" expanded="True">
             <Node name="csharpServices.IntegrationTests" expanded="True">
-              <Node name="DOPSTests" expanded="True">
-                <Node name="DOPsWebSocketConnectionTests" expanded="True" />
-              </Node>
               <Node name="HadoopTests" expanded="True">
-                <Node name="HadoopConnectionTests" expanded="True">
-                  <Node name="ListFilesOnHadoop" selected="True" />
-                </Node>
+                <Node name="HadoopConnectionTests" expanded="True" />
               </Node>
             </Node>
             <Node name="csharpServices.Test" expanded="True">
-              <Node name="DEDTests" expanded="True">
-                <Node name="lzssTests" expanded="True" />
-                <Node name="mockDOPsServerTest" expanded="True" />
-              </Node>
-              <Node name="WebSocketTests" expanded="True">
-                <Node name="EventWaitHandleTests" expanded="True" />
-                <Node name="WebSocketServerTests" expanded="True" />
-              </Node>
+              <Node name="DEDTests" selected="True" />
+              <Node name="WebSocketTests" expanded="True" />
             </Node>
           </Node>
         </State>
@@ -90,12 +81,13 @@
       <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.Test/unittests/WebSocketServerTests.cs" line="109" column="1" />
       <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices/WebSocket/Client.cs" line="309" column="1" />
       <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices/WebSocket/Client.cs" line="231" column="1" />
-      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/hadoopTests.cs" line="27" column="1" />
-      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/hadoopTests.cs" line="31" column="1" />
-      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/hadoopTests.cs" line="29" column="31" />
-      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/hadoopTests.cs" line="47" column="1" />
-      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/hadoopTests.cs" line="44" column="34" />
-      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/hadoopTests.cs" line="42" column="1" />
+      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/hadoopTests.cs" line="30" column="1" />
+      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/hadoopTests.cs" line="34" column="1" />
+      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/hadoopTests.cs" line="32" column="31" />
+      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/hadoopTests.cs" line="54" column="1" />
+      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/hadoopTests.cs" line="51" column="34" />
+      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/hadoopTests.cs" line="62" column="1" />
+      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/hadoopTests.cs" line="65" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
