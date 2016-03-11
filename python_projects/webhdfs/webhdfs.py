@@ -171,7 +171,7 @@ class WebHDFS(object):
     def listdir(self, path):
         if os.path.isabs(path)==False:
             raise Exception("Only absolute paths supported: %s"%(path))
-        
+
         url_path = urllib.quote(WEBHDFS_CONTEXT_ROOT + path+'?op=LISTSTATUS&user.name='+self.username)
         logger.debug("List directory: " + url_path)
         httpClient = self.__getNameNodeHTTPClient()
