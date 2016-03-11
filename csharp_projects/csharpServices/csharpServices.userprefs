@@ -2,7 +2,7 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
   <MonoDevelop.Ide.Workbench ActiveDocument="csharpServices.IntegrationTests/unittests/hadoopTests.cs">
     <Files>
-      <File FileName="csharpServices.IntegrationTests/unittests/hadoopTests.cs" Line="6" Column="18" />
+      <File FileName="csharpServices.IntegrationTests/unittests/hadoopTests.cs" Line="37" Column="4" />
       <File FileName="csharpServices.IntegrationTests/packages.config" Line="1" Column="1" />
     </Files>
     <Pads>
@@ -15,7 +15,7 @@
               </Node>
               <Node name="HadoopTests" expanded="True">
                 <Node name="HadoopConnectionTests" expanded="True">
-                  <Node name="ConnectTohadoop" selected="True" />
+                  <Node name="ListFilesOnHadoop" selected="True" />
                 </Node>
               </Node>
             </Node>
@@ -92,6 +92,10 @@
       <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices/WebSocket/Client.cs" line="231" column="1" />
       <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/hadoopTests.cs" line="27" column="1" />
       <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/hadoopTests.cs" line="31" column="1" />
+      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/hadoopTests.cs" line="29" column="31" />
+      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/hadoopTests.cs" line="47" column="1" />
+      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/hadoopTests.cs" line="44" column="34" />
+      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/hadoopTests.cs" line="42" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
