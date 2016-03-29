@@ -65,6 +65,14 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- oracle-java already installed"
 fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 bikeshed |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install bikeshed on ubuntu, to use when purging old kernals - example: sudo purge-old-kernals --keep 3 "
+  sudo apt-get install -yq bikeshed 
+  echo " - done."
+else
+  echo "- bikeshed already installed, to use when purging old kernals - example: sudo purge-old-kernals --keep 3 "
+fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 nmap |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install nmap on ubuntu "
