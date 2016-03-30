@@ -74,7 +74,8 @@ namespace SharpHadoop
 			string credentials = userName + ":" + password;
             req.Headers["Authorization"] = "Basic " + Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes(credentials));
   
-			req.Accept = "application/json"; // accept json
+//			req.Accept = "application/json"; // accept json
+			req.Accept = "*/*"; // accept json
     
 			HttpWebResponse resp = req.GetResponse () as HttpWebResponse;
 			StreamReader reader = new StreamReader (resp.GetResponseStream ());
