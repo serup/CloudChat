@@ -67,7 +67,13 @@ namespace SharpHadoop
 
 //			req.Credentials = new System.Net.NetworkCredential("admin", "admin");
 //			req.Credentials = BuildCredentials(url_path,"admin","admin","TMG:BASIC"); // TMG:BASIC for cookie handling
-			req.Credentials = BuildCredentials(url_path,"admin","admin","UserPassword"); 
+//			req.Credentials = BuildCredentials(url_path,"admin","admin","UserPassword");
+//			req.Headers.Add("Authorization", "admin:admin");
+			string userName = "admin";
+			string password = "admin";
+			string credentials = userName + ":" + password;
+            req.Headers["Authorization"] = "Basic " + Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes(credentials));
+  
 			req.Accept = "application/json"; // accept json
     
 			HttpWebResponse resp = req.GetResponse () as HttpWebResponse;
