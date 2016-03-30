@@ -62,9 +62,12 @@ namespace SharpHadoop
 			// create request using the above url
 			HttpWebRequest req = WebRequest.Create (url_path) as HttpWebRequest;
 			req.Method = WebRequestMethods.Http.Get; // Get method
+
+			/// It sounds like you are facing the infamous double-hop issue. In a nutshell, with NTLM you are authenticated to the server, but your credentials cannot be used by the server to access other servers.
+
 //			req.Credentials = new System.Net.NetworkCredential("admin", "admin");
 //			req.Credentials = BuildCredentials(url_path,"admin","admin","TMG:BASIC"); // TMG:BASIC for cookie handling
-			req.Credentials = BuildCredentials(url_path,"admin","admin","UserPassword");
+			req.Credentials = BuildCredentials(url_path,"admin","admin","UserPassword"); 
 			req.Accept = "application/json"; // accept json
     
 			HttpWebResponse resp = req.GetResponse () as HttpWebResponse;
