@@ -72,7 +72,7 @@ namespace HadoopTests
 		public void DatanodesOnHadoop ()
 		{
 			// NB! Make sure HDFS is running on hadoop cluster and WebHDFS is enabled (this is not default) use ambari server to setup correctly
-			WebHDFS hdfs = new WebHDFS("one.cluster", "testhadoop", "vagrant", "50070");
+			AmbariManager hdfs = new AmbariManager("one.cluster", "testhadoop", "vagrant", "50070");
 		          
 			// List files in Directory
 		        string jsonString = hdfs.ListDatanodes("two.cluster");
