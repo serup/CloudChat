@@ -284,6 +284,9 @@ if [ "" == "$PIPPKG_OK" ]; then
   echo -n "- install python webhdfs on ubuntu "
   sudo easy_install webhdfs 
   echo " - done."
+  echo " - NB! if issues on quoting, then download https://github.com/kupferk/webhdfs-py : "
+  echo "       git clone https://github.com/kupferk/webhdfs-py.git "
+  echo "       , and run sudo python setup.py install"
 else
   echo "- python webhdfs already installed"
 fi
