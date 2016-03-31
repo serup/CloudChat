@@ -309,6 +309,15 @@ namespace SharpHadoop
 	{
 		[DataMember(Name = "cluster_name")]
 		public string cluster_name { get; set; }
+		[DataMember(Name = "desired_state")]
+		public string desired_state { get; set; }
+		[DataMember(Name = "component_name")]
+		public string component_name { get; set; }
+		//TODO you could add more if you want - use  http://json.parser.online.fr/  to help with showing types - copy paste the result repsonse into parser, then use it to manually create datacontracts on elements you need...
+		[DataMember(Name = "stack_id")]
+		public string stack_id { get; set; }
+
+
 
 	}
 
