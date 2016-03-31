@@ -195,7 +195,7 @@ class WebHDFS(object):
         return httpClient
 
 
-    
+
 if __name__ == "__main__":
     webhdfs = WebHDFS("localhost", 50070, "luckow")
     webhdfs.mkdir("/pilotstore-1/pd-9c2d42c4-30a3-11e1-bab1-00264a13ca4c/")
