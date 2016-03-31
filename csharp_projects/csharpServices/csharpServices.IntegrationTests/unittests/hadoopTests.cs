@@ -18,7 +18,36 @@ namespace HadoopTests
 	public class HadoopConnectionTests
 	{
 		[Test]
-		public void ConnectTohadoop ()
+		public void LsOnHadoop ()
+		{
+			// NB! Make sure HDFS is running on hadoop cluster and WebHDFS is enabled (this is not default) use ambari server to setup correctly
+			WebHDFS hdfs = new WebHDFS("one.cluster", "testhadoop", "vagrant", "50070");
+		          
+			// List files in Directory
+		        string result = hdfs.ListDir("/");
+		        Console.WriteLine(result);
+
+		        Assert.AreEqual(true,(result.Contains("mapred")));
+		}
+
+		[Test]
+		public void DatanodesOnHadoop ()
+		{
+			// NB! Make sure HDFS is running on hadoop cluster and WebHDFS is enabled (this is not default) use ambari server to setup correctly
+			AmbariManager hdfs = new AmbariManager("one.cluster", "testhadoop", "vagrant", "50070");
+		          
+			ResponseDatanode result = hdfs.ListDatanodes("two.cluster");
+			Console.WriteLine(result.href);
+			Console.WriteLine(result.hostRoles.cluster_name);
+			Console.WriteLine(result.hostRoles.desired_state);
+
+			Assert.AreEqual(true,(result.href.Contains("DATANODE")));
+			Assert.AreEqual(true,(result.hostRoles.cluster_name.Contains("testhadoop")));
+			Assert.AreEqual(true,(result.hostRoles.desired_state.Contains("STARTED")));
+		}
+
+		[Test]
+		public void MapReduceJobOnHadoop ()
 		{
 			// TODO: use following to make a test for connecting to hadoop VM cluster
 			// http://www.codeguru.com/columns/experts/how-to-create-mapreduce-jobs-for-hadoop-using-c.htm
@@ -33,34 +62,8 @@ namespace HadoopTests
 	 
 			//Assert.IsTrue (false);
 		}
-
-
-		[Test]
-		public void LsOnHadoop ()
-		{
-			// NB! Make sure HDFS is running on hadoop cluster and WebHDFS is enabled (this is not default) use ambari server to setup correctly
-			WebHDFS hdfs = new WebHDFS("one.cluster", "testhadoop", "vagrant", "50070");
-		          
-			// List files in Directory
-		        string jsonString = hdfs.ListDir("/");
-		        Console.WriteLine(jsonString);
-
-		        Assert.AreEqual(true,(jsonString.Contains("mapred")));
-		}
-
-		[Test]
-		public void DatanodesOnHadoop ()
-		{
-			// NB! Make sure HDFS is running on hadoop cluster and WebHDFS is enabled (this is not default) use ambari server to setup correctly
-			AmbariManager hdfs = new AmbariManager("one.cluster", "testhadoop", "vagrant", "50070");
-		          
-			ResponseDatanode result = hdfs.ListDatanodes("two.cluster");
-		        Console.WriteLine(result.href);
-
-		        Assert.AreEqual(true,(result.href.Contains("DATANODE")));
-		}
-
 	}
+
 
 
 	// Mapper and Reduce classes ;  NuGet package Microsoft .Net Map Reduce API for Hadoop
