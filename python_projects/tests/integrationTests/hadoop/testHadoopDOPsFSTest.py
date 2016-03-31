@@ -106,7 +106,7 @@ class HadoopTest(unittest.TestCase):
 
         webhdfs.copyFromLocal(f.name, "/tmp/hello-world/test8.txt")
         f.close()
-        webhdfs.copyToLocal("/tmp/hello-world/test8.txt", "/tmp/testresult.txt") // WILL reside on your local machine in /tmp/folder - NOT on hadoop node
+        webhdfs.copyToLocal("/tmp/hello-world/test8.txt", "/tmp/testresult.txt")  #  WILL reside on your local machine in /tmp/folder - NOT on hadoop node
 
         for i in webhdfs.listdir("/tmp/hello-world/"):
             print str(i)
