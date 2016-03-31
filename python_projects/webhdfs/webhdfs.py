@@ -25,7 +25,7 @@ class WebHDFS(object):
     """
     
     def __init__(self, namenode_host, namenode_port, hdfs_username):
-        self.namenode_host=namenode_host
+        self.namenode_host = namenode_host
         self.namenode_port = namenode_port
         self.username = hdfs_username
         
