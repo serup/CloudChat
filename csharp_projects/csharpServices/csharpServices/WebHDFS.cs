@@ -305,10 +305,21 @@ namespace SharpHadoop
 	}
 
 	[DataContract]
+	public class HostRoles
+	{
+		[DataMember(Name = "cluster_name")]
+		public string cluster_name { get; set; }
+
+	}
+
+	[DataContract]
 	public class ResponseDatanode
 	{
 		[DataMember(Name = "href")]
 		public string href { get; set; }
+		[DataMember(Name = "HostRoles")]
+		public HostRoles hostRoles { get; set; }
+		 
 		//TODO add more datacontracts to parse the json response string...
 	}
 }
