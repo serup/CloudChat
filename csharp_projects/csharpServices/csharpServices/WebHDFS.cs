@@ -32,59 +32,6 @@ namespace SharpHadoop
 			this.clusterName = clusterName;
 		}
 
-		private ICredentials BuildCredentials (string siteurl, string username, string password, string authtype)
-		{
-			NetworkCredential cred;
-			if (username.Contains (@"\")) {
-				string domain = username.Substring (0, username.IndexOf (@"\"));
-				username = username.Substring (username.IndexOf (@"\") + 1);
-				cred = new System.Net.NetworkCredential (username, password, domain);
-			} else {
-				cred = new System.Net.NetworkCredential (username, password);
-			}
-			CredentialCache cache = new CredentialCache ();
-			if (authtype.Contains (":")) {
-				authtype = authtype.Substring (authtype.IndexOf (":") + 1); //remove the TMG: prefix
-			}
-			cache.Add (new Uri (siteurl), authtype, cred);
-			return cache;
-		}
-
-		/// <summary>
-		/// Lists the datanodes.
-		/// <param name="node"></param>
-		/// </summary>
-		/// <returns>Json string</returns>
-		public string ListDatanodes (string node)
-		{
-			// Create the final url with params
-			string url_path = "http://" + this.namenodeHost + ":8080" + "/api/v1/clusters/" + this.clusterName + "/hosts/" + node + "/host_components/DATANODE";
-			// create request using the above url
-			HttpWebRequest req = WebRequest.Create (url_path) as HttpWebRequest;
-			req.Method = WebRequestMethods.Http.Get; // Get method
-
-			/// It sounds like you are facing the infamous double-hop issue. In a nutshell, with NTLM you are authenticated to the server, but your credentials cannot be used by the server to access other servers.
-
-//			req.Credentials = new System.Net.NetworkCredential("admin", "admin");
-//			req.Credentials = BuildCredentials(url_path,"admin","admin","TMG:BASIC"); // TMG:BASIC for cookie handling
-//			req.Credentials = BuildCredentials(url_path,"admin","admin","UserPassword");
-//			req.Headers.Add("Authorization", "admin:admin");
-			string userName = "admin";
-			string password = "admin";
-			string credentials = userName + ":" + password;
-            req.Headers["Authorization"] = "Basic " + Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes(credentials));
-  
-//			req.Accept = "application/json"; // accept json
-			req.Accept = "*/*"; // accept json
-    
-			HttpWebResponse resp = req.GetResponse () as HttpWebResponse;
-			StreamReader reader = new StreamReader (resp.GetResponseStream ());
-    
-			string result = reader.ReadToEnd ();
-			return result;
-
-		}
-
 		///<summary>
 		///List items in directory
 		///<param name="path">Directory path to list.</param>
@@ -251,11 +198,6 @@ namespace SharpHadoop
 			}
 
 			return code;
-
-
-
-
-
 		}
 
 		///<summary>
@@ -274,5 +216,78 @@ namespace SharpHadoop
 			return wc.StatusCode ();
 	
 		}
+	}
+
+	public class AmbariManager
+	{
+		string namenodeHost { get; set; }
+		string namenodePort { get; set; }
+		string hdfsUsername { get; set; }
+		string clusterName { get; set; }
+
+		string WEBHDFS_CONTEXT_ROOT = "/webhdfs/v1";
+
+		///<summary>
+		///Public Constructor takes two required, one optional parameters
+		///<param name="namenodeHost">Namenode Location without http://</param>
+		///<param name="clusterName"></param>
+		///<param name="hdfsUsername">UserName</param>
+		///<param name="namenodePort">Namenode Port, by default its 50070</param>
+		///</summary>
+		public AmbariManager (string namenodeHost, string clusterName, string  hdfsUsername, string namenodePort = "50070")
+		{
+			this.namenodeHost = namenodeHost;
+			this.namenodePort = namenodePort;
+			this.hdfsUsername = hdfsUsername;
+			this.clusterName = clusterName;
+		}
+
+		private ICredentials BuildCredentials (string siteurl, string username, string password, string authtype)
+		{
+			NetworkCredential cred;
+			if (username.Contains (@"\")) {
+				string domain = username.Substring (0, username.IndexOf (@"\"));
+				username = username.Substring (username.IndexOf (@"\") + 1);
+				cred = new System.Net.NetworkCredential (username, password, domain);
+			} else {
+				cred = new System.Net.NetworkCredential (username, password);
+			}
+			CredentialCache cache = new CredentialCache ();
+			if (authtype.Contains (":")) {
+				authtype = authtype.Substring (authtype.IndexOf (":") + 1); //remove the TMG: prefix
+			}
+			cache.Add (new Uri (siteurl), authtype, cred);
+			return cache;
+		}
+
+		/// <summary>
+		/// Lists the datanodes.
+		/// <param name="node"></param>
+		/// </summary>
+		/// <returns>Json string</returns>
+		public string ListDatanodes (string node)
+		{
+			// Create the final url with params
+			string url_path = "http://" + this.namenodeHost + ":8080" + "/api/v1/clusters/" + this.clusterName + "/hosts/" + node + "/host_components/DATANODE";
+			// create request using the above url
+			HttpWebRequest req = WebRequest.Create (url_path) as HttpWebRequest;
+			req.Method = WebRequestMethods.Http.Get; // Get method
+
+			string userName = "admin";
+			string password = "admin";
+			string credentials = userName + ":" + password;
+            req.Headers["Authorization"] = "Basic " + Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes(credentials));
+  
+//			req.Accept = "application/json"; // accept json
+			req.Accept = "*/*"; // accept json
+    
+			HttpWebResponse resp = req.GetResponse () as HttpWebResponse;
+			StreamReader reader = new StreamReader (resp.GetResponseStream ());
+    
+			string result = reader.ReadToEnd ();
+			return result;
+
+		}
+
 	}
 }
