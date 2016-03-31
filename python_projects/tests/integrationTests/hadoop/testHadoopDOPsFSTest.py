@@ -86,19 +86,35 @@ class HadoopTest(unittest.TestCase):
         f.write(b'Hello world!\n')
         f.flush()
 
+        # should now be a file on node one.cluster --
+        # vagrant ssh one
+        # hadoop fs -ls /tmp
+        # should show something like this
+        # [vagrant@one ~]$ hadoop fs -ls /tmp
+        # Found 8 items
+        # drwxr-xr-x   - vagrant   hdfs           0 2016-03-11 11:42 /tmp/hello-world
+        # -rwx------   3 ambari-qa hdfs        1472 2016-03-11 10:17 /tmp/ida8c06600_date171116
+        # -rwx------   3 ambari-qa hdfs        1472 2016-03-11 09:52 /tmp/ida8c06600_date501116
+        # -rwx------   3 ambari-qa hdfs        1472 2016-02-29 11:58 /tmp/ida8c06600_date582916
+        # -rwxr-xr-x   3 serup     serup       3690 2016-03-01 07:52 /tmp/old
+        # -rwxr-xr-x   3 serup     hdfs        3690 2016-03-01 08:38 /tmp/old2
+        # -rwxr-xr-x   3 serup     hdfs        3690 2016-03-01 10:43 /tmp/old3
+        # -rwxr-xr-x   1 vagrant   hdfs          13 2016-03-11 11:57 /tmp/test.txt
+        # [vagrant@one ~]$
+
         print "Upload file: " + f.name
 
-        webhdfs.copyFromLocal(f.name, "/hello-world/test3.txt")
-        webhdfs.copyToLocal("/hello-world/test3.txt", "/tmp/test3.txt")
+        webhdfs.copyFromLocal(f.name, "/tmp/hello-world/test8.txt")
+        f.close()
+        webhdfs.copyToLocal("/tmp/hello-world/test8.txt", "/tmp/testresult.txt")  #  WILL reside on your local machine in /tmp/folder - NOT on hadoop node
 
-        for i in webhdfs.listdir("/hello-world/"):
+        for i in webhdfs.listdir("/tmp/hello-world/"):
             print str(i)
 
-        f.close()
 
     def test_hdfs_webhdfs_ls(self):
 
         webhdfs = WebHDFS("one.cluster", 50070, "vagrant")
-        for i in webhdfs.listdir("/tmp"):
+        for i in webhdfs.listdir('/'):
             print str(i)
 
