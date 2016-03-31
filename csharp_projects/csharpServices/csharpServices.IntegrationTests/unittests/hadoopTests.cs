@@ -55,7 +55,7 @@ namespace HadoopTests
 			HadoopJobConfiguration hadoopConfiguration = new HadoopJobConfiguration();  //TODO: require a new version og NuGet Packet Manager to install Microsoft MapReduce hadoop
 		        hadoopConfiguration.InputPath = "/input";
 		        hadoopConfiguration.OutputFolder = "/output";
-		        Uri myUri = new Uri("one.cluster:50070");
+		        Uri myUri = new Uri("http://one.cluster:50070");
 		        IHadoop hadoop = Hadoop.Connect(myUri, "admin", "admin");  // NB! if System.Net.Http fails, then set System.Web and System.Net.Http to copy local -- right click on reference and change
 
 	    		hadoop.MapReduceJob.Execute<ErrorTextMapper, ErrorTextReducerCombiner>(hadoopConfiguration);
