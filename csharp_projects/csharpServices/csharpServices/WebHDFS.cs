@@ -2,6 +2,9 @@
 using System.Net;
 using System.IO;
 using SharpHadoop.Utilities.Net;
+using System.Runtime.Serialization.Json;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
 
 namespace SharpHadoop
 {
@@ -265,7 +268,7 @@ namespace SharpHadoop
 		/// <param name="node"></param>
 		/// </summary>
 		/// <returns>Json string</returns>
-		public string ListDatanodes (string node)
+		public ResponseDatanode ListDatanodes (string node)
 		{
 			// Create the final url with params
 			string url_path = "http://" + this.namenodeHost + ":8080" + "/api/v1/clusters/" + this.clusterName + "/hosts/" + node + "/host_components/DATANODE";
@@ -282,12 +285,30 @@ namespace SharpHadoop
 			req.Accept = "*/*"; // accept json
     
 			HttpWebResponse resp = req.GetResponse () as HttpWebResponse;
-			StreamReader reader = new StreamReader (resp.GetResponseStream ());
-    
-			string result = reader.ReadToEnd ();
-			return result;
+
+			// setup json parser for handling response of datanodes
+			DataContractJsonSerializer jsonSerializer = new DataContractJsonSerializer(typeof(ResponseDatanode));
+			object objResponse = jsonSerializer.ReadObject(resp.GetResponseStream());
+			ResponseDatanode jsonResponse = objResponse as ResponseDatanode;
+
+			//TODO: validate incomming response
+
+			return jsonResponse;
+
+			// old...
+			//StreamReader reader = new StreamReader (resp.GetResponseStream ());
+			//string result = reader.ReadToEnd ();
+			//return result;
 
 		}
 
+	}
+
+	[DataContract]
+	public class ResponseDatanode
+	{
+		[DataMember(Name = "href")]
+		public string href { get; set; }
+		//TODO add more datacontracts to parse the json response string...
 	}
 }

@@ -26,39 +26,19 @@ namespace HadoopTests
 			HadoopJobConfiguration hadoopConfiguration = new HadoopJobConfiguration();  //TODO: require a new version og NuGet Packet Manager to install Microsoft MapReduce hadoop
 		        hadoopConfiguration.InputPath = "/input";
 		        hadoopConfiguration.OutputFolder = "/output";
-		        Uri myUri = new Uri("one.cluster:8020");
+		        Uri myUri = new Uri("one.cluster:50070");
 		        IHadoop hadoop = Hadoop.Connect(myUri, "vagrant", "vagrant");  // NB! if System.Net.Http fails, then set System.Web and System.Net.Http to copy local -- right click on reference and change
 
 	    		hadoop.MapReduceJob.Execute<ErrorTextMapper, ErrorTextReducerCombiner>(hadoopConfiguration);
 	 
-			Assert.IsTrue (false);
+			//Assert.IsTrue (false);
 		}
 
-		// Perhaps using this:
-		// https://sharphadoop.codeplex.com/SourceControl/latest#SharpHadoop/trunk/SharpHadoop/Examples.cs
-		[Test]
-		public void ListFilesOnHadoop ()
-		{
-/*			//Uri myUri = new Uri("hdfs://one.cluster:8020/");
-			//Uri myUri = new Uri("http://one.cluster:8020/webhdfs/v1/");
-			//Uri myUri = new Uri("http://one.cluster:8020/");
-			//Uri myUri = new Uri("http://one.cluster:50070/");
-			Uri myUri = new Uri("http://one.cluster:8020/");
-		        IHadoop hadoop = Hadoop.Connect(myUri, "vagrant", "vagrant");  // NB! if System.Net.Http fails, then set System.Web and System.Net.Http to copy local -- right click on reference and change
-
-		        string absolutePath = hadoop.StorageSystem.GetAbsolutePath("/");
-		        string qualifiedPath = hadoop.StorageSystem.GetFullyQualifiedPath(absolutePath);
-			hadoop.StorageSystem.LsFiles(qualifiedPath);
-*/		  
-	 
-			Assert.IsTrue (false);
-		}
 
 		[Test]
 		public void LsOnHadoop ()
 		{
 			// NB! Make sure HDFS is running on hadoop cluster and WebHDFS is enabled (this is not default) use ambari server to setup correctly
-			//WebHDFS hdfs = new WebHDFS("namenodeURL", "username", "50070");
 			WebHDFS hdfs = new WebHDFS("one.cluster", "testhadoop", "vagrant", "50070");
 		          
 			// List files in Directory
@@ -74,11 +54,10 @@ namespace HadoopTests
 			// NB! Make sure HDFS is running on hadoop cluster and WebHDFS is enabled (this is not default) use ambari server to setup correctly
 			AmbariManager hdfs = new AmbariManager("one.cluster", "testhadoop", "vagrant", "50070");
 		          
-			// List files in Directory
-		        string jsonString = hdfs.ListDatanodes("two.cluster");
-		        Console.WriteLine(jsonString);
+			ResponseDatanode result = hdfs.ListDatanodes("two.cluster");
+		        Console.WriteLine(result.href);
 
-		        Assert.AreEqual(true,(jsonString.Contains("mapred")));
+		        Assert.AreEqual(true,(result.href.Contains("DATANODE")));
 		}
 
 	}
