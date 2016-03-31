@@ -227,6 +227,8 @@ namespace SharpHadoop
 		string namenodePort { get; set; }
 		string hdfsUsername { get; set; }
 		string clusterName { get; set; }
+		string username { get; set; }
+		string password { get; set; }
 
 		string WEBHDFS_CONTEXT_ROOT = "/webhdfs/v1";
 
@@ -237,12 +239,14 @@ namespace SharpHadoop
 		///<param name="hdfsUsername">UserName</param>
 		///<param name="namenodePort">Namenode Port, by default its 50070</param>
 		///</summary>
-		public AmbariManager (string namenodeHost, string clusterName, string  hdfsUsername, string namenodePort = "50070")
+		public AmbariManager (string namenodeHost, string clusterName, string  hdfsUsername, string namenodePort = "50070", string username = "admin", string password = "admin")
 		{
 			this.namenodeHost = namenodeHost;
 			this.namenodePort = namenodePort;
 			this.hdfsUsername = hdfsUsername;
 			this.clusterName = clusterName;
+			this.username = username;
+			this.password = password;
 		}
 
 		private ICredentials BuildCredentials (string siteurl, string username, string password, string authtype)
@@ -276,9 +280,7 @@ namespace SharpHadoop
 			HttpWebRequest req = WebRequest.Create (url_path) as HttpWebRequest;
 			req.Method = WebRequestMethods.Http.Get; // Get method
 
-			string userName = "admin";
-			string password = "admin";
-			string credentials = userName + ":" + password;
+			string credentials = username + ":" + password;
             req.Headers["Authorization"] = "Basic " + Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes(credentials));
   
 //			req.Accept = "application/json"; // accept json
@@ -291,15 +293,7 @@ namespace SharpHadoop
 			object objResponse = jsonSerializer.ReadObject(resp.GetResponseStream());
 			ResponseDatanode jsonResponse = objResponse as ResponseDatanode;
 
-			//TODO: validate incomming response
-
 			return jsonResponse;
-
-			// old...
-			//StreamReader reader = new StreamReader (resp.GetResponseStream ());
-			//string result = reader.ReadToEnd ();
-			//return result;
-
 		}
 
 	}
