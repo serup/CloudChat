@@ -56,7 +56,7 @@ namespace HadoopTests
 		        hadoopConfiguration.InputPath = "/input";
 		        hadoopConfiguration.OutputFolder = "/output";
 		        Uri myUri = new Uri("one.cluster:50070");
-		        IHadoop hadoop = Hadoop.Connect(myUri, "vagrant", "vagrant");  // NB! if System.Net.Http fails, then set System.Web and System.Net.Http to copy local -- right click on reference and change
+		        IHadoop hadoop = Hadoop.Connect(myUri, "admin", "admin");  // NB! if System.Net.Http fails, then set System.Web and System.Net.Http to copy local -- right click on reference and change
 
 	    		hadoop.MapReduceJob.Execute<ErrorTextMapper, ErrorTextReducerCombiner>(hadoopConfiguration);
 	 
