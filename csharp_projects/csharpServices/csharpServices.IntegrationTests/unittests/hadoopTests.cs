@@ -50,13 +50,6 @@ namespace HadoopTests
 		[Test]
 		public void MapReduceJobOnHadoop ()
 		{
-			// TODO: use following to make a test for connecting to hadoop VM cluster
-			// http://www.codeguru.com/columns/experts/how-to-create-mapreduce-jobs-for-hadoop-using-c.htm
-
-			//HadoopJobConfiguration hadoopConfiguration = new HadoopJobConfiguration();  //TODO: require a new version og NuGet Packet Manager to install Microsoft MapReduce hadoop
-		        //hadoopConfiguration.InputPath = "/input";
-		        //hadoopConfiguration.OutputFolder = "/output";
-
 			Environment.SetEnvironmentVariable("HADOOP_HOME", @"/usr/local/hadoop");
 			Environment.SetEnvironmentVariable("JAVA_HOME", @"/usr/lib/jvm/java-8-oracle");
 			Environment.SetEnvironmentVariable("Java_HOME", @"/usr/lib/jvm/java-8-oracle");
@@ -70,33 +63,13 @@ namespace HadoopTests
 			// then copy some .cs files to one.cluster local -  sshpass -p "vagrant" scp -oStrictHostKeyChecking=no -rp /home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices/*.cs vagrant@one.cluster:/tmp
 			// then copy .cs files into hadoop - 
 			// hadoop fs -copyFromLocal /tmp/*.cs /tmp/input/CodeFiles
-			hadoop.MapReduceJob.ExecuteJob<NamespaceCounterJob>();
+			hadoop.MapReduceJob.ExecuteJob<NamespaceCounterJob>();  // http://www.amazedsaint.com/2013/03/taming-big-data-with-c-using-hadoop-on.html
 	 
 			//Assert.IsTrue (false);
 		}
 	}
 
 
-
-	// Mapper and Reduce classes ;  NuGet package Microsoft .Net Map Reduce API for Hadoop
-	public class ErrorTextMapper : MapperBase
-	{
-		public override void Map(string inputLine, MapperContext context)
-		{
-		    if (inputLine.ToLowerInvariant().Equals("error"))
-		        context.EmitLine(inputLine);
-		}
-	}
-
-	public class ErrorTextReducerCombiner : ReducerCombinerBase
-	{
-		public override void Reduce(string key, IEnumerable<string> values, ReducerCombinerContext context)
-		{
-		    context.EmitKeyValue("errortextcount: ", values.Count().ToString());
-		}
-	}
-
-	///
 
 	//Mapper 
 	public class NamespaceMapper : MapperBase 
