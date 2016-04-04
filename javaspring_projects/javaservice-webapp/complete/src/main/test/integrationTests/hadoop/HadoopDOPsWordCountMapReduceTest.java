@@ -10,14 +10,13 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,11 +71,11 @@ public class HadoopDOPsWordCountMapReduceTest {
         // this is setting the format of your input, can be TextInputFormat
 //        job.setInputFormatClass(SequenceFileInputFormat.class);
         //job.setInputFormatClass(FileInputFormat.class);
-        FileInputFormat.setInputPaths(job, "/tmp/input/wordcount/");
+//        FileInputFormat.setInputPaths(job, "/tmp/input/wordcount/");
 
         // same with output
         //job.setOutputFormatClass(TextOutputFormat.class);
-        FileOutputFormat.setOutputPath(job, new Path("/tmp/output/wordcount/"));
+//        FileOutputFormat.setOutputPath(job, new Path("/tmp/output/wordcount/"));
 
         // here you can set the path of your input
 //        SequenceFileInputFormat.addInputPath(job, new Path("hdfs://one.cluster:50070/tmp/input/wordcount/"));
@@ -84,8 +83,10 @@ public class HadoopDOPsWordCountMapReduceTest {
 //        FileInputFormat.addInputPath(job, new Path("/tmp/input/wordcount/"));
 
         // this deletes possible output paths to prevent job failures
-        fs = FileSystem.get(uri, conf); // fetch filesystem handle for hdfs on one.cluster server
-        FileSystem fs = FileSystem.get(conf);
+        //FileSystem fs = FileSystem.get(conf);
+        URI uri = URI.create ("hdfs://one.cluster:8020/");
+        FileSystem fs = FileSystem.get(uri, conf); // fetch filesystem handle for hdfs on one.cluster server
+
         Path out = new Path("/tmp/output/wordcount/");
         fs.delete(out, true);
 
