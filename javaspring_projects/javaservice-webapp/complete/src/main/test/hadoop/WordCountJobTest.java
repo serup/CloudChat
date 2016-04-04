@@ -1,4 +1,4 @@
-package integrationTests.hadoop;
+package hadoop;
 
 import hadoop.hadoopMappers.WordMapper;
 import hadoop.hadoopReducers.WordReducer;
@@ -9,9 +9,10 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mrunit.mapreduce.MapDriver;
 import org.apache.hadoop.mrunit.mapreduce.MapReduceDriver;
 import org.apache.hadoop.mrunit.mapreduce.ReduceDriver;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by serup on 04-04-16.
@@ -29,7 +30,7 @@ public class WordCountJobTest {
 
     @Before
     public void setUp() throws Exception {
-        Assert.assertEquals(true,env.setupHadoopIntegrationEnvironment());
+        assertEquals(true,env.setupHadoopIntegrationEnvironment());
         WordMapper mapper = new WordMapper();
         WordReducer reducer = new WordReducer();
         mapDriver = MapDriver.newMapDriver(mapper);
@@ -37,9 +38,10 @@ public class WordCountJobTest {
         mapReduceDriver = MapReduceDriver.newMapReduceDriver(mapper, reducer);
     }
 
+
     @Test
-    public void testMapper() {
-        mapDriver.withInput(new LongWritable(), new Text("THE ADVENTURES OF SHERLOCK HOLMES\n" +
+    public void testWordCountMapReduce() {
+        mapReduceDriver.withInput(new LongWritable(), new Text("THE ADVENTURES OF SHERLOCK HOLMES\n" +
                 "\n" +
                 "by\n" +
                 "\n" +
@@ -158,21 +160,9 @@ public class WordCountJobTest {
                 "\n" +
                 "He chuckled to himself and rubbed his long, nervous hands\n" +
                 "together." ));
-        mapDriver.runTest();
-    }
-    @Test
-    public void testReducer() {
-  /*      List<IntWritable> values = new ArrayList<IntWritable>();
-        values.add(new IntWritable(1));
-        values.add(new IntWritable(1));
-        reduceDriver.withInput(new Text("6"), values);
-        reduceDriver.withOutput(new Text("6"), new IntWritable(2));
-        reduceDriver.runTest();
-        */
-    }
 
-    @Test
-    public void testWordCountMapReduce() {
+        mapReduceDriver.withOutput(new Text("Watson"), new IntWritable(2));  // Expect 2 counts of word 'Watson' in above text
+        mapReduceDriver.runTest();
 
     }
 }
