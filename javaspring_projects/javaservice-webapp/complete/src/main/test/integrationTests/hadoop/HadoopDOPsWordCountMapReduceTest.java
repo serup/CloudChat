@@ -11,6 +11,7 @@ import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.junit.Assert;
 import org.junit.Before;
@@ -51,6 +52,7 @@ public class HadoopDOPsWordCountMapReduceTest {
         // like defined in hdfs-site.xml
         conf.set("fs.default.name", "hdfs://one.cluster:50070");
         conf.set("fs.defaultFS", "hdfs://one.cluster:8020/");
+        conf.set("hadoop.job.ugi", "root, supergroup");
 
         // create a new job based on the configuration
         Job job = new Job(conf);
@@ -69,15 +71,20 @@ public class HadoopDOPsWordCountMapReduceTest {
 
         // this is setting the format of your input, can be TextInputFormat
 //        job.setInputFormatClass(SequenceFileInputFormat.class);
-        job.setInputFormatClass(FileInputFormat.class);
+        //job.setInputFormatClass(FileInputFormat.class);
+        FileInputFormat.setInputPaths(job, "/tmp/input/wordcount/");
+
         // same with output
-        job.setOutputFormatClass(TextOutputFormat.class);
+        //job.setOutputFormatClass(TextOutputFormat.class);
+        FileOutputFormat.setOutputPath(job, new Path("/tmp/output/wordcount/"));
+
         // here you can set the path of your input
 //        SequenceFileInputFormat.addInputPath(job, new Path("hdfs://one.cluster:50070/tmp/input/wordcount/"));
 //        SequenceFileInputFormat.addInputPath(job, new Path("/tmp/input/wordcount/"));
-        FileInputFormat.addInputPath(job, new Path("/tmp/input/wordcount/"));
+//        FileInputFormat.addInputPath(job, new Path("/tmp/input/wordcount/"));
 
         // this deletes possible output paths to prevent job failures
+        fs = FileSystem.get(uri, conf); // fetch filesystem handle for hdfs on one.cluster server
         FileSystem fs = FileSystem.get(conf);
         Path out = new Path("/tmp/output/wordcount/");
         fs.delete(out, true);
