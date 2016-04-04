@@ -10,15 +10,17 @@ import org.apache.hadoop.mapreduce.Mapper;
  */
 public class hadoopDOPsFSMapper extends Mapper<LongWritable, Text, Text, IntWritable> {
 
-    /**
-     * Make a key value pair list of filenames with user and password
-     */
+
     protected void map(LongWritable key, Text value, Context context) throws java.io.IOException, InterruptedException {
 
-        /**
-         * the value contains the username and password - first extract values and make a list of files in hadoop cluster
-         * then add each file to the list - reducer will then reduce to the user in question
-         */
-
+       /* //Extract the namespace declarations in the Csharp files
+        Regex reg = new Regex(@"(using)\s[A-za-z0-9_\.]*\;");
+        var matches = reg.matcher(inputLine);
+        foreach (Match match in matches)
+        {
+            //Just emit the namespaces.
+            context.EmitKeyValue(match.Value,"1");
+        }
+*/
     }
 }

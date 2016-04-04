@@ -57,6 +57,8 @@
   <ItemGroup>
     <Compile Include="unittests\DOPsConnectTests.cs" />
     <Compile Include="unittests\hadoopTests.cs" />
+    <Compile Include="unittests\NamespaceMapper.cs" />
+    <Compile Include="unittests\NamespaceReducer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Net" />
@@ -96,8 +98,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="MRLib\Microsoft.WindowsAzure.Management.Framework.Threading.dll" />
-    <None Include="MRLib\MRRunner.exe" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
