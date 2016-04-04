@@ -2,7 +2,6 @@ package hadoop;
 
 import hadoop.hadoopMappers.WordMapper;
 import hadoop.hadoopReducers.WordReducer;
-import integrationTests.IntegrationEnvironmentSetup;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -11,8 +10,6 @@ import org.apache.hadoop.mrunit.mapreduce.MapReduceDriver;
 import org.apache.hadoop.mrunit.mapreduce.ReduceDriver;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * Created by serup on 04-04-16.
@@ -24,13 +21,9 @@ public class WordCountJobTest {
     ReduceDriver<Text, IntWritable, Text, IntWritable> reduceDriver;
     MapReduceDriver<LongWritable, Text, Text, IntWritable, Text, IntWritable> mapReduceDriver;
 
-    /*
-    */
-    IntegrationEnvironmentSetup env = new IntegrationEnvironmentSetup();
 
     @Before
     public void setUp() throws Exception {
-        assertEquals(true,env.setupHadoopIntegrationEnvironment());
         WordMapper mapper = new WordMapper();
         WordReducer reducer = new WordReducer();
         mapDriver = MapDriver.newMapDriver(mapper);
