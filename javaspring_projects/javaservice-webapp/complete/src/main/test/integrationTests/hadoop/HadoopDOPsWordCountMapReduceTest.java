@@ -1,5 +1,6 @@
 package integrationTests.hadoop;
 
+import hadoop.hadoopFSHandlers.hadoopDOPsFSHandler;
 import hadoop.hadoopMappers.WordMapper;
 import hadoop.hadoopReducers.WordReducer;
 import integrationTests.IntegrationEnvironmentSetup;
@@ -15,6 +16,13 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+import static junit.framework.TestCase.assertEquals;
+
 /**
  * Created by serup on 04-04-16.
  */
@@ -23,11 +31,14 @@ import org.junit.Test;
 // should find count the word 'Watson' from a created file on the one.cluster node in the DOPs hadoop system
 public class HadoopDOPsWordCountMapReduceTest {
 
+    hadoopDOPsFSHandler fshandlerDriver;
+
     IntegrationEnvironmentSetup env = new IntegrationEnvironmentSetup();
 
     @Before
     public void setUp() throws Exception {
         Assert.assertEquals(true,env.setupHadoopIntegrationEnvironment());
+        fshandlerDriver = new hadoopDOPsFSHandler();
     }
 
     @Test
@@ -36,9 +47,9 @@ public class HadoopDOPsWordCountMapReduceTest {
         // create a configuration
         Configuration conf = new Configuration();
         // this should be like defined in your mapred-site.xml
-        conf.set("mapred.job.tracker", "one.cluster:50030");
+        conf.set("mapred.job.tracker", "two.cluster:50030");
         // like defined in hdfs-site.xml
-        conf.set("fs.default.name", "hdfs://one.cluster:50070");
+        conf.set("fs.default.name", "hdfs://two.cluster:50070");
 
         // create a new job based on the configuration
         Job job = new Job(conf);
@@ -70,9 +81,35 @@ public class HadoopDOPsWordCountMapReduceTest {
         // finally set the empty out path
         TextOutputFormat.setOutputPath(job, out);
 
-        // this waits until the job completes and prints debug out to STDOUT or whatever
-        // has been configured in your log4j properties.
-        job.waitForCompletion(true);
+        try {
+            String fileResource="watson.txt";
+            String destFolder="tmp/input/wordcount";
+            URL fileResourceUrl = this.getClass().getClassLoader().getResource(fileResource);
+            // copy the internal resource file watson.txt to remote hadoop hdfs system
+            fshandlerDriver.copyTo(fileResourceUrl.getPath(), "/"+destFolder);
+
+            // verify that the input file is in hdfs
+            List<String> itemsToAdd = new ArrayList<String>();
+            String filepathname = destFolder+"/"+fileResource;
+            itemsToAdd.add(fshandlerDriver.uri+filepathname);
+            assertEquals("Expected 1 item in hdfs ls list", itemsToAdd, fshandlerDriver.ls("/"+filepathname));
+
+
+            // MapReduce job start
+            // this waits until the job completes and prints debug out to STDOUT or whatever
+            // has been configured in your log4j properties.
+            job.waitForCompletion(true);
+
+
+            // cleanup - when after testing - the input file will be deleted on exit
+            String newfileName = "/" + destFolder + "/" + fileResource;
+            fshandlerDriver.remove(newfileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+
     }
 
 }
