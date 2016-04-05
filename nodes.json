@@ -8,6 +8,14 @@
       ":memory": 512,
       ":hostname" :  "puppet.dev.dops.scanva.com"
     },
+    "gerrit": {
+      "nodeOS": "ubuntu/vivid32",
+      "bootstrap": "bootstrap-node-gerrit.sh",
+      ":ip": "192.168.31.14",
+      "ports": [],
+      ":memory": 512,
+      ":hostname" :  "gerrit.dops.scanva.com"
+    },
     "jekyll": {
       "nodeOS": "ubuntu/vivid32",
       "bootstrap": "bootstrap-node-jekyll.sh",

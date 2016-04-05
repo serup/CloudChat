@@ -285,6 +285,36 @@ node default {
 
 }
 
+
+node /^gerrit.*/ {
+
+  class { apache : } 
+
+  exec { "apt-update":
+    command => "/usr/bin/apt-get update"
+  }
+  Exec["apt-update"] -> Package <| |>
+
+  include sudo
+  # Add adm group to sudoers with NOPASSWD
+  sudo::conf { 'vagrant':
+    priority => 01,
+    content  => "vagrant ALL=(ALL) NOPASSWD: ALL",
+  }
+
+  include git
+  #include grails_springboot
+
+  class { 'ruby':
+    gems_version => 'latest'
+  }
+   
+
+#  include ::gerrit 
+	
+}
+
+
 node /^jekyll.*/ {
 
   class { apache : } 
