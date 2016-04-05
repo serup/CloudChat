@@ -112,7 +112,7 @@ public class hadoopDOPsFSHandler {
     }
 
     public boolean copyTo(String inputfile, String destinationHDFSPath) throws IOException {
-        boolean bResult = false;
+        boolean bResult = true;
 
         String fileName = inputfile.substring( inputfile.lastIndexOf('/')+1, inputfile.length() );
         // put file into hdfs at destinationHDFSPath
