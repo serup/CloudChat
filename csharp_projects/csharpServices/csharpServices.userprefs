@@ -2,11 +2,11 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
   <MonoDevelop.Ide.Workbench ActiveDocument="csharpServices.IntegrationTests/unittests/hadoopTests.cs">
     <Files>
-      <File FileName="csharpServices.IntegrationTests/unittests/hadoopTests.cs" Line="51" Column="39" />
+      <File FileName="csharpServices.IntegrationTests/unittests/hadoopTests.cs" Line="60" Column="14" />
       <File FileName="csharpServices.IntegrationTests/packages.config" Line="1" Column="1" />
-      <File FileName="csharpServices/WebHDFS.cs" Line="292" Column="33" />
-      <File FileName="csharpServices.IntegrationTests/unittests/NamespaceMapper.cs" Line="20" Column="1" />
-      <File FileName="csharpServices.IntegrationTests/unittests/NamespaceReducer.cs" Line="3" Column="19" />
+      <File FileName="csharpServices/WebHDFS.cs" Line="1" Column="1" />
+      <File FileName="csharpServices.IntegrationTests/unittests/NamespaceMapper.cs" Line="1" Column="1" />
+      <File FileName="csharpServices.IntegrationTests/unittests/NamespaceReducer.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
