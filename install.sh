@@ -426,6 +426,14 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- puppetlabs-release installed"
 fi
+MODULE_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep roidelapluie-gerrit*)
+if [ "" == "$MODULE_OK" ]; then
+  echo -n "- install datacentred-gerrit"
+  puppet module install roidelapluie-gerrit  --modulepath ./puppet/trunk/environments/devtest/modules
+  echo " - done."
+else
+  echo "- roidelapluie-gerrit puppet module installed"
+fi
 MODULE_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep maestrodev-bamboo*)
 if [ "" == "$MODULE_OK" ]; then
   echo -n "- install maestrodev-bamboo and nexus"
@@ -670,10 +678,16 @@ if [ "" == "$PKG_OK" ]; then
   echo " - done."
 else
   echo "- vagrant installed"
-  echo "- destroy old setup, so new can run"
-  vagrant destroy
-  echo "- update vagrant box to newest version"
-  vagrant box update
+  echo -n " - do you want to cleanup nodes (y/n)? "
+  read answer
+  if echo "$answer" | grep -iq "^y" ;then
+   echo "- destroy old setup, so new can run"
+   vagrant destroy
+   echo "- update vagrant box to newest version"
+   vagrant box update
+  else
+   echo "- maintain old nodes "
+  fi
 fi
 
 PLUGIN_OK=$(vagrant plugin list|grep vagrant-vbguest) 

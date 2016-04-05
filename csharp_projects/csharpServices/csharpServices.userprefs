@@ -1,28 +1,13 @@
 ﻿<Properties StartupItem="csharpServices.IntegrationTests/csharpServices.IntegrationTests.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="csharpServices.IntegrationTests/unittests/NamespaceReducer.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="csharpServices.IntegrationTests/unittests/hadoopTests.cs">
     <Files>
-      <File FileName="csharpServices.IntegrationTests/unittests/hadoopTests.cs" Line="67" Column="46" />
+      <File FileName="csharpServices.IntegrationTests/unittests/hadoopTests.cs" Line="60" Column="49" />
       <File FileName="csharpServices.IntegrationTests/packages.config" Line="1" Column="1" />
-      <File FileName="csharpServices/WebHDFS.cs" Line="292" Column="33" />
-      <File FileName="csharpServices.IntegrationTests/unittests/NamespaceMapper.cs" Line="18" Column="5" />
-      <File FileName="csharpServices.IntegrationTests/unittests/NamespaceReducer.cs" Line="3" Column="19" />
+      <File FileName="csharpServices/WebHDFS.cs" Line="1" Column="1" />
+      <File FileName="csharpServices.IntegrationTests/unittests/NamespaceMapper.cs" Line="1" Column="1" />
+      <File FileName="csharpServices.IntegrationTests/unittests/NamespaceReducer.cs" Line="1" Column="1" />
     </Files>
-    <Pads>
-      <Pad Id="MonoDevelop.NUnit.TestPad">
-        <State name="__root__">
-          <Node name="csharpServices" expanded="True">
-            <Node name="csharpServices.IntegrationTests" expanded="True">
-              <Node name="HadoopTests" expanded="True">
-                <Node name="HadoopConnectionTests" expanded="True">
-                  <Node name="MapReduceJobOnHadoop" selected="True" />
-                </Node>
-              </Node>
-            </Node>
-          </Node>
-        </State>
-      </Pad>
-    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
