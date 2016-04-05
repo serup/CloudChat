@@ -71,36 +71,16 @@ public class HadoopDOPsWordCountMapReduceTest {
         job.setOutputValueClass(IntWritable.class);
 
         // this is setting the format of your input, can be TextInputFormat
-//        job.setInputFormatClass(SequenceFileInputFormat.class);
-        //job.setInputFormatClass(FileInputFormat.class);
-//        FileInputFormat.setInputPaths(job, "/tmp/input/wordcount/");
+        job.setInputFormatClass(SequenceFileInputFormat.class);
 
         // same with output
-        //job.setOutputFormatClass(TextOutputFormat.class);
-//        FileOutputFormat.setOutputPath(job, new Path("/tmp/output/wordcount/"));
+        job.setOutputFormatClass(TextOutputFormat.class);
 
-        // here you can set the path of your input
-//        SequenceFileInputFormat.addInputPath(job, new Path("hdfs://one.cluster:50070/tmp/input/wordcount/"));
-//        SequenceFileInputFormat.addInputPath(job, new Path("/tmp/input/wordcount/"));
-//        FileInputFormat.addInputPath(job, new Path("/tmp/input/wordcount/"));
-        SequenceFileInputFormat.addInputPath(job, new Path("hdfs://one.cluster:8020/tmp/input/wordcount/"));
 
-        // this deletes possible output paths to prevent job failures
-        //FileSystem fs = FileSystem.get(conf);
-        URI uri = URI.create ("hdfs://one.cluster:8020/");
-        FileSystem fs = FileSystem.get(uri, conf); // fetch filesystem handle for hdfs on one.cluster server
-
-        //Path in = new Path("/tmp/input/wordcount");
-        //fs.delete(in, true);
-        Path out = new Path("/tmp/output/wordcount");
-        //fs.delete(out, true);
-
-        // finally set the empty out path
-        TextOutputFormat.setOutputPath(job, out);
+        String fileResource="watson.txt";
+        String destFolder="tmp/input/wordcount";
 
         try {
-            String fileResource="watson.txt";
-            String destFolder="tmp/input/wordcount";
             URL fileResourceUrl = this.getClass().getClassLoader().getResource(fileResource);
             // copy the internal resource file watson.txt to remote hadoop hdfs system
             fshandlerDriver.copyTo(fileResourceUrl.getPath(), "/"+destFolder+"/watson.txt");
@@ -112,21 +92,32 @@ public class HadoopDOPsWordCountMapReduceTest {
             assertEquals("Expected 1 item in hdfs ls list", itemsToAdd, fshandlerDriver.ls("/"+filepathname));
 
 
-            // MapReduce job start
-            // this waits until the job completes and prints debug out to STDOUT or whatever
-            // has been configured in your log4j properties.
-            job.waitForCompletion(true);
-
-
-            // cleanup - when after testing - the input file will be deleted on exit
-            String newfileName = "/" + destFolder + "/" + fileResource;
-            fshandlerDriver.remove(newfileName);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+        // here you can set the path of your input
+        SequenceFileInputFormat.addInputPath(job, new Path("hdfs://one.cluster:8020/tmp/input/wordcount/"));
 
+        // this deletes possible output paths to prevent job failures
+        //FileSystem fs = FileSystem.get(conf);
+        URI uri = URI.create ("hdfs://one.cluster:8020/");
+        FileSystem fs = FileSystem.get(uri, conf); // fetch filesystem handle for hdfs on one.cluster server
 
+        Path out = new Path("/tmp/output/wordcount");
+        //fs.delete(out, true);
+
+        // finally set the empty out path
+        TextOutputFormat.setOutputPath(job, out);
+
+        // MapReduce job start
+        // this waits until the job completes and prints debug out to STDOUT or whatever
+        // has been configured in your log4j properties.
+        job.waitForCompletion(true);
+
+        // cleanup - when after testing - the input file will be deleted on exit
+        String newfileName = "/" + destFolder + "/" + fileResource;
+        fshandlerDriver.remove(newfileName);
     }
 
 }
