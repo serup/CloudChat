@@ -10,6 +10,7 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.junit.Assert;
 import org.junit.Before;
@@ -40,6 +41,7 @@ public class HadoopDOPsWordCountMapReduceTest {
         Assert.assertEquals(true,env.setupHadoopIntegrationEnvironment());
         fshandlerDriver = new hadoopDOPsFSHandler();
     }
+
 
     @Test
     public void testMapReduce() throws Exception {
@@ -81,14 +83,17 @@ public class HadoopDOPsWordCountMapReduceTest {
 //        SequenceFileInputFormat.addInputPath(job, new Path("hdfs://one.cluster:50070/tmp/input/wordcount/"));
 //        SequenceFileInputFormat.addInputPath(job, new Path("/tmp/input/wordcount/"));
 //        FileInputFormat.addInputPath(job, new Path("/tmp/input/wordcount/"));
+        SequenceFileInputFormat.addInputPath(job, new Path("hdfs://one.cluster:8020/tmp/input/wordcount/"));
 
         // this deletes possible output paths to prevent job failures
         //FileSystem fs = FileSystem.get(conf);
         URI uri = URI.create ("hdfs://one.cluster:8020/");
         FileSystem fs = FileSystem.get(uri, conf); // fetch filesystem handle for hdfs on one.cluster server
 
-        Path out = new Path("/tmp/output/wordcount/");
-        fs.delete(out, true);
+        //Path in = new Path("/tmp/input/wordcount");
+        //fs.delete(in, true);
+        Path out = new Path("/tmp/output/wordcount");
+        //fs.delete(out, true);
 
         // finally set the empty out path
         TextOutputFormat.setOutputPath(job, out);
@@ -98,7 +103,7 @@ public class HadoopDOPsWordCountMapReduceTest {
             String destFolder="tmp/input/wordcount";
             URL fileResourceUrl = this.getClass().getClassLoader().getResource(fileResource);
             // copy the internal resource file watson.txt to remote hadoop hdfs system
-            fshandlerDriver.copyTo(fileResourceUrl.getPath(), "/"+destFolder);
+            fshandlerDriver.copyTo(fileResourceUrl.getPath(), "/"+destFolder+"/watson.txt");
 
             // verify that the input file is in hdfs
             List<String> itemsToAdd = new ArrayList<String>();
