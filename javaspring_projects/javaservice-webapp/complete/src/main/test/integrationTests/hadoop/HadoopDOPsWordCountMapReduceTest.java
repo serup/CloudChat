@@ -16,7 +16,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
@@ -54,6 +53,7 @@ public class HadoopDOPsWordCountMapReduceTest {
         conf.set("fs.default.name", "hdfs://one.cluster:50070");
         conf.set("fs.defaultFS", "hdfs://one.cluster:8020/");
         conf.set("hadoop.job.ugi", "root, supergroup");
+        conf.set("dfs.block.local-path-access.user", "gpadmin,hdfs,mapred,yarn,hbase,hive,serup");
 
         // create a new job based on the configuration
         Job job = new Job(conf);
@@ -80,21 +80,16 @@ public class HadoopDOPsWordCountMapReduceTest {
         String fileResource="watson.txt";
         String destFolder="tmp/input/wordcount";
 
-        try {
-            URL fileResourceUrl = this.getClass().getClassLoader().getResource(fileResource);
-            // copy the internal resource file watson.txt to remote hadoop hdfs system
-            fshandlerDriver.copyTo(fileResourceUrl.getPath(), "/"+destFolder+"/watson.txt");
+        URL fileResourceUrl = this.getClass().getClassLoader().getResource(fileResource);
+        // copy the internal resource file watson.txt to remote hadoop hdfs system
+        fshandlerDriver.copyTo(fileResourceUrl.getPath(), "/"+destFolder+"/watson.txt");
 
-            // verify that the input file is in hdfs
-            List<String> itemsToAdd = new ArrayList<String>();
-            String filepathname = destFolder+"/"+fileResource;
-            itemsToAdd.add(fshandlerDriver.uri+filepathname);
-            assertEquals("Expected 1 item in hdfs ls list", itemsToAdd, fshandlerDriver.ls("/"+filepathname));
+        // verify that the input file is in hdfs
+        List<String> itemsToAdd = new ArrayList<String>();
+        String filepathname = destFolder+"/"+fileResource;
+        itemsToAdd.add(fshandlerDriver.uri+filepathname);
+        assertEquals("Expected 1 item in hdfs ls list", itemsToAdd, fshandlerDriver.ls("/"+filepathname));
 
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         // here you can set the path of your input
         SequenceFileInputFormat.addInputPath(job, new Path("hdfs://one.cluster:8020/tmp/input/wordcount/"));
