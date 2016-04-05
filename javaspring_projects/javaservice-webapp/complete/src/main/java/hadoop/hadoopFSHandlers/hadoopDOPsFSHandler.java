@@ -111,14 +111,19 @@ public class hadoopDOPsFSHandler {
         return bResult;
     }
 
-    public boolean copyTo(String inputfile, String destinationHDFSPath) throws IOException {
+    public boolean copyTo(String inputfile, String destinationHDFSPath) {
         boolean bResult = true;
 
         String fileName = inputfile.substring( inputfile.lastIndexOf('/')+1, inputfile.length() );
         // put file into hdfs at destinationHDFSPath
-        fs = FileSystem.get(uri, conf); // fetch filesystem handle for hdfs on one.cluster server
-        Path dest = new Path(destinationHDFSPath);
-        fs.copyFromLocalFile(new Path(inputfile), dest);
+        try {
+            fs = FileSystem.get(uri, conf); // fetch filesystem handle for hdfs on one.cluster server
+            Path dest = new Path(destinationHDFSPath);
+            fs.copyFromLocalFile(new Path(inputfile), dest);
+        } catch (IOException e) {
+            bResult = false;
+            e.printStackTrace();
+        }
 
         // cleanup - when testing
         //String newfileName = destinationHDFSPath + "/" + fileName;
