@@ -7,7 +7,7 @@ class ambari_agent ($ownhostname, $serverhostname) {
   # Ambari Repo
   exec { 'get-ambari-agent-repo':
     command => "wget http://public-repo-1.hortonworks.com/ambari/centos6/1.x/updates/1.2.3.7/ambari.repo",
-#    command => "wget http://public-repo-1.hortonworks.com/ambari/centos6/1.x/GA/ambari.repo",
+    #command => "wget http://public-repo-1.hortonworks.com/ambari/centos6/1.x/GA/ambari.repo",
     cwd     => '/etc/yum.repos.d/',
     creates => '/etc/yum.repos.d/ambari.repo',
     user    => root

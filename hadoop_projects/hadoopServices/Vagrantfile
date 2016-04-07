@@ -3,24 +3,15 @@ VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
-  # 64 bit
-  # 64bit on 32bit host - http://askubuntu.com/questions/714998/ambari-agent-installation-on-ubuntu-14-04-32-bit
   config.vm.box = "centos6.4Min"
   config.vm.box_url = "http://developer.nrel.gov/downloads/vagrant-boxes/CentOS-6.4-x86_64-v20130731.box"
- 
-  # 32 bit -- pt. ambari is NOT running on 32 bit
-  #config.vm.box = "centos6.4" 
-  #config.vm.box_url = "http://developer.nrel.gov/downloads/vagrant-boxes/CentOS-6.4-i386-v20130731.box"
 
-  # Ambari admin, admin -- see one.cluster:8080 in browser
-  
   config.vm.define :one do |one| 
-    one.vm.provision :shell, :path => "bootstrap-one.sh" 
     one.vm.hostname = "one.cluster"
     one.vm.network :private_network, ip: "192.168.0.101"
     one.vm.provider :virtualbox do |vb|
-      vb.customize ["modifyvm", :id, "--memory", 2048]
       vb.customize ["modifyvm", :id, "--name", "one.cluster"]
+      vb.customize ["modifyvm", :id, "--memory", 2048]
     end
 
     one.vm.provision "puppet" do |puppet|
@@ -34,8 +25,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     two.vm.hostname = "two.cluster"
     two.vm.network :private_network, ip: "192.168.0.102"
     two.vm.provider :virtualbox do |vb|
-      vb.customize ["modifyvm", :id, "--memory", 2048]
       vb.customize ["modifyvm", :id, "--name", "two.cluster"]
+      vb.customize ["modifyvm", :id, "--memory", 2048]
     end
 
     two.vm.provision "puppet" do |puppet|
@@ -49,8 +40,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     three.vm.hostname = "three.cluster"
     three.vm.network :private_network, ip: "192.168.0.103"
     three.vm.provider :virtualbox do |vb|
-      vb.customize ["modifyvm", :id, "--memory", 2048]
       vb.customize ["modifyvm", :id, "--name", "three.cluster"]
+      vb.customize ["modifyvm", :id, "--memory", 2048]
     end
 
     three.vm.provision "puppet" do |puppet|
