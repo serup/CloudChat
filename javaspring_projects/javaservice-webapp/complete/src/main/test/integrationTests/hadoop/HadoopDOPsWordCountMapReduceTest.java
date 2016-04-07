@@ -49,22 +49,34 @@ public class HadoopDOPsWordCountMapReduceTest {
         Configuration conf = new Configuration();
         // this should be like defined in your mapred-site.xml
         conf.set("mapred.job.tracker", "two.cluster:50030");
+        //conf.set("mapred.job.tracker", "hdfs://two.cluster:50030");
         // like defined in hdfs-site.xml
         conf.set("fs.default.name", "hdfs://one.cluster:50070");
         conf.set("fs.defaultFS", "hdfs://one.cluster:8020/");
-        conf.set("hadoop.job.ugi", "root, supergroup");
+        conf.set("hadoop.job.ugi", "ambari-qa, supergroup");
         conf.set("dfs.block.local-path-access.user", "gpadmin,hdfs,mapred,yarn,hbase,hive,serup");
+        conf.set("dfs.client.read.shortcircuit", "true");
+
+        // job.setMapSpeculativeExecution(false)
+        conf.setBoolean("mapreduce.map.speculative", false);
+        conf.setBoolean("mapreduce.reduce.speculative", false);
+        conf.setBoolean("mapred.map.tasks.speculative.execution", false);
+        conf.setBoolean("mapred.reduce.tasks.speculative.execution", false);
+
 
         // create a new job based on the configuration
         Job job = new Job(conf);
+        job.setJobName("WatsonWordCount");
+
+        // here you have to set the jar which is containing your
+        // map/reduce class, so you can use the mapper class
+        job.setJarByClass(WordMapper.class);
+
         // here you have to put your mapper class
         job.setMapperClass(WordMapper.class);
 
         // here you have to put your reducer class
         job.setReducerClass(WordReducer.class);
-        // here you have to set the jar which is containing your
-        // map/reduce class, so you can use the mapper class
-        job.setJarByClass(WordMapper.class);
 
         // key/value of your reducer output
         job.setOutputKeyClass(Text.class);
@@ -90,6 +102,7 @@ public class HadoopDOPsWordCountMapReduceTest {
         itemsToAdd.add(fshandlerDriver.uri+filepathname);
         assertEquals("Expected 1 item in hdfs ls list", itemsToAdd, fshandlerDriver.ls("/"+filepathname));
 
+        fshandlerDriver.touch("/tmp/output/g"); // hmm
 
         // here you can set the path of your input
         SequenceFileInputFormat.addInputPath(job, new Path("hdfs://one.cluster:8020/tmp/input/wordcount/"));
