@@ -67,6 +67,9 @@ public class HadoopDOPsWordCountMapReduceTest {
 
         // create a new job based on the configuration
         Job job = new Job(conf);
+
+//        JobConf jb = new JobConf(conf);
+//        Job job = new Job(jb);
         job.setJobName("WatsonWordCount");
 
         // here you have to set the jar which is containing your
@@ -117,7 +120,11 @@ public class HadoopDOPsWordCountMapReduceTest {
         //fs.delete(out, true);
 
         // finally set the empty out path
-        //TextOutputFormat.setOutputPath(job, out);
+//        TextOutputFormat.setOutputPath(job, new Path("/tmp"));
+//        FileOutputFormat.setOutputPath(job, new Path("/tmp/output/wordcount/result.txt"));
+//        JobConf jb = new JobConf(job.getConfiguration());
+//        SequenceFileOutputFormat.setOutputPath(jb, new Path("/tmp/output/wordcount/result.txt"));
+//        jb.setWorkingDirectory(new Path("/tmp"));
         SequenceFileOutputFormat.setOutputPath(job, new Path("/tmp/output/wordcount/result.txt"));
 
         job.setWorkingDirectory(new Path("/tmp"));
@@ -126,7 +133,6 @@ public class HadoopDOPsWordCountMapReduceTest {
         // this waits until the job completes and prints debug out to STDOUT or whatever
         // has been configured in your log4j properties.
         job.waitForCompletion(true);
-
     }
 
 }
