@@ -11,6 +11,7 @@ import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.junit.Assert;
 import org.junit.Before;
@@ -48,8 +49,8 @@ public class HadoopDOPsWordCountMapReduceTest {
         // create a configuration
         Configuration conf = new Configuration();
         // this should be like defined in your mapred-site.xml
-        conf.set("mapred.job.tracker", "two.cluster:50030");
-        //conf.set("mapred.job.tracker", "hdfs://two.cluster:50030");
+        //conf.set("mapreduce.job.tracker", "hdfs://two.cluster:50030");
+        conf.set("mapred.job.tracker", "hdfs://two.cluster:50030");
         // like defined in hdfs-site.xml
         conf.set("fs.default.name", "hdfs://one.cluster:50070");
         conf.set("fs.defaultFS", "hdfs://one.cluster:8020/");
@@ -102,7 +103,7 @@ public class HadoopDOPsWordCountMapReduceTest {
         itemsToAdd.add(fshandlerDriver.uri+filepathname);
         assertEquals("Expected 1 item in hdfs ls list", itemsToAdd, fshandlerDriver.ls("/"+filepathname));
 
-        fshandlerDriver.touch("/tmp/output/g"); // hmm
+        fshandlerDriver.touch("/tmp/output/wordcount/g"); // hmm
 
         // here you can set the path of your input
         SequenceFileInputFormat.addInputPath(job, new Path("hdfs://one.cluster:8020/tmp/input/wordcount/"));
@@ -112,20 +113,20 @@ public class HadoopDOPsWordCountMapReduceTest {
         URI uri = URI.create ("hdfs://one.cluster:8020/");
         FileSystem fs = FileSystem.get(uri, conf); // fetch filesystem handle for hdfs on one.cluster server
 
-        Path out = new Path("/tmp/output/wordcount");
+        //Path out = new Path("/tmp/output/wordcount");
         //fs.delete(out, true);
 
         // finally set the empty out path
-        TextOutputFormat.setOutputPath(job, out);
+        //TextOutputFormat.setOutputPath(job, out);
+        SequenceFileOutputFormat.setOutputPath(job, new Path("/tmp/output/wordcount/result.txt"));
+
+        job.setWorkingDirectory(new Path("/tmp"));
 
         // MapReduce job start
         // this waits until the job completes and prints debug out to STDOUT or whatever
         // has been configured in your log4j properties.
         job.waitForCompletion(true);
 
-        // cleanup - when after testing - the input file will be deleted on exit
-        String newfileName = "/" + destFolder + "/" + fileResource;
-        fshandlerDriver.remove(newfileName);
     }
 
 }
