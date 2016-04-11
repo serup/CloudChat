@@ -5,19 +5,19 @@ import hadoop.hadoopMappers.WordMapper;
 import hadoop.hadoopReducers.WordReducer;
 import integrationTests.IntegrationEnvironmentSetup;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,24 +52,27 @@ public class HadoopDOPsWordCountMapReduceTest {
         //conf.set("mapreduce.job.tracker", "hdfs://two.cluster:50030");
         conf.set("mapred.job.tracker", "hdfs://two.cluster:50030");
         // like defined in hdfs-site.xml
-        conf.set("fs.default.name", "hdfs://one.cluster:50070");
+        //conf.set("fs.default.name", "hdfs://one.cluster:50070");
         conf.set("fs.defaultFS", "hdfs://one.cluster:8020/");
-        conf.set("hadoop.job.ugi", "ambari-qa, supergroup");
+        conf.set("hadoop.job.ugi", "root, supergroup");
         conf.set("dfs.block.local-path-access.user", "gpadmin,hdfs,mapred,yarn,hbase,hive,serup");
         conf.set("dfs.client.read.shortcircuit", "true");
+        //conf.set("hadoop.home.dir", "/");
+        //conf.set("dfs.domain.socket.path", "/var/lib/hadoop-hdfs/dn_socket");
 
         // job.setMapSpeculativeExecution(false)
-        conf.setBoolean("mapreduce.map.speculative", false);
-        conf.setBoolean("mapreduce.reduce.speculative", false);
+        //conf.setBoolean("mapreduce.map.speculative", false);
+        //conf.setBoolean("mapreduce.reduce.speculative", false);
         conf.setBoolean("mapred.map.tasks.speculative.execution", false);
         conf.setBoolean("mapred.reduce.tasks.speculative.execution", false);
 
 
         // create a new job based on the configuration
-        Job job = new Job(conf);
+        //Job job = new Job(conf);
+        //Job jb = new Job();
 
-//        JobConf jb = new JobConf(conf);
-//        Job job = new Job(jb);
+        //JobConf job = new JobConf(conf);
+        Job job = Job.getInstance(conf);
         job.setJobName("WatsonWordCount");
 
         // here you have to set the jar which is containing your
@@ -113,8 +116,8 @@ public class HadoopDOPsWordCountMapReduceTest {
 
         // this deletes possible output paths to prevent job failures
         //FileSystem fs = FileSystem.get(conf);
-        URI uri = URI.create ("hdfs://one.cluster:8020/");
-        FileSystem fs = FileSystem.get(uri, conf); // fetch filesystem handle for hdfs on one.cluster server
+        //URI uri = URI.create ("hdfs://one.cluster:8020/");
+        //FileSystem fs = FileSystem.get(uri, conf); // fetch filesystem handle for hdfs on one.cluster server
 
         //Path out = new Path("/tmp/output/wordcount");
         //fs.delete(out, true);
@@ -135,4 +138,40 @@ public class HadoopDOPsWordCountMapReduceTest {
         job.waitForCompletion(true);
     }
 
+    @Test
+    public void testMapReduceWordCount() throws Exception {
+        Configuration conf = new Configuration();
+
+        //conf.set("mapred.job.tracker", "hdfs://two.cluster:50030");
+        // like defined in hdfs-site.xml
+        //conf.set("fs.default.name", "hdfs://one.cluster:50070");
+        conf.set("fs.defaultFS", "hdfs://one.cluster/");
+        conf.set("hadoop.job.ugi", "root, supergroup");
+        //conf.set("dfs.block.local-path-access.user", "gpadmin,hdfs,mapred,yarn,hbase,hive,serup");
+        //conf.set("dfs.client.read.shortcircuit", "true");
+        conf.set("hadoop.home.dir", "/usr/local/hadoop");
+        conf.set("dfs.domain.socket.path", "/var/lib/hadoop-hdfs/dn_socket");
+
+        // job.setMapSpeculativeExecution(false)
+        conf.setBoolean("mapreduce.map.speculative", false);
+        conf.setBoolean("mapreduce.reduce.speculative", false);
+        //conf.setBoolean("mapred.map.tasks.speculative.execution", false);
+        //conf.setBoolean("mapred.reduce.tasks.speculative.execution", false);
+
+        Job job = Job.getInstance(conf);
+        job.setJobName("WordCount");
+
+        job.setJarByClass(WordMapper.class);
+
+        job.setMapperClass(WordMapper.class);
+        job.setReducerClass(WordReducer.class);
+
+        job.setOutputKeyClass(Text.class);
+        job.setOutputValueClass(IntWritable.class);
+
+        FileInputFormat.addInputPath(job, new Path("hdfs://one.cluster:8020/tmp/input/wordcount/*"));
+        FileOutputFormat.setOutputPath(job, new Path("/tmp/output/wordcount/result.txt"));
+
+        job.waitForCompletion(true);
+    }
 }
