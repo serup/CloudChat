@@ -68,6 +68,16 @@ public class hadoopDOPsFSHandler {
     {
         conf = new Configuration();
         conf.set("fs.defaultFS", "hdfs://one.cluster:8020/");
+
+        // this should be like defined in your mapred-site.xml
+        conf.set("mapred.job.tracker", "two.cluster:50030");
+        //conf.set("mapred.job.tracker", "hdfs://two.cluster:50030");
+        // like defined in hdfs-site.xml
+        conf.set("fs.default.name", "hdfs://one.cluster:50070");
+        conf.set("hadoop.job.ugi", "root, supergroup");
+        conf.set("dfs.block.local-path-access.user", "gpadmin,hdfs,mapred,yarn,hbase,hive,serup,root");
+        conf.set("dfs.client.read.shortcircuit", "true");
+
         uri = URI.create ("hdfs://one.cluster:8020/");
     }
 
