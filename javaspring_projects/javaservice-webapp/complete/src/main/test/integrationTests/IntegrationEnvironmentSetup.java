@@ -147,4 +147,8 @@ public class IntegrationEnvironmentSetup {
         return bResult;
     }
 
+    public String executeCmd(String command, String path)
+    {
+        return executeCommand(command, path);
+    }
 }

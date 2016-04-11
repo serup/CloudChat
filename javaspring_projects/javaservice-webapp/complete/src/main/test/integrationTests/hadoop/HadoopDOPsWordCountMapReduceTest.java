@@ -22,11 +22,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static junit.framework.TestCase.assertEquals;
+import static org.mortbay.util.LazyList.contains;
+
 
 /**
  * Created by serup on 04-04-16.
  */
-
 
 // http://stackoverflow.com/questions/9849776/calling-a-mapreduce-job-from-a-simple-java-program
 // should find count the word 'Watson' from a created file on the one.cluster node in the DOPs hadoop system
@@ -146,6 +147,9 @@ public class HadoopDOPsWordCountMapReduceTest {
         // serup@serup-ThinkPad-T440s:~$
         //
         // above shows that the word 'watson' was found 81 times, which is correct according to the watson.txt resource file
+
+        String result = env.executeCmd("cat /tmp/output/wordcount/result/part-r-00000", "/");
+        Assert.assertEquals(true, contains(result, new String("Watson\t81\n")));
 
     }
 
