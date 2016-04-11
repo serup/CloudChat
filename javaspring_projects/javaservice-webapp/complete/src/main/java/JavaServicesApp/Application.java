@@ -1,4 +1,4 @@
-package hello;
+package JavaServicesApp;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class Application {
 
     public static void main(String[] args) {
-        //ApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
         SpringApplication.run(Application.class, args);
     }
 }
