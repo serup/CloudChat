@@ -73,6 +73,14 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- wireshark already installed"
 fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 sysstat |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install sysstat on ubuntu "
+  sudo apt-get install -yq sysstat
+  echo " - done."
+else
+  echo "- sysstat already installed"
+fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 bikeshed |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install bikeshed on ubuntu, to use when purging old kernals - example: sudo purge-old-kernals --keep 3 "
