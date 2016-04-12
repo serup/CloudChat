@@ -75,7 +75,7 @@ else
 fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 sysstat |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
-  echo -n "- install sysstat on ubuntu "
+  echo -n "- install sysstat on ubuntu : example: iostat -d 1 10"
   sudo apt-get install -yq sysstat
   echo " - done."
 else
