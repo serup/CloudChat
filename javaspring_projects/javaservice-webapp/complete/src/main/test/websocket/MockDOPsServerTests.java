@@ -88,7 +88,7 @@ public class MockDOPsServerTests {
         DED.PUT_METHOD  ( "name",  "MusicPlayer" );
         DED.PUT_USHORT  ( "trans_id",  trans_id);
         DED.PUT_BOOL    ( "startstop", action );
-        DED.PUT_STDSTRING("text", "hello world");
+        DED.PUT_STDSTRING("text", "JavaServicesApp world");
         DED.PUT_STRUCT_END( "event" );
 
         ByteBuffer data = DED.GET_ENCODED_BYTEBUFFER_DATA();
