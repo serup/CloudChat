@@ -30,7 +30,7 @@ public class FindFileWithPatternInsideMapper extends Mapper<LongWritable, Text, 
         Matcher matcher = p.matcher(lineFromFile);
         if(matcher.find()) {
             // foundFile has the pattern, now find its filename
-            String filename =((FileSplit) context.getInputSplit()).getPath().getName() ;
+            String filename =((FileSplit) context.getInputSplit()).getPath().getName() ; // this will yield 'somefile' when used with Mock mapper framework
             foundFile.set(filename);
             context.write(foundFile, new IntWritable(1)); // add 1 count to key ( foundFile )
         }
