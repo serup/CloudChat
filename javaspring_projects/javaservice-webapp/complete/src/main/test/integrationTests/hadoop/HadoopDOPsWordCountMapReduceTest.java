@@ -85,11 +85,12 @@ public class HadoopDOPsWordCountMapReduceTest {
         File directory = new File("/tmp/output/wordcount");
         //make sure directory exists
         if (!directory.exists()) {
-            System.out.println("Directory does not exist.");
-            System.exit(0);
-        } else {
+            // Directory does not exist
+            directory.mkdir();
+        }else {
             try {
-                delete(directory);
+                delete(directory); // clean out old
+                directory.mkdir(); // create for this test
             } catch (IOException e) {
                 e.printStackTrace();
                 System.exit(0);
