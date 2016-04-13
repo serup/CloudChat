@@ -1,13 +1,13 @@
 package dops.database;
 
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import java.io.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -15,8 +15,96 @@ import java.util.ArrayList;
  */
 public class DataBaseControl {
 
-    class DDEntityEntry
+    public class DDEntityEntry
     {
+        public String getDDGuid() {
+            return DDGuid;
+        }
+
+        public void setDDGuid(String DDGuid) {
+            this.DDGuid = DDGuid;
+        }
+
+        public String getPhysicalDataElementName() {
+            return PhysicalDataElementName;
+        }
+
+        public void setPhysicalDataElementName(String physicalDataElementName) {
+            PhysicalDataElementName = physicalDataElementName;
+        }
+
+        public String getLocation() {
+            return Location;
+        }
+
+        public void setLocation(String location) {
+            Location = location;
+        }
+
+        public String getCategory() {
+            return Category;
+        }
+
+        public void setCategory(String category) {
+            Category = category;
+        }
+
+        public String getDataType() {
+            return DataType;
+        }
+
+        public void setDataType(String dataType) {
+            DataType = dataType;
+        }
+
+        public String getMaxLength() {
+            return MaxLength;
+        }
+
+        public void setMaxLength(String maxLength) {
+            MaxLength = maxLength;
+        }
+
+        public String getDescription() {
+            return Description;
+        }
+
+        public void setDescription(String description) {
+            Description = description;
+        }
+
+        public String getCharacteristics() {
+            return characteristics;
+        }
+
+        public void setCharacteristics(String characteristics) {
+            this.characteristics = characteristics;
+        }
+
+        public String getRelationship() {
+            return relationship;
+        }
+
+        public void setRelationship(String relationship) {
+            this.relationship = relationship;
+        }
+
+        public String getMandatory() {
+            return Mandatory;
+        }
+
+        public void setMandatory(String mandatory) {
+            Mandatory = mandatory;
+        }
+
+        public String getAccessrights() {
+            return accessrights;
+        }
+
+        public void setAccessrights(String accessrights) {
+            this.accessrights = accessrights;
+        }
+
         String  DDGuid;
         String  PhysicalDataElementName;
         String  Location;
@@ -37,86 +125,68 @@ public class DataBaseControl {
     }
 
     public EntityRealm readDDEntityRealm(File file, String EntityName) {
-        EntityRealm _DDEntityRealm = null;
+        EntityRealm _DDEntityRealm = new EntityRealm();
         try {
 
-            SAXParserFactory factory = SAXParserFactory.newInstance();
-            SAXParser saxParser = factory.newSAXParser();
+            File fXmlFile = file;
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(fXmlFile);
 
-            DefaultHandler handler = new DefaultHandler() {
-            /*
-                boolean bfname = false;
-                boolean blname = false;
-                boolean bnname = false;
-                boolean bsalary = false;
-            */
-                public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+            //optional, but recommended
+            //read this - http://stackoverflow.com/questions/13786607/normalization-in-dom-parsing-with-java-how-does-it-work
+            doc.getDocumentElement().normalize();
+            String nodename = doc.getDocumentElement().getNodeName();
+            String expectedEntity = EntityName+"Realm";
+            if( !expectedEntity.contentEquals(nodename) )
+                return null; // Error This is NOT the correct file
 
-                    System.out.println("Start Element :" + qName);
+            //System.out.println("Root element :" + nodename);
 
-                   /* if (qName.equalsIgnoreCase("FIRSTNAME")) {
-                        bfname = true;
-                    }
+            NodeList nList = doc.getElementsByTagName("DDEntry");
 
-                    if (qName.equalsIgnoreCase("LASTNAME")) {
-                        blname = true;
-                    }
+            //System.out.println("----------------------------");
 
-                    if (qName.equalsIgnoreCase("NICKNAME")) {
-                        bnname = true;
-                    }
+            for (int temp = 0; temp < nList.getLength(); temp++) {
 
-                    if (qName.equalsIgnoreCase("SALARY")) {
-                        bsalary = true;
-                    }
-                    */
+                Node nNode = nList.item(temp);
+
+                //System.out.println("\n- " + nNode.getNodeName());
+
+                if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+
+                    Element eElement = (Element) nNode;
+
+/*
+                    System.out.println("DDGuid : " + eElement.getElementsByTagName("DDGuid").item(0).getTextContent());
+                    System.out.println("PhysicalDataElementName : " + eElement.getElementsByTagName("PhysicalDataElementName").item(0).getTextContent());
+                    System.out.println("Location : " + eElement.getElementsByTagName("Location").item(0).getTextContent());
+                    System.out.println("Category : " + eElement.getElementsByTagName("Category").item(0).getTextContent());
+                    System.out.println("DataType : " + eElement.getElementsByTagName("DataType").item(0).getTextContent());
+                    System.out.println("MaxLength : " + eElement.getElementsByTagName("MaxLength").item(0).getTextContent());
+                    System.out.println("Description : " + eElement.getElementsByTagName("Description").item(0).getTextContent());
+                    System.out.println("characteristics : " + eElement.getElementsByTagName("characteristics").item(0).getTextContent());
+                    System.out.println("relationship : " + eElement.getElementsByTagName("relationship").item(0).getTextContent());
+                    System.out.println("Mandatory : " + eElement.getElementsByTagName("Mandatory").item(0).getTextContent());
+                    System.out.println("accessrights : " + eElement.getElementsByTagName("accessrights").item(0).getTextContent());
+*/
+
+                    DDEntityEntry newEntry = new DDEntityEntry();
+                    newEntry.setDDGuid(eElement.getElementsByTagName("DDGuid").item(0).getTextContent());
+                    newEntry.setPhysicalDataElementName(eElement.getElementsByTagName("PhysicalDataElementName").item(0).getTextContent());
+                    newEntry.setLocation(eElement.getElementsByTagName("Location").item(0).getTextContent());
+                    newEntry.setCategory(eElement.getElementsByTagName("Category").item(0).getTextContent());
+                    newEntry.setDataType(eElement.getElementsByTagName("DataType").item(0).getTextContent());
+                    newEntry.setMaxLength(eElement.getElementsByTagName("MaxLength").item(0).getTextContent());
+                    newEntry.setDescription(eElement.getElementsByTagName("Description").item(0).getTextContent());
+                    newEntry.setCharacteristics(eElement.getElementsByTagName("characteristics").item(0).getTextContent());
+                    newEntry.setRelationship(eElement.getElementsByTagName("relationship").item(0).getTextContent());
+                    newEntry.setMandatory(eElement.getElementsByTagName("Mandatory").item(0).getTextContent());
+                    newEntry.setAccessrights(eElement.getElementsByTagName("accessrights").item(0).getTextContent());
+                    _DDEntityRealm.add(newEntry);
+
                 }
-
-                public void endElement(String uri, String localName, String qName) throws SAXException {
-                    System.out.println("End Element :" + qName);
-                }
-
-                public void characters(char ch[], int start, int length) throws SAXException {
-
-                    System.out.println(new String(ch, start, length));
-                    /*
-                    if (bfname) {
-                        System.out.println("First Name : "
-                                + new String(ch, start, length));
-                        bfname = false;
-                    }
-
-                    if (blname) {
-                        System.out.println("Last Name : "
-                                + new String(ch, start, length));
-                        blname = false;
-                    }
-
-                    if (bnname) {
-                        System.out.println("Nick Name : "
-                                + new String(ch, start, length));
-                        bnname = false;
-                    }
-
-                    if (bsalary) {
-                        System.out.println("Salary : "
-                                + new String(ch, start, length));
-                        bsalary = false;
-                    }
-                    */
-                }
-
-            };
-
-            //File file = new File("c:\\file.xml");
-            InputStream inputStream= new FileInputStream(file);
-            Reader reader = new InputStreamReader(inputStream,"UTF-8");
-
-            InputSource is = new InputSource(reader);
-            is.setEncoding("UTF-8");
-
-            saxParser.parse(is, handler);
-
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
