@@ -45,7 +45,7 @@ public class DataBaseControlTest {
         // ..... more DDEntries
         // </CustomerRealm>
 
-        String fileResource="DD_CUSTOMER.xml";
+        String fileResource= "DataDictionary/DD_CUSTOMER.xml";
         File file = new File(this.getClass().getClassLoader().getResource(fileResource).getFile());
         DataBaseControl.EntityRealm entityRealm = dbctrl.readDDEntityRealm(file, "Customer");
 
@@ -69,7 +69,7 @@ public class DataBaseControlTest {
 
     @Test
     public void testReadDDwithElements() throws Exception {
-        String fileResource="DD_CUSTOMER.xml";
+        String fileResource= "DataDictionary/DD_CUSTOMER.xml";
         File file = new File(this.getClass().getClassLoader().getResource(fileResource).getFile());
 
         DataBaseControl.DEDElements dedElements = this.dbctrl.createDEDElements();
