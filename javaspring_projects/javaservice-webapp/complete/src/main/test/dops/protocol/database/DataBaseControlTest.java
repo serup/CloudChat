@@ -48,9 +48,9 @@ public class DataBaseControlTest {
         DataBaseControl.EntityRealm entityRealm = dbctrl.readDDEntityRealm(file, "Customer");
 
         DataBaseControl.DDEntityEntry foundEntry;
-        Iterator<?> iterator = entityRealm.iterator();
-        while (iterator.hasNext()) {
-            foundEntry = (DataBaseControl.DDEntityEntry) iterator.next();
+        Iterator<DataBaseControl.DDEntityEntry> i;
+        for (i  = entityRealm.iterator(); i.hasNext(); ) {
+            foundEntry = i.next();
             System.out.println("DDGuid : " + foundEntry.getDDGuid() );
             System.out.println("PhysicalDataElementName : " + foundEntry.getPhysicalDataElementName() );
             System.out.println("Location : " + foundEntry.getLocation() );
