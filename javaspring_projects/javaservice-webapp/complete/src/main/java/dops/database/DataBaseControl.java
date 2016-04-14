@@ -15,6 +15,8 @@ import java.util.ArrayList;
  */
 public class DataBaseControl {
 
+    String relative_DATADICTIONARY_ENTITIES_PLACE;
+
     public class DDEntityEntry
     {
         public String getDDGuid() {
@@ -151,7 +153,10 @@ public class DataBaseControl {
        return new DEDElements();
     }
 
-    public DataBaseControl() {
+    public DataBaseControl()
+    {
+        // DEFINES
+        relative_DATADICTIONARY_ENTITIES_PLACE = "/DataDictionary/Entities/";
     }
 
     public EntityRealm readDDEntityRealm(File file, String EntityName) {
@@ -231,6 +236,22 @@ public class DataBaseControl {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        return bResult;
+    }
+
+    public boolean ftgt(String realm_name, String index_name, DEDElements record_value )
+    {
+        boolean bResult = false;
+        String EntityName       = realm_name;
+        String EntityFileName   = index_name;
+        DEDElements _DEDElements = new DEDElements();
+
+        // NB! DataDictionary is embedded as resource files
+        String uppercaseEntityName = "DD_" + EntityName.toUpperCase()  + ".xml";  // example: DD_CUSTOMER.xml
+        File file  = new File(this.getClass().getClassLoader().getResource(uppercaseEntityName).getFile());
+        if(file.exists())
+            bResult = readDDEntityRealm(file, EntityName, _DEDElements);
 
         return bResult;
     }
