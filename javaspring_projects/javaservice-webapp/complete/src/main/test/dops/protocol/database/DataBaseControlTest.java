@@ -70,8 +70,7 @@ public class DataBaseControlTest {
         String fileResource="DD_CUSTOMER.xml";
         File file = new File(this.getClass().getClassLoader().getResource(fileResource).getFile());
 
-        DataBaseControl dataBaseControl = new DataBaseControl();
-        DataBaseControl.DEDElements dedElements = dataBaseControl.createDEDElements();
+        DataBaseControl.DEDElements dedElements = this.dbctrl.createDEDElements();
         boolean bResult = this.dbctrl.readDDEntityRealm(file, "Customer", dedElements);
         for (DataBaseControl.Elements e: dedElements) {
             System.out.println(e.getStrElementID());
