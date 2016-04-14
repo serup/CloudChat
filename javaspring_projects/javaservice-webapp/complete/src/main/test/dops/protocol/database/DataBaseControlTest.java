@@ -65,5 +65,17 @@ public class DataBaseControlTest {
         }
     }
 
+    @Test
+    public void testReadDDwithElements() throws Exception {
+        String fileResource="DD_CUSTOMER.xml";
+        File file = new File(this.getClass().getClassLoader().getResource(fileResource).getFile());
+
+        DataBaseControl dataBaseControl = new DataBaseControl();
+        DataBaseControl.DEDElements dedElements = dataBaseControl.createDEDElements();
+        boolean bResult = this.dbctrl.readDDEntityRealm(file, "Customer", dedElements);
+        for (DataBaseControl.Elements e: dedElements) {
+            System.out.println(e.getStrElementID());
+        }
+    }
 
 }

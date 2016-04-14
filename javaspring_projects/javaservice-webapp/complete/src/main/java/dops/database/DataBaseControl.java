@@ -119,7 +119,37 @@ public class DataBaseControl {
     };
 
 
+    public class Elements {
+        public Elements() {
+        }
+
+        public String getStrElementID() {
+            return strElementID;
+        }
+
+        public void setStrElementID(String strElementID) {
+            this.strElementID = strElementID;
+        }
+
+        public ArrayList<?> getElementData() {
+            return ElementData;
+        }
+
+        public void setElementData(ArrayList<?> elementData) {
+            ElementData = elementData;
+        }
+
+        String strElementID;
+        ArrayList<?> ElementData;
+    }
+
     public class EntityRealm extends ArrayList<DDEntityEntry> { }
+    public class DEDElements extends ArrayList<Elements> { }
+
+    public DEDElements createDEDElements()
+    {
+       return new DEDElements();
+    }
 
     public DataBaseControl() {
     }
@@ -133,44 +163,19 @@ public class DataBaseControl {
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(fXmlFile);
 
-            //optional, but recommended
-            //read this - http://stackoverflow.com/questions/13786607/normalization-in-dom-parsing-with-java-how-does-it-work
             doc.getDocumentElement().normalize();
-            String nodename = doc.getDocumentElement().getNodeName();
+            String nodeName = doc.getDocumentElement().getNodeName();
             String expectedEntity = EntityName+"Realm";
-            if( !expectedEntity.contentEquals(nodename) )
+            if( !expectedEntity.contentEquals(nodeName) )
                 return null; // Error This is NOT the correct file
 
-            //System.out.println("Root element :" + nodename);
-
             NodeList nList = doc.getElementsByTagName("DDEntry");
-
-            //System.out.println("----------------------------");
-
             for (int temp = 0; temp < nList.getLength(); temp++) {
 
                 Node nNode = nList.item(temp);
-
-                //System.out.println("\n- " + nNode.getNodeName());
-
                 if (nNode.getNodeType() == Node.ELEMENT_NODE) {
 
                     Element eElement = (Element) nNode;
-
-/*
-                    System.out.println("DDGuid : " + eElement.getElementsByTagName("DDGuid").item(0).getTextContent());
-                    System.out.println("PhysicalDataElementName : " + eElement.getElementsByTagName("PhysicalDataElementName").item(0).getTextContent());
-                    System.out.println("Location : " + eElement.getElementsByTagName("Location").item(0).getTextContent());
-                    System.out.println("Category : " + eElement.getElementsByTagName("Category").item(0).getTextContent());
-                    System.out.println("DataType : " + eElement.getElementsByTagName("DataType").item(0).getTextContent());
-                    System.out.println("MaxLength : " + eElement.getElementsByTagName("MaxLength").item(0).getTextContent());
-                    System.out.println("Description : " + eElement.getElementsByTagName("Description").item(0).getTextContent());
-                    System.out.println("characteristics : " + eElement.getElementsByTagName("characteristics").item(0).getTextContent());
-                    System.out.println("relationship : " + eElement.getElementsByTagName("relationship").item(0).getTextContent());
-                    System.out.println("Mandatory : " + eElement.getElementsByTagName("Mandatory").item(0).getTextContent());
-                    System.out.println("accessrights : " + eElement.getElementsByTagName("accessrights").item(0).getTextContent());
-*/
-
                     DDEntityEntry newEntry = new DDEntityEntry();
                     newEntry.setDDGuid(eElement.getElementsByTagName("DDGuid").item(0).getTextContent());
                     newEntry.setPhysicalDataElementName(eElement.getElementsByTagName("PhysicalDataElementName").item(0).getTextContent());
@@ -184,7 +189,6 @@ public class DataBaseControl {
                     newEntry.setMandatory(eElement.getElementsByTagName("Mandatory").item(0).getTextContent());
                     newEntry.setAccessrights(eElement.getElementsByTagName("accessrights").item(0).getTextContent());
                     _DDEntityRealm.add(newEntry);
-
                 }
             }
         } catch (Exception e) {
@@ -192,5 +196,42 @@ public class DataBaseControl {
         }
 
         return _DDEntityRealm;
+    }
+
+    public boolean readDDEntityRealm(File file, String EntityName, DEDElements dedElements) {
+        boolean bResult = false;
+        EntityRealm _DDEntityRealm = new EntityRealm();
+        try {
+
+            File fXmlFile = file;
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(fXmlFile);
+
+            doc.getDocumentElement().normalize();
+            String nodeName = doc.getDocumentElement().getNodeName();
+            String expectedEntity = EntityName+"Realm";
+            if( !expectedEntity.contentEquals(nodeName) )
+                return false; // Error This is NOT the correct file
+
+            NodeList nList = doc.getElementsByTagName("DDEntry");
+            for (int temp = 0; temp < nList.getLength(); temp++) {
+                Node nNode = nList.item(temp);
+                if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+                    Element eElement = (Element) nNode;
+                    DDEntityEntry newEntry = new DDEntityEntry();
+                    Elements elm = new Elements();
+                    newEntry.setPhysicalDataElementName(eElement.getElementsByTagName("PhysicalDataElementName").item(0).getTextContent());
+                    elm.setStrElementID(newEntry.getPhysicalDataElementName());
+                    dedElements.add(elm);
+                    _DDEntityRealm.add(newEntry);
+                    bResult = true;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return bResult;
     }
 }
