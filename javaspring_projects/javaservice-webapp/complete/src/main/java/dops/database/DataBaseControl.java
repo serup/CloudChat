@@ -15,8 +15,6 @@ import java.util.ArrayList;
  */
 public class DataBaseControl {
 
-    String relative_DATADICTIONARY_ENTITIES_PLACE;
-
     public class DDEntityEntry
     {
         public String getDDGuid() {
@@ -155,8 +153,6 @@ public class DataBaseControl {
 
     public DataBaseControl()
     {
-        // DEFINES
-        relative_DATADICTIONARY_ENTITIES_PLACE = "/DataDictionary/Entities/";
     }
 
     public EntityRealm readDDEntityRealm(File file, String EntityName) {
@@ -248,11 +244,41 @@ public class DataBaseControl {
         DEDElements _DEDElements = new DEDElements();
 
         // NB! DataDictionary is embedded as resource files
+/*
         String uppercaseEntityName = "DD_" + EntityName.toUpperCase()  + ".xml";  // example: DD_CUSTOMER.xml
         File file  = new File(this.getClass().getClassLoader().getResource(uppercaseEntityName).getFile());
-        if(file.exists())
+        if(file.exists()) {
             bResult = readDDEntityRealm(file, EntityName, _DEDElements);
+            if(bResult == false)
+            {
+                System.out.println("[ftgt] ERROR : reading file failed : Entity name : " + EntityName + " filename: " + EntityFileName);
+            }
+            else {
+                // now read the actual entity file and make sure it follows current datadictionary configuration
+                //bResult = ReadEntityFile(EntityName,EntityFileName,record_value);
+            //}
+*/
 
+        // now read the actual entity file and make sure it follows current datadictionary configuration
+        bResult = ReadEntityFile(EntityName,EntityFileName,record_value);
+
+        /// now fetch ALL elements with their attribute values  -- all incl. TOAST attributes
+        /// this means that now we should fetch all attributes from the TOAST entity file
+
+        return bResult;
+    }
+
+    public boolean ReadEntityFile(String EntityName, String EntityFileName, DEDElements dedElements)
+    {
+        boolean bResult=false;
+
+        // NB! DataDictionary is embedded as resource files
+        String uppercaseEntityName = "DD_" + EntityName.toUpperCase()  + ".xml";  // example: DD_CUSTOMER.xml
+        File file  = new File(this.getClass().getClassLoader().getResource(uppercaseEntityName).getFile());
+        if(file.exists()) {
+            bResult = readDDEntityRealm(file, EntityName, dedElements);
+
+        }
         return bResult;
     }
 }
