@@ -8,6 +8,8 @@ import org.junit.Test;
 import java.io.File;
 import java.util.Iterator;
 
+import static junit.framework.TestCase.assertEquals;
+
 /**
  * Created by serup on 13-04-16.
  */
@@ -72,6 +74,7 @@ public class DataBaseControlTest {
 
         DataBaseControl.DEDElements dedElements = this.dbctrl.createDEDElements();
         boolean bResult = this.dbctrl.readDDEntityRealm(file, "Customer", dedElements);
+        assertEquals(true, bResult);
         for (DataBaseControl.Elements e: dedElements) {
             System.out.println(e.getStrElementID());
         }
