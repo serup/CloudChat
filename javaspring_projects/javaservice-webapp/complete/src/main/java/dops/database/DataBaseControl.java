@@ -303,6 +303,41 @@ public class DataBaseControl {
         return bResult;
     }
 
+    /**
+     * -- pronounsed FetchGet
+     * it fetches one record from a specific realm in the database
+     * the database consists of flat files and each file has an internal structure descriped in DataDictionary .xml files
+     * the main structure of a file looks like this:
+     *
+     *  <?xml version="1.0" encoding="utf-8"?>
+     *  <Entity>
+     *   <version>1</version>
+     *   <EntityRecord>
+     *     <TransGUID></TransGUID> -- each record has a unique transaction id to be used with security, when detecting inconsistencies
+     *     <Protocol>DED</Protocol>
+     *     <ProtocolVersion>1.0.0.0</ProtocolVersion>
+     *     <DataSize></DataSize>
+     *     <Data></Data> -- here is the pCompressedData from above protocol encoding, compression, encrypting algoritm -- currently DED (dataencoderdecoder)
+     *     <DataMD5><DataMD5> -- this md5 checksum is used as an extra verification -- Data must be verified with this value before being used.
+     *   </EntityRecord>
+     *   ...
+     *  </Entity>
+     *
+     * Inside the Data field lies yet another structure based on the <Protocol>DED</Protocol>
+     * <record>
+     *     <chunk_id></chunk_id>
+     *     <aiid></aiid>
+     *     <chunk_seq></chunk_seq>
+     *     <chunk_data></chunk_data>
+     * </record>
+     *
+     * its a TOAST - The Oversized Attribute Storage Technique
+     *
+     * @param realm_name
+     * @param index_name
+     * @param record_value
+     * @return true/false
+     */
     public boolean ftgt(String realm_name, String index_name, DEDElements record_value )
     {
         boolean bResult = false;
@@ -310,28 +345,12 @@ public class DataBaseControl {
         String EntityFileName   = index_name;
         DEDElements _DEDElements = new DEDElements();
 
-        // NB! DataDictionary is embedded as resource files
-/*
-        String uppercaseEntityName = "DD_" + EntityName.toUpperCase()  + ".xml";  // example: DD_CUSTOMER.xml
-        File file  = new File(this.getClass().getClassLoader().getResource(uppercaseEntityName).getFile());
-        if(file.exists()) {
-            bResult = readDDEntityRealm(file, EntityName, _DEDElements);
-            if(bResult == false)
-            {
-                System.out.println("[ftgt] ERROR : reading file failed : Entity name : " + EntityName + " filename: " + EntityFileName);
-            }
-            else {
-                // now read the actual entity file and make sure it follows current datadictionary configuration
-                //bResult = ReadEntityFile(EntityName,EntityFileName,record_value);
-            //}
-*/
-
         // now read the actual entity file and make sure it follows current datadictionary configuration
         bResult = ReadEntityFile(EntityName,EntityFileName,record_value);
 
         /// now fetch ALL elements with their attribute values  -- all incl. TOAST attributes
         /// this means that now we should fetch all attributes from the TOAST entity file
-
+//TODO: - here
         return bResult;
     }
 
