@@ -143,8 +143,73 @@ public class DataBaseControl {
         ArrayList<?> ElementData;
     }
 
+    public class DatabaseEntityRecordEntry
+    {
+
+        public String getTransGUID() {
+            return TransGUID;
+        }
+
+        public void setTransGUID(String transGUID) {
+            TransGUID = transGUID;
+        }
+
+        public String getProtocol() {
+            return Protocol;
+        }
+
+        public void setProtocol(String protocol) {
+            Protocol = protocol;
+        }
+
+        public String getProtocolVersion() {
+            return ProtocolVersion;
+        }
+
+        public void setProtocolVersion(String protocolVersion) {
+            ProtocolVersion = protocolVersion;
+        }
+
+        public int getDataSize() {
+            return DataSize;
+        }
+
+        public void setDataSize(int dataSize) {
+            DataSize = dataSize;
+        }
+
+        public String getData() {
+            return Data;
+        }
+
+        public void setData(String data) {
+            Data = data;
+        }
+
+        public String getDataMD5() {
+            return DataMD5;
+        }
+
+        public void setDataMD5(String dataMD5) {
+            DataMD5 = dataMD5;
+        }
+
+        String TransGUID;
+        String Protocol;
+        String ProtocolVersion;
+        int    DataSize;
+        String Data;
+        String DataMD5;
+    }
+
     public class EntityRealm extends ArrayList<DDEntityEntry> { }
     public class DEDElements extends ArrayList<Elements> { }
+    public class DatabaseEntityRecord extends ArrayList<DatabaseEntityRecordEntry> { }
+
+    public DatabaseEntityRecord createEntityRecord()
+    {
+        return new DatabaseEntityRecord();
+    }
 
     public DEDElements createDEDElements()
     {
@@ -268,15 +333,83 @@ public class DataBaseControl {
         return bResult;
     }
 
+
+    public boolean ReadXmlFile(File file, DatabaseEntityRecord records, String EntityName) {
+        boolean bResult = false;
+
+        String Child = EntityName;
+        String ChildRecord = EntityName + "Record";
+
+        File fXmlFile = file;
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder dBuilder;
+        Document doc = null;
+        try {
+            dBuilder = dbFactory.newDocumentBuilder();
+            doc = dBuilder.parse(fXmlFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        doc.getDocumentElement().normalize();
+        String nodeName = doc.getDocumentElement().getNodeName();
+        String expectedEntity = Child;
+        if (!expectedEntity.contentEquals(nodeName))
+            return false; // Error This is NOT the correct file
+
+        NodeList nList = doc.getElementsByTagName(Child);
+        for (int temp = 0; temp < nList.getLength(); temp++) {
+            Node nNode = nList.item(temp);
+            if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+                Element eElement = (Element) nNode;
+                DatabaseEntityRecordEntry record = new DatabaseEntityRecordEntry();
+                record.setTransGUID(eElement.getElementsByTagName("TransGUID").item(0).getTextContent());
+                record.setProtocol(eElement.getElementsByTagName("Protocol").item(0).getTextContent());
+                record.setProtocolVersion(eElement.getElementsByTagName("ProtocolVersion").item(0).getTextContent());
+                record.setDataSize(Integer.parseInt(eElement.getElementsByTagName("DataSize").item(0).getTextContent()));
+                record.setData(eElement.getElementsByTagName("Data").item(0).getTextContent());
+                record.setDataMD5(eElement.getElementsByTagName("DataMD5").item(0).getTextContent());
+                records.add(record);
+                bResult=true;
+            }
+        }
+
+        return bResult;
+    }
+
     public boolean ReadEntityFile(String EntityName, String EntityFileName, DEDElements dedElements)
     {
         boolean bResult=false;
 
+        String FilePath = EntityFileName;
+
         // NB! DataDictionary is embedded as resource files
         String uppercaseEntityName = "DD_" + EntityName.toUpperCase()  + ".xml";  // example: DD_CUSTOMER.xml
-        File file  = new File(this.getClass().getClassLoader().getResource(uppercaseEntityName).getFile());
-        if(file.exists()) {
-            bResult = readDDEntityRealm(file, EntityName, dedElements);
+        File dataDictionaryFile  = new File(this.getClass().getClassLoader().getResource(uppercaseEntityName).getFile());
+        if(dataDictionaryFile.exists()) {
+            bResult = readDDEntityRealm(dataDictionaryFile, EntityName, dedElements);
+            if(!bResult) {
+                System.out.println("[ReadEntityFile] ERROR : DataDictionary File can not be read - please check access rights : " + uppercaseEntityName);
+                return bResult;
+            }
+            // Read data from file
+            DatabaseEntityRecord EntityRecordResult = new DatabaseEntityRecord();
+            {
+                File databaseFile = new File(FilePath);
+                if (!databaseFile.exists()) {
+                    System.out.println("[ReadEntityFile] File NOT found : " + FilePath);
+                    bResult = false;
+                }
+                else
+                    bResult = ReadXmlFile(databaseFile, EntityRecordResult, EntityName);
+
+            }
+            if(!bResult)
+                return bResult;
+
+            bResult=false;
+            // now traverse record
+            //TODO: FOREACH
 
         }
         return bResult;
