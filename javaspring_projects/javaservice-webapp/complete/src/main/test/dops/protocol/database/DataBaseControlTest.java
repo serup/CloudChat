@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.util.Iterator;
 
 import static junit.framework.TestCase.assertEquals;
@@ -91,6 +92,30 @@ public class DataBaseControlTest {
         assertEquals(true, bResult);
         for (DataBaseControl.DatabaseEntityRecordEntry e: record) {
             System.out.println(e.getDataMD5());
+        }
+    }
+
+    @Test
+    public void testReadEntitiyFile() throws Exception {
+        // This is a dummy database file - it is following protocol as DataDictionary is stating in its DataDictionary/Entities/DD_TOAST.xml file
+        String fileResource = "DataDictionary/Database/ENTITIEs/355760fb6afaf9c41d17ac5b9397fd45.xml"; // This is a profile database file
+        String EntityFileName = "/tmp/355760fb6afaf9c41d17ac5b9397fd45.xml"; // This is the extracted file on local
+        String EntityName       = "Profile"; // since this file is a customer profile database file, its entity name is 'Profile' -- DD_PROFILE.xml MUST reside in DataDictionary/Entities
+
+        // 1. extract resource dummy file to local filesystem
+        File resourceFile       = new File(this.getClass().getClassLoader().getResource(fileResource).getFile());
+        File destinationFile    = new File(EntityFileName);
+        Files.deleteIfExists(destinationFile.toPath());
+        Files.copy(resourceFile.toPath(), destinationFile.toPath());
+
+        // 2. use it as input to method to be tested
+        DataBaseControl.DEDElements record_value = this.dbctrl.createDEDElements(); // Placeholder for retrieved DataEncoderDecoder elements
+        boolean bResult =  this.dbctrl.ReadEntityFile(EntityName,EntityFileName,record_value);
+
+        // 3. validate result
+        assertEquals(true, bResult);
+        for (DataBaseControl.Elements e: record_value) {
+            System.out.println(e.getStrElementID());
         }
     }
 }
