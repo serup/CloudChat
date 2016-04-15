@@ -1,10 +1,12 @@
 package dops.database;
 
+import dops.protocol.ded.DEDDecoder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import javax.xml.bind.DatatypeConverter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
@@ -131,16 +133,16 @@ public class DataBaseControl {
             this.strElementID = strElementID;
         }
 
-        public ArrayList<?> getElementData() {
+        public byte[] getElementData() {
             return ElementData;
         }
 
-        public void setElementData(ArrayList<?> elementData) {
+        public void setElementData(byte[] elementData) {
             ElementData = elementData;
         }
 
         String strElementID;
-        ArrayList<?> ElementData;
+        byte[] ElementData;
     }
 
     public class DatabaseEntityRecordEntry
@@ -384,7 +386,7 @@ public class DataBaseControl {
         String FilePath = EntityFileName;
 
         // NB! DataDictionary is embedded as resource files
-        String uppercaseEntityName = "DD_" + EntityName.toUpperCase()  + ".xml";  // example: DD_CUSTOMER.xml
+        String uppercaseEntityName = "DataDictionary/Entities/DD_" + EntityName.toUpperCase()  + ".xml";  // example: DataDictionary/DD_CUSTOMER.xml
         File dataDictionaryFile  = new File(this.getClass().getClassLoader().getResource(uppercaseEntityName).getFile());
         if(dataDictionaryFile.exists()) {
             bResult = readDDEntityRealm(dataDictionaryFile, EntityName, dedElements);
@@ -407,10 +409,37 @@ public class DataBaseControl {
             if(!bResult)
                 return bResult;
 
-            bResult=false;
+            bResult=true;
             // now traverse record
-            //TODO: FOREACH
+            for (DatabaseEntityRecordEntry f: EntityRecordResult) {
+                // take the hex converted data and unhex it before DED will decode it
+                byte[] data_in_unhexed_buf = DatatypeConverter.parseHexBinary(f.getData());
 
+                // fetch the data area and unpack it with DED to check it
+                DEDDecoder DED = new DEDDecoder();
+                DED.PUT_DATA_IN_DECODER( data_in_unhexed_buf, data_in_unhexed_buf.length ); // data should be decompressed using LZSS algorithm
+                if( DED.GET_STRUCT_START( "record" )==1 ) {
+                    int n=0;
+                    for (Elements e: dedElements) {
+                        String tmp = ""; // clear
+                        if((tmp = DED.GET_STDSTRING(e.getStrElementID())) != "")
+                        {
+                            // put attribute values from entity file into DEDElements
+                            Elements elm = dedElements.get(n);
+                            elm.setElementData(tmp.getBytes());
+                            dedElements.set(n,elm);
+                            n++;
+                        }
+                        else
+                        {
+                            System.out.println("[ReadEntityFile] WARNING : DECODING ERROR: elementID : " + e.getStrElementID());
+                            bResult=false;
+                            break;
+                        }
+                    }
+                }
+
+            }
         }
         return bResult;
     }
