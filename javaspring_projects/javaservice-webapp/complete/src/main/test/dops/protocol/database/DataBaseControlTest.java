@@ -126,9 +126,13 @@ public class DataBaseControlTest {
         String EntityFileName = "/tmp/355760fb6afaf9c41d17ac5b9397fd45.xml"; // This is the extracted file on local
         String EntityName       = "Profile"; // since this file is a customer profile database file, its entity name is 'Profile' -- DD_PROFILE.xml MUST reside in DataDictionary/Entities
 
-        // 1. extract resource dummy file to local filesystem
+        // 1. extract resource dummy file(s) to local filesystem
         File resourceFile       = new File(this.getClass().getClassLoader().getResource(fileResource).getFile());
         File destinationFile    = new File(EntityFileName);
+        Files.deleteIfExists(destinationFile.toPath());
+        Files.copy(resourceFile.toPath(), destinationFile.toPath());
+        resourceFile            = new File(this.getClass().getClassLoader().getResource("DataDictionary/Database/TOASTs/355760fb6afaf9c41d17ac5b9397fd45_toast.xml").getFile());
+        destinationFile         = new File("/tmp/355760fb6afaf9c41d17ac5b9397fd45_toast.xml");
         Files.deleteIfExists(destinationFile.toPath());
         Files.copy(resourceFile.toPath(), destinationFile.toPath());
 

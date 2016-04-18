@@ -329,6 +329,15 @@ public class DataBaseControl {
         return bResult;
     }
 
+    public boolean ReadTOASTXmlFile(File file, DEDElements records_elements, String EntityName)
+    {
+        boolean bResult=false;
+
+        //TODO: here --
+
+        return bResult;
+    }
+
     /**
      * -- pronounsed FetchGet
      * it fetches one record from a specific realm in the database
@@ -412,9 +421,13 @@ public class DataBaseControl {
                 // now open its toast file and put all attributes and values on record_value
                 File ToastFile  = new File(TOASTFilePath);
                 if(ToastFile.exists()) {
-
-//TODO: - here
-
+                    bResult = ReadTOASTXmlFile(ToastFile, record_value, EntityName);
+                    if(bResult==false)
+                    {
+                        System.out.println("[ftgt] ERROR : File can not be read : file name : " + TOASTFilePath );    /// no need to go further, something is wrong with the file
+                        return bResult;
+                    }
+                    // now all elements from Entity should have been read, including the ones in TOAST (they have also been merged, so no chunks exists)
                 }
                 else
                 {
