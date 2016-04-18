@@ -11,6 +11,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -329,17 +331,8 @@ public class DataBaseControl {
         return bResult;
     }
 
-    public boolean ReadTOASTXmlFile(File file, DEDElements records_elements, String EntityName)
-    {
-        boolean bResult=false;
-
-        //TODO: here --
-
-        return bResult;
-    }
-
     /**
-     * -- pronounsed FetchGet
+     * -- pronounced FetchGet
      * it fetches one record from a specific realm in the database
      * the database consists of flat files and each file has an internal structure descriped in DataDictionary .xml files
      * the main structure of a file looks like this:
@@ -480,6 +473,80 @@ public class DataBaseControl {
                 bResult=true;
             }
         }
+
+        return bResult;
+    }
+
+    public String CalculateMD5CheckSum(byte[] bytes)
+    {
+        MessageDigest md = null;
+        String md5 = "";
+        try {
+            md = MessageDigest.getInstance("MD5");
+            md.update(bytes);
+            byte[] mdbytes = md.digest();
+            //convert the byte to hex format
+            StringBuffer sb = new StringBuffer("");
+            for (int i = 0; i < mdbytes.length; i++) {
+                sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
+            }
+            md5 = sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return md5;
+    }
+
+    public boolean ReadTOASTXmlFile(File file, DEDElements records_elements, String EntityName)
+    {
+        boolean bResult=false;
+
+        String Child = EntityName;
+        String ChildRecord = EntityName + "Record";
+
+        File fXmlFile = file;
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder dBuilder;
+        Document doc = null;
+        try {
+            dBuilder = dbFactory.newDocumentBuilder();
+            doc = dBuilder.parse(fXmlFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        doc.getDocumentElement().normalize();
+        String nodeName = doc.getDocumentElement().getNodeName();
+        String expectedEntity = Child;
+        if (!expectedEntity.contentEquals(nodeName))
+            return false; // Error This is NOT the correct file
+
+        NodeList nList = doc.getElementsByTagName(Child);
+        for (int temp = 0; temp < nList.getLength(); temp++) {
+            Node nNode = nList.item(temp);
+            if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+                Element eElement = (Element) nNode;
+                DatabaseEntityRecordEntry record = new DatabaseEntityRecordEntry();
+                record.setTransGUID(eElement.getElementsByTagName("TransGUID").item(0).getTextContent());
+                record.setProtocol(eElement.getElementsByTagName("Protocol").item(0).getTextContent());
+                record.setProtocolVersion(eElement.getElementsByTagName("ProtocolVersion").item(0).getTextContent());
+                record.setDataSize(Integer.parseInt(eElement.getElementsByTagName("DataSize").item(0).getTextContent()));
+                record.setData(eElement.getElementsByTagName("Data").item(0).getTextContent());
+                record.setDataMD5(eElement.getElementsByTagName("DataMD5").item(0).getTextContent());
+
+                String md5 = CalculateMD5CheckSum(record.getData().getBytes());
+                if (!md5.equalsIgnoreCase(record.getDataMD5()))
+                {
+                    System.out.println("ERROR: data area in file have changed without having the MD5 checksum changed -- Warning data could be compromised ; " + Child );
+                    return false;  // data area in file have changed without having the MD5 checksum changed -- Warning data could be compromised
+                }
+                //TODO: here --
+
+                bResult=true;
+            }
+        }
+
+
 
         return bResult;
     }
