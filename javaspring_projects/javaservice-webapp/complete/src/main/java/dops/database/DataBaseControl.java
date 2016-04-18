@@ -230,6 +230,23 @@ public class DataBaseControl {
         String DataMD5;
     }
 
+    public class EntityChunkDataInfo
+    {
+        String entity_chunk_id;
+        long aiid;
+        long entity_chunk_seq;
+        byte[] entity_chunk_data;
+
+        public EntityChunkDataInfo() {
+            aiid = -1;
+            entity_chunk_id = "";
+            entity_chunk_seq = -1;
+            entity_chunk_data = new byte[0];
+        }
+    }
+
+
+    public class EntityTOASTDEDRecord extends ArrayList<EntityChunkDataInfo> { };
     public class EntityRealm extends ArrayList<DDEntityEntry> { }
     public class DEDElements extends ArrayList<Elements> { }
     public class DatabaseEntityRecord extends ArrayList<DatabaseEntityRecordEntry> { }
@@ -540,6 +557,25 @@ public class DataBaseControl {
                     System.out.println("ERROR: data area in file have changed without having the MD5 checksum changed -- Warning data could be compromised ; " + Child );
                     return false;  // data area in file have changed without having the MD5 checksum changed -- Warning data could be compromised
                 }
+
+                byte[] data_in_unhexed_buf = DatatypeConverter.parseHexBinary(record.getData());
+
+                // According to what the protocol prescribes for DED entries in TOAST, then a loop of decode, according to specs, of entries is needed
+                // fetch the data area and unpack it with DED to check it
+                EntityChunkDataInfo chunk = new EntityChunkDataInfo();
+                DEDDecoder DED = new DEDDecoder();
+                DED.PUT_DATA_IN_DECODER(data_in_unhexed_buf,data_in_unhexed_buf.length);
+                String EntityChunkId    = (Child + "_chunk_id").toLowerCase(); // eg. profile_chunk_id
+                String EntityChunkSeq   = (Child + "_chunk_seq").toLowerCase(); // eg. profile_chunk_seq
+                String EntityChunkData  = (Child + "_chunk_data").toLowerCase(); // eg. profile_chunk_data
+                // decode data ...
+                DED.GET_STRUCT_START( "record" );
+                chunk.entity_chunk_id  = DED.GET_STDSTRING	( EntityChunkId ); // key of particular item
+                chunk.aiid              = DED.GET_ULONG   	( "aiid" ); // this number is continuesly increasing all thruout the entries in this table
+                chunk.entity_chunk_seq  = DED.GET_ULONG   	( EntityChunkSeq ); // sequence number of particular item
+                //DED.GET_STDVECTOR	( EntityChunkData, chunk.entity_chunk_data ); //
+                //DED.GET_STRUCT_END( "record" );
+
                 //TODO: here --
 
                 bResult=true;
