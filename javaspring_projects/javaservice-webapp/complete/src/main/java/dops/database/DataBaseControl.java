@@ -325,6 +325,7 @@ public class DataBaseControl {
      *
      * Inside the Data field lies yet another structure compressed with DED and described in DataDictionary under Entities following this file:
      * DD_<entity realm name>.xml  -- entity could fx. be 'Profile'
+     * This 'front' file is to be used for fast lookup - only fields of primary importance is in this file, the rest are put inside the TOAST
      *
      * inorder to handle dynamically adding more fields, and fields of oversize, then a TOAST structure is used
      * DD_<entity realm name>_TOAST.xml describes the 'toast - the Oversized Attribute Storage Technique' elements and the file
