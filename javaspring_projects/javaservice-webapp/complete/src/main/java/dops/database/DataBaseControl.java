@@ -10,12 +10,36 @@ import javax.xml.bind.DatatypeConverter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by serup on 13-04-16.
  */
 public class DataBaseControl {
+
+    String relativeENTITIES_DATABASE_PLACE;
+    String relativeENTITIES_DATABASE_TOAST_PLACE;
+
+    public String getRelativeENTITIES_DATABASE_PLACE() {
+        return relativeENTITIES_DATABASE_PLACE;
+    }
+
+    public void setRelativeENTITIES_DATABASE_PLACE(String relativeENTITIES_DATABASE_PLACE) {
+        this.relativeENTITIES_DATABASE_PLACE = relativeENTITIES_DATABASE_PLACE;
+    }
+
+
+    public String getRelativeENTITIES_DATABASE_TOAST_PLACE() {
+        return relativeENTITIES_DATABASE_TOAST_PLACE;
+    }
+
+    public void setRelativeENTITIES_DATABASE_TOAST_PLACE(String relativeENTITIES_DATABASE_TOAST_PLACE) {
+        this.relativeENTITIES_DATABASE_TOAST_PLACE = relativeENTITIES_DATABASE_TOAST_PLACE;
+    }
+
 
     public class DDEntityEntry
     {
@@ -220,6 +244,8 @@ public class DataBaseControl {
 
     public DataBaseControl()
     {
+        relativeENTITIES_DATABASE_PLACE         = "/DataDictionary/Database/ENTITIEs/";
+        relativeENTITIES_DATABASE_TOAST_PLACE   = "/DataDictionary/Database/TOASTs/";
     }
 
     public EntityRealm readDDEntityRealm(File file, String EntityName) {
@@ -342,7 +368,7 @@ public class DataBaseControl {
      *
      *
      * @param realm_name
-     * @param index_name
+     * @param index_name  -- translated internally to a filenamepath to the index file
      * @param record_value
      * @return true/false
      */
@@ -350,7 +376,7 @@ public class DataBaseControl {
     {
         boolean bResult = false;
         String EntityName       = realm_name;
-        String EntityFileName   = index_name;
+        String EntityFileName   = relativeENTITIES_DATABASE_PLACE + index_name + ".xml";
         DEDElements _DEDElements = new DEDElements();
 
         // now read the actual entity file and make sure it follows current datadictionary configuration
@@ -358,7 +384,46 @@ public class DataBaseControl {
 
         /// now fetch ALL elements with their attribute values  -- all incl. TOAST attributes
         /// this means that now we should fetch all attributes from the TOAST entity file
+        if(bResult==false)
+        {
+            System.out.println("[ftgt] ERROR : reading file failed : Entity name : " + EntityName + " filename: " + EntityFileName );    /// no need to go further, something is wrong with the file
+            return bResult;
+        }
+        else {//TODO: Consider putting below fetch from TOAST into ReadEntityFile, since toast is a part of an entity it should reside there
+            bResult = false;
+            /// now fetch ALL elements with their attribute values  -- all incl. TOAST attributes
+            /// this means that now we should fetch all attributes from the TOAST entity file
+            String ChunkID = (EntityName + "_chunk_id").toLowerCase();
+            String ChunkIdValue = "";
+            /// function finding the element in entity file
+            //bResult = find_element_value(record_value, ChunkID, ChunkIdValue);
+            List<Elements> resultElement = record_value.stream()
+                    .filter((p)-> p.getStrElementID().equals((ChunkID)))
+                    .collect(Collectors.toList());
+            if(resultElement.size()>0)
+            {
+                byte[] bytes = resultElement.get(0).getElementData();
+                try {
+                    ChunkIdValue = new String(bytes, "UTF-8"); // for UTF-8 encoding
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                String TOASTFilePath =  relativeENTITIES_DATABASE_TOAST_PLACE + ChunkIdValue + ".xml";
+                // now open its toast file and put all attributes and values on record_value
+                File ToastFile  = new File(TOASTFilePath);
+                if(ToastFile.exists()) {
+
 //TODO: - here
+
+                }
+                else
+                {
+                    // warning there could not be found a TOAST file, this is not necessary an error, however strange
+                    System.out.println("[ftgt] WARNING: there could not be found a TOAST file, this is not necessary an error, however strange : " + TOASTFilePath );
+                    bResult=true;
+                }
+            }
+        }
         return bResult;
     }
 
