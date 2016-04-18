@@ -323,7 +323,15 @@ public class DataBaseControl {
      *   ...
      *  </Entity>
      *
-     * Inside the Data field lies yet another structure based on the <Protocol>DED</Protocol>
+     * Inside the Data field lies yet another structure compressed with DED and described in DataDictionary under Entities following this file:
+     * DD_<entity realm name>.xml  -- entity could fx. be 'Profile'
+     *
+     * inorder to handle dynamically adding more fields, and fields of oversize, then a TOAST structure is used
+     * DD_<entity realm name>_TOAST.xml describes the 'toast - the Oversized Attribute Storage Technique' elements and the file
+     * DD_<entity realm name>_TOAST_ATTRIBUTES.xml
+     * describes the fields inside the toast
+     *
+     * The toast structure follows this format:
      * <record>
      *     <chunk_id></chunk_id>
      *     <aiid></aiid>
@@ -331,7 +339,6 @@ public class DataBaseControl {
      *     <chunk_data></chunk_data>
      * </record>
      *
-     * its a TOAST - The Oversized Attribute Storage Technique
      *
      * @param realm_name
      * @param index_name
