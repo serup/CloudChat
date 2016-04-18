@@ -72,10 +72,13 @@ public class DEDDecoder {
 		public long bytesToLong(byte[] bytes) {
 			ByteBuffer buffer = ByteBuffer.wrap(bytes);
 			buffer.order(ByteOrder.LITTLE_ENDIAN);  // coming from server which, when running on linux, is a Little Endian architecture
+			//buffer.order(ByteOrder.BIG_ENDIAN);
+			long v = buffer.getLong();
+			/*
 			long v=0;
 			while( buffer.hasRemaining()){
 				v = buffer.getLong();
-			}
+			} */
 			return v;
 		}
 
@@ -462,9 +465,27 @@ public class DEDDecoder {
 		return result;
 	}
 
-	public int GET_LONG(String name, long value)
+	public long GET_ULONG(String name)
 	{
-		int result = -1;
+		long result = -1;
+		if(this.decoder_ptr==null) return -1;
+		if(!name.isEmpty()) {
+			param DEDobject = new param();
+			DEDobject.name = name;
+			DEDobject.ElementType = DED_ELEMENT_TYPE_ULONG;
+			DEDobject.value = null;
+			DEDobject.length = 0;
+			int found = decoder_ptr._GetElement(DEDobject);
+			if (found == 1) {
+				result = byteUtils.bytesToLong(DEDobject.value);
+			}
+		}
+		return result;
+	}
+
+	public long GET_LONG(String name)
+	{
+		long result = -1;
 		if(this.decoder_ptr==null) return -1;
 		if(!name.isEmpty()) {
 			param DEDobject = new param();
@@ -474,8 +495,7 @@ public class DEDDecoder {
 			DEDobject.length = 0;
 			int found = decoder_ptr._GetElement(DEDobject);
 			if (found == 1) {
-				value = byteUtils.bytesToLong(DEDobject.value);
-				result = 1;
+				result = byteUtils.bytesToLong(DEDobject.value);
 			}
 		}
 		return result;
@@ -633,7 +653,14 @@ public class DEDDecoder {
 								}
 								else
 								{
-									DEDobject.value = param.data;
+									if (ElementType == DED_ELEMENT_TYPE_ULONG || ElementType == DED_ELEMENT_TYPE_LONG)
+									{
+										byte[] dest = new byte[8];
+										System.arraycopy(param.data,0,dest, 0,param.data.length);
+										DEDobject.value = dest;
+									}
+									else
+										DEDobject.value = param.data;
 								}
 								result = 1;
 							}
