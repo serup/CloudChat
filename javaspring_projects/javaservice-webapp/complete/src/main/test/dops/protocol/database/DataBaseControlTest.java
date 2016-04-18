@@ -118,4 +118,30 @@ public class DataBaseControlTest {
             System.out.println(e.getStrElementID());
         }
     }
+
+    @Test
+    public void testFtgt() throws Exception {
+        // This is a dummy database file - it is following protocol as DataDictionary is stating in its DataDictionary/Entities/DD_TOAST.xml file
+        String fileResource = "DataDictionary/Database/ENTITIEs/355760fb6afaf9c41d17ac5b9397fd45.xml"; // This is a profile database file
+        String EntityFileName = "/tmp/355760fb6afaf9c41d17ac5b9397fd45.xml"; // This is the extracted file on local
+        String EntityName       = "Profile"; // since this file is a customer profile database file, its entity name is 'Profile' -- DD_PROFILE.xml MUST reside in DataDictionary/Entities
+
+        // 1. extract resource dummy file to local filesystem
+        File resourceFile       = new File(this.getClass().getClassLoader().getResource(fileResource).getFile());
+        File destinationFile    = new File(EntityFileName);
+        Files.deleteIfExists(destinationFile.toPath());
+        Files.copy(resourceFile.toPath(), destinationFile.toPath());
+
+        // 2. use it as input to method to be tested
+        String indexName = "355760fb6afaf9c41d17ac5b9397fd45"; // The id of the profile
+        DataBaseControl.DEDElements record_value = this.dbctrl.createDEDElements(); // Placeholder for retrieved DataEncoderDecoder elements
+        this.dbctrl.setRelativeENTITIES_DATABASE_PLACE("/tmp/");  // reset default value to work with test
+        this.dbctrl.setRelativeENTITIES_DATABASE_TOAST_PLACE("/tmp/"); // reset default value to work with test
+        boolean bResult =  this.dbctrl.ftgt(EntityName,indexName,record_value); // Fetch and Get the profile with indexName
+
+
+        // 3. validate result
+        assertEquals(true, bResult);
+
+    }
 }
