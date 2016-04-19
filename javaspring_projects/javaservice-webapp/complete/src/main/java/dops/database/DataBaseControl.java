@@ -606,9 +606,9 @@ public class DataBaseControl {
                 chunk.entity_chunk_data = DED.GET_STDVECTOR	( EntityChunkData ); //
                 DED.GET_STRUCT_END( "record" );
 
-                if(PrevChunkId=="nothing" || PrevChunkId != chunk.entity_chunk_id)
+                if(PrevChunkId.contentEquals("nothing") || !PrevChunkId.contentEquals(chunk.entity_chunk_id))
                 {
-                    if(PrevChunkId!="nothing" && PrevChunkId != chunk.entity_chunk_id)
+                    if(!PrevChunkId.contentEquals("nothing") && !PrevChunkId.contentEquals(chunk.entity_chunk_id))
                     {
                         records_elements.add(Element);
                         Element = new Elements();
