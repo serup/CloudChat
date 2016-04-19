@@ -10,12 +10,38 @@ import javax.xml.bind.DatatypeConverter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by serup on 13-04-16.
  */
 public class DataBaseControl {
+
+    String relativeENTITIES_DATABASE_PLACE;
+    String relativeENTITIES_DATABASE_TOAST_PLACE;
+
+    public String getRelativeENTITIES_DATABASE_PLACE() {
+        return relativeENTITIES_DATABASE_PLACE;
+    }
+
+    public void setRelativeENTITIES_DATABASE_PLACE(String relativeENTITIES_DATABASE_PLACE) {
+        this.relativeENTITIES_DATABASE_PLACE = relativeENTITIES_DATABASE_PLACE;
+    }
+
+
+    public String getRelativeENTITIES_DATABASE_TOAST_PLACE() {
+        return relativeENTITIES_DATABASE_TOAST_PLACE;
+    }
+
+    public void setRelativeENTITIES_DATABASE_TOAST_PLACE(String relativeENTITIES_DATABASE_TOAST_PLACE) {
+        this.relativeENTITIES_DATABASE_TOAST_PLACE = relativeENTITIES_DATABASE_TOAST_PLACE;
+    }
+
 
     public class DDEntityEntry
     {
@@ -204,6 +230,23 @@ public class DataBaseControl {
         String DataMD5;
     }
 
+    public class EntityChunkDataInfo
+    {
+        String entity_chunk_id;
+        long aiid;
+        long entity_chunk_seq;
+        byte[] entity_chunk_data;
+
+        public EntityChunkDataInfo() {
+            aiid = -1;
+            entity_chunk_id = "";
+            entity_chunk_seq = -1;
+            entity_chunk_data = new byte[0];
+        }
+    }
+
+
+    public class EntityTOASTDEDRecord extends ArrayList<EntityChunkDataInfo> { };
     public class EntityRealm extends ArrayList<DDEntityEntry> { }
     public class DEDElements extends ArrayList<Elements> { }
     public class DatabaseEntityRecord extends ArrayList<DatabaseEntityRecordEntry> { }
@@ -220,6 +263,8 @@ public class DataBaseControl {
 
     public DataBaseControl()
     {
+        relativeENTITIES_DATABASE_PLACE         = "/DataDictionary/Database/ENTITIEs/";
+        relativeENTITIES_DATABASE_TOAST_PLACE   = "/DataDictionary/Database/TOASTs/";
     }
 
     public EntityRealm readDDEntityRealm(File file, String EntityName) {
@@ -304,7 +349,7 @@ public class DataBaseControl {
     }
 
     /**
-     * -- pronounsed FetchGet
+     * -- pronounced FetchGet
      * it fetches one record from a specific realm in the database
      * the database consists of flat files and each file has an internal structure descriped in DataDictionary .xml files
      * the main structure of a file looks like this:
@@ -323,7 +368,16 @@ public class DataBaseControl {
      *   ...
      *  </Entity>
      *
-     * Inside the Data field lies yet another structure based on the <Protocol>DED</Protocol>
+     * Inside the Data field lies yet another structure compressed with DED and described in DataDictionary under Entities following this file:
+     * DD_<entity realm name>.xml  -- entity could fx. be 'Profile'
+     * This 'front' file is to be used for fast lookup - only fields of primary importance is in this file, the rest are put inside the TOAST
+     *
+     * inorder to handle dynamically adding more fields, and fields of oversize, then a TOAST structure is used
+     * DD_<entity realm name>_TOAST.xml describes the 'toast - the Oversized Attribute Storage Technique' elements and the file
+     * DD_<entity realm name>_TOAST_ATTRIBUTES.xml
+     * describes the fields inside the toast
+     *
+     * The toast structure follows this format:
      * <record>
      *     <chunk_id></chunk_id>
      *     <aiid></aiid>
@@ -331,10 +385,9 @@ public class DataBaseControl {
      *     <chunk_data></chunk_data>
      * </record>
      *
-     * its a TOAST - The Oversized Attribute Storage Technique
      *
      * @param realm_name
-     * @param index_name
+     * @param index_name  -- translated internally to a filenamepath to the index file
      * @param record_value
      * @return true/false
      */
@@ -342,7 +395,7 @@ public class DataBaseControl {
     {
         boolean bResult = false;
         String EntityName       = realm_name;
-        String EntityFileName   = index_name;
+        String EntityFileName   = relativeENTITIES_DATABASE_PLACE + index_name + ".xml";
         DEDElements _DEDElements = new DEDElements();
 
         // now read the actual entity file and make sure it follows current datadictionary configuration
@@ -350,7 +403,50 @@ public class DataBaseControl {
 
         /// now fetch ALL elements with their attribute values  -- all incl. TOAST attributes
         /// this means that now we should fetch all attributes from the TOAST entity file
-//TODO: - here
+        if(bResult==false)
+        {
+            System.out.println("[ftgt] ERROR : reading file failed : Entity name : " + EntityName + " filename: " + EntityFileName );    /// no need to go further, something is wrong with the file
+            return bResult;
+        }
+        else {//TODO: Consider putting below fetch from TOAST into ReadEntityFile, since toast is a part of an entity it should reside there
+            bResult = false;
+            /// now fetch ALL elements with their attribute values  -- all incl. TOAST attributes
+            /// this means that now we should fetch all attributes from the TOAST entity file
+            String ChunkID = (EntityName + "_chunk_id").toLowerCase();
+            String ChunkIdValue = "";
+            /// function finding the element in entity file
+            //bResult = find_element_value(record_value, ChunkID, ChunkIdValue);
+            List<Elements> resultElement = record_value.stream()
+                    .filter((p)-> p.getStrElementID().equals((ChunkID)))
+                    .collect(Collectors.toList());
+            if(resultElement.size()>0)
+            {
+                byte[] bytes = resultElement.get(0).getElementData();
+                try {
+                    ChunkIdValue = new String(bytes, "UTF-8"); // for UTF-8 encoding
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                String TOASTFilePath =  relativeENTITIES_DATABASE_TOAST_PLACE + ChunkIdValue + ".xml";
+                // now open its toast file and put all attributes and values on record_value
+                File ToastFile  = new File(TOASTFilePath);
+                if(ToastFile.exists()) {
+                    bResult = ReadTOASTXmlFile(ToastFile, record_value, EntityName);
+                    if(bResult==false)
+                    {
+                        System.out.println("[ftgt] ERROR : File can not be read : file name : " + TOASTFilePath );    /// no need to go further, something is wrong with the file
+                        return bResult;
+                    }
+                    // now all elements from Entity should have been read, including the ones in TOAST (they have also been merged, so no chunks exists)
+                }
+                else
+                {
+                    // warning there could not be found a TOAST file, this is not necessary an error, however strange
+                    System.out.println("[ftgt] WARNING: there could not be found a TOAST file, this is not necessary an error, however strange : " + TOASTFilePath );
+                    bResult=true;
+                }
+            }
+        }
         return bResult;
     }
 
@@ -393,6 +489,151 @@ public class DataBaseControl {
                 records.add(record);
                 bResult=true;
             }
+        }
+
+        return bResult;
+    }
+
+    public String CalculateMD5CheckSum(byte[] bytes)
+    {
+        MessageDigest md = null;
+        String md5 = "";
+        try {
+            md = MessageDigest.getInstance("MD5");
+            md.update(bytes);
+            byte[] mdbytes = md.digest();
+            //convert the byte to hex format
+            StringBuffer sb = new StringBuffer("");
+            for (int i = 0; i < mdbytes.length; i++) {
+                sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
+            }
+            md5 = sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return md5;
+    }
+
+    /**
+     *
+     * Will append IncommingData to a new enlarged CurrentBuffer
+     *
+     * @param IncommingData
+     * @param CurrentBuffer
+     * @return new buffer with old and appended data
+     */
+    private byte[] back_inserter(byte[] IncommingData, byte[] CurrentBuffer)
+    {
+        if(CurrentBuffer == null)
+            CurrentBuffer = new byte[0]; // assign an empty buffer
+        if(IncommingData == null)
+            return CurrentBuffer;  // no data to append, hence return CurrentBuffer
+        int CurrentBufferSize = CurrentBuffer.length;
+        int IncomingDataSize = IncommingData.length;
+        int AppendPosition    = CurrentBufferSize;
+        int NewBufferSize     = CurrentBufferSize + IncomingDataSize;
+        byte[] NewBuffer      = new byte[NewBufferSize];
+
+        System.arraycopy(CurrentBuffer,0,NewBuffer,0,CurrentBufferSize); // First move previous data to new larger space
+        System.arraycopy(IncommingData,0,NewBuffer,AppendPosition,IncomingDataSize); // Second append new data
+
+        return NewBuffer;
+    }
+
+    public boolean ReadTOASTXmlFile(File file, DEDElements records_elements, String EntityName)
+    {
+        boolean bResult=true;
+
+        String Child = EntityName;
+        String ChildRecord = EntityName + "Record";
+
+        File fXmlFile = file;
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder dBuilder;
+        Document doc = null;
+        try {
+            dBuilder = dbFactory.newDocumentBuilder();
+            doc = dBuilder.parse(fXmlFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        doc.getDocumentElement().normalize();
+        String nodeName = doc.getDocumentElement().getNodeName();
+        String expectedEntity = Child;
+        if (!expectedEntity.contentEquals(nodeName))
+            return false; // Error This is NOT the correct file
+
+        String PrevChunkId = "nothing";
+        boolean isPushed=false;
+
+        Elements Element = new Elements();
+        NodeList nList = doc.getElementsByTagName(ChildRecord);
+        for (int temp = 0; temp < nList.getLength(); temp++) {
+            Node nNode = nList.item(temp);
+            if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+                Element eElement = (Element) nNode;
+                DatabaseEntityRecordEntry record = new DatabaseEntityRecordEntry();
+                record.setTransGUID(eElement.getElementsByTagName("TransGUID").item(0).getTextContent());
+                record.setProtocol(eElement.getElementsByTagName("Protocol").item(0).getTextContent());
+                record.setProtocolVersion(eElement.getElementsByTagName("ProtocolVersion").item(0).getTextContent());
+                record.setDataSize(Integer.parseInt(eElement.getElementsByTagName("DataSize").item(0).getTextContent()));
+                record.setData(eElement.getElementsByTagName("Data").item(0).getTextContent());
+                record.setDataMD5(eElement.getElementsByTagName("DataMD5").item(0).getTextContent());
+
+                String md5 = CalculateMD5CheckSum(record.getData().getBytes());
+                if (!md5.equalsIgnoreCase(record.getDataMD5()))
+                {
+                    System.out.println("ERROR: data area in file have changed without having the MD5 checksum changed -- Warning data could be compromised ; " + Child );
+                    return false;  // data area in file have changed without having the MD5 checksum changed -- Warning data could be compromised
+                }
+
+                byte[] data_in_unhexed_buf = DatatypeConverter.parseHexBinary(record.getData());
+
+                // According to what the protocol prescribes for DED entries in TOAST, then a loop of decode, according to specs, of entries is needed
+                // fetch the data area and unpack it with DED to check it
+                EntityChunkDataInfo chunk = new EntityChunkDataInfo();
+                DEDDecoder DED = new DEDDecoder();
+                DED.PUT_DATA_IN_DECODER(data_in_unhexed_buf,data_in_unhexed_buf.length);
+                String EntityChunkId    = (Child + "_chunk_id").toLowerCase(); // eg. profile_chunk_id
+                String EntityChunkSeq   = (Child + "_chunk_seq").toLowerCase(); // eg. profile_chunk_seq
+                String EntityChunkData  = (Child + "_chunk_data").toLowerCase(); // eg. profile_chunk_data
+                // decode data ...
+                DED.GET_STRUCT_START( "record" );
+                chunk.entity_chunk_id   = DED.GET_STDSTRING	( EntityChunkId ); // key of particular item
+                chunk.aiid              = DED.GET_ULONG   	( "aiid" ); // this number is continuesly increasing all thruout the entries in this table
+                chunk.entity_chunk_seq  = DED.GET_ULONG   	( EntityChunkSeq ); // sequence number of particular item
+                chunk.entity_chunk_data = DED.GET_STDVECTOR	( EntityChunkData ); //
+                DED.GET_STRUCT_END( "record" );
+
+                if(PrevChunkId.contentEquals("nothing") || !PrevChunkId.contentEquals(chunk.entity_chunk_id))
+                {
+                    if(!PrevChunkId.contentEquals("nothing") && !PrevChunkId.contentEquals(chunk.entity_chunk_id))
+                    {
+                        records_elements.add(Element);
+                        Element = new Elements();
+                        isPushed=true;
+                    }
+                    else
+                    {
+                        isPushed=false;
+                    }
+
+                    // new Element
+                    Element.strElementID = chunk.entity_chunk_id;
+                    Element.ElementData = new byte[0];
+                    PrevChunkId = chunk.entity_chunk_id;
+
+                }
+                // this will, chunk by chunk, assemble the elementfile data
+                Element.setElementData(back_inserter(chunk.entity_chunk_data, Element.ElementData));
+
+                isPushed=false;
+            }
+        }
+        //should only add to vecElements if chunks have been assembled and next element is to be processed
+        if(isPushed==false){
+            records_elements.add(Element);
         }
 
         return bResult;

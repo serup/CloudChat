@@ -46,7 +46,7 @@ public class DataBaseControlTest {
         // ..... more DDEntries
         // </CustomerRealm>
 
-        String fileResource= "DataDictionary/DD_CUSTOMER.xml";
+        String fileResource= "DataDictionary/Entities/DD_CUSTOMER.xml";
         File file = new File(this.getClass().getClassLoader().getResource(fileResource).getFile());
         DataBaseControl.EntityRealm entityRealm = dbctrl.readDDEntityRealm(file, "Customer");
 
@@ -70,7 +70,7 @@ public class DataBaseControlTest {
 
     @Test
     public void testReadDDwithElements() throws Exception {
-        String fileResource= "DataDictionary/DD_CUSTOMER.xml";
+        String fileResource= "DataDictionary/Entities/DD_CUSTOMER.xml";
         File file = new File(this.getClass().getClassLoader().getResource(fileResource).getFile());
 
         DataBaseControl.DEDElements dedElements = this.dbctrl.createDEDElements();
@@ -117,5 +117,38 @@ public class DataBaseControlTest {
         for (DataBaseControl.Elements e: record_value) {
             System.out.println(e.getStrElementID());
         }
+    }
+
+    @Test
+    public void testFtgt() throws Exception {
+        // This is a dummy database file - it is following protocol as DataDictionary is stating in its DataDictionary/Entities/DD_TOAST.xml file
+        String fileResource = "DataDictionary/Database/ENTITIEs/355760fb6afaf9c41d17ac5b9397fd45.xml"; // This is a profile database file
+        String EntityFileName = "/tmp/355760fb6afaf9c41d17ac5b9397fd45.xml"; // This is the extracted file on local
+        String EntityName       = "Profile"; // since this file is a customer profile database file, its entity name is 'Profile' -- DD_PROFILE.xml MUST reside in DataDictionary/Entities
+
+        // 1. extract resource dummy file(s) to local filesystem
+        File resourceFile       = new File(this.getClass().getClassLoader().getResource(fileResource).getFile());
+        File destinationFile    = new File(EntityFileName);
+        Files.deleteIfExists(destinationFile.toPath());
+        Files.copy(resourceFile.toPath(), destinationFile.toPath());
+        resourceFile            = new File(this.getClass().getClassLoader().getResource("DataDictionary/Database/TOASTs/355760fb6afaf9c41d17ac5b9397fd45_toast.xml").getFile());
+        destinationFile         = new File("/tmp/355760fb6afaf9c41d17ac5b9397fd45_toast.xml");
+        Files.deleteIfExists(destinationFile.toPath());
+        Files.copy(resourceFile.toPath(), destinationFile.toPath());
+
+        // 2. use it as input to method to be tested
+        String indexName = "355760fb6afaf9c41d17ac5b9397fd45"; // The id of the profile
+        DataBaseControl.DEDElements record_value = this.dbctrl.createDEDElements(); // Placeholder for retrieved DataEncoderDecoder elements
+        this.dbctrl.setRelativeENTITIES_DATABASE_PLACE("/tmp/");  // reset default value to work with test
+        this.dbctrl.setRelativeENTITIES_DATABASE_TOAST_PLACE("/tmp/"); // reset default value to work with test
+        boolean bResult =  this.dbctrl.ftgt(EntityName,indexName,record_value); // Fetch and Get the profile with indexName
+
+
+        // 3. validate result
+        assertEquals(true, bResult);
+        for (DataBaseControl.Elements e: record_value) {
+            System.out.println(e.getStrElementID());
+        }
+
     }
 }
