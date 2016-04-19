@@ -524,14 +524,18 @@ public class DataBaseControl {
      */
     private byte[] back_inserter(byte[] IncommingData, byte[] CurrentBuffer)
     {
+        if(CurrentBuffer == null)
+            CurrentBuffer = new byte[0]; // assign an empty buffer
+        if(IncommingData == null)
+            return CurrentBuffer;  // no data to append, hence return CurrentBuffer
         int CurrentBufferSize = CurrentBuffer.length;
-        int IncommingDataSize = IncommingData.length;
+        int IncomingDataSize = IncommingData.length;
         int AppendPosition    = CurrentBufferSize;
-        int NewBufferSize     = CurrentBufferSize + IncommingDataSize;
+        int NewBufferSize     = CurrentBufferSize + IncomingDataSize;
         byte[] NewBuffer      = new byte[NewBufferSize];
 
         System.arraycopy(CurrentBuffer,0,NewBuffer,0,CurrentBufferSize); // First move previous data to new larger space
-        System.arraycopy(IncommingData,0,NewBuffer,AppendPosition,IncommingDataSize); // Second append new data
+        System.arraycopy(IncommingData,0,NewBuffer,AppendPosition,IncomingDataSize); // Second append new data
 
         return NewBuffer;
     }
@@ -541,7 +545,7 @@ public class DataBaseControl {
         boolean bResult=true;
 
         String Child = EntityName;
-        //String ChildRecord = EntityName + "Record";
+        String ChildRecord = EntityName + "Record";
 
         File fXmlFile = file;
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -564,7 +568,7 @@ public class DataBaseControl {
         boolean isPushed=false;
 
         Elements Element = new Elements();
-        NodeList nList = doc.getElementsByTagName(Child);
+        NodeList nList = doc.getElementsByTagName(ChildRecord);
         for (int temp = 0; temp < nList.getLength(); temp++) {
             Node nNode = nList.item(temp);
             if (nNode.getNodeType() == Node.ELEMENT_NODE) {
