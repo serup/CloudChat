@@ -1,8 +1,8 @@
-package integrationTests.hadoop;
+package integrationTests.dops.hadoop;
 
-import hadoop.hadoopFSHandlers.hadoopDOPsFSHandler;
-import hadoop.hadoopMappers.WordMapper;
-import hadoop.hadoopReducers.WordReducer;
+import dops.hadoop.handlers.hadoopDOPsFSHandler;
+import hadoop.mappers.WordMapper;
+import hadoop.reducers.WordReducer;
 import integrationTests.IntegrationEnvironmentSetup;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
