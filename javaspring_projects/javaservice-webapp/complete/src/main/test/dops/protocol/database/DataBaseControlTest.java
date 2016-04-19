@@ -146,6 +146,9 @@ public class DataBaseControlTest {
 
         // 3. validate result
         assertEquals(true, bResult);
+        for (DataBaseControl.Elements e: record_value) {
+            System.out.println(e.getStrElementID());
+        }
 
     }
 }
