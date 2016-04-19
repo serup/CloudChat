@@ -1,4 +1,4 @@
-package integrationTests.hadoop;
+package integrationTests.dops.hadoop;
 
 import dops.hadoop.handlers.hadoopDOPsFSHandler;
 import hadoop.mappers.WordMapper;
