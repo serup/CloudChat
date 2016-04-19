@@ -1,4 +1,4 @@
-package hadoop.hadoopReducers;
+package hadoop.reducers;
 
 /**
  * Created by serup on 04-04-16.

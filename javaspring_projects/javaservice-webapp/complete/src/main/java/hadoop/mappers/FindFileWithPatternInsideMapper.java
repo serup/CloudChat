@@ -1,4 +1,4 @@
-package hadoop.hadoopMappers;
+package hadoop.mappers;
 
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;

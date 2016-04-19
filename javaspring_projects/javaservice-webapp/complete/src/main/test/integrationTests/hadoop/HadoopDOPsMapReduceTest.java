@@ -1,8 +1,8 @@
 package integrationTests.hadoop;
 
-import hadoop.hadoopFSHandlers.hadoopDOPsFSHandler;
-import hadoop.hadoopMappers.hadoopDOPsFSMapper;
-import hadoop.hadoopReducers.hadoopDOPsFSReducer;
+import dops.hadoop.handlers.hadoopDOPsFSHandler;
+import dops.hadoop.mappers.hadoopDOPsFSMapper;
+import dops.hadoop.reducers.hadoopDOPsFSReducer;
 import integrationTests.IntegrationEnvironmentSetup;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;

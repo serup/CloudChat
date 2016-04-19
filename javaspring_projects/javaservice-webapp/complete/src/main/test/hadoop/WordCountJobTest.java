@@ -2,8 +2,8 @@ package hadoop;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
-import hadoop.hadoopMappers.WordMapper;
-import hadoop.hadoopReducers.WordReducer;
+import hadoop.mappers.WordMapper;
+import hadoop.reducers.WordReducer;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
