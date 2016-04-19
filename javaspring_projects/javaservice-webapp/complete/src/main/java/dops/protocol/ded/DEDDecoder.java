@@ -70,15 +70,21 @@ public class DEDDecoder {
 	public class ByteUtils {
 
 		public long bytesToLong(byte[] bytes) {
-			ByteBuffer buffer = ByteBuffer.wrap(bytes);
+			//
+			byte[] dest = new byte[8]; // Make sure that buffer has 8 bytes for 64bit long -- NB! long in C++ is normally 4 bytes, so DED could have long values with only 4 bytes
+			try {
+				System.arraycopy(bytes,0,dest, 0,bytes.length);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			ByteBuffer buffer = ByteBuffer.wrap(dest);
 			buffer.order(ByteOrder.LITTLE_ENDIAN);  // coming from server which, when running on linux, is a Little Endian architecture
-			//buffer.order(ByteOrder.BIG_ENDIAN);
-			long v = buffer.getLong();
-			/*
+
 			long v=0;
 			while( buffer.hasRemaining()){
-				v = buffer.getLong();
-			} */
+				v = buffer.getLong(); // Reads the next eight bytes at this buffer's current position
+			}
 			return v;
 		}
 
@@ -556,6 +562,24 @@ public class DEDDecoder {
 		return result;
 	}
 
+	public byte[] GET_STDVECTOR(String name)
+	{
+		byte[] result = null;
+		if(this.decoder_ptr==null) return null;
+		if(!name.isEmpty()) {
+			param DEDobject = new param();
+			DEDobject.name = name;
+			DEDobject.ElementType = DED_ELEMENT_TYPE_STDVECTOR;
+			DEDobject.value = null;
+			DEDobject.length = -1;
+			int found = decoder_ptr._GetElement(DEDobject);
+			if (found == 1) {
+				result = DEDobject.value;
+			}
+		}
+		return result;
+	}
+
 
 	//TODO: 20140724 consider designing _GET_ so that if element is NOT found, then internal pointer is NOT moved as it is NOW!!!
 	public DEDDecoder._Elements GET_ELEMENT(String entityname)
@@ -627,7 +651,6 @@ public class DEDDecoder {
 				String strCmp="";
 				for(int i=0;i<param.Length;i++)
 					strCmp = strCmp + (char)param.data[i];
-				//strCmp = param.data.toString();
 				if (DEDobject.name.equals(strCmp))
 				{
 					if (param.Tag == DED_ELEMENT_TYPE_STRUCT || param.Tag == DED_ELEMENT_TYPE_STRUCT_END)
@@ -648,19 +671,11 @@ public class DEDDecoder {
 									String str="";
 									for(int i=0;i<param.Length;i++)
 										str = str + (char)param.data[i];
-									//str = param.data.toString();
 									DEDobject.value = str.getBytes();
 								}
 								else
 								{
-									if (ElementType == DED_ELEMENT_TYPE_ULONG || ElementType == DED_ELEMENT_TYPE_LONG)
-									{
-										byte[] dest = new byte[8];
-										System.arraycopy(param.data,0,dest, 0,param.data.length);
-										DEDobject.value = dest;
-									}
-									else
-										DEDobject.value = param.data;
+									DEDobject.value = param.data;
 								}
 								result = 1;
 							}
