@@ -514,12 +514,34 @@ public class DataBaseControl {
         return md5;
     }
 
+    /**
+     *
+     * Will append IncommingData to a new enlarged CurrentBuffer
+     *
+     * @param IncommingData
+     * @param CurrentBuffer
+     * @return new buffer with old and appended data
+     */
+    private byte[] back_inserter(byte[] IncommingData, byte[] CurrentBuffer)
+    {
+        int CurrentBufferSize = CurrentBuffer.length;
+        int IncommingDataSize = IncommingData.length;
+        int AppendPosition    = CurrentBufferSize;
+        int NewBufferSize     = CurrentBufferSize + IncommingDataSize;
+        byte[] NewBuffer      = new byte[NewBufferSize];
+
+        System.arraycopy(CurrentBuffer,0,NewBuffer,0,CurrentBufferSize); // First move previous data to new larger space
+        System.arraycopy(IncommingData,0,NewBuffer,AppendPosition,IncommingDataSize); // Second append new data
+
+        return NewBuffer;
+    }
+
     public boolean ReadTOASTXmlFile(File file, DEDElements records_elements, String EntityName)
     {
-        boolean bResult=false;
+        boolean bResult=true;
 
         String Child = EntityName;
-        String ChildRecord = EntityName + "Record";
+        //String ChildRecord = EntityName + "Record";
 
         File fXmlFile = file;
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -538,6 +560,10 @@ public class DataBaseControl {
         if (!expectedEntity.contentEquals(nodeName))
             return false; // Error This is NOT the correct file
 
+        String PrevChunkId = "nothing";
+        boolean isPushed=false;
+
+        Elements Element = new Elements();
         NodeList nList = doc.getElementsByTagName(Child);
         for (int temp = 0; temp < nList.getLength(); temp++) {
             Node nNode = nList.item(temp);
@@ -570,19 +596,41 @@ public class DataBaseControl {
                 String EntityChunkData  = (Child + "_chunk_data").toLowerCase(); // eg. profile_chunk_data
                 // decode data ...
                 DED.GET_STRUCT_START( "record" );
-                chunk.entity_chunk_id  = DED.GET_STDSTRING	( EntityChunkId ); // key of particular item
+                chunk.entity_chunk_id   = DED.GET_STDSTRING	( EntityChunkId ); // key of particular item
                 chunk.aiid              = DED.GET_ULONG   	( "aiid" ); // this number is continuesly increasing all thruout the entries in this table
                 chunk.entity_chunk_seq  = DED.GET_ULONG   	( EntityChunkSeq ); // sequence number of particular item
-                //DED.GET_STDVECTOR	( EntityChunkData, chunk.entity_chunk_data ); //
-                //DED.GET_STRUCT_END( "record" );
+                chunk.entity_chunk_data = DED.GET_STDVECTOR	( EntityChunkData ); //
+                DED.GET_STRUCT_END( "record" );
 
-                //TODO: here --
+                if(PrevChunkId=="nothing" || PrevChunkId != chunk.entity_chunk_id)
+                {
+                    if(PrevChunkId!="nothing" && PrevChunkId != chunk.entity_chunk_id)
+                    {
+                        records_elements.add(Element);
+                        Element = new Elements();
+                        isPushed=true;
+                    }
+                    else
+                    {
+                        isPushed=false;
+                    }
 
-                bResult=true;
+                    // new Element
+                    Element.strElementID = chunk.entity_chunk_id;
+                    Element.ElementData = new byte[0];
+                    PrevChunkId = chunk.entity_chunk_id;
+
+                }
+                // this will, chunk by chunk, assemble the elementfile data
+                Element.setElementData(back_inserter(chunk.entity_chunk_data, Element.ElementData));
+
+                isPushed=false;
             }
         }
-
-
+        //should only add to vecElements if chunks have been assembled and next element is to be processed
+        if(isPushed==false){
+            records_elements.add(Element);
+        }
 
         return bResult;
     }
