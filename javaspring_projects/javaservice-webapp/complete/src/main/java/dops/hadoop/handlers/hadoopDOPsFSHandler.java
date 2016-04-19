@@ -1,4 +1,4 @@
-package hadoop.hadoopFSHandlers;
+package dops.hadoop.handlers;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;

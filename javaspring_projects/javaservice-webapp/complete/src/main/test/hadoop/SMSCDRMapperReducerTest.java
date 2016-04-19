@@ -1,7 +1,7 @@
 package hadoop;
 
-import hadoop.hadoopMappers.SMSCDRMapper;
-import hadoop.hadoopReducers.SMSCDRReducer;
+import hadoop.mappers.SMSCDRMapper;
+import hadoop.reducers.SMSCDRReducer;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
