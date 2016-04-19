@@ -38,7 +38,7 @@ public class DataBaseControl {
         return relativeENTITIES_DATABASE_TOAST_PLACE;
     }
 
-    public void setRelativeENTITIES_DATABASE_TOAST_PLACE(String relativeENTITIES_DATABASE_TOAST_PLACE) {
+    public void setRelativeTOASTS_DATABASE_PLACE(String relativeENTITIES_DATABASE_TOAST_PLACE) {
         this.relativeENTITIES_DATABASE_TOAST_PLACE = relativeENTITIES_DATABASE_TOAST_PLACE;
     }
 
@@ -370,7 +370,8 @@ public class DataBaseControl {
      *
      * Inside the Data field lies yet another structure compressed with DED and described in DataDictionary under Entities following this file:
      * DD_<entity realm name>.xml  -- entity could fx. be 'Profile'
-     * This 'front' file is to be used for fast lookup - only fields of primary importance is in this file, the rest are put inside the TOAST
+     * This 'front' file is to be used for fast lookup - only fields of primary importance is in this file, the rest are put inside the TOAST and
+     * the toast file has its id in field '<entity realm name>_chunk_id' - this id maps to the toast file !!!
      *
      * inorder to handle dynamically adding more fields, and fields of oversize, then a TOAST structure is used
      * DD_<entity realm name>_TOAST.xml describes the 'toast - the Oversized Attribute Storage Technique' elements and the file
@@ -396,7 +397,6 @@ public class DataBaseControl {
         boolean bResult = false;
         String EntityName       = realm_name;
         String EntityFileName   = relativeENTITIES_DATABASE_PLACE + index_name + ".xml";
-        DEDElements _DEDElements = new DEDElements();
 
         // now read the actual entity file and make sure it follows current datadictionary configuration
         bResult = ReadEntityFile(EntityName,EntityFileName,record_value);
@@ -414,11 +414,10 @@ public class DataBaseControl {
             /// this means that now we should fetch all attributes from the TOAST entity file
             String ChunkID = (EntityName + "_chunk_id").toLowerCase();
             String ChunkIdValue = "";
-            /// function finding the element in entity file
-            //bResult = find_element_value(record_value, ChunkID, ChunkIdValue);
+            // finding the element
             List<Elements> resultElement = record_value.stream()
-                    .filter((p)-> p.getStrElementID().equals((ChunkID)))
-                    .collect(Collectors.toList());
+                                                        .filter((p)-> p.getStrElementID().equals((ChunkID)))
+                                                        .collect(Collectors.toList());
             if(resultElement.size()>0)
             {
                 byte[] bytes = resultElement.get(0).getElementData();
@@ -450,7 +449,26 @@ public class DataBaseControl {
         return bResult;
     }
 
-
+    /**
+     * Read a database xml file which follows following format:
+     *
+     *  <?xml version="1.0" encoding="utf-8"?>
+     *  <Entity>
+     *   <version>1</version>
+     *   <EntityRecord>
+     *     <TransGUID></TransGUID> -- each record has a unique transaction id to be used with security, when detecting inconsistencies
+     *     <Protocol>DED</Protocol>
+     *     <ProtocolVersion>1.0.0.0</ProtocolVersion>
+     *     <DataSize></DataSize>
+     *     <Data></Data> -- here is the pCompressedData from above protocol encoding, compression, encrypting algoritm -- currently DED (dataencoderdecoder)
+     *     <DataMD5><DataMD5> -- this md5 checksum is used as an extra verification -- Data must be verified with this value before being used.
+     *   </EntityRecord>
+     *
+     * @param file
+     * @param records
+     * @param EntityName
+     * @return
+     */
     public boolean ReadXmlFile(File file, DatabaseEntityRecord records, String EntityName) {
         boolean bResult = false;
 
@@ -501,11 +519,11 @@ public class DataBaseControl {
         try {
             md = MessageDigest.getInstance("MD5");
             md.update(bytes);
-            byte[] mdbytes = md.digest();
+            byte[] md5Bytes = md.digest();
             //convert the byte to hex format
             StringBuffer sb = new StringBuffer("");
-            for (int i = 0; i < mdbytes.length; i++) {
-                sb.append(Integer.toString((mdbytes[i] & 0xff) + 0x100, 16).substring(1));
+            for (int i = 0; i < md5Bytes.length; i++) {
+                sb.append(Integer.toString((md5Bytes[i] & 0xff) + 0x100, 16).substring(1));
             }
             md5 = sb.toString();
         } catch (NoSuchAlgorithmException e) {
@@ -540,6 +558,33 @@ public class DataBaseControl {
         return NewBuffer;
     }
 
+    /**
+     * Read a database TOAST xml file which follows this format:
+     *
+     *  <?xml version="1.0" encoding="utf-8"?>
+     *  <Entity>
+     *   <version>1</version>
+     *   <EntityRecord>
+     *     <TransGUID></TransGUID> -- each record has a unique transaction id to be used with security, when detecting inconsistencies
+     *     <Protocol>DED</Protocol>
+     *     <ProtocolVersion>1.0.0.0</ProtocolVersion>
+     *     <DataSize></DataSize>
+     *     <Data>
+     *          <record>
+     *              <chunk_id></chunk_id>
+     *              <aiid></aiid>
+     *              <chunk_seq></chunk_seq>
+     *              <chunk_data></chunk_data>
+     *          </record>
+     *     </Data> -- here is the pCompressedData from above protocol encoding, compression, encrypting algoritm -- currently DED (dataencoderdecoder)
+     *     <DataMD5><DataMD5> -- this md5 checksum is used as an extra verification -- Data must be verified with this value before being used.
+     *   </EntityRecord>
+
+     * @param file
+     * @param records_elements
+     * @param EntityName
+     * @return
+     */
     public boolean ReadTOASTXmlFile(File file, DEDElements records_elements, String EntityName)
     {
         boolean bResult=true;
@@ -625,7 +670,7 @@ public class DataBaseControl {
                     PrevChunkId = chunk.entity_chunk_id;
 
                 }
-                // this will, chunk by chunk, assemble the elementfile data
+                // this will, chunk by chunk, assemble the element data - fx. a foto element consists of many chunks in the file
                 Element.setElementData(back_inserter(chunk.entity_chunk_data, Element.ElementData));
 
                 isPushed=false;

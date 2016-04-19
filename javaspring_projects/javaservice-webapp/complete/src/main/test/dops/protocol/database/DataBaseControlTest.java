@@ -140,7 +140,7 @@ public class DataBaseControlTest {
         String indexName = "355760fb6afaf9c41d17ac5b9397fd45"; // The id of the profile
         DataBaseControl.DEDElements record_value = this.dbctrl.createDEDElements(); // Placeholder for retrieved DataEncoderDecoder elements
         this.dbctrl.setRelativeENTITIES_DATABASE_PLACE("/tmp/");  // reset default value to work with test
-        this.dbctrl.setRelativeENTITIES_DATABASE_TOAST_PLACE("/tmp/"); // reset default value to work with test
+        this.dbctrl.setRelativeTOASTS_DATABASE_PLACE("/tmp/"); // reset default value to work with test
         boolean bResult =  this.dbctrl.ftgt(EntityName,indexName,record_value); // Fetch and Get the profile with indexName
 
 
