@@ -1,4 +1,4 @@
-package hadoop;
+package dops.hadoop;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
@@ -17,9 +17,9 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 
 /**
- * Created by serup on 12-04-16.
+ * Created by serup on 22-02-16.
  */
-public class FindFileWithPatternMRTest {
+public class DOPsMapperReducerTest {
 
 
     MapDriver<LongWritable, Text, Text, IntWritable> mapDriver;
@@ -45,6 +45,7 @@ public class FindFileWithPatternMRTest {
         }
     }
 
+    //TODO: change to find DOPs database file
     @Test
     public void testFindFileWithPatternMapReduce() {
         String fileResource1="fileWithPattern1.txt";

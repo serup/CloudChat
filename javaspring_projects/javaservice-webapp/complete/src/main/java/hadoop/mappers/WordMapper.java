@@ -1,4 +1,4 @@
-package hadoop.hadoopMappers;
+package hadoop.mappers;
 
 /**
  * Created by serup on 04-04-16.
