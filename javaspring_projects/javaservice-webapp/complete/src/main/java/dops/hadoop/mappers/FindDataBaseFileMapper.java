@@ -4,35 +4,67 @@ import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
-import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by serup on 20-04-16.
+ *
+ * //INPUT IS AN XML FILE
+ * <configuration>
+ *  <property>
+ *    <name>dfs.replication</name>
+ *    <value>1</value>
+ *  </property>
+ *  <property>
+ *    <name>dfs</name>
+ *    <value>2</value>
+ *  </property>
+ * </configuration>
+ *
  */
-public class FindDataBaseFileMapper extends Mapper<LongWritable, Text, Text, IntWritable> {
+public class FindDataBaseFileMapper extends Mapper<LongWritable, Text, Text, Text>{
 
-    private Text foundFile = new Text();
+    private final static IntWritable one = new IntWritable( 1 );
+    private Text word = new Text();
 
-    public void setSearchPattern(String searchPattern) {
-        SearchPattern = searchPattern;
-    }
+    public void map( LongWritable key, Text value, Mapper.Context context ) throws IOException, InterruptedException {
 
-    private String SearchPattern = new String("abc123");
+        String document = value.toString();
+        System.out.println("‘" + document + "‘");
+        try {
+            XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(new ByteArrayInputStream(document.getBytes()));
+            String propertyName = "";
+            String propertyValue = "";
+            String currentElement = "";
+            while (reader.hasNext()) {
+                int code = reader.next();
+                switch (code) {
+                    case XMLStreamConstants.START_ELEMENT: //START_ELEMENT:
+                        currentElement = reader.getLocalName();
+                        break;
+                    case XMLStreamConstants.CHARACTERS:  //CHARACTERS:
+                        if (currentElement.equalsIgnoreCase("name")) {
+                            propertyName += reader.getText();
+                            //System.out.println(propertyName);
+                        } else if (currentElement.equalsIgnoreCase("value")) {
+                            propertyValue += reader.getText();
+                            //System.out.println(propertyValue);
+                        }
+                        break;
+                }
+            }
+            reader.close();
+            context.write(new Text(propertyName.trim()), new Text(propertyValue.trim()));
 
-    @Override
-    protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
-        String lineFromFile = value.toString();
-        Pattern p = Pattern.compile(SearchPattern); // pattern which should be found in 'foundFile'
-        Matcher matcher = p.matcher(lineFromFile);
-        if(matcher.find()) {
-            // foundFile has the pattern, now find its filename
-            String filename =((FileSplit) context.getInputSplit()).getPath().getName() ; // this will yield 'somefile' when used with Mock mapper framework
-            foundFile.set(filename);
-            context.write(foundFile, new IntWritable(1)); // add 1 count to key ( foundFile )
+        }
+        catch(Exception e){
+            throw new IOException(e);
+
         }
     }
 

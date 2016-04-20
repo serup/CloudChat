@@ -2,6 +2,8 @@ package dops.hadoop;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
+import dops.hadoop.mappers.FindDataBaseFileMapper;
+import dops.hadoop.reducers.FindDataBaseFileReducer;
 import hadoop.mappers.FindFileWithPatternInsideMapper;
 import hadoop.reducers.FindFileWithPatternInsideReducer;
 import org.apache.hadoop.io.IntWritable;
@@ -22,11 +24,6 @@ import java.nio.charset.Charset;
 public class DOPsMapperReducerTest {
 
 
-    MapDriver<LongWritable, Text, Text, IntWritable> mapDriver;
-    ReduceDriver<Text, IntWritable, Text, IntWritable> reduceDriver;
-    MapReduceDriver<LongWritable, Text, Text, IntWritable, Text, IntWritable> mapReduceDriver;
-
-
     @Before
     public void setUp() throws Exception {
     }
@@ -41,6 +38,10 @@ public class DOPsMapperReducerTest {
 
     @Test
     public void testFindFileWithPatternMapReduce() {
+        MapDriver<LongWritable, Text, Text, IntWritable> mapDriver;
+        ReduceDriver<Text, IntWritable, Text, IntWritable> reduceDriver;
+        MapReduceDriver<LongWritable, Text, Text, IntWritable, Text, IntWritable> mapReduceDriver;
+
         FindFileWithPatternInsideMapper mapper = new FindFileWithPatternInsideMapper();
         FindFileWithPatternInsideReducer reducer = new FindFileWithPatternInsideReducer();
         mapper.setSearchPattern("Watson"); // pattern searched for inside the file
@@ -85,12 +86,31 @@ public class DOPsMapperReducerTest {
     public void testFindDataBaseProfileFile() {
 
         // 1. Setup mapper and reducer
+        FindDataBaseFileMapper mapper = new FindDataBaseFileMapper();
+        FindDataBaseFileReducer reducer = new FindDataBaseFileReducer();
+        MapDriver<LongWritable, Text, Text, Text> mapDriver;
+        ReduceDriver<Text, Text, Text, Text> reduceDriver;
+        MapReduceDriver<LongWritable, Text, Text, Text, Text, Text> mapReduceDriver;
+        mapDriver = MapDriver.newMapDriver(mapper);
+        reduceDriver = ReduceDriver.newReduceDriver(reducer);
+        mapReduceDriver = MapReduceDriver.newMapReduceDriver(mapper, reducer);
 
         // 2. Set input for reducer
+        String fileResource="xmlparserTestFile.xml";
+        try {
+            String fileContent = this.readResource(fileResource, Charsets.UTF_8);
+            Text content = new Text();
+            content.set(fileContent);
+            mapReduceDriver.withInput(new LongWritable(), content);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         // 3. Set output for map/reduce job
+        mapReduceDriver.withOutput(new Text("hep"), new Text("hep"));  //TODO: find out what output really is
 
-        // 4. run mapreduce job
+        // 4. run MapReduce job
+        mapReduceDriver.runTest();
 
         // 5. verify result
     }

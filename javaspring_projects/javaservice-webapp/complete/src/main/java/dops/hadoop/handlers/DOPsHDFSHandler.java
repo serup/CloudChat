@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Created by serup on 22-02-16.
  */
-public class hadoopDOPsFSHandler {
+public class DOPsHDFSHandler {
     /**
      * Should handle all commands going to the hdfs
      */
@@ -64,7 +64,7 @@ public class hadoopDOPsFSHandler {
     }
 
 
-    public hadoopDOPsFSHandler() // constructor
+    public DOPsHDFSHandler() // constructor
     {
         conf = new Configuration();
         conf.set("fs.defaultFS", "hdfs://one.cluster:8020/");

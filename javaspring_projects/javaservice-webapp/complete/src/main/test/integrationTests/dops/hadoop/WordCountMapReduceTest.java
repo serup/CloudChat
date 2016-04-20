@@ -1,6 +1,6 @@
 package integrationTests.dops.hadoop;
 
-import dops.hadoop.handlers.hadoopDOPsFSHandler;
+import dops.hadoop.handlers.DOPsHDFSHandler;
 import hadoop.mappers.WordMapper;
 import hadoop.reducers.WordReducer;
 import integrationTests.IntegrationEnvironmentSetup;
@@ -34,7 +34,7 @@ import static org.mortbay.util.LazyList.contains;
 public class WordCountMapReduceTest {
 
 
-    hadoopDOPsFSHandler fshandlerDriver;
+    DOPsHDFSHandler fshandlerDriver;
 
     IntegrationEnvironmentSetup env = new IntegrationEnvironmentSetup();
 
@@ -80,7 +80,7 @@ public class WordCountMapReduceTest {
     @Before
     public void setUp() throws Exception {
         Assert.assertEquals(true, env.setupHadoopIntegrationEnvironment());
-        fshandlerDriver = new hadoopDOPsFSHandler();
+        fshandlerDriver = new DOPsHDFSHandler();
 
         File directory = new File("/tmp/output/wordcount");
         //make sure directory exists
