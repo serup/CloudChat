@@ -29,12 +29,6 @@ public class DOPsMapperReducerTest {
 
     @Before
     public void setUp() throws Exception {
-        FindFileWithPatternInsideMapper mapper = new FindFileWithPatternInsideMapper();
-        FindFileWithPatternInsideReducer reducer = new FindFileWithPatternInsideReducer();
-        mapper.setSearchPattern("Watson"); // pattern searched for inside the file
-        mapDriver = MapDriver.newMapDriver(mapper);
-        reduceDriver = ReduceDriver.newReduceDriver(reducer);
-        mapReduceDriver = MapReduceDriver.newMapReduceDriver(mapper, reducer);
     }
 
     public String readResource(final String fileName, Charset charset) throws Exception {
@@ -45,9 +39,14 @@ public class DOPsMapperReducerTest {
         }
     }
 
-    //TODO: change to find DOPs database file
     @Test
     public void testFindFileWithPatternMapReduce() {
+        FindFileWithPatternInsideMapper mapper = new FindFileWithPatternInsideMapper();
+        FindFileWithPatternInsideReducer reducer = new FindFileWithPatternInsideReducer();
+        mapper.setSearchPattern("Watson"); // pattern searched for inside the file
+        mapDriver = MapDriver.newMapDriver(mapper);
+        reduceDriver = ReduceDriver.newReduceDriver(reducer);
+        mapReduceDriver = MapReduceDriver.newMapReduceDriver(mapper, reducer);
         String fileResource1="fileWithPattern1.txt";
         String fileResource2="fileWithPattern2.txt"; // should contain the pattern searched for
 
@@ -80,4 +79,20 @@ public class DOPsMapperReducerTest {
 
         */
     }
+
+    //TODO: find DOPs database file
+    @Test
+    public void testFindDataBaseProfileFile() {
+
+        // 1. Setup mapper and reducer
+
+        // 2. Set input for reducer
+
+        // 3. Set output for map/reduce job
+
+        // 4. run mapreduce job
+
+        // 5. verify result
+    }
+
 }
