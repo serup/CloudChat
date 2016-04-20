@@ -31,7 +31,7 @@ import static org.mortbay.util.LazyList.contains;
 
 // http://stackoverflow.com/questions/9849776/calling-a-mapreduce-job-from-a-simple-java-program
 // should find count the word 'Watson' from a created file on the one.cluster node in the DOPs hadoop system
-public class HadoopDOPsWordCountMapReduceTest {
+public class WordCountMapReduceTest {
 
 
     hadoopDOPsFSHandler fshandlerDriver;

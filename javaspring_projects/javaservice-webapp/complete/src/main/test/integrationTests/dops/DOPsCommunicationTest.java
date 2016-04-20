@@ -1,35 +1,60 @@
 package integrationTests.dops;
 
 import dops.ClientEndpoint.JavaWebSocketClientEndpoint;
+import dops.protocol.DOPS;
 import dops.protocol.ded.DEDDecoder;
 import dops.protocol.ded.DEDEncoder;
 import integrationTests.IntegrationEnvironmentSetup;
-import org.junit.Assert;
+import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.nio.ByteBuffer;
 
-import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 /**
- * Created by serup on 31-12-15.
+ * INTEGRATION TESTS
+ *
+ * To run these tests, then the VM's needed must be running
+ *
+ * how to manually start VM's :
+ *
+ * vagrant up <name of VM>
+ *
+ * Created by serup on 05-01-16.
  */
-public class DOPSconnectTests {
+public class DOPsCommunicationTest {
 
     IntegrationEnvironmentSetup env = new IntegrationEnvironmentSetup();
 
     @Before
     public void setup() throws Exception {
-        Assert.assertEquals(true,env.setupIntegrationEnvironment());
+        assertEquals(true,env.setupIntegrationEnvironment());
+    }
+
+    @Test
+    public void testLoginToServer() throws Exception {
+
+        DOPS dops = new DOPS();
+        String url = "backend.scanva.com";
+        String port = "7777";
+        String uniqueId = "985998707DF048B2A796B44C89345494";
+        String username = "johndoe@email.com"; // TODO: find a way to safely handle retrieval of username,password - should NOT be stored in source code
+        String password = "12345";
+
+        assertEquals(false,dops.loginToServer(url,port,uniqueId,username,password)); // expect false, since user is NOT registered in DFD
+        assertEquals(true,dops.isOpen()); // even though login to profile failed, then connection to DOPS main part should have been established
+
+        System.out.println("done - success");
     }
 
     @Test
     public void testConnectToDFD()
     {
         /**
-        * setup client
-        */
+         * setup client
+         */
         JavaWebSocketClientEndpoint clientEndpoint = new JavaWebSocketClientEndpoint();
 
         /**
@@ -52,12 +77,12 @@ public class DOPSconnectTests {
          */
         DEDEncoder DED = new DEDEncoder();
         DED.PUT_STRUCT_START ( "WSRequest" );
-            DED.PUT_METHOD   ( "Method",  "JavaConnect" );
-            DED.PUT_USHORT   ( "TransID",  trans_id);
-            DED.PUT_STDSTRING( "protocolTypeID", "DED1.00.00");
-            DED.PUT_STDSTRING( "functionName", uniqueId );
-            DED.PUT_STDSTRING( "username", username );
-            DED.PUT_STDSTRING( "password", password );
+        DED.PUT_METHOD   ( "Method",  "JavaConnect" );
+        DED.PUT_USHORT   ( "TransID",  trans_id);
+        DED.PUT_STDSTRING( "protocolTypeID", "DED1.00.00");
+        DED.PUT_STDSTRING( "functionName", uniqueId );
+        DED.PUT_STDSTRING( "username", username );
+        DED.PUT_STDSTRING( "password", password );
         DED.PUT_STRUCT_END( "WSRequest" );
 
         ByteBuffer data = DED.GET_ENCODED_BYTEBUFFER_DATA();
@@ -96,9 +121,9 @@ public class DOPSconnectTests {
                 String strSource="";
                 // login response from DFD was received, now decode response
                 if ( (strDestination = DED2.GET_STDSTRING ( "dest")).length()>0 &&
-                     (strSource      = DED2.GET_STDSTRING ( "src")).length()>0 &&
-                     (strStatus      = DED2.GET_STDSTRING ( "status")).length()>0 &&
-                     DED2.GET_STRUCT_END( "WSResponse" )==1)
+                        (strSource      = DED2.GET_STDSTRING ( "src")).length()>0 &&
+                        (strStatus      = DED2.GET_STDSTRING ( "status")).length()>0 &&
+                        DED2.GET_STRUCT_END( "WSResponse" )==1)
                 {
                     // response from login to profile in DFD was received - now validate status
                     if(strStatus.equals("ACCEPTED")) {
@@ -114,36 +139,35 @@ public class DOPSconnectTests {
             }
             else
             { // When DFD is offline, then this type of packet is received
-               if (
-                     (strFunctionName    = DED2.GET_STDSTRING ( "functionName")).length()>0 &&
-                     (strStatus  = DED2.GET_STDSTRING ( "status")).length()>0 &&
-                   DED2.GET_STRUCT_END( "WSResponse" )==1)
-               {
-                   bDecoded=true;
-                   System.out.println("DED packet decoded - now validate");
+                if (
+                        (strFunctionName    = DED2.GET_STDSTRING ( "functionName")).length()>0 &&
+                                (strStatus  = DED2.GET_STDSTRING ( "status")).length()>0 &&
+                                DED2.GET_STRUCT_END( "WSResponse" )==1)
+                {
+                    bDecoded=true;
+                    System.out.println("DED packet decoded - now validate");
 
-                   if(!strMethod.equals("JavaConnect")) bDecoded=false;
-                   if(uTrans_id != trans_id) bDecoded=false;
-                   assertEquals(true,bDecoded);
-                   if(!strFunctionName.equals(uniqueId)) bDecoded=false;
-                   assertEquals(true,bDecoded);
-                   if(!strStatus.equals("ACCEPTED")) bDecoded=false;
-                   assertEquals(true,bDecoded);
-                   if(!strProtocolTypeID.equals("DED1.00.00")) bDecoded=false;
-               }
-               else
-               {
-                   // unknown method
-                   System.out.println("DED packet could NOT be decoded - unknown Method: "+strMethod);
-               }
+                    if(!strMethod.equals("JavaConnect")) bDecoded=false;
+                    if(uTrans_id != trans_id) bDecoded=false;
+                    TestCase.assertEquals(true,bDecoded);
+                    if(!strFunctionName.equals(uniqueId)) bDecoded=false;
+                    TestCase.assertEquals(true,bDecoded);
+                    if(!strStatus.equals("ACCEPTED")) bDecoded=false;
+                    TestCase.assertEquals(true,bDecoded);
+                    if(!strProtocolTypeID.equals("DED1.00.00")) bDecoded=false;
+                }
+                else
+                {
+                    // unknown method
+                    System.out.println("DED packet could NOT be decoded - unknown Method: "+strMethod);
+                }
             }
         }
         else
         {
             bDecoded=false;
         }
-        assertEquals(true,bDecoded);
+        TestCase.assertEquals(true,bDecoded);
     }
-
 
 }
