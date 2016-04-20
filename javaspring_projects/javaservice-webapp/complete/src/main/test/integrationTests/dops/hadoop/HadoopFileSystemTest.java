@@ -1,8 +1,6 @@
 package integrationTests.dops.hadoop;
 
 import dops.hadoop.handlers.hadoopDOPsFSHandler;
-import dops.hadoop.mappers.hadoopDOPsFSMapper;
-import dops.hadoop.reducers.hadoopDOPsFSReducer;
 import integrationTests.IntegrationEnvironmentSetup;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
@@ -24,7 +22,7 @@ import static junit.framework.TestCase.assertEquals;
 /**
  * Created by serup on 22-02-16.
  */
-public class HadoopDOPsFSTest {
+public class HadoopFileSystemTest {
 
     MapDriver<LongWritable, Text, Text, IntWritable> mapDriver;
     ReduceDriver<Text, IntWritable, Text, IntWritable> reduceDriver;
@@ -38,11 +36,6 @@ public class HadoopDOPsFSTest {
     @Before
     public void setUp() throws Exception {
         Assert.assertEquals(true,env.setupHadoopIntegrationEnvironment());
-        hadoopDOPsFSMapper mapper = new hadoopDOPsFSMapper();
-        hadoopDOPsFSReducer reducer = new hadoopDOPsFSReducer();
-        mapDriver = MapDriver.newMapDriver(mapper);
-        reduceDriver = ReduceDriver.newReduceDriver(reducer);
-        mapReduceDriver = MapReduceDriver.newMapReduceDriver(mapper, reducer);
         fshandlerDriver = new hadoopDOPsFSHandler();
     }
 
