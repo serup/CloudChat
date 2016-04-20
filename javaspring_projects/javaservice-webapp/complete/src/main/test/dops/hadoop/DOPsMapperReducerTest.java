@@ -107,7 +107,13 @@ public class DOPsMapperReducerTest {
         }
 
         // 3. Set output for map/reduce job
-        mapReduceDriver.withOutput(new Text("hep"), new Text("hep"));  //TODO: find out what output really is
+        mapReduceDriver.withOutput(new Text("<configuration>"), new Text(""));
+        mapReduceDriver.withOutput(new Text("<property><name>dfs</name><value>2</value></property>"), new Text(""));
+        mapReduceDriver.withOutput(new Text("</configuration>"), new Text(""));
+        mapReduceDriver.withOutput(new Text("<configuration>"), new Text(""));
+        mapReduceDriver.withOutput(new Text("<property><name>dfs.replication</name><value>1</value></property>"), new Text(""));
+        mapReduceDriver.withOutput(new Text("</configuration>"), new Text(""));
+
 
         // 4. run MapReduce job
         mapReduceDriver.runTest();

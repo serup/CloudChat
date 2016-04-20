@@ -12,10 +12,6 @@ import org.xml.sax.InputSource;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringReader;
 
@@ -47,31 +43,31 @@ public class FindDataBaseFileMapper extends Mapper<LongWritable, Text, Text, Tex
         Document doc = null;
         try {
             dBuilder = dbFactory.newDocumentBuilder();
-            doc = dBuilder.parse(new InputSource(new StringReader( value.toString() )));
+            doc = dBuilder.parse(new InputSource(new StringReader(value.toString())));
+
+            String _name = "";
+            String _value = "";
+            doc.getDocumentElement().normalize();
+            NodeList nList = doc.getElementsByTagName("property");
+            for (int temp = 0; temp < nList.getLength(); temp++) {
+                Node nNode = nList.item(temp);
+                if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+                    Element eElement = (Element) nNode;
+                    System.out.println(eElement.getTagName());
+                    System.out.println(eElement.getElementsByTagName("name").item(0).getTextContent());
+                    System.out.println(eElement.getElementsByTagName("value").item(0).getTextContent());
+                    _name = eElement.getElementsByTagName("name").item(0).getTextContent();
+                    _value = eElement.getElementsByTagName("value").item(0).getTextContent();
+                }
+                context.write(new Text(_name.trim()), new Text(_value.trim()));
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        String _name ="";
-        String _value = "";
-        doc.getDocumentElement().normalize();
-        String nodeName = doc.getDocumentElement().getNodeName();
-        NodeList nList = doc.getElementsByTagName("property");
-        for (int temp = 0; temp < nList.getLength(); temp++) {
-            Node nNode = nList.item(temp);
-            if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-                Element eElement = (Element) nNode;
-                System.out.println(eElement.getTagName());
-                System.out.println(eElement.getElementsByTagName("name").item(0).getTextContent());
-                System.out.println(eElement.getElementsByTagName("value").item(0).getTextContent());
-                _name = eElement.getElementsByTagName("name").item(0).getTextContent() + " ";
-                _value = eElement.getElementsByTagName("value").item(0).getTextContent() + " ";
-            }
-            context.write(new Text(_name.trim()), new Text(_value.trim()));
-        }
-
-        //TODO: find a way to remove unwanted '\n' in document
+/* deprecated
         String document = value.toString();
+
         //System.out.println("‘" + document + "‘");
         try {
             XMLStreamReader reader = XMLInputFactory.newInstance().createXMLStreamReader(new ByteArrayInputStream(document.getBytes()));
@@ -103,6 +99,7 @@ public class FindDataBaseFileMapper extends Mapper<LongWritable, Text, Text, Tex
             throw new IOException(e);
 
         }
+*/
     }
 
 }
