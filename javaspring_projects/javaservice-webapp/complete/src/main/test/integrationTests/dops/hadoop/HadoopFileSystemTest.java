@@ -1,6 +1,6 @@
 package integrationTests.dops.hadoop;
 
-import dops.hadoop.handlers.hadoopDOPsFSHandler;
+import dops.hadoop.handlers.DOPsHDFSHandler;
 import integrationTests.IntegrationEnvironmentSetup;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
@@ -27,7 +27,7 @@ public class HadoopFileSystemTest {
     MapDriver<LongWritable, Text, Text, IntWritable> mapDriver;
     ReduceDriver<Text, IntWritable, Text, IntWritable> reduceDriver;
     MapReduceDriver<LongWritable, Text, Text, IntWritable, Text, IntWritable> mapReduceDriver;
-    hadoopDOPsFSHandler fshandlerDriver;
+    DOPsHDFSHandler fshandlerDriver;
 
     /*
     */
@@ -36,7 +36,7 @@ public class HadoopFileSystemTest {
     @Before
     public void setUp() throws Exception {
         Assert.assertEquals(true,env.setupHadoopIntegrationEnvironment());
-        fshandlerDriver = new hadoopDOPsFSHandler();
+        fshandlerDriver = new DOPsHDFSHandler();
     }
 
     @Test
