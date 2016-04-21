@@ -127,18 +127,23 @@ public class DOPsMapperReducerTest {
 
         // 3. Set input for reducer
         String fileResource = "DataDictionary/Database/ENTITIEs/355760fb6afaf9c41d17ac5b9397fd45.xml"; // This is a profile database file
+        String fileResource2 = "DataDictionary/Database/TOASTs/355760fb6afaf9c41d17ac5b9397fd45_toast.xml"; // This is a profile toast database file
         try {
             String fileContent = this.readResource(fileResource, Charsets.UTF_8);
             Text content = new Text();
             content.set(fileContent);
             mapReduceDriver.withInput(new LongWritable(), content);
+            //String fileContent2 = this.readResource(fileResource2, Charsets.UTF_8);
+            //Text content2 = new Text();
+            //content.set(fileContent2);
+            //mapReduceDriver.withInput(new LongWritable(), content2);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         // 4. Set output for map/reduce job
         mapReduceDriver.withOutput(new Text("<result>"), new Text(""));
-        mapReduceDriver.withOutput(new Text("<file>somefile</file>"), new Text(""));
+        mapReduceDriver.withOutput(new Text("<file>somefile</file>"), new Text(""));  // resource file yields 'somefile' when used with Mock mapper framework
         mapReduceDriver.withOutput(new Text("</result>"), new Text(""));
 
         // 5. run MapReduce job
