@@ -1,5 +1,7 @@
 package dops.hadoop.mappers;
 
+import dops.database.DataBaseControl;
+import dops.protocol.ded.DEDDecoder;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -10,8 +12,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
+import javax.xml.bind.DatatypeConverter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 
@@ -63,9 +67,46 @@ public class ProfileFileMapper extends Mapper<LongWritable, Text, Text, Text>{
                 }
                 //TODO: check if MD5 is correct, and only if it is correct, then use ProfileRecord data as result
 
-                //TODO: fetch the TOAST file, then since TOAST file has same xml structure then take Data area of that file as _value for the keypair
+                // fetch the EntityFile then the associated TOAST file, since TOAST file has same xml structure then take Data area of that file as _value for the keypair
                 // since TOAST file has many records, then context.write has to be called for each record
+                DataBaseControl dbctrl = new DataBaseControl();
+                DataBaseControl.DEDElements dedElements = dbctrl.createDEDElements(); // Placeholder for retrieved DataEncoderDecoder elements
+                String uppercaseEntityName = "DataDictionary/Entities/DD_" + "PROFILE"  + ".xml";  // example: DataDictionary/DD_PROFILE.xml
+                File dataDictionaryFile  = new File(this.getClass().getClassLoader().getResource(uppercaseEntityName).getFile());
+                if(dataDictionaryFile.exists()) {
+                    boolean bResult = dbctrl.readDDEntityRealm(dataDictionaryFile, "Profile", dedElements);
+                    if (!bResult) {
+                        System.out.println("[ProfileFileMapper] ERROR : DataDictionary File can not be read - please check access rights : " + uppercaseEntityName);
+                        return;
+                    }
 
+                    // take the hex converted data and unhex it before DED will decode it
+                    String data = _value.toString();
+                    byte[] data_in_unhexed_buf = DatatypeConverter.parseHexBinary(data);
+
+                    // fetch the data area and unpack it with DED to check it
+                    DEDDecoder DED = new DEDDecoder();
+                    DED.PUT_DATA_IN_DECODER(data_in_unhexed_buf, data_in_unhexed_buf.length); // data should be decompressed using LZSS algorithm
+                    if (DED.GET_STRUCT_START("record") == 1) {
+                        int n = 0;
+                        for (DataBaseControl.Elements e : dedElements) {
+                            String tmp = ""; // clear
+                            if ((tmp = DED.GET_STDSTRING(e.getStrElementID())) != "") {
+                                // put attribute values from entity file into DEDElements
+                                DataBaseControl.Elements elm = dedElements.get(n);
+                                elm.setElementData(tmp.getBytes());
+                                dedElements.set(n, elm);
+                                n++;
+                            } else {
+                                System.out.println("[ProfileFileMapper] WARNING : DECODING ERROR: elementID : " + e.getStrElementID());
+                                break;
+                            }
+                        }
+                    }
+
+                    // fetch the TOAST file, then since TOAST file has same xml structure then take Data area of that file as _value for the keypair
+
+                }
                 // forward result key pair
                 context.write(new Text(_key.trim()), new Text(_value.trim())); // current filename is used as key and data is value
             }
