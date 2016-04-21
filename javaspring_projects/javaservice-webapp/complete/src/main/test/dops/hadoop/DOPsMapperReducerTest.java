@@ -3,7 +3,9 @@ package dops.hadoop;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import dops.hadoop.mappers.FindDataBaseFileMapper;
+import dops.hadoop.mappers.XMLFileMapper;
 import dops.hadoop.reducers.FindDataBaseFileReducer;
+import dops.hadoop.reducers.XMLFileReducer;
 import hadoop.mappers.FindFileWithPatternInsideMapper;
 import hadoop.reducers.FindFileWithPatternInsideReducer;
 import org.apache.hadoop.io.IntWritable;
@@ -81,6 +83,42 @@ public class DOPsMapperReducerTest {
         */
     }
 
+
+    @Test
+    public void testMapReduceXMLFile() {
+
+        // 1. Setup mapper and reducer
+        XMLFileMapper mapper = new XMLFileMapper();
+        XMLFileReducer reducer = new XMLFileReducer();
+        MapReduceDriver<LongWritable, Text, Text, Text, Text, Text> mapReduceDriver;
+        mapReduceDriver = MapReduceDriver.newMapReduceDriver(mapper, reducer);
+
+        // 2. Set input for reducer
+        String fileResource="xmlparserTestFile.xml";
+        try {
+            String fileContent = this.readResource(fileResource, Charsets.UTF_8);
+            Text content = new Text();
+            content.set(fileContent);
+            mapReduceDriver.withInput(new LongWritable(), content);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // 3. Set output for map/reduce job
+        mapReduceDriver.withOutput(new Text("<configuration>"), new Text(""));
+        mapReduceDriver.withOutput(new Text("<property><name>dfs</name><value>2</value></property>"), new Text(""));
+        mapReduceDriver.withOutput(new Text("</configuration>"), new Text(""));
+        mapReduceDriver.withOutput(new Text("<configuration>"), new Text(""));
+        mapReduceDriver.withOutput(new Text("<property><name>dfs.replication</name><value>1</value></property>"), new Text(""));
+        mapReduceDriver.withOutput(new Text("</configuration>"), new Text(""));
+
+
+        // 4. run MapReduce job
+        mapReduceDriver.runTest();
+
+        // 5. verify result
+    }
+
     //TODO: find DOPs database file
     @Test
     public void testFindDataBaseProfileFile() {
@@ -88,11 +126,7 @@ public class DOPsMapperReducerTest {
         // 1. Setup mapper and reducer
         FindDataBaseFileMapper mapper = new FindDataBaseFileMapper();
         FindDataBaseFileReducer reducer = new FindDataBaseFileReducer();
-        MapDriver<LongWritable, Text, Text, Text> mapDriver;
-        ReduceDriver<Text, Text, Text, Text> reduceDriver;
         MapReduceDriver<LongWritable, Text, Text, Text, Text, Text> mapReduceDriver;
-        mapDriver = MapDriver.newMapDriver(mapper);
-        reduceDriver = ReduceDriver.newReduceDriver(reducer);
         mapReduceDriver = MapReduceDriver.newMapReduceDriver(mapper, reducer);
 
         // 2. Set input for reducer
