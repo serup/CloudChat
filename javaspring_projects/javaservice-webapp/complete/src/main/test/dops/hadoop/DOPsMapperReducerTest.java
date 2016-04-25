@@ -2,19 +2,23 @@ package dops.hadoop;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
+import dops.hadoop.mappers.ProfileFileMapper;
+import dops.hadoop.mappers.XMLFileMapper;
+import dops.hadoop.reducers.ProfileFileReducer;
+import dops.hadoop.reducers.XMLFileReducer;
 import hadoop.mappers.FindFileWithPatternInsideMapper;
 import hadoop.reducers.FindFileWithPatternInsideReducer;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mrunit.mapreduce.MapDriver;
 import org.apache.hadoop.mrunit.mapreduce.MapReduceDriver;
-import org.apache.hadoop.mrunit.mapreduce.ReduceDriver;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 
 /**
  * Created by serup on 22-02-16.
@@ -22,19 +26,8 @@ import java.nio.charset.Charset;
 public class DOPsMapperReducerTest {
 
 
-    MapDriver<LongWritable, Text, Text, IntWritable> mapDriver;
-    ReduceDriver<Text, IntWritable, Text, IntWritable> reduceDriver;
-    MapReduceDriver<LongWritable, Text, Text, IntWritable, Text, IntWritable> mapReduceDriver;
-
-
     @Before
     public void setUp() throws Exception {
-        FindFileWithPatternInsideMapper mapper = new FindFileWithPatternInsideMapper();
-        FindFileWithPatternInsideReducer reducer = new FindFileWithPatternInsideReducer();
-        mapper.setSearchPattern("Watson"); // pattern searched for inside the file
-        mapDriver = MapDriver.newMapDriver(mapper);
-        reduceDriver = ReduceDriver.newReduceDriver(reducer);
-        mapReduceDriver = MapReduceDriver.newMapReduceDriver(mapper, reducer);
     }
 
     public String readResource(final String fileName, Charset charset) throws Exception {
@@ -45,9 +38,13 @@ public class DOPsMapperReducerTest {
         }
     }
 
-    //TODO: change to find DOPs database file
     @Test
     public void testFindFileWithPatternMapReduce() {
+        MapReduceDriver<LongWritable, Text, Text, IntWritable, Text, IntWritable> mapReduceDriver;
+        FindFileWithPatternInsideMapper mapper = new FindFileWithPatternInsideMapper();
+        FindFileWithPatternInsideReducer reducer = new FindFileWithPatternInsideReducer();
+        mapper.setSearchPattern("Watson"); // pattern searched for inside the file
+        mapReduceDriver = MapReduceDriver.newMapReduceDriver(mapper, reducer);
         String fileResource1="fileWithPattern1.txt";
         String fileResource2="fileWithPattern2.txt"; // should contain the pattern searched for
 
@@ -80,4 +77,90 @@ public class DOPsMapperReducerTest {
 
         */
     }
+
+
+    @Test
+    public void testMapReduceXMLFile() {
+
+        // 1. Setup mapper and reducer
+        XMLFileMapper mapper = new XMLFileMapper();
+        XMLFileReducer reducer = new XMLFileReducer();
+        MapReduceDriver<LongWritable, Text, Text, Text, Text, Text> mapReduceDriver;
+        mapReduceDriver = MapReduceDriver.newMapReduceDriver(mapper, reducer);
+
+        // 2. Set input for reducer
+        String fileResource="xmlparserTestFile.xml";
+        try {
+            String fileContent = this.readResource(fileResource, Charsets.UTF_8);
+            Text content = new Text();
+            content.set(fileContent);
+            mapReduceDriver.withInput(new LongWritable(), content);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // 3. Set output for map/reduce job
+        mapReduceDriver.withOutput(new Text("<configuration>"), new Text(""));
+        mapReduceDriver.withOutput(new Text("<property><name>dfs</name><value>2</value></property>"), new Text(""));
+        mapReduceDriver.withOutput(new Text("</configuration>"), new Text(""));
+        mapReduceDriver.withOutput(new Text("<configuration>"), new Text(""));
+        mapReduceDriver.withOutput(new Text("<property><name>dfs.replication</name><value>1</value></property>"), new Text(""));
+        mapReduceDriver.withOutput(new Text("</configuration>"), new Text(""));
+
+
+        // 4. run MapReduce job
+        mapReduceDriver.runTest();
+
+        // 5. verify result
+    }
+
+    //TODO: find DOPs database file
+    @Test
+    public void testFindProfileFile() {
+
+        // 1. Setup mapper and reducer
+        ProfileFileMapper mapper = new ProfileFileMapper();
+        ProfileFileReducer reducer = new ProfileFileReducer();
+        MapReduceDriver<LongWritable, Text, Text, Text, Text, Text> mapReduceDriver;
+
+        // 2. Setup search information - username & password for profile to be found
+        mapper.dbctrl.setRelativeENTITIES_DATABASE_PLACE("/tmp/");  // reset default value to work with test
+        mapper.dbctrl.setRelativeTOASTS_DATABASE_PLACE("/tmp/"); // reset default value to work with test
+        reducer.setElementOfInterest("username");
+        mapReduceDriver = MapReduceDriver.newMapReduceDriver(mapper, reducer);
+
+        // 3. Set input for reducer
+        String fileResource = "DataDictionary/Database/ENTITIEs/355760fb6afaf9c41d17ac5b9397fd45.xml"; // This is a profile database file
+        try {
+            String fileContent = this.readResource(fileResource, Charsets.UTF_8);
+            Text content = new Text();
+            content.set(fileContent);
+            mapReduceDriver.withInput(new LongWritable(), content);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // 4. Extract toast file to tmp area - mapper will use input and parse for toast file name, then try to read it and parse it, hence the need for extract of test toast file
+        File resourceFileToast       = new File(this.getClass().getClassLoader().getResource("DataDictionary/Database/TOASTs/355760fb6afaf9c41d17ac5b9397fd45_toast.xml").getFile());
+        File destinationFile         = new File("/tmp/355760fb6afaf9c41d17ac5b9397fd45_toast.xml");
+        try {
+            Files.deleteIfExists(destinationFile.toPath());
+            Files.copy(resourceFileToast.toPath(), destinationFile.toPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        // 5. Set output for map/reduce job
+        mapReduceDriver.withOutput(new Text("<result>"), new Text(""));
+        mapReduceDriver.withOutput(new Text("<file>somefile</file>"), new Text(""));  // resource file yields 'somefile' when used with Mock mapper framework
+        mapReduceDriver.withOutput(new Text("</result>"), new Text(""));
+
+        // 6. run MapReduce job
+        mapReduceDriver.runTest();
+
+        // 7. verify result
+
+    }
+
 }
