@@ -74,6 +74,10 @@ else
       sudo wget -q http://jenkins.dops.scanva.com:8080/jnlpJars/jenkins-cli.jar
       echo "install jenkins cucumber plugin"
       java -jar jenkins-cli.jar -s http://jenkins.dops.scanva.com:8080/ install-plugin cucumber-testresult-plugin
+
+      # TODO: setup jenkins and then copy config file and add it to this install -- example on how to get config file
+      # curl http://jenkins.dops.scanva.com:8080/job/<job-name>/config.xml > jenkins_config.xml
+
       echo "restart jenkins"
       java -jar jenkins-cli.jar -s http://jenkins.dops.scanva.com:8080/ restart
      fi

@@ -167,8 +167,8 @@ public class DataBaseControl {
             ElementData = elementData;
         }
 
-        String strElementID;
-        byte[] ElementData;
+        public String strElementID;
+        public byte[] ElementData;
     }
 
     public class DatabaseEntityRecordEntry
@@ -232,10 +232,10 @@ public class DataBaseControl {
 
     public class EntityChunkDataInfo
     {
-        String entity_chunk_id;
-        long aiid;
-        long entity_chunk_seq;
-        byte[] entity_chunk_data;
+        public String entity_chunk_id;
+        public long aiid;
+        public long entity_chunk_seq;
+        public byte[] entity_chunk_data;
 
         public EntityChunkDataInfo() {
             aiid = -1;
@@ -245,21 +245,23 @@ public class DataBaseControl {
         }
     }
 
-
     public class EntityTOASTDEDRecord extends ArrayList<EntityChunkDataInfo> { };
     public class EntityRealm extends ArrayList<DDEntityEntry> { }
     public class DEDElements extends ArrayList<Elements> { }
     public class DatabaseEntityRecord extends ArrayList<DatabaseEntityRecordEntry> { }
 
+    public EntityChunkDataInfo createEntityChunkDataInfo() { return new EntityChunkDataInfo(); }
+    public DatabaseEntityRecordEntry createEntityRecordEntry() { return new DatabaseEntityRecordEntry(); }
     public DatabaseEntityRecord createEntityRecord()
     {
         return new DatabaseEntityRecord();
     }
-
     public DEDElements createDEDElements()
     {
        return new DEDElements();
     }
+
+    public Elements createElements() { return new Elements(); }
 
     public DataBaseControl()
     {
@@ -409,43 +411,52 @@ public class DataBaseControl {
             return bResult;
         }
         else {//TODO: Consider putting below fetch from TOAST into ReadEntityFile, since toast is a part of an entity it should reside there
-            bResult = false;
-            /// now fetch ALL elements with their attribute values  -- all incl. TOAST attributes
-            /// this means that now we should fetch all attributes from the TOAST entity file
-            String ChunkID = (EntityName + "_chunk_id").toLowerCase();
-            String ChunkIdValue = "";
-            // finding the element
-            List<Elements> resultElement = record_value.stream()
-                                                        .filter((p)-> p.getStrElementID().equals((ChunkID)))
-                                                        .collect(Collectors.toList());
-            if(resultElement.size()>0)
-            {
-                byte[] bytes = resultElement.get(0).getElementData();
-                try {
-                    ChunkIdValue = new String(bytes, "UTF-8"); // for UTF-8 encoding
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-                String TOASTFilePath =  relativeENTITIES_DATABASE_TOAST_PLACE + ChunkIdValue + ".xml";
-                // now open its toast file and put all attributes and values on record_value
-                File ToastFile  = new File(TOASTFilePath);
-                if(ToastFile.exists()) {
-                    bResult = ReadTOASTXmlFile(ToastFile, record_value, EntityName);
-                    if(bResult==false)
-                    {
-                        System.out.println("[ftgt] ERROR : File can not be read : file name : " + TOASTFilePath );    /// no need to go further, something is wrong with the file
-                        return bResult;
-                    }
-                    // now all elements from Entity should have been read, including the ones in TOAST (they have also been merged, so no chunks exists)
-                }
-                else
+            bResult = FetchTOASTEntities(EntityName, record_value);
+        }
+        return bResult;
+    }
+
+    public boolean FetchTOASTEntities(String realm_name, DEDElements record_value)
+    {
+        boolean bResult = false;
+        String EntityName = realm_name;
+
+        /// now fetch ALL elements with their attribute values  -- all incl. TOAST attributes
+        /// this means that now we should fetch all attributes from the TOAST entity file
+        String ChunkID = (EntityName + "_chunk_id").toLowerCase();
+        String ChunkIdValue = "";
+        // finding the element
+        List<Elements> resultElement = record_value.stream()
+                                                    .filter((p)-> p.getStrElementID().equals((ChunkID)))
+                                                    .collect(Collectors.toList());
+        if(resultElement.size()>0)
+        {
+            byte[] bytes = resultElement.get(0).getElementData();
+            try {
+                ChunkIdValue = new String(bytes, "UTF-8"); // for UTF-8 encoding
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            String TOASTFilePath =  relativeENTITIES_DATABASE_TOAST_PLACE + ChunkIdValue + ".xml";
+            // now open its toast file and put all attributes and values on record_value
+            File ToastFile  = new File(TOASTFilePath);
+            if(ToastFile.exists()) {
+                bResult = ReadTOASTXmlFile(ToastFile, record_value, EntityName);
+                if(bResult==false)
                 {
-                    // warning there could not be found a TOAST file, this is not necessary an error, however strange
-                    System.out.println("[ftgt] WARNING: there could not be found a TOAST file, this is not necessary an error, however strange : " + TOASTFilePath );
-                    bResult=true;
+                    System.out.println("[FetchTOASTEntities] ERROR : File can not be read : file name : " + TOASTFilePath );    /// no need to go further, something is wrong with the file
+                    return bResult;
                 }
+                // now all elements from Entity should have been read, including the ones in TOAST (they have also been merged, so no chunks exists)
+            }
+            else
+            {
+                // warning there could not be found a TOAST file, this is not necessary an error, however strange
+                System.out.println("[FetchTOASTEntities] WARNING: there could not be found a TOAST file, this is not necessary an error, however strange : " + TOASTFilePath );
+                bResult=true;
             }
         }
+
         return bResult;
     }
 
@@ -540,7 +551,7 @@ public class DataBaseControl {
      * @param CurrentBuffer
      * @return new buffer with old and appended data
      */
-    private byte[] back_inserter(byte[] IncommingData, byte[] CurrentBuffer)
+    public byte[] back_inserter(byte[] IncommingData, byte[] CurrentBuffer)
     {
         if(CurrentBuffer == null)
             CurrentBuffer = new byte[0]; // assign an empty buffer

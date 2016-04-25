@@ -1,6 +1,6 @@
 package integrationTests.dops.hadoop;
 
-import dops.hadoop.handlers.hadoopDOPsFSHandler;
+import dops.hadoop.handlers.DOPsHDFSHandler;
 import hadoop.mappers.WordMapper;
 import hadoop.reducers.WordReducer;
 import integrationTests.IntegrationEnvironmentSetup;
@@ -31,10 +31,10 @@ import static org.mortbay.util.LazyList.contains;
 
 // http://stackoverflow.com/questions/9849776/calling-a-mapreduce-job-from-a-simple-java-program
 // should find count the word 'Watson' from a created file on the one.cluster node in the DOPs hadoop system
-public class HadoopDOPsWordCountMapReduceTest {
+public class WordCountMapReduceTest {
 
 
-    hadoopDOPsFSHandler fshandlerDriver;
+    DOPsHDFSHandler fshandlerDriver;
 
     IntegrationEnvironmentSetup env = new IntegrationEnvironmentSetup();
 
@@ -80,7 +80,7 @@ public class HadoopDOPsWordCountMapReduceTest {
     @Before
     public void setUp() throws Exception {
         Assert.assertEquals(true, env.setupHadoopIntegrationEnvironment());
-        fshandlerDriver = new hadoopDOPsFSHandler();
+        fshandlerDriver = new DOPsHDFSHandler();
 
         File directory = new File("/tmp/output/wordcount");
         //make sure directory exists
