@@ -58,6 +58,16 @@ public class ProfileFileReducer extends Reducer<Text, Text, Text, Text> {
 
     public String elementOfInterest;
 
+    public String getElementOfInterestValue() {
+        return elementOfInterestValue;
+    }
+
+    public void setElementOfInterestValue(String elementOfInterestValue) {
+        this.elementOfInterestValue = elementOfInterestValue;
+    }
+
+    public String elementOfInterestValue;
+
 /* deprecated
     public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
         for (Text value : values) {
@@ -140,7 +150,7 @@ public class ProfileFileReducer extends Reducer<Text, Text, Text, Text> {
                         String id = eElement.getElementsByTagName("id").item(0).getTextContent();
                         String data = eElement.getElementsByTagName("data").item(0).getTextContent();
                         // reduce to find the element being searched for
-                        if(id.contentEquals(elementOfInterest))
+                        if(id.contentEquals(elementOfInterest) && data.contentEquals(elementOfInterestValue))
                         {
                             // if found search values, thus key aka. file is of interest
                             outputKey.set(constructPropertyXml(key));
