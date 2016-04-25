@@ -15,8 +15,10 @@ import org.apache.hadoop.mrunit.mapreduce.MapReduceDriver;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 
 /**
  * Created by serup on 22-02-16.
@@ -120,36 +122,43 @@ public class DOPsMapperReducerTest {
         ProfileFileMapper mapper = new ProfileFileMapper();
         ProfileFileReducer reducer = new ProfileFileReducer();
         MapReduceDriver<LongWritable, Text, Text, Text, Text, Text> mapReduceDriver;
-        mapReduceDriver = MapReduceDriver.newMapReduceDriver(mapper, reducer);
 
         // 2. Setup search information - username & password for profile to be found
-
+        mapper.dbctrl.setRelativeENTITIES_DATABASE_PLACE("/tmp/");  // reset default value to work with test
+        mapper.dbctrl.setRelativeTOASTS_DATABASE_PLACE("/tmp/"); // reset default value to work with test
+        mapReduceDriver = MapReduceDriver.newMapReduceDriver(mapper, reducer);
 
         // 3. Set input for reducer
         String fileResource = "DataDictionary/Database/ENTITIEs/355760fb6afaf9c41d17ac5b9397fd45.xml"; // This is a profile database file
-        String fileResource2 = "DataDictionary/Database/TOASTs/355760fb6afaf9c41d17ac5b9397fd45_toast.xml"; // This is a profile toast database file
         try {
             String fileContent = this.readResource(fileResource, Charsets.UTF_8);
             Text content = new Text();
             content.set(fileContent);
             mapReduceDriver.withInput(new LongWritable(), content);
-            //String fileContent2 = this.readResource(fileResource2, Charsets.UTF_8);
-            //Text content2 = new Text();
-            //content.set(fileContent2);
-            //mapReduceDriver.withInput(new LongWritable(), content2);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        // 4. Set output for map/reduce job
+        // 4. Extract toast file to tmp area - mapper will use input and parse for toast file name, then try to read it and parse it, hence the need for extract of test toast file
+        File resourceFileToast       = new File(this.getClass().getClassLoader().getResource("DataDictionary/Database/TOASTs/355760fb6afaf9c41d17ac5b9397fd45_toast.xml").getFile());
+        File destinationFile         = new File("/tmp/355760fb6afaf9c41d17ac5b9397fd45_toast.xml");
+        try {
+            Files.deleteIfExists(destinationFile.toPath());
+            Files.copy(resourceFileToast.toPath(), destinationFile.toPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        // 5. Set output for map/reduce job
         mapReduceDriver.withOutput(new Text("<result>"), new Text(""));
         mapReduceDriver.withOutput(new Text("<file>somefile</file>"), new Text(""));  // resource file yields 'somefile' when used with Mock mapper framework
         mapReduceDriver.withOutput(new Text("</result>"), new Text(""));
 
-        // 5. run MapReduce job
+        // 6. run MapReduce job
         mapReduceDriver.runTest();
 
-        // 6. verify result
+        // 7. verify result
 
     }
 
