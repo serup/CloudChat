@@ -109,7 +109,6 @@ public class ProfileFileMapper extends Mapper<LongWritable, Text, Text, Text>{
                         }
                         if(n != 0) {
                             // fetch the TOAST file, then since TOAST file has same xml structure then take Data area of that file as _value for the keypair
-                            //dbctrl.FetchTOASTEntities(EntityName, dedElements);
 
                             /// now fetch ALL elements with their attribute values  -- all incl. TOAST attributes
                             /// this means that now we should fetch all attributes from the TOAST entity file
@@ -130,12 +129,6 @@ public class ProfileFileMapper extends Mapper<LongWritable, Text, Text, Text>{
                                 // now open its toast file and put all attributes and values on record_value
                                 File ToastFile = new File(TOASTFilePath);
                                 if (ToastFile.exists()) {
-                                    //bResult = dbctrl.ReadTOASTXmlFile(ToastFile, dedElements, EntityName);
-                                    //if (bResult == false) {
-                                    //    System.out.println("[FetchTOASTEntities] ERROR : File can not be read : file name : " + TOASTFilePath);    /// no need to go further, something is wrong with the file
-                                    //    return;
-                                    //}
-
                                     String Child = EntityName;
                                     String ChildRecord = EntityName + "Record";
 
@@ -203,18 +196,11 @@ public class ProfileFileMapper extends Mapper<LongWritable, Text, Text, Text>{
                                                 if(!PrevChunkId.contentEquals("nothing") && !PrevChunkId.contentEquals(chunk.entity_chunk_id))
                                                 {
                                                     // SETUP KEY/PAIR
-                                                    //records_elements.add(Element);
-
-                                                    // FORWARD RESULT KEY/PAIR
-                                                    //context.write(new Text(_key), new Text(_value)); // current Element is used as key/value pair
-                                                    //context.write(new Text(Element.getStrElementID()), Element); // current Element is used as key/value pair
-                                                    //context.write(new Text(Element.getStrElementID()), dbctrl.createElements()); // current Element is used as key/value pair
-                                                    //context.write(new Text(Element.getStrElementID()), new DataBaseControl().new Elements()); // current Element is used as key/value pair
-//                                                    context.write(new Text(Element.getStrElementID()), new Text("")); // current Element is used as key/value pair
                                                     String tmp = new String(Element.ElementData, "UTF-8");
                                                     if(tmp.contentEquals("<empty>"))
                                                         tmp="null";
                                                     String resultValue = constructEntityXml(new Text(Element.getStrElementID().toString()), new Text(tmp));
+                                                    // FORWARD RESULT KEY/PAIR
                                                     context.write(new Text(_key), new Text(resultValue));
 
                                                     Element = dbctrl.createElements();
@@ -234,16 +220,11 @@ public class ProfileFileMapper extends Mapper<LongWritable, Text, Text, Text>{
                                     // should only add last element if chunks have been assembled
                                     if(isPushed==false){
                                         // SETUP KEY/PAIR
-                                        //records_elements.add(Element);
-
-                                        // FORWARD RESULT KEY/PAIR
-                                        //context.write(new Text(_key), new Text(_value)); // current Element is used as key/value pair
-                                        //context.write(new Text(_key), Element); // current Element is used as key/value pair
-//                                        context.write(new Text(Element.getStrElementID()), new Text("")); // current Element is used as key/value pair
                                         String tmp = new String(Element.ElementData, "UTF-8");
                                         if(tmp.contentEquals("<empty>"))
                                             tmp="null";
                                         String resultValue = constructEntityXml(new Text(Element.getStrElementID().toString()), new Text(tmp));
+                                        // FORWARD RESULT KEY/PAIR
                                         context.write(new Text(_key), new Text(resultValue));
 
                                     }
