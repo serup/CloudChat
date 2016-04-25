@@ -126,6 +126,7 @@ public class DOPsMapperReducerTest {
         // 2. Setup search information - username & password for profile to be found
         mapper.dbctrl.setRelativeENTITIES_DATABASE_PLACE("/tmp/");  // reset default value to work with test
         mapper.dbctrl.setRelativeTOASTS_DATABASE_PLACE("/tmp/"); // reset default value to work with test
+        reducer.setElementOfInterest("username");
         mapReduceDriver = MapReduceDriver.newMapReduceDriver(mapper, reducer);
 
         // 3. Set input for reducer

@@ -167,8 +167,8 @@ public class DataBaseControl {
             ElementData = elementData;
         }
 
-        String strElementID;
-        byte[] ElementData;
+        public String strElementID;
+        public byte[] ElementData;
     }
 
     public class DatabaseEntityRecordEntry
@@ -232,10 +232,10 @@ public class DataBaseControl {
 
     public class EntityChunkDataInfo
     {
-        String entity_chunk_id;
-        long aiid;
-        long entity_chunk_seq;
-        byte[] entity_chunk_data;
+        public String entity_chunk_id;
+        public long aiid;
+        public long entity_chunk_seq;
+        public byte[] entity_chunk_data;
 
         public EntityChunkDataInfo() {
             aiid = -1;
@@ -245,21 +245,23 @@ public class DataBaseControl {
         }
     }
 
-
     public class EntityTOASTDEDRecord extends ArrayList<EntityChunkDataInfo> { };
     public class EntityRealm extends ArrayList<DDEntityEntry> { }
     public class DEDElements extends ArrayList<Elements> { }
     public class DatabaseEntityRecord extends ArrayList<DatabaseEntityRecordEntry> { }
 
+    public EntityChunkDataInfo createEntityChunkDataInfo() { return new EntityChunkDataInfo(); }
+    public DatabaseEntityRecordEntry createEntityRecordEntry() { return new DatabaseEntityRecordEntry(); }
     public DatabaseEntityRecord createEntityRecord()
     {
         return new DatabaseEntityRecord();
     }
-
     public DEDElements createDEDElements()
     {
        return new DEDElements();
     }
+
+    public Elements createElements() { return new Elements(); }
 
     public DataBaseControl()
     {
@@ -549,7 +551,7 @@ public class DataBaseControl {
      * @param CurrentBuffer
      * @return new buffer with old and appended data
      */
-    private byte[] back_inserter(byte[] IncommingData, byte[] CurrentBuffer)
+    public byte[] back_inserter(byte[] IncommingData, byte[] CurrentBuffer)
     {
         if(CurrentBuffer == null)
             CurrentBuffer = new byte[0]; // assign an empty buffer

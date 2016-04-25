@@ -1,13 +1,17 @@
 package dops.hadoop.reducers;
 
-import dops.database.DataBaseControl;
-import dops.protocol.ded.DEDDecoder;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
-import javax.xml.bind.DatatypeConverter;
-import java.io.File;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.IOException;
+import java.io.StringReader;
 
 /**
  * Created by serup on 21-04-16.
@@ -44,6 +48,17 @@ public class ProfileFileReducer extends Reducer<Text, Text, Text, Text> {
 
     private Text outputKey = new Text();
 
+    public String getElementOfInterest() {
+        return elementOfInterest;
+    }
+
+    public void setElementOfInterest(String elementOfInterest) {
+        this.elementOfInterest = elementOfInterest;
+    }
+
+    public String elementOfInterest;
+
+/* deprecated
     public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
         for (Text value : values) {
             //TODO: use DED to lookup Data and check for search values
@@ -84,6 +99,58 @@ public class ProfileFileReducer extends Reducer<Text, Text, Text, Text> {
                 // if found search values, thus key aka. file is of interest
                 outputKey.set(constructPropertyXml(key));
                 context.write(outputKey, new Text(""));
+            }
+        }
+    }
+*/
+
+/*    public void reduce(Text key, Iterable<DataBaseControl.Elements> values, Context context) throws IOException, InterruptedException {
+        for (DataBaseControl.Elements value : values) {
+            DataBaseControl dbctrl = new DataBaseControl();
+
+            // reduce to find the element being searched for
+            if(value.getStrElementID() == elementOfInterest)
+            {
+                // if found search values, thus key aka. file is of interest
+                outputKey.set(constructPropertyXml(key));
+                context.write(outputKey, new Text(""));
+            }
+        }
+    }
+*/
+    public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder dBuilder;
+        Document doc = null;
+
+        for (Text value : values) {
+
+
+            try {
+                dBuilder = dbFactory.newDocumentBuilder();
+                doc = dBuilder.parse(new InputSource(new StringReader(value.toString())));
+
+                doc.getDocumentElement().normalize();
+                NodeList nList = doc.getElementsByTagName("entity");
+                for (int temp = 0; temp < nList.getLength(); temp++) {
+                    Node nNode = nList.item(temp);
+                    if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+                        Element eElement = (Element) nNode;
+                        System.out.println(eElement.getTagName());
+                        String id = eElement.getElementsByTagName("id").item(0).getTextContent();
+                        String data = eElement.getElementsByTagName("data").item(0).getTextContent();
+                        // reduce to find the element being searched for
+                        if(id.contentEquals(elementOfInterest))
+                        {
+                            // if found search values, thus key aka. file is of interest
+                            outputKey.set(constructPropertyXml(key));
+                            context.write(outputKey, new Text(""));
+                        }
+                    }
+
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
