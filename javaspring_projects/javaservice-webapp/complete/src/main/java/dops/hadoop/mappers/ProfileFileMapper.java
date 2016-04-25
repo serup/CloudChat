@@ -36,7 +36,13 @@ import java.io.StringReader;
  */
 public class ProfileFileMapper extends Mapper<LongWritable, Text, Text, Text>{
 
-    public void map( LongWritable key, Text value, Mapper.Context context ) throws IOException, InterruptedException {
+    public DataBaseControl dbctrl;
+
+    public ProfileFileMapper() {
+        DataBaseControl dbctrl = new DataBaseControl();
+    }
+
+    public void map(LongWritable key, Text value, Mapper.Context context ) throws IOException, InterruptedException {
 
         String filename =((FileSplit) context.getInputSplit()).getPath().getName() ; // this will yield 'somefile' when used with Mock mapper framework
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -69,7 +75,6 @@ public class ProfileFileMapper extends Mapper<LongWritable, Text, Text, Text>{
 
                 // fetch the EntityFile then the associated TOAST file, since TOAST file has same xml structure then take Data area of that file as _value for the keypair
                 // since TOAST file has many records, then context.write has to be called for each record
-                DataBaseControl dbctrl = new DataBaseControl();
                 DataBaseControl.DEDElements dedElements = dbctrl.createDEDElements(); // Placeholder for retrieved DataEncoderDecoder elements
                 String uppercaseEntityName = "DataDictionary/Entities/DD_" + "PROFILE"  + ".xml";  // example: DataDictionary/DD_PROFILE.xml
                 File dataDictionaryFile  = new File(this.getClass().getClassLoader().getResource(uppercaseEntityName).getFile());
