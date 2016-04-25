@@ -212,6 +212,8 @@ public class ProfileFileMapper extends Mapper<LongWritable, Text, Text, Text>{
                                                     //context.write(new Text(Element.getStrElementID()), new DataBaseControl().new Elements()); // current Element is used as key/value pair
 //                                                    context.write(new Text(Element.getStrElementID()), new Text("")); // current Element is used as key/value pair
                                                     String tmp = new String(Element.ElementData, "UTF-8");
+                                                    if(tmp.contentEquals("<empty>"))
+                                                        tmp="null";
                                                     String resultValue = constructEntityXml(new Text(Element.getStrElementID().toString()), new Text(tmp));
                                                     context.write(new Text(_key), new Text(resultValue));
 
@@ -239,6 +241,8 @@ public class ProfileFileMapper extends Mapper<LongWritable, Text, Text, Text>{
                                         //context.write(new Text(_key), Element); // current Element is used as key/value pair
 //                                        context.write(new Text(Element.getStrElementID()), new Text("")); // current Element is used as key/value pair
                                         String tmp = new String(Element.ElementData, "UTF-8");
+                                        if(tmp.contentEquals("<empty>"))
+                                            tmp="null";
                                         String resultValue = constructEntityXml(new Text(Element.getStrElementID().toString()), new Text(tmp));
                                         context.write(new Text(_key), new Text(resultValue));
 

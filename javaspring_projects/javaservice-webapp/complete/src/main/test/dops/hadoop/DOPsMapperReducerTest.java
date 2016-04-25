@@ -127,6 +127,7 @@ public class DOPsMapperReducerTest {
         mapper.dbctrl.setRelativeENTITIES_DATABASE_PLACE("/tmp/");  // reset default value to work with test
         mapper.dbctrl.setRelativeTOASTS_DATABASE_PLACE("/tmp/"); // reset default value to work with test
         reducer.setElementOfInterest("username");
+        reducer.setElementOfInterestValue("johnnytest@email.com");
         mapReduceDriver = MapReduceDriver.newMapReduceDriver(mapper, reducer);
 
         // 3. Set input for reducer
