@@ -125,7 +125,12 @@ public class ProfileFileMapper extends Mapper<LongWritable, Text, Text, Text>{
                                 } catch (UnsupportedEncodingException e) {
                                     e.printStackTrace();
                                 }
-                                String TOASTFilePath = dbctrl.getRelativeENTITIES_DATABASE_TOAST_PLACE() + ChunkIdValue + ".xml";
+                                String TOASTFilePath;
+                                if(context.getConfiguration().get("dops.entities.database.dir") == null)
+                                    TOASTFilePath = dbctrl.getRelativeENTITIES_DATABASE_TOAST_PLACE() + ChunkIdValue + ".xml";
+                                else
+                                    TOASTFilePath = context.getConfiguration().get("dops.entities.database.dir") + ChunkIdValue + ".xml";
+
                                 // now open its toast file and put all attributes and values on record_value
                                 File ToastFile = new File(TOASTFilePath);
                                 if (ToastFile.exists()) {
