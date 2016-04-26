@@ -181,6 +181,8 @@ class DEDTest(unittest.TestCase):
         result = DED2.GET_STRUCT_START("event")
         self.assertTrue(True, result > 0)
 
+        DED2.endianness = 'be';   # necessary for this test, since default is little endian
+
         result = DED2.GET_USHORT("ushort")
         self.assertEquals(4, result)
 
@@ -202,6 +204,7 @@ class DEDTest(unittest.TestCase):
         self.assertTrue(True, DED2.ptotaldata == DEDobj.uncompresseddata)
 
         # start decoding
+        DED2.endianness = 'be';   # necessary for this test, since default is little endian
         result = DED2.GET_STRUCT_START("event")
         self.assertTrue(True, result > 0)
 
