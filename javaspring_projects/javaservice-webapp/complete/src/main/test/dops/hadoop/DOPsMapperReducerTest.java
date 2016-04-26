@@ -114,7 +114,6 @@ public class DOPsMapperReducerTest {
         // 5. verify result
     }
 
-    //TODO: find DOPs database file
     @Test
     public void testFindProfileFile() {
 
@@ -123,7 +122,7 @@ public class DOPsMapperReducerTest {
         ProfileFileReducer reducer = new ProfileFileReducer();
         MapReduceDriver<LongWritable, Text, Text, Text, Text, Text> mapReduceDriver;
 
-        // 2. Setup search information - username & password for profile to be found
+        // 2. Setup search information - username - for profile to be found
         mapper.dbctrl.setRelativeENTITIES_DATABASE_PLACE("/tmp/");  // reset default value to work with test
         mapper.dbctrl.setRelativeTOASTS_DATABASE_PLACE("/tmp/"); // reset default value to work with test
         reducer.setElementOfInterest("username");
@@ -159,8 +158,6 @@ public class DOPsMapperReducerTest {
 
         // 6. run MapReduce job
         mapReduceDriver.runTest();
-
-        // 7. verify result
 
     }
 
