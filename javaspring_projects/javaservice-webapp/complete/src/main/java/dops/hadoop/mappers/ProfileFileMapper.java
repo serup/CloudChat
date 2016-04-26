@@ -2,6 +2,10 @@ package dops.hadoop.mappers;
 
 import dops.database.DataBaseControl;
 import dops.protocol.ded.DEDDecoder;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FSDataInputStream;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -19,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -125,28 +130,56 @@ public class ProfileFileMapper extends Mapper<LongWritable, Text, Text, Text>{
                                 } catch (UnsupportedEncodingException e) {
                                     e.printStackTrace();
                                 }
+
+                                DocumentBuilderFactory dbFactory2 = DocumentBuilderFactory.newInstance();
+                                DocumentBuilder dBuilder2;
+                                Document doc2 = null;
+                                String Child = EntityName;
+                                String ChildRecord = EntityName + "Record";
+                                boolean bFoundFile=false;
                                 String TOASTFilePath;
-                                if(context.getConfiguration().get("dops.entities.database.dir") == null)
+                                if(context.getConfiguration().get("dops.entities.database.dir") == null) {
                                     TOASTFilePath = dbctrl.getRelativeENTITIES_DATABASE_TOAST_PLACE() + ChunkIdValue + ".xml";
-                                else
+                                    // now open its toast file and put all attributes and values on record_value
+                                    File ToastFile = new File(TOASTFilePath);
+                                    if (ToastFile.exists()) {
+//                                        String Child = EntityName;
+//                                        String ChildRecord = EntityName + "Record";
+
+                                        File fXmlFile = ToastFile;
+//                                    DocumentBuilderFactory dbFactory2 = DocumentBuilderFactory.newInstance();
+//                                    DocumentBuilder dBuilder2;
+//                                    Document doc2 = null;
+                                        try {
+                                            dBuilder2 = dbFactory.newDocumentBuilder();
+                                            doc2 = dBuilder2.parse(fXmlFile);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+
+
+                                        bFoundFile=true;
+                                    }
+                                }
+                                else {
+                                    // handle file from hdfs
                                     TOASTFilePath = context.getConfiguration().get("dops.entities.database.dir") + ChunkIdValue + ".xml";
-
-                                // now open its toast file and put all attributes and values on record_value
-                                File ToastFile = new File(TOASTFilePath);
-                                if (ToastFile.exists()) {
-                                    String Child = EntityName;
-                                    String ChildRecord = EntityName + "Record";
-
-                                    File fXmlFile = ToastFile;
-                                    DocumentBuilderFactory dbFactory2 = DocumentBuilderFactory.newInstance();
-                                    DocumentBuilder dBuilder2;
-                                    Document doc2 = null;
+                                    Configuration configuration = new Configuration();
+                                    FileSystem fs = FileSystem.get(new URI(context.getConfiguration().get("fs.defaultFS")),configuration);
+                                    Path filePath = new Path(TOASTFilePath);
+                                    FSDataInputStream fsDataInputStream = fs.open(filePath);
                                     try {
                                         dBuilder2 = dbFactory.newDocumentBuilder();
-                                        doc2 = dBuilder2.parse(fXmlFile);
+                                        doc2 = dBuilder2.parse(fsDataInputStream);
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     }
+                                    bFoundFile=true;
+
+                                    System.out.println("hdfs file parsed : TransGUID: " + doc2.getElementsByTagName("TransGUID").item(0).getTextContent());
+                                }
+
+                                if(bFoundFile) {
 
                                     doc2.getDocumentElement().normalize();
                                     String nodeName = doc2.getDocumentElement().getNodeName();
