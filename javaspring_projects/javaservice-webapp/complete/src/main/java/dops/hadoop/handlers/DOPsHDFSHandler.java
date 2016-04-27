@@ -13,16 +13,15 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by serup on 22-02-16.
- */
+
+@SuppressWarnings("unused")
 public class DOPsHDFSHandler {
     /**
      * Should handle all commands going to the hdfs
      */
-    Configuration conf;
-    public URI uri;
-    FileSystem fs;
+    private final Configuration conf;
+    public final URI uri;
+    private FileSystem fs;
 
     private String executeCommand(String command, String path) {
 
@@ -36,7 +35,7 @@ public class DOPsHDFSHandler {
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             process.waitFor();
 
-            String line = "";
+            String line;
             while ((line = reader.readLine())!= null) {
                 output.append(line + "\n");
             }
@@ -83,20 +82,16 @@ public class DOPsHDFSHandler {
 
 
     public List<String> ls(String strPath){
-        List<String> itemsToAdd = new ArrayList<String>();
+        List<String> itemsToAdd = new ArrayList<>();
 
-        FileSystem fs = null;
+        FileSystem fs;
         try {
             fs = FileSystem.get(uri, conf);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Path filePath = new Path(strPath); // root = "/"
-        FileStatus[] fileStatuses = null;
-        try {
+            Path filePath = new Path(strPath); // root = "/"
+            FileStatus[] fileStatuses;
             fileStatuses = fs.listStatus(filePath);
             for(FileStatus status : fileStatuses) {
-               itemsToAdd.add(status.getPath().toString());
+                itemsToAdd.add(status.getPath().toString());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -124,7 +119,7 @@ public class DOPsHDFSHandler {
     public boolean copyTo(String inputfile, String destinationHDFSPath) {
         boolean bResult = true;
 
-        String fileName = inputfile.substring( inputfile.lastIndexOf('/')+1, inputfile.length() );
+        // String fileName = inputfile.substring( inputfile.lastIndexOf('/')+1, inputfile.length() );
         // put file into hdfs at destinationHDFSPath
         try {
             fs = FileSystem.get(uri, conf); // fetch filesystem handle for hdfs on one.cluster server
@@ -134,12 +129,6 @@ public class DOPsHDFSHandler {
             bResult = false;
             e.printStackTrace();
         }
-
-        // cleanup - when testing
-        //String newfileName = destinationHDFSPath + "/" + fileName;
-        ////fs.deleteOnExit(new Path(newfileName));
-        //remove(newfileName);
-
         return bResult;
     }
 }

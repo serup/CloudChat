@@ -73,6 +73,14 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- wireshark already installed"
 fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 vim |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install vim on ubuntu "
+  sudo apt-get install -yq vim 
+  echo " - done."
+else
+  echo "- vim already installed"
+fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 sysstat |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install sysstat on ubuntu : example: iostat -d 1 10"

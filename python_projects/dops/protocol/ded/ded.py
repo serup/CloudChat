@@ -526,10 +526,7 @@ class DEDEncoder(object):
         DEDelmnt.elementtype = conversion_factors_for("DED_ELEMENT_TYPE_USHORT")
         result = self.getelement(DEDelmnt)
         if result == 1:
-            if self.endianness == "le":
-                result = leUnpack(bytes(DEDelmnt.value))  # coming from C++ server on linux
-            else:
-                result = beUnpack(bytes(DEDelmnt.value))  # fx. coming from JavaSpring
+            result = DEDelmnt.value
         else:
             result = -1
         return result
