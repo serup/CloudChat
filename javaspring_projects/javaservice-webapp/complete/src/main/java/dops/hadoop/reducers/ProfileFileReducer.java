@@ -96,23 +96,40 @@ public class ProfileFileReducer extends Reducer<Text, Text, Text, Text> {
         return bFound;
     }
 
-    public boolean parseXMLToFindElement(Text xmlElement) {
-        boolean bFound=false;
+    public Document setupDocument(Text xmlElement) {
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder dBuilder;
+        Document doc = null;
         try {
-            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder dBuilder;
-            Document doc;
             dBuilder = dbFactory.newDocumentBuilder();
             doc = dBuilder.parse(new InputSource(new StringReader(xmlElement.toString())));
             doc.getDocumentElement().normalize();
-            NodeList nList = doc.getElementsByTagName("entity");
-            for (int index = 0; index < nList.getLength(); index++) {
-                Node nNode = nList.item(index);
-                bFound = isElementOfInterest(nNode);
-                if(bFound)
-                    break;
-            }
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return doc;
+    }
+
+    public boolean searchForElementOfInterest(Document doc)
+    {
+        boolean bFound=false;
+        NodeList nList = doc.getElementsByTagName("entity");
+        for (int index = 0; index < nList.getLength(); index++) {
+            Node nNode = nList.item(index);
+            bFound = isElementOfInterest(nNode);
+            if (bFound)
+                break;
+        }
+        return bFound;
+    }
+
+    public boolean parseXMLToFindElementOfInterest(Text xmlElement) {
+        boolean bFound=false;
+        try {
+            Document doc = setupDocument(xmlElement);
+            if(doc!=null)
+                bFound = searchForElementOfInterest(doc);
+       } catch (Exception e) {
             e.printStackTrace();
             bFound=false;
         }
@@ -141,7 +158,7 @@ public class ProfileFileReducer extends Reducer<Text, Text, Text, Text> {
     {
         boolean bFound=false;
         for (Text xmlElement : lineFromFile) {
-            bFound = parseXMLToFindElement(xmlElement);
+            bFound = parseXMLToFindElementOfInterest(xmlElement);
            if (bFound)
                 break;
         }
