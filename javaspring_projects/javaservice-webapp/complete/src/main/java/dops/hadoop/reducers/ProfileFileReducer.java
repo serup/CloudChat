@@ -69,7 +69,7 @@ public class ProfileFileReducer extends Reducer<Text, Text, Text, Text> {
 
     private String elementOfInterestValue;
 
-    private void setupConfElements(Context context) {
+    private void setupContextConfigurationElements(Context context) {
         if(context.getConfiguration().get("dops.entities.database.dir") != null) {
             elementOfInterest = context.getConfiguration().get("dops.elementofinterest");
             elementOfInterestValue = context.getConfiguration().get("dops.elementofinterest.value");
@@ -154,10 +154,10 @@ public class ProfileFileReducer extends Reducer<Text, Text, Text, Text> {
 
     public void reduce(Text fileNameOfFileBeingProcessed, Iterable<Text> lineFromFile, Context context) throws IOException, InterruptedException {
 
-        setupConfElements(context);
+        setupContextConfigurationElements(context);
         if(parseLineFromFileToFindElementOfInterest(lineFromFile))
              writeReducerContext(fileNameOfFileBeingProcessed, context);
-   }
+    }
 
 
 }
