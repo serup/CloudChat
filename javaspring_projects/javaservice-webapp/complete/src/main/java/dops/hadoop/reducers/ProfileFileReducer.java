@@ -154,7 +154,7 @@ public class ProfileFileReducer extends Reducer<Text, Text, Text, Text> {
         }
     }
 
-    public boolean parseValuesToFindElementOfInterest(Iterable<Text> lineFromFile)
+    public boolean parseLineFromFileToFindElementOfInterest(Iterable<Text> lineFromFile)
     {
         boolean bFound=false;
         for (Text xmlElement : lineFromFile) {
@@ -165,11 +165,11 @@ public class ProfileFileReducer extends Reducer<Text, Text, Text, Text> {
         return bFound;
     }
 
-    public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
+    public void reduce(Text fileNameOfFileBeingProcessed, Iterable<Text> lineFromFile, Context context) throws IOException, InterruptedException {
 
         setupConfElements(context);
-        if(parseValuesToFindElementOfInterest(values))
-             writeReducerContext(key, context);
+        if(parseLineFromFileToFindElementOfInterest(lineFromFile))
+             writeReducerContext(fileNameOfFileBeingProcessed, context);
    }
 
 
