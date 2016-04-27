@@ -74,8 +74,13 @@ public class ProfileFileMapper extends Mapper<LongWritable, Text, Text, Text>{
 
                     _key = filename;
                     _value = eElement.getElementsByTagName("Data").item(0).getTextContent();
+                    String md5 = dbctrl.CalculateMD5CheckSum(_value.getBytes());
+                    if (!md5.equalsIgnoreCase(eElement.getElementsByTagName("DataMD5").item(0).getTextContent()))
+                    {
+                        System.out.println("ERROR: data area in file have changed without having the MD5 checksum changed -- Warning data could be compromised ; ");
+                        return;  // data area in file have changed without having the MD5 checksum changed -- Warning data could be compromised
+                    }
                 }
-                //TODO: check if MD5 is correct, and only if it is correct, then use ProfileRecord data as result
 
                 // fetch the EntityFile then the associated TOAST file, since TOAST file has same xml structure then take Data area of that file as _value for the keypair
                 // since TOAST file has many records, then context.write has to be called for each record
