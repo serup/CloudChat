@@ -66,25 +66,20 @@ public class DOPsMRTests {
             conf.set("hadoop.job.ugi", "root, supergroup");
             conf.set("hadoop.home.dir", "/usr/local/hadoop");
             conf.set("dfs.domain.socket.path", "/var/lib/hadoop-hdfs/dn_socket");
-
             conf.set("dops.entities.database.dir", "hdfs://one.cluster:8020/tmp/input/findprofile/");
             conf.set("dops.toast.database.dir", "hdfs://one.cluster:8020/tmp/input/findprofile/toast/");
             conf.set("dops.elementofinterest", "username");
             conf.set("dops.elementofinterest.value", "johnnytest@email.com");
 
-            // job.setMapSpeculativeExecution(false)
             conf.setBoolean("mapreduce.map.speculative", false);
             conf.setBoolean("mapreduce.reduce.speculative", false);
 
             Job job = null;
             job = Job.getInstance(conf);
             job.setJobName("FindProfileFile");
-
             job.setJarByClass(ProfileFileMapper.class);
-
             job.setMapperClass(ProfileFileMapper.class);
             job.setReducerClass(ProfileFileReducer.class);
-
             job.setOutputKeyClass(Text.class);
             job.setOutputValueClass(Text.class);
 
@@ -125,10 +120,9 @@ public class DOPsMRTests {
         // serup@serup-ThinkPad-T440s:~$ ls /tmp/output/findprofile/result/
         // part-r-00000  _SUCCESS
         // serup@serup-ThinkPad-T440s:~$ cat /tmp/output/findprofile/result/part-r-00000
-        // ????  ???? //TODO:find out
-        // serup@serup-ThinkPad-T440s:~$
+        // <result>\t\n<file>355760fb6afaf9c41d17ac5b9397fd45.xml</file>\t\n</result>\t\n
         //
-        // above shows that the word 'watson' was found 81 times, which is correct according to the watson.txt resource file
+        // above shows that the field searched for was found in <file>
 
         String result = env.executeCmd("cat /tmp/output/findprofile/result/part-r-00000", "/");
         assertEquals(true, contains(result, new String("<result>\t\n<file>355760fb6afaf9c41d17ac5b9397fd45.xml</file>\t\n</result>\t\n")));

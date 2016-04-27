@@ -143,21 +143,13 @@ public class ProfileFileMapper extends Mapper<LongWritable, Text, Text, Text>{
                                     // now open its toast file and put all attributes and values on record_value
                                     File ToastFile = new File(TOASTFilePath);
                                     if (ToastFile.exists()) {
-//                                        String Child = EntityName;
-//                                        String ChildRecord = EntityName + "Record";
-
                                         File fXmlFile = ToastFile;
-//                                    DocumentBuilderFactory dbFactory2 = DocumentBuilderFactory.newInstance();
-//                                    DocumentBuilder dBuilder2;
-//                                    Document doc2 = null;
                                         try {
                                             dBuilder2 = dbFactory2.newDocumentBuilder();
                                             doc2 = dBuilder2.parse(fXmlFile);
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
-
-
                                         bFoundFile=true;
                                     }
                                 }
