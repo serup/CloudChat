@@ -138,7 +138,7 @@ public class ProfileFileMapper extends Mapper<LongWritable, Text, Text, Text>{
                                 String ChildRecord = EntityName + "Record";
                                 boolean bFoundFile=false;
                                 String TOASTFilePath;
-                                if(context.getConfiguration().get("dops.entities.database.dir") == null) {
+                                if(context.getConfiguration().get("dops.toast.database.dir") == null) {
                                     TOASTFilePath = dbctrl.getRelativeENTITIES_DATABASE_TOAST_PLACE() + ChunkIdValue + ".xml";
                                     // now open its toast file and put all attributes and values on record_value
                                     File ToastFile = new File(TOASTFilePath);
@@ -151,7 +151,7 @@ public class ProfileFileMapper extends Mapper<LongWritable, Text, Text, Text>{
 //                                    DocumentBuilder dBuilder2;
 //                                    Document doc2 = null;
                                         try {
-                                            dBuilder2 = dbFactory.newDocumentBuilder();
+                                            dBuilder2 = dbFactory2.newDocumentBuilder();
                                             doc2 = dBuilder2.parse(fXmlFile);
                                         } catch (Exception e) {
                                             e.printStackTrace();
@@ -163,13 +163,13 @@ public class ProfileFileMapper extends Mapper<LongWritable, Text, Text, Text>{
                                 }
                                 else {
                                     // handle file from hdfs
-                                    TOASTFilePath = context.getConfiguration().get("dops.entities.database.dir") + ChunkIdValue + ".xml";
+                                    TOASTFilePath = context.getConfiguration().get("dops.toast.database.dir") + ChunkIdValue + ".xml";
                                     Configuration configuration = new Configuration();
                                     FileSystem fs = FileSystem.get(new URI(context.getConfiguration().get("fs.defaultFS")),configuration);
                                     Path filePath = new Path(TOASTFilePath);
                                     FSDataInputStream fsDataInputStream = fs.open(filePath);
                                     try {
-                                        dBuilder2 = dbFactory.newDocumentBuilder();
+                                        dBuilder2 = dbFactory2.newDocumentBuilder();
                                         doc2 = dBuilder2.parse(fsDataInputStream);
                                     } catch (Exception e) {
                                         e.printStackTrace();

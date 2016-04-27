@@ -155,6 +155,9 @@ public class IntegrationEnvironmentSetup {
 
     public static void delete(File file) throws IOException {
 
+        // NB! if this does not work then manually try this :
+        // hadoop -skipTrash fs -rmr /tmp/input/findprofile
+        //
         if(file.isDirectory()){
 
             //directory is empty, then delete it
