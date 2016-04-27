@@ -153,7 +153,7 @@ public class IntegrationEnvironmentSetup {
         return executeCommand(command, path);
     }
 
-    public static void delete(File file) throws IOException {
+    public void delete(File file) throws IOException {
 
         // NB! if this does not work then manually try this :
         // hadoop -skipTrash fs -rmr /tmp/input/findprofile
