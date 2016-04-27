@@ -77,52 +77,46 @@ public class ProfileFileReducer extends Reducer<Text, Text, Text, Text> {
 
     public String elementOfInterestValue;
 
-
-    public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
-        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder dBuilder;
-        Document doc = null;
-
+    public void setupConfElements(Context context) {
         if(context.getConfiguration().get("dops.entities.database.dir") != null) {
             elementOfInterest = context.getConfiguration().get("dops.elementofinterest");
             elementOfInterestValue = context.getConfiguration().get("dops.elementofinterest.value");
         }
+    }
 
+    public boolean isElementOfInterest(Node nNode) {
         boolean bFound=false;
-        for (Text value : values) {
-
-            if(bFound)
-                break;
-
-            try {
-                dBuilder = dbFactory.newDocumentBuilder();
-                doc = dBuilder.parse(new InputSource(new StringReader(value.toString())));
-
-                doc.getDocumentElement().normalize();
-                NodeList nList = doc.getElementsByTagName("entity");
-                for (int temp = 0; temp < nList.getLength(); temp++) {
-                    Node nNode = nList.item(temp);
-                    if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-                        Element eElement = (Element) nNode;
-                        //System.out.println(eElement.getTagName());
-                        String id = eElement.getElementsByTagName("id").item(0).getTextContent();
-                        String data = eElement.getElementsByTagName("data").item(0).getTextContent();
-                        // reduce to find the element being searched for
-                        if(id.contentEquals(elementOfInterest) && data.contentEquals(elementOfInterestValue))
-                        {
-                            // if found search values, thus key aka. file is of interest
-                            outputKey.set(constructPropertyXml(key));
-                            context.write(outputKey, new Text(""));
-                            bFound=true;
-                            break; // found item, no need to go on with further elements
-                        }
-                    }
-
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+            Element eElement = (Element) nNode;
+            String id = eElement.getElementsByTagName("id").item(0).getTextContent();
+            String data = eElement.getElementsByTagName("data").item(0).getTextContent();
+            if (id.contentEquals(elementOfInterest) && data.contentEquals(elementOfInterestValue))
+                bFound = true;
         }
+        return bFound;
+    }
+
+    public boolean parseXMLToFindElement(Text xmlElement) {
+        boolean bFound=false;
+        try {
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder;
+            Document doc;
+            dBuilder = dbFactory.newDocumentBuilder();
+            doc = dBuilder.parse(new InputSource(new StringReader(xmlElement.toString())));
+            doc.getDocumentElement().normalize();
+            NodeList nList = doc.getElementsByTagName("entity");
+            for (int index = 0; index < nList.getLength(); index++) {
+                Node nNode = nList.item(index);
+                bFound = isElementOfInterest(nNode);
+                if(bFound)
+                    break;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            bFound=false;
+        }
+        return bFound;
     }
 
     public static String constructPropertyXml(Text name) {
@@ -131,4 +125,35 @@ public class ProfileFileReducer extends Reducer<Text, Text, Text, Text> {
                 .append("</file>");
         return sb.toString();
     }
+
+    public void writeReducerContext(Text fileNameOfFileBeingProcessed, Context context) {
+        try {
+            outputKey.set(constructPropertyXml(fileNameOfFileBeingProcessed));
+            context.write(outputKey, new Text(""));
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean parseValuesToFindElementOfInterest(Iterable<Text> lineFromFile)
+    {
+        boolean bFound=false;
+        for (Text xmlElement : lineFromFile) {
+            bFound = parseXMLToFindElement(xmlElement);
+           if (bFound)
+                break;
+        }
+        return bFound;
+    }
+
+    public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
+
+        setupConfElements(context);
+        if(parseValuesToFindElementOfInterest(values))
+             writeReducerContext(key, context);
+   }
+
+
 }
