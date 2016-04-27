@@ -18,15 +18,24 @@ import java.io.StringReader;
  *
  * INPUT IS A XML structure
  *
- * <ProfileRecord>
- *     <TransGUID>581dd417e98c4e11b3b6aa15435cd929</TransGUID>
+ *  <Entity>
+ *   <version>1</version>
+ *   <ProfileRecord>
+ *     <TransGUID>581dd417e98c4e11b3b6aa15435cd929</TransGUID> -- each record has a unique transaction id to be used with security, when detecting inconsistencies
  *     <Protocol>DED</Protocol>
  *     <ProtocolVersion>1.0.0.0</ProtocolVersion>
- *     <DataSize>492</DataSize>
- *     <Data>...</Data>
- *     <DataMD5>EB11373F99512CD9731B74621A9F6B15</DataMD5>
- * </ProfileRecord>
- *
+ *     <DataSize></DataSize>
+ *     <Data>
+ *          <record>
+ *              <chunk_id></chunk_id>
+ *              <aiid></aiid>
+ *              <chunk_seq></chunk_seq>
+ *              <chunk_data></chunk_data>
+ *          </record>
+ *     </Data> -- here is the pCompressedData from above protocol encoding, compression, encrypting algoritm -- currently DED (dataencoderdecoder)
+ *     <DataMD5>EB11373F99512CD9731B74621A9F6B15<DataMD5> -- this md5 checksum is used as an extra verification -- Data must be verified with this value before being used.
+ *   </ProfileRecord>
+ * </Entity>
  *
  * output result:
  *
@@ -46,119 +55,109 @@ public class ProfileFileReducer extends Reducer<Text, Text, Text, Text> {
         context.write(new Text("</result>"), new Text(""));
     }
 
-    private Text outputKey = new Text();
-
-    public String getElementOfInterest() {
-        return elementOfInterest;
-    }
+    private final Text outputKey = new Text();
 
     public void setElementOfInterest(String elementOfInterest) {
         this.elementOfInterest = elementOfInterest;
     }
 
-    public String elementOfInterest;
+    private String elementOfInterest;
 
-/* deprecated
-    public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
-        for (Text value : values) {
-            //TODO: use DED to lookup Data and check for search values
-            DataBaseControl dbctrl = new DataBaseControl();
-            DataBaseControl.DEDElements dedElements = dbctrl.createDEDElements(); // Placeholder for retrieved DataEncoderDecoder elements
-            String uppercaseEntityName = "DataDictionary/Entities/DD_" + "PROFILE"  + ".xml";  // example: DataDictionary/DD_PROFILE.xml
-            File dataDictionaryFile  = new File(this.getClass().getClassLoader().getResource(uppercaseEntityName).getFile());
-            if(dataDictionaryFile.exists()) {
-                boolean bResult = dbctrl.readDDEntityRealm(dataDictionaryFile, "Profile", dedElements);
-                if (!bResult) {
-                    System.out.println("[ProfileFileReducer] ERROR : DataDictionary File can not be read - please check access rights : " + uppercaseEntityName);
-                    return;
-                }
+    public void setElementOfInterestValue(String elementOfInterestValue) {
+        this.elementOfInterestValue = elementOfInterestValue;
+    }
 
-                // take the hex converted data and unhex it before DED will decode it
-                String data = value.toString();
-                byte[] data_in_unhexed_buf = DatatypeConverter.parseHexBinary(data);
+    private String elementOfInterestValue;
 
-                // fetch the data area and unpack it with DED to check it
-                DEDDecoder DED = new DEDDecoder();
-                DED.PUT_DATA_IN_DECODER(data_in_unhexed_buf, data_in_unhexed_buf.length); // data should be decompressed using LZSS algorithm
-                if (DED.GET_STRUCT_START("record") == 1) {
-                    int n = 0;
-                    for (DataBaseControl.Elements e : dedElements) {
-                        String tmp = ""; // clear
-                        if ((tmp = DED.GET_STDSTRING(e.getStrElementID())) != "") {
-                            // put attribute values from entity file into DEDElements
-                            DataBaseControl.Elements elm = dedElements.get(n);
-                            elm.setElementData(tmp.getBytes());
-                            dedElements.set(n, elm);
-                            n++;
-                        } else {
-                            System.out.println("WARNING : DECODING ERROR: elementID : " + e.getStrElementID());
-                            break;
-                        }
-                    }
-                }
-                // if found search values, thus key aka. file is of interest
-                outputKey.set(constructPropertyXml(key));
-                context.write(outputKey, new Text(""));
-            }
+    private void setupContextConfigurationElements(Context context) {
+        if(context.getConfiguration().get("dops.entities.database.dir") != null) {
+            elementOfInterest = context.getConfiguration().get("dops.elementofinterest");
+            elementOfInterestValue = context.getConfiguration().get("dops.elementofinterest.value");
         }
     }
-*/
 
-/*    public void reduce(Text key, Iterable<DataBaseControl.Elements> values, Context context) throws IOException, InterruptedException {
-        for (DataBaseControl.Elements value : values) {
-            DataBaseControl dbctrl = new DataBaseControl();
-
-            // reduce to find the element being searched for
-            if(value.getStrElementID() == elementOfInterest)
-            {
-                // if found search values, thus key aka. file is of interest
-                outputKey.set(constructPropertyXml(key));
-                context.write(outputKey, new Text(""));
-            }
+    private boolean isElementOfInterest(Node nNode) {
+        boolean bFound=false;
+        if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+            Element eElement = (Element) nNode;
+            String id = eElement.getElementsByTagName("id").item(0).getTextContent();
+            String data = eElement.getElementsByTagName("data").item(0).getTextContent();
+            if (id.contentEquals(elementOfInterest) && data.contentEquals(elementOfInterestValue))
+                bFound = true;
         }
+        return bFound;
     }
-*/
-    public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
+
+    private Document setupDocument(Text xmlElement) {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder;
         Document doc = null;
+        try {
+            dBuilder = dbFactory.newDocumentBuilder();
+            doc = dBuilder.parse(new InputSource(new StringReader(xmlElement.toString())));
+            doc.getDocumentElement().normalize();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return doc;
+    }
 
-        for (Text value : values) {
+    private boolean searchForElementOfInterest(Document doc)
+    {
+        boolean bFound=false;
+        NodeList nList = doc.getElementsByTagName("entity");
+        for (int index = 0; index < nList.getLength(); index++) {
+            Node nNode = nList.item(index);
+            bFound = isElementOfInterest(nNode);
+            if (bFound)
+                break;
+        }
+        return bFound;
+    }
 
+    private boolean parseXMLToFindElementOfInterest(Text xmlElement) {
+        boolean bFound=false;
+        try {
+            Document doc = setupDocument(xmlElement);
+            if(doc!=null)
+                bFound = searchForElementOfInterest(doc);
+       } catch (Exception e) {
+            e.printStackTrace();
+            bFound=false;
+        }
+        return bFound;
+    }
 
-            try {
-                dBuilder = dbFactory.newDocumentBuilder();
-                doc = dBuilder.parse(new InputSource(new StringReader(value.toString())));
+    private static String constructResultXml(Text name) {
+        return "<file>" + name + "</file>";
+    }
 
-                doc.getDocumentElement().normalize();
-                NodeList nList = doc.getElementsByTagName("entity");
-                for (int temp = 0; temp < nList.getLength(); temp++) {
-                    Node nNode = nList.item(temp);
-                    if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-                        Element eElement = (Element) nNode;
-                        System.out.println(eElement.getTagName());
-                        String id = eElement.getElementsByTagName("id").item(0).getTextContent();
-                        String data = eElement.getElementsByTagName("data").item(0).getTextContent();
-                        // reduce to find the element being searched for
-                        if(id.contentEquals(elementOfInterest))
-                        {
-                            // if found search values, thus key aka. file is of interest
-                            outputKey.set(constructPropertyXml(key));
-                            context.write(outputKey, new Text(""));
-                        }
-                    }
-
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+    private void writeReducerContext(Text fileNameOfFileBeingProcessed, Context context) {
+        try {
+            outputKey.set(constructResultXml(fileNameOfFileBeingProcessed));
+            context.write(outputKey, new Text(""));
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    public static String constructPropertyXml(Text name) {
-        StringBuilder sb = new StringBuilder();
-              sb.append("<file>").append(name)
-                .append("</file>");
-        return sb.toString();
+    private boolean parseLineFromFileToFindElementOfInterest(Iterable<Text> lineFromFile)
+    {
+        boolean bFound=false;
+        for (Text xmlElement : lineFromFile) {
+            bFound = parseXMLToFindElementOfInterest(xmlElement);
+           if (bFound)
+                break;
+        }
+        return bFound;
     }
+
+    public void reduce(Text fileNameOfFileBeingProcessed, Iterable<Text> lineFromFile, Context context) throws IOException, InterruptedException {
+
+        setupContextConfigurationElements(context);
+        if(parseLineFromFileToFindElementOfInterest(lineFromFile))
+             writeReducerContext(fileNameOfFileBeingProcessed, context);
+    }
+
+
 }
