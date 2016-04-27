@@ -55,36 +55,28 @@ public class ProfileFileReducer extends Reducer<Text, Text, Text, Text> {
         context.write(new Text("</result>"), new Text(""));
     }
 
-    private Text outputKey = new Text();
-
-    public String getElementOfInterest() {
-        return elementOfInterest;
-    }
+    private final Text outputKey = new Text();
 
     public void setElementOfInterest(String elementOfInterest) {
         this.elementOfInterest = elementOfInterest;
     }
 
-    public String elementOfInterest;
-
-    public String getElementOfInterestValue() {
-        return elementOfInterestValue;
-    }
+    private String elementOfInterest;
 
     public void setElementOfInterestValue(String elementOfInterestValue) {
         this.elementOfInterestValue = elementOfInterestValue;
     }
 
-    public String elementOfInterestValue;
+    private String elementOfInterestValue;
 
-    public void setupConfElements(Context context) {
+    private void setupConfElements(Context context) {
         if(context.getConfiguration().get("dops.entities.database.dir") != null) {
             elementOfInterest = context.getConfiguration().get("dops.elementofinterest");
             elementOfInterestValue = context.getConfiguration().get("dops.elementofinterest.value");
         }
     }
 
-    public boolean isElementOfInterest(Node nNode) {
+    private boolean isElementOfInterest(Node nNode) {
         boolean bFound=false;
         if (nNode.getNodeType() == Node.ELEMENT_NODE) {
             Element eElement = (Element) nNode;
@@ -96,7 +88,7 @@ public class ProfileFileReducer extends Reducer<Text, Text, Text, Text> {
         return bFound;
     }
 
-    public Document setupDocument(Text xmlElement) {
+    private Document setupDocument(Text xmlElement) {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder;
         Document doc = null;
@@ -110,7 +102,7 @@ public class ProfileFileReducer extends Reducer<Text, Text, Text, Text> {
         return doc;
     }
 
-    public boolean searchForElementOfInterest(Document doc)
+    private boolean searchForElementOfInterest(Document doc)
     {
         boolean bFound=false;
         NodeList nList = doc.getElementsByTagName("entity");
@@ -123,7 +115,7 @@ public class ProfileFileReducer extends Reducer<Text, Text, Text, Text> {
         return bFound;
     }
 
-    public boolean parseXMLToFindElementOfInterest(Text xmlElement) {
+    private boolean parseXMLToFindElementOfInterest(Text xmlElement) {
         boolean bFound=false;
         try {
             Document doc = setupDocument(xmlElement);
@@ -136,25 +128,20 @@ public class ProfileFileReducer extends Reducer<Text, Text, Text, Text> {
         return bFound;
     }
 
-    public static String constructPropertyXml(Text name) {
-        StringBuilder sb = new StringBuilder();
-              sb.append("<file>").append(name)
-                .append("</file>");
-        return sb.toString();
+    private static String constructResultXml(Text name) {
+        return "<file>" + name + "</file>";
     }
 
-    public void writeReducerContext(Text fileNameOfFileBeingProcessed, Context context) {
+    private void writeReducerContext(Text fileNameOfFileBeingProcessed, Context context) {
         try {
-            outputKey.set(constructPropertyXml(fileNameOfFileBeingProcessed));
+            outputKey.set(constructResultXml(fileNameOfFileBeingProcessed));
             context.write(outputKey, new Text(""));
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public boolean parseLineFromFileToFindElementOfInterest(Iterable<Text> lineFromFile)
+    private boolean parseLineFromFileToFindElementOfInterest(Iterable<Text> lineFromFile)
     {
         boolean bFound=false;
         for (Text xmlElement : lineFromFile) {
