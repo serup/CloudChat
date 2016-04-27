@@ -10,7 +10,6 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,7 +19,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertEquals;
 import static org.mortbay.util.LazyList.contains;
 
 /**
@@ -37,7 +36,7 @@ public class DOPsMRTests {
 
     @Before
     public void setUp() throws Exception {
-        Assert.assertEquals(true,env.setupHadoopIntegrationEnvironment());
+        assertEquals(true,env.setupHadoopIntegrationEnvironment());
         fshandlerDriver = new DOPsHDFSHandler();
 
         File directory = new File("/tmp/output/findprofile");
@@ -69,6 +68,9 @@ public class DOPsMRTests {
             conf.set("dfs.domain.socket.path", "/var/lib/hadoop-hdfs/dn_socket");
 
             conf.set("dops.entities.database.dir", "hdfs://one.cluster:8020/tmp/input/findprofile/");
+            conf.set("dops.toast.database.dir", "hdfs://one.cluster:8020/tmp/input/findprofile/toast/");
+            conf.set("dops.elementofinterest", "username");
+            conf.set("dops.elementofinterest.value", "johnnytest@email.com");
 
             // job.setMapSpeculativeExecution(false)
             conf.setBoolean("mapreduce.map.speculative", false);
@@ -86,7 +88,7 @@ public class DOPsMRTests {
             job.setOutputKeyClass(Text.class);
             job.setOutputValueClass(Text.class);
 
-            FileInputFormat.addInputPath(job, new Path("hdfs://one.cluster:8020/tmp/input/findprofile/*"));
+            FileInputFormat.addInputPath(job, new Path("hdfs://one.cluster:8020/tmp/input/findprofile/*.xml"));
             FileOutputFormat.setOutputPath(job, new Path("/tmp/output/findprofile/result/"));
 
             // copy the internal resource file watson.txt to remote hadoop hdfs system
@@ -96,16 +98,18 @@ public class DOPsMRTests {
             URL fileResourceUrl = this.getClass().getClassLoader().getResource(fileResource1);
             URL fileResourceUrl2 = this.getClass().getClassLoader().getResource(fileResource2);
             fshandlerDriver.copyTo(fileResourceUrl.getPath(), "/"+destFolder+"/355760fb6afaf9c41d17ac5b9397fd45.xml");
-            fshandlerDriver.copyTo(fileResourceUrl2.getPath(), "/"+destFolder+"/355760fb6afaf9c41d17ac5b9397fd45_toast.xml");
+            fshandlerDriver.copyTo(fileResourceUrl2.getPath(), "/"+destFolder+"/toast"+"/355760fb6afaf9c41d17ac5b9397fd45_toast.xml");
 
             // verify that the input file is in hdfs
             List<String> itemsToAdd = new ArrayList<String>();
             String filepathname1 = destFolder+"/"+"355760fb6afaf9c41d17ac5b9397fd45.xml";
-            String filepathname2 = destFolder+"/"+"355760fb6afaf9c41d17ac5b9397fd45_toast.xml";
+            String filepathname2 = destFolder+"/toast/"+"355760fb6afaf9c41d17ac5b9397fd45_toast.xml";
             itemsToAdd.add(fshandlerDriver.uri+filepathname1);
-            itemsToAdd.add(fshandlerDriver.uri+filepathname2);
+            itemsToAdd.add("hdfs://one.cluster:8020/tmp/input/findprofile/toast");
             assertEquals("Expected 2 item in hdfs ls list", itemsToAdd, fshandlerDriver.ls("/tmp/input/findprofile/"));
-
+            itemsToAdd = new ArrayList<String>();
+            itemsToAdd.add(fshandlerDriver.uri+filepathname2);
+            assertEquals("Expected 1 item in hdfs ls list", itemsToAdd, fshandlerDriver.ls("/tmp/input/findprofile/toast"));
 
             job.waitForCompletion(true);
         } catch (IOException e) {
@@ -127,8 +131,9 @@ public class DOPsMRTests {
         // above shows that the word 'watson' was found 81 times, which is correct according to the watson.txt resource file
 
         String result = env.executeCmd("cat /tmp/output/findprofile/result/part-r-00000", "/");
-        Assert.assertEquals(true, contains(result, new String("Watson\t81\n")));
+        assertEquals(true, contains(result, new String("<result>\t\n<file>355760fb6afaf9c41d17ac5b9397fd45.xml</file>\t\n</result>\t\n")));
 
+        System.out.println("FindProfileFile - mapreduce job finished - status : SUCCESS");
     }
 
 }

@@ -83,8 +83,16 @@ public class ProfileFileReducer extends Reducer<Text, Text, Text, Text> {
         DocumentBuilder dBuilder;
         Document doc = null;
 
+        if(context.getConfiguration().get("dops.entities.database.dir") != null) {
+            elementOfInterest = context.getConfiguration().get("dops.elementofinterest");
+            elementOfInterestValue = context.getConfiguration().get("dops.elementofinterest.value");
+        }
+
+        boolean bFound=false;
         for (Text value : values) {
 
+            if(bFound)
+                break;
 
             try {
                 dBuilder = dbFactory.newDocumentBuilder();
@@ -105,6 +113,8 @@ public class ProfileFileReducer extends Reducer<Text, Text, Text, Text> {
                             // if found search values, thus key aka. file is of interest
                             outputKey.set(constructPropertyXml(key));
                             context.write(outputKey, new Text(""));
+                            bFound=true;
+                            break; // found item, no need to go on with further elements
                         }
                     }
 
