@@ -24,10 +24,20 @@ export DOCKER_PUPPET_PATH="$DIR""/puppet/trunk/environments/"
 echo "setting DOCKER_PUPPET_PATH=$DOCKER_PUPPET_PATH"
 echo $DOCKER_PUPPET_PATH > env_docker_puppet_path
 mkdir -p $DOCKER_PUPPET_PATH
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 apt-fast |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install apt-fast on ubuntu, to use for speeding up apt-get install's "
+  sudo add-apt-repository ppa:saiarcot895/myppa
+  sudo apt-get update
+  sudo apt-fast install -yq apt-fast
+  echo " - done."
+else
+  echo "- apt-fast already installed"
+fi
 JQ_OK=$(dpkg --get-selections | grep -v deinstall|grep jq)
 if [ "" == "$JQ_OK" ]; then
   echo -n "- install jq - for handling json files inside batch"
-  sudo apt-get install -yq  jq
+  sudo apt-fast install -yq  jq
   echo " - done."
 else
   echo "- jq installed"
@@ -58,8 +68,8 @@ if [ "" == "$PKG_OK" ]; then
   echo -n "- install oracle-java on ubuntu "
   sudo add-apt-repository -y ppa:webupd8team/java
   sudo apt-get update
-  sudo apt-get install -yq oracle-java8-installer
-  sudo apt-get install -yq oracle-java8-set-default
+  sudo apt-fast install -yq oracle-java8-installer
+  sudo apt-fast install -yq oracle-java8-set-default
   java -version
   echo " - done."
 else
@@ -68,7 +78,7 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 wireshark |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install wireshark on ubuntu, to use when monitoring tcp trafic "
-  sudo apt-get install -yq wireshark 
+  sudo apt-fast install -yq wireshark 
   echo " - done."
 else
   echo "- wireshark already installed"
@@ -76,7 +86,7 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 vim |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install vim on ubuntu "
-  sudo apt-get install -yq vim 
+  sudo apt-fast install -yq vim 
   echo " - done."
 else
   echo "- vim already installed"
@@ -84,7 +94,7 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 sysstat |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install sysstat on ubuntu : example: iostat -d 1 10"
-  sudo apt-get install -yq sysstat
+  sudo apt-fast install -yq sysstat
   echo " - done."
 else
   echo "- sysstat already installed"
@@ -92,7 +102,7 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 bikeshed |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install bikeshed on ubuntu, to use when purging old kernals - example: sudo purge-old-kernals --keep 3 "
-  sudo apt-get install -yq bikeshed 
+  sudo apt-fast install -yq bikeshed 
   echo " - done."
 else
   echo "- bikeshed already installed, to use when purging old kernals - example: sudo purge-old-kernals --keep 3 "
@@ -100,7 +110,7 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 nmap |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install nmap on ubuntu "
-  sudo apt-get install -yq nmap 
+  sudo apt-fast install -yq nmap 
   echo " - done."
 else
   echo "- nmap already installed"
@@ -108,7 +118,7 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 eclipse |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install eclipse on ubuntu "
-  sudo apt-get install -yq eclipse 
+  sudo apt-fast install -yq eclipse 
   echo " - done."
   sudo bash eclipse_plugin_install.sh
 else
@@ -118,7 +128,7 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 openjdk* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install eclipse dependencies on ubuntu "
-  sudo apt-get install -yq openjdk-6-jdk openjdk-6-source openjdk-6-demo openjdk-6-doc openjdk-6-jre-headless openjdk-6-jre-lib 
+  sudo apt-fast install -yq openjdk-6-jdk openjdk-6-source openjdk-6-demo openjdk-6-doc openjdk-6-jre-headless openjdk-6-jre-lib 
   echo " - done."
 else
   echo "- eclipse dependencies already installed"
@@ -133,7 +143,7 @@ if [ "" == "$PKG_OK" ]; then
    #sudo dpkg -i javafx_scenebuilder-2_0-linux-x64.deb && \
    # find it using this command: dpkg-query  -S scene*
    # then add in intellij under settings/language.../JavaFX/path to scenebuilder
-   sudo apt-get install -yq  scenebuilder
+   sudo apt-fast install -yq  scenebuilder
    sudo apt-get update 
   echo " - done."
 else
@@ -142,7 +152,7 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 p7zip-rar* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install p7zip-rar "
-  sudo apt-get install -yq p7zip-rar 
+  sudo apt-fast install -yq p7zip-rar 
   echo " - done."
 else
   echo "- p7zip-rar already installed"
@@ -151,7 +161,7 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 p7zip-full* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install p7zip-full "
-  sudo apt-get install -yq p7zip-full 
+  sudo apt-fast install -yq p7zip-full 
   echo " - done."
 else
   echo "- p7zip already installed"
@@ -159,7 +169,7 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 p7zip-rar* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install p7zip-rar "
-  sudo apt-get install -yq p7zip-rar 
+  sudo apt-fast install -yq p7zip-rar 
   echo " - done."
 else
   echo "- p7zip-rar already installed"
@@ -167,7 +177,7 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 lzma* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install LZMA "
-  sudo apt-get install -yq LZMA 
+  sudo apt-fast install -yq LZMA 
   echo " - done."
 else
   echo "- LZMA already installed"
@@ -175,7 +185,7 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 lcov* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install lcov "
-  sudo apt-get install -yq lcov 
+  sudo apt-fast install -yq lcov 
   echo " - done."
 else
   echo "- lcov already installed"
@@ -183,7 +193,7 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 nodejs* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install nodejs-legacy "
-  sudo apt-get install -yq nodejs-legacy 
+  sudo apt-fast install -yq nodejs-legacy 
   echo " - done."
 else
   echo "- nodejs-legacy already installed"
@@ -191,7 +201,7 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 pidgin* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install pidgin "
-  sudo apt-get install -yq pidgin 
+  sudo apt-fast install -yq pidgin 
   echo " - done."
 else
   echo "- pidgin already installed"
@@ -199,7 +209,7 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 monodevelop-nunit* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install monodevelop-nunit for C# on ubuntu "
-  sudo apt-get install -yq monodevelop-nunit 
+  sudo apt-fast install -yq monodevelop-nunit 
   echo " - done."
 else
   echo "- monodevelop-nunit already installed"
@@ -207,7 +217,7 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 nuget* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install monodevelop-nunit for C# on ubuntu "
-  sudo apt-get install -yq nuget 
+  sudo apt-fast install -yq nuget 
   echo " - done."
 else
   echo "- nuget already installed"
@@ -218,7 +228,7 @@ if [ "" == "$PKG_OK" ]; then
   echo "deb http://download.mono-project.com/repo/debian wheezy main" | sudo tee /etc/apt/sources.list.d/mono-xamarin.list
   sudo apt-get update
   echo -n "- install mono-complete for C# on ubuntu "
-  sudo apt-get install -yq mono-complete 
+  sudo apt-fast install -yq mono-complete 
   echo " - done."
 else
   echo "- mono-complete already installed"
@@ -226,7 +236,7 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 libnunit-cil-dev* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install libnunit-cil-dev for C# on ubuntu "
-  sudo apt-get install -yq libnunit-cil-dev 
+  sudo apt-fast install -yq libnunit-cil-dev 
   echo " - done."
 else
   echo "- libnunit-cil-dev already installed"
@@ -234,7 +244,7 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 monodevelop* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install monodevelop for C# on ubuntu "
-  sudo apt-get install -yq monodevelop 
+  sudo apt-fast install -yq monodevelop 
   echo " - done."
 else
   echo "- monodevelop already installed"
@@ -243,7 +253,7 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 python-pip* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install python-pip "
-  sudo apt-get install -yq python-pip
+  sudo apt-fast install -yq python-pip
   echo " - done."
 else
   echo "- python-pip already installed"
@@ -252,7 +262,7 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 python-fs* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install python-fs "
-  sudo apt-get install -yq python-fs
+  sudo apt-fast install -yq python-fs
   echo " - done."
 else
   echo "- python-fs already installed"
@@ -279,7 +289,7 @@ fi
 #  #sudo sh -c 'echo deb http://us.archive.ubuntu.com/ubuntu vivid main universe > /etc/apt/sources.list.d/monodevelop-python.list' 
 #  sudo add-apt-repository ppa:keks9n/monodevelop-latest  
 #  sudo apt-get update -yq
-#  sudo apt-get install -yq monodevelop-python
+#  sudo apt-fast install -yq monodevelop-python
 #  echo " - done."
 #else
 #  echo "- monodevelop-python already installed"
@@ -311,7 +321,7 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 libwebkit-c* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install libwebkit-cil-dev for C# on ubuntu "
-  sudo apt-get install -yq libwebkit-cil-dev 
+  sudo apt-fast install -yq libwebkit-cil-dev 
   echo " - done."
 else
   echo "- libwebkit already installed"
@@ -319,7 +329,7 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 bundler* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install bundler "
-  sudo apt-get install -yq bundler 
+  sudo apt-fast install -yq bundler 
   sudo bundle install
   echo " - done."
 else
@@ -328,7 +338,7 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 rubygems* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install rubygems "
-  sudo apt-get install -yq rubygems 
+  sudo apt-fast install -yq rubygems 
   echo " - done."
 else
   echo "- rubygems already installed"
@@ -344,7 +354,7 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 ruby-full* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install ruby-full "
-  sudo apt-get install -yq ruby-full 
+  sudo apt-fast install -yq ruby-full 
   echo " - done."
 else
   echo "- ruby-full already installed"
@@ -352,7 +362,7 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 rsync* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install rsync "
-  sudo apt-get install -yq rsync 
+  sudo apt-fast install -yq rsync 
   echo " - done."
 else
   echo "- rsync already installed"
@@ -360,7 +370,7 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 ssh* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install ssh "
-  sudo apt-get install -yq ssh 
+  sudo apt-fast install -yq ssh 
   echo " - done."
 else
   echo "- ssh already installed"
@@ -369,7 +379,7 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 sshpass* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install sshpass "
-  sudo apt-get install -yq sshpass
+  sudo apt-fast install -yq sshpass
   echo " - done."
 else
   echo "- sshpass already installed"
@@ -378,7 +388,7 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 taskwarrior* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install taskwarrior "
-  sudo apt-get install -yq taskwarrior
+  sudo apt-fast install -yq taskwarrior
   echo " - done."
 else
   echo "- taskwarrior already installed"
@@ -386,7 +396,7 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 xslt* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install xsltproc "
-  sudo apt-get install -yq xsltproc
+  sudo apt-fast install -yq xsltproc
   echo " - done."
 else
   echo "- xsltproc already installed"
@@ -394,7 +404,7 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 g++* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install g++ "
-  sudo apt-get install -yq g++ 
+  sudo apt-fast install -yq g++ 
   echo " - done."
 else
   echo "- g++ already installed"
@@ -402,7 +412,7 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 libboost-all* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install libboost "
-  sudo apt-get install -yq libboost-all-dev 
+  sudo apt-fast install -yq libboost-all-dev 
   echo " - done."
 else
   echo "- libbost already installed"
@@ -419,7 +429,7 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 virtualbox-guest* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install Virtualbox guest addition "
-  sudo apt-get install -yq virtualbox-guest-additions-iso
+  sudo apt-fast install -yq virtualbox-guest-additions-iso
   sudo mkdir -p /media/VirtualBoxGuestAdditions
   sudo mount -t iso9660 -o loop /usr/share/virtualbox/VBoxGuestAdditions.iso /media/VirtualBoxGuestAdditions/
   sudo /media/VirtualBoxGuestAdditions/VBoxLinuxAdditions.run
@@ -432,7 +442,7 @@ PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 puppet-co* |grep "install
 if [ "" == "$PKG_OK" ]; then
 #  echo "puppetlabs-release was not found, now it will be installed - please wait..."
   echo -n "- install puppetlabs-release "
-  sudo apt-get install -yq puppet-common
+  sudo apt-fast install -yq puppet-common
 #  wget https://apt.puppetlabs.com/puppetlabs-release-trusty.deb
 #  sudo dpkg -i puppetlabs-release-trusty.deb
    wget https://apt.puppetlabs.com/puppetlabs-release-pc1-vivid.deb && \
@@ -593,7 +603,7 @@ if [ "" == "$SPRINGBOOT_OK" ]; then
   echo -n "- install maven puppet module"
   puppet module install maestrodev/maven  --modulepath ./puppet/trunk/environments/devtest/modules
   echo -n "- install curl"
-  sudo apt-get install -yq curl 
+  sudo apt-fast install -yq curl 
   echo -n "- install sdkman"
   curl -s http://get.sdkman.io | bash
   echo -n "- init sdk"
@@ -670,7 +680,7 @@ fi
 MOGRIFY_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 imagemagick |grep "install ok installed")
 if [ "" == "$MOGRIFY_OK" ]; then
   echo -n "- install imagemagick to make use of mogrify "
-  sudo apt-get install -yq imagemagick
+  sudo apt-fast install -yq imagemagick
   echo " - done."
 else
   echo "- mogrify installed"
