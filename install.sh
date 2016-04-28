@@ -393,12 +393,49 @@ else
 fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 g++* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
+  # http://stackoverflow.com/questions/15359589/cout-is-not-a-member-of-std-cout-was-not-declared-in-this-scope
+  sudo apt-get install -yq build-essential g++-multilib
+  echo -n "- install g++ "
+  echo " - done."
+else
+  echo "- g++ already installed"
+fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 g++* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
   echo -n "- install g++ "
   sudo apt-get install -yq g++ 
   echo " - done."
 else
   echo "- g++ already installed"
 fi
+
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 lcov* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo "install LCOV for code coverage"
+  sudo apt-get install -yq lcov
+  echo " - done."
+else
+  echo "- already installed"
+fi
+
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 nodejs* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo "fetch nodejs"
+  sudo apt-get install -yq nodejs-legacy
+  echo " - done."
+else
+  echo "- already installed"
+fi
+
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 xsltproc* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo "fetch xsltproc"
+  sudo apt-get install -yq xsltproc
+  echo " - done."
+else
+  echo "- already installed"
+fi
+
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 libboost-all* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install libboost "
