@@ -23,7 +23,7 @@ using std::unique_ptr; // unique_ptr class definition   // with -std=c++11 or -s
 
 #include <string.h>  // memset
 
-#define __byte unsigned char
+//#define __byte unsigned char
 //#define BYTE unsigned char
 //#define NULL 0x0
 
@@ -35,13 +35,13 @@ namespace HandleProtocol
 class CASN1
 {
 public:
-	unique_ptr<__byte> m_pASN1Data;
+	unique_ptr<unsigned char> m_pASN1Data;
 private:
     int     m_iLengthOfData;		// Length of ASN1 data, copied during construction.
     int     m_iTotalLengthOfData;	// Total length of ASN1 data.
-    __byte*   m_pNextASN1;			// Will point at first ASN1 structure, and when FetchNextASN1 is called it will move to (point at) next ASN1 location.
-									// The __byte that it points at will be the length __byte of the ASN1 data.
-    __byte*   m_pAppendPosition;		// Pointer to end of current ASN1 data
+    unsigned char*   m_pNextASN1;			// Will point at first ASN1 structure, and when FetchNextASN1 is called it will move to (point at) next ASN1 location.
+									// The unsigned char that it points at will be the length unsigned char of the ASN1 data.
+    unsigned char*   m_pAppendPosition;		// Pointer to end of current ASN1 data
     int     CurrentASN1Position, NextASN1Position;
 
 
@@ -56,7 +56,7 @@ public:
         m_iLengthOfData=0;
         m_iTotalLengthOfData=0;
         if(iLength!=0){
-			  m_pASN1Data.reset(new __byte[iLength]);
+			  m_pASN1Data.reset(new unsigned char[iLength]);
 			  if(m_pASN1Data.get() != NULL){
                 m_iTotalLengthOfData=iLength;
 				m_pNextASN1=m_pASN1Data.get(); // First ASN1
@@ -72,7 +72,7 @@ public:
         return;
     }
 
-    CASN1(int  LengthOfData, __byte* m_pdata, int iAppendMaxLength=0 )
+    CASN1(int  LengthOfData, unsigned char* m_pdata, int iAppendMaxLength=0 )
     {
         try{
         m_pNextASN1=NULL;
@@ -81,7 +81,7 @@ public:
         m_iLengthOfData=LengthOfData;
         m_iTotalLengthOfData=0;
         if(iLength!=0){
-			  m_pASN1Data.reset(new __byte[iLength]);
+			  m_pASN1Data.reset(new unsigned char[iLength]);
 			  if(NULL!=m_pASN1Data.get()){
                 ZeroMemory(m_pASN1Data.get(),iLength);
                 m_iTotalLengthOfData=iLength;
@@ -124,7 +124,7 @@ public:
 
 
 
-    bool AppendASN1(int LengthOfNewASN1Data, __byte Tag, const char* data )    // Append an ASN1 structure to a data area, fx. the data area of a datapacket.
+    bool AppendASN1(int LengthOfNewASN1Data, unsigned char Tag, const char* data )    // Append an ASN1 structure to a data area, fx. the data area of a datapacket.
     {
         bool bResult=true;
 
@@ -136,7 +136,7 @@ public:
             m_pAppendPosition = m_pASN1Data.get()+m_iLengthOfData;
             *((int*)m_pAppendPosition) = LengthOfNewASN1Data;
             m_pAppendPosition+=sizeof(LengthOfNewASN1Data);
-            *m_pAppendPosition++ = (__byte)Tag;
+            *m_pAppendPosition++ = (unsigned char)Tag;
 
             memcpy(m_pAppendPosition,(void*)data,LengthOfNewASN1Data);
             m_iLengthOfData=m_iLengthOfData+sizeof(LengthOfNewASN1Data)+1+LengthOfNewASN1Data; // Add new ASN1 to length : Length+tag+SizeofData
@@ -145,10 +145,10 @@ public:
         return bResult;
     }
 
-    bool FetchNextASN1(int& Length, __byte& Tag, __byte** m_pdata) // Returns true if ASN1 was found, and false if not.
+    bool FetchNextASN1(int& Length, unsigned char& Tag, unsigned char** m_pdata) // Returns true if ASN1 was found, and false if not.
     {
         bool bResult=true;
-        __byte* m_pPrevASN1;
+        unsigned char* m_pPrevASN1;
         m_pPrevASN1 = 0;
         try{
             if(NULL!=m_pNextASN1)
@@ -179,7 +179,7 @@ public:
     }
 
 
-    bool FetchTotalASN1(int& Length, __byte** m_pdata) // Returns true if ASN1 was found, and false if not.
+    bool FetchTotalASN1(int& Length, unsigned char** m_pdata) // Returns true if ASN1 was found, and false if not.
     {
         bool bResult=true;
         try{
