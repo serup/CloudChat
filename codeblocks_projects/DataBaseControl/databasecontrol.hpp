@@ -7,8 +7,19 @@
 #include <cctype>       // std::toupper
 #include <boost/algorithm/string.hpp> // boost::to_upper
 #include <boost/algorithm/hex.hpp>
+
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
+
+// The signature of boost::property_tree::xml_parser::write_xml() changed in Boost 1.56
+// See https://github.com/PointCloudLibrary/pcl/issues/864
+#include <boost/version.hpp>
+#if (BOOST_VERSION >= 105600)
+  typedef boost::property_tree::xml_writer_settings<std::string> xml_writer_settings;
+#else
+  typedef boost::property_tree::xml_writer_settings<char> xml_writer_settings;
+#endif
+
 #include <boost/foreach.hpp>
 #include <boost/range.hpp> // used when calculating amount of std::string array
 #define BOOST_FILESYSTEM_NO_DEPRECATED
