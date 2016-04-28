@@ -451,7 +451,8 @@ bool CDatabaseControl::AppendXmlFile(std::string filename,unsigned char* pCompre
         }
 
         /// Then write file
-        boost::property_tree::xml_writer_settings<std::string> set(' ', 4);
+        //boost::property_tree::xml_writer_settings<std::string> set(' ', 4);
+        xml_writer_settings set(' ', 4);
         write_xml( filename, pt, std::locale(), set);// write xml file
 
         free(data_in_hex_buf); // free temporary conversion buffer
