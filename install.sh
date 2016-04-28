@@ -27,7 +27,7 @@ mkdir -p $DOCKER_PUPPET_PATH
 JQ_OK=$(dpkg --get-selections | grep -v deinstall|grep jq)
 if [ "" == "$JQ_OK" ]; then
   echo -n "- install jq - for handling json files inside batch"
-  sudo apt-get install jq
+  sudo apt-get install -yq  jq
   echo " - done."
 else
   echo "- jq installed"
@@ -133,7 +133,7 @@ if [ "" == "$PKG_OK" ]; then
    #sudo dpkg -i javafx_scenebuilder-2_0-linux-x64.deb && \
    # find it using this command: dpkg-query  -S scene*
    # then add in intellij under settings/language.../JavaFX/path to scenebuilder
-   sudo apt-get install scenebuilder
+   sudo apt-get install -yq  scenebuilder
    sudo apt-get update 
   echo " - done."
 else
