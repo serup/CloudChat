@@ -17,6 +17,7 @@
 //#pragma message( "Last modified on " __TIMESTAMP__ )
 //#pragma once
 #include <sys/stat.h>
+#include <iostream>
 #include "ASN1.h"
 //#include "compression-lib/compression.h"
 /*
@@ -72,6 +73,7 @@
 
 typedef unsigned short WORD;
 typedef unsigned long DWORD;
+typedef unsigned char __byte;
 #define uint8  unsigned char
 #define uint16 unsigned short
 #define int32  long
