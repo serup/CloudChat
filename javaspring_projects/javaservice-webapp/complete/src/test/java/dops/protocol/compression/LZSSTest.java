@@ -50,7 +50,7 @@ public class LZSSTest {
         byte[] originalTxtfileInBytes=null;
         try {
             Resource resource = null;
-            resource = new FileSystemResource("src/main/resources/helloworld.txt");
+            resource = new FileSystemResource("src/test/resources/dummyFiles/helloworld.txt");
             InputStream file = (InputStream) resource.getInputStream();
             originalTxtfileInBytes = getBytes(file);
         } catch (MissingResourceException e) {
