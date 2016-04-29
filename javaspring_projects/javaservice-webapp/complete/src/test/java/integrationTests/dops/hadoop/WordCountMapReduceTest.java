@@ -126,10 +126,10 @@ public class WordCountMapReduceTest {
         FileOutputFormat.setOutputPath(job, new Path("/tmp/output/wordcount/result/"));
 
         // copy the internal resource file watson.txt to remote hadoop hdfs system
-        String fileResource= "watson.txt";
+        String fileResource= "dummyFiles/watson.txt";
         String destFolder="tmp/input/wordcount";
         URL fileResourceUrl = this.getClass().getClassLoader().getResource(fileResource);
-        fshandlerDriver.copyTo(fileResourceUrl.getPath(), "/"+destFolder+ "/watson.txt");
+        fshandlerDriver.copyTo(fileResourceUrl.getPath(), "/"+destFolder+ "/dummyFiles/watson.txt");
 
         // verify that the input file is in hdfs
         List<String> itemsToAdd = new ArrayList<String>();

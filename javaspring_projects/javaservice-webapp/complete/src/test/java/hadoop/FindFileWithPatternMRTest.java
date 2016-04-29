@@ -47,8 +47,8 @@ public class FindFileWithPatternMRTest {
 
     @Test
     public void testFindFileWithPatternMapReduce() {
-        String fileResource1= "fileWithPattern1.txt";
-        String fileResource2= "fileWithPattern2.txt"; // should contain the pattern searched for
+        String fileResource1= "dummyFiles/fileWithPattern1.txt";
+        String fileResource2= "dummyFiles/fileWithPattern2.txt"; // should contain the pattern searched for
 
 
         try {

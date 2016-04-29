@@ -45,8 +45,8 @@ public class DOPsMapperReducerTest {
         FindFileWithPatternInsideReducer reducer = new FindFileWithPatternInsideReducer();
         mapper.setSearchPattern("Watson"); // pattern searched for inside the file
         mapReduceDriver = MapReduceDriver.newMapReduceDriver(mapper, reducer);
-        String fileResource1= "fileWithPattern1.txt";
-        String fileResource2= "fileWithPattern2.txt"; // should contain the pattern searched for
+        String fileResource1= "dummyFiles/fileWithPattern1.txt";
+        String fileResource2= "dummyFiles/fileWithPattern2.txt"; // should contain the pattern searched for
 
 
         try {
@@ -89,7 +89,7 @@ public class DOPsMapperReducerTest {
         mapReduceDriver = MapReduceDriver.newMapReduceDriver(mapper, reducer);
 
         // 2. Set input for reducer
-        String fileResource= "xmlparserTestFile.xml";
+        String fileResource= "dummyFiles/xmlparserTestFile.xml";
         try {
             String fileContent = this.readResource(fileResource, Charsets.UTF_8);
             Text content = new Text();

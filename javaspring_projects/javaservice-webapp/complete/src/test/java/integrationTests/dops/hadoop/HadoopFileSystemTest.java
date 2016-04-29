@@ -54,7 +54,7 @@ public class HadoopFileSystemTest {
     @Test
     public void test_copy_file_to_hdfs() {
         try {
-            String fileResource= "helloworld.txt";
+            String fileResource= "dummyFiles/helloworld.txt";
             String destFolder="tmp";
             URL fileResourceUrl = this.getClass().getClassLoader().getResource(fileResource);
             fshandlerDriver.copyTo(fileResourceUrl.getPath(), "/"+destFolder);

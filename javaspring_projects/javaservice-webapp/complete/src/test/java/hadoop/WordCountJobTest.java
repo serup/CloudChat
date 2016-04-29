@@ -46,7 +46,7 @@ public class WordCountJobTest {
 
     @Test
     public void testWordCountMapReduce() {
-        String fileResource= "watson.txt";
+        String fileResource= "dummyFiles/watson.txt";
         try {
             String fileContent = this.readResource(fileResource, Charsets.UTF_8);
             Text content = new Text();
