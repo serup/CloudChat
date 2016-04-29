@@ -437,15 +437,6 @@ else
   echo "- already installed"
 fi
 
-PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 xsltproc* |grep "install ok installed")
-if [ "" == "$PKG_OK" ]; then
-  echo "fetch xsltproc"
-  sudo apt-get install -yq xsltproc
-  echo " - done."
-else
-  echo "- already installed"
-fi
-
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 libboost-all* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install libboost "
