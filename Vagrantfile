@@ -62,7 +62,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       end
       config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
 
-      #if node_name == "hadoop"   # Centos/7 related -- redhat is somehow not working well, thus use ubuntu/vivid32
+      #if node_name == "hadoop"   # Centos/7 related -- redhat is somehow not working well, thus use ubuntu/vivid32 -- ubuntu/xenial32
 #	  # Prevent Vagrant from mounting the default /vagrant synced folder
  # 	config.vm.synced_folder ".", "/home/vagrant/sync", disabled: true
 #      else
@@ -72,7 +72,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       config.vm.provision :shell, :path => node_values['bootstrap']
       # inline: "apt-get update -y" # https://github.com/mitchellh/vagrant/pull/5860
       config.vm.box = node_values['nodeOS']
-      #config.vm.provision :shell, inline: "hostnamectl set-hostname " + node_values[':hostname'] 
+#      config.vm.provision :shell, inline: "hostnamectl set-hostname " + node_values[':hostname'] 
       config.vm.hostname = node_values[':hostname']
       config.vm.network :private_network, ip: node_values[':ip']
 
