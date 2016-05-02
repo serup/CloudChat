@@ -460,7 +460,8 @@ fi
 PKG_OK=$(vagrant box list | grep vivid32)
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install Virtualbox ubuntu/vivid32 from saved version "
-  vagrant box add ubuntu/vivid32 ubuntuvivid32.box
+#  vagrant box add ubuntu/vivid32 ubuntuvivid32.box
+  vagrant box add ubuntu/vivid32 mwe/vivid32 
   echo " - done."
 else
   echo "- ubuntu/vivid32 box already present"
