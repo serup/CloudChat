@@ -454,6 +454,19 @@ else
   echo "- Virtualbox installed"
 fi
 
+# if a box is not possible to find like ubuntu/vivid32 because it is deprecated, then create and use one like this
+# vagrant package --base gerrit --output ubuntuvivid32.box
+# http://stackoverflow.com/questions/19094024/is-there-any-way-to-clone-a-vagrant-box-that-is-already-installed
+PKG_OK=$(vagrant box list | grep vivid32)
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install Virtualbox ubuntu/vivid32 from saved version "
+#  vagrant box add ubuntu/vivid32 ubuntuvivid32.box
+  vagrant box add ubuntu/vivid32 mwe/vivid32 
+  echo " - done."
+else
+  echo "- ubuntu/vivid32 box already present"
+fi 
+
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 virtualbox-guest* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install Virtualbox guest addition "
@@ -756,7 +769,9 @@ VBOX_OK=$(vagrant box list|awk 'BEGIN {strtmp=$1} END {print $strtmp}')
 if [ "" == "$VBOX_OK" ]; then
   echo "vbox not found - installing.."
   #vagrant box add ubuntu/trusty64 https://atlas.hashicorp.com/ubuntu/boxes/trusty64/versions/14.04/providers/virtualbox.box
-  vagrant box add ubuntu/vivid32 
+  #vagrant box add ubuntu/vivid32 
+  #vagrant box add ubuntu/xenial32 
+  vagrant box add ubuntu/vivid32 mwe/vivid32 
 else
   echo "- vbox installed"
 fi
