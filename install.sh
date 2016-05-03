@@ -75,6 +75,14 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- oracle-java already installed"
 fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 gitk* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install gitk on ubuntu, to use for visualizing git repos "
+  sudo apt-fast install -yq gitk 
+  echo " - done."
+else
+  echo "- gitk already installed"
+fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 wireshark |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install wireshark on ubuntu, to use when monitoring tcp trafic "
