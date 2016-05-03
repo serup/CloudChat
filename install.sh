@@ -49,6 +49,145 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- oracle-java already installed"
 fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 gitk* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install gitk on ubuntu, to use for visualizing git repos "
+  sudo apt-fast install -yq gitk 
+  echo " - done."
+else
+  echo "- gitk already installed"
+fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 wireshark |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install wireshark on ubuntu, to use when monitoring tcp trafic "
+  sudo apt-fast install -yq wireshark 
+  echo " - done."
+else
+  echo "- wireshark already installed"
+fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 vim |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install vim on ubuntu "
+  sudo apt-fast install -yq vim 
+  echo " - done."
+else
+  echo "- vim already installed"
+fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 sysstat |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install sysstat on ubuntu : example: iostat -d 1 10"
+  sudo apt-fast install -yq sysstat
+  echo " - done."
+else
+  echo "- sysstat already installed"
+fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 bikeshed |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install bikeshed on ubuntu, to use when purging old kernals - example: sudo purge-old-kernals --keep 3 "
+  sudo apt-fast install -yq bikeshed 
+  echo " - done."
+else
+  echo "- bikeshed already installed, to use when purging old kernals - example: sudo purge-old-kernals --keep 3 "
+fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 nmap |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install nmap on ubuntu "
+  sudo apt-fast install -yq nmap 
+  echo " - done."
+else
+  echo "- nmap already installed"
+fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 eclipse |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install eclipse on ubuntu "
+  sudo apt-fast install -yq eclipse 
+  echo " - done."
+  sudo bash eclipse_plugin_install.sh
+else
+  echo "- eclipse already installed"
+fi
+
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 openjdk* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install eclipse dependencies on ubuntu "
+  sudo apt-fast install -yq openjdk-6-jdk openjdk-6-source openjdk-6-demo openjdk-6-doc openjdk-6-jre-headless openjdk-6-jre-lib 
+  echo " - done."
+else
+  echo "- eclipse dependencies already installed"
+fi
+
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 scene* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install javaFX Scene builder "
+   echo "PLEASE manually download http://download.oracle.com/otn-pub/java/javafx_scenebuilder/2.0-b20/javafx_scenebuilder-2_0-linux-i586.deb"
+   #wget http://download.oracle.com/otn-pub/java/javafx_scenebuilder/2.0-b20/javafx_scenebuilder-2_0-linux-i586.deb && \
+   #sudo dpkg -i javafx_scenebuilder-2_0-linux-i586.deb && \
+   #sudo dpkg -i javafx_scenebuilder-2_0-linux-x64.deb && \
+   # find it using this command: dpkg-query  -S scene*
+   # then add in intellij under settings/language.../JavaFX/path to scenebuilder
+   sudo apt-fast install -yq  scenebuilder
+   sudo apt-get update 
+  echo " - done."
+else
+  echo "- JavaFX Scene builder already installed"
+fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 p7zip-rar* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install p7zip-rar "
+  sudo apt-fast install -yq p7zip-rar 
+  echo " - done."
+else
+  echo "- p7zip-rar already installed"
+fi
+
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 p7zip-full* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install p7zip-full "
+  sudo apt-fast install -yq p7zip-full 
+  echo " - done."
+else
+  echo "- p7zip already installed"
+fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 p7zip-rar* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install p7zip-rar "
+  sudo apt-fast install -yq p7zip-rar 
+  echo " - done."
+else
+  echo "- p7zip-rar already installed"
+fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 lzma* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install LZMA "
+  sudo apt-fast install -yq LZMA 
+  echo " - done."
+else
+  echo "- LZMA already installed"
+fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 lcov* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install lcov "
+  sudo apt-fast install -yq lcov 
+  echo " - done."
+else
+  echo "- lcov already installed"
+fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 nodejs* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install nodejs-legacy "
+  sudo apt-fast install -yq nodejs-legacy 
+  echo " - done."
+else
+  echo "- nodejs-legacy already installed"
+fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 pidgin* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install pidgin "
+  sudo apt-fast install -yq pidgin 
+  echo " - done."
+else
+  echo "- pidgin already installed"
+fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 monodevelop-nunit* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install monodevelop-nunit for C# on ubuntu "
