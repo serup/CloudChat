@@ -1,4 +1,4 @@
-package websocket;
+package dops.websocket;
 
 import dops.ClientEndpoint.JavaWebSocketClientEndpoint;
 import dops.mocks.setupMockServer;
