@@ -53,20 +53,19 @@
 <noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript! Websocket relies on Javascript being enabled. Please enable
     Javascript and reload this page!</h2></noscript>
 <div>
-    <div id="conversationDiv" >
-        <label>Welcome to DOPs JavaServicesApp</label>
-        <h1>service is running</h1>
-    </div>
-    <div>
+   <div>
         <button id="connect" onclick="connect();">Connect</button>
         <button id="disconnect" disabled="disabled" onclick="disconnect();">Disconnect</button>
     </div>
-    <div id="hiddenfields" hidden display: none>
+    <div id="hiddenfields" hidden >
         <input type="text" id="name" />
         <button id="sendName" onclick="sendName();">Send</button>
+    </div>
+    <div id="conversationDiv" >
+        <label>Welcome to DOPs JavaServicesApp</label>
+        <h1>service is running</h1>
         <p id="response"></p>
     </div>
-    <div id="YoshiElement"></div>
 </div>
 </body>
 </html>

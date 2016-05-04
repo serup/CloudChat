@@ -1,4 +1,4 @@
-package dops.ClientMessageHandler;
+package JavaServicesApp.ClientMessageHandler;
 
 import javax.websocket.MessageHandler;
 import java.util.concurrent.CountDownLatch;

@@ -82,6 +82,12 @@
             <artifactId>guava</artifactId>
             <version>19.0</version>
         </dependency>
+
+        <!-- https://spring.io/guides/gs/spring-boot/ -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
     </dependencies>
 
     <properties>
