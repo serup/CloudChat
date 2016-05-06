@@ -12,10 +12,8 @@ nodes_config = (JSON.parse(File.read("nodes.json")))['nodes']
 puppet_source = ENV['DOPS_PUPPET_PATH']
   
 if puppet_source == nil
-#   puts "NodeOS: " + nodeOS
    puts "Please set DOPS_PUPPET_PATH to your checkout of devtest, test and production"
    puppet_source = "$DIR""/puppet/trunk/environments/"
-   #exit
 end
 
 VAGRANTFILE_API_VERSION = "2"
@@ -61,18 +59,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         config.ssh.forward_x11 = true 
       end
       config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
-
-      #if node_name == "hadoop"   # Centos/7 related -- redhat is somehow not working well, thus use ubuntu/vivid32 -- ubuntu/xenial32
-#	  # Prevent Vagrant from mounting the default /vagrant synced folder
- # 	config.vm.synced_folder ".", "/home/vagrant/sync", disabled: true
-#      else
-        config.vm.synced_folder("puppet/hiera", "/tmp/vagrant-puppet-3/hiera")
-#      end
+      config.vm.synced_folder("puppet/hiera", "/tmp/vagrant-puppet-3/hiera")
 
       config.vm.provision :shell, :path => node_values['bootstrap']
-      # inline: "apt-get update -y" # https://github.com/mitchellh/vagrant/pull/5860
       config.vm.box = node_values['nodeOS']
-#      config.vm.provision :shell, inline: "hostnamectl set-hostname " + node_values[':hostname'] 
       config.vm.hostname = node_values[':hostname']
       config.vm.network :private_network, ip: node_values[':ip']
 
