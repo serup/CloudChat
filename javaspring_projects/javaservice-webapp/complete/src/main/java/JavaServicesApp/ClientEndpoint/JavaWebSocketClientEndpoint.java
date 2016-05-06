@@ -1,6 +1,6 @@
-package dops.ClientEndpoint;
+package JavaServicesApp.ClientEndpoint;
 
-import dops.ClientMessageHandler.JavaWebSocketClientMessageHandler;
+import JavaServicesApp.ClientMessageHandler.JavaWebSocketClientMessageHandler;
 import org.glassfish.tyrus.client.ClientManager;
 
 import javax.websocket.ClientEndpointConfig;
