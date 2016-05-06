@@ -450,7 +450,9 @@ namespace websocket {
                                     /// fetch username and password
                                     if( DED_GET_STDSTRING( decoder_ptr, "username", strUserName ) && DED_GET_STDSTRING( decoder_ptr, "password", strPassword ))
                                     {
-                                        /// Add participant to vip list of DFD functions online
+                                        /// TODO: check if new user/service is allowed on this framework - ignore if not allowed
+
+                                        /// Add participant to vip list of services online
                                         removevipparticipant(strFunctionName); /// First remove previous connection info
                                         if(findvipparticipant(strFunctionName) == 0)
                                         {
