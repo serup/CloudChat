@@ -243,4 +243,15 @@ pip-log.txt
 *.bmarks
 *.depend
 *.layout
-*.xml
+#*.xml
+
+#python
+*.pyc
+*~
+*\#
+.\#*
+build
+dist
+*.egg-info
+.cache/
+compliance/reports/

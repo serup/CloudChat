@@ -210,11 +210,13 @@ namespace websocket {
                     }
                     else
                     { /// Handle JSC dataframes and Java dataframes
-                        enum _eMethod { null, JSCconnect, JSCGetProfile, JavaConnect } eMethod;
+                        enum _eMethod { null, JSCconnect, JSCGetProfile, JavaConnect, PythonConnect, CSharpConnect } eMethod;
 
                         if( strMethod ==(std::string)"JSCconnect" ) eMethod = JSCconnect;
                         if( strMethod ==(std::string)"JSCGetProfile" ) eMethod = JSCGetProfile;
                         if( strMethod ==(std::string)"JavaConnect" ) eMethod = JavaConnect;
+                        if( strMethod ==(std::string)"PythonConnect" ) eMethod = PythonConnect;
+                        if( strMethod ==(std::string)"CSharpConnect" ) eMethod = CSharpConnect;
 
 
                         switch(eMethod)
@@ -523,6 +525,249 @@ namespace websocket {
                                         DED_START_ENCODER(encoder_ptr);
                                         DED_PUT_STRUCT_START( encoder_ptr, "WSResponse" );
                                         DED_PUT_METHOD	( encoder_ptr, "Method",  "JavaConnect" );
+                                        DED_PUT_USHORT	( encoder_ptr, "TransID",	(unsigned short)iTransID);
+                                        DED_PUT_STDSTRING	( encoder_ptr, "protocolTypeID", (std::string)strProtocolTypeID );
+                                        DED_PUT_STDSTRING	( encoder_ptr, "functionName", (std::string)strFunctionName );
+                                        DED_PUT_STDSTRING	( encoder_ptr, "status", (std::string)"NOT ACCEPTED" );
+                                        DED_PUT_STRUCT_END( encoder_ptr, "WSResponse" );
+                                        DED_GET_ENCODED_DATA(encoder_ptr,data_ptr,iLengthOfTotalData,pCompressedData,sizeofCompressedData);
+
+                                        /// Create a binary dataframe with above DED inside payload
+                                        dataframe frame;
+                                        frame.opcode = dataframe::binary_frame;
+                                        if(sizeofCompressedData==0) sizeofCompressedData = iLengthOfTotalData; // if sizeofcompresseddata is 0 then compression was not possible and size is the same as for uncompressed
+                                        frame.putBinaryInPayload(pCompressedData,sizeofCompressedData); // Put DED structure in dataframe payload
+
+                                        /// set dataframe as response frame
+                                        frmResponse=frame;
+                                        destination=source; // since reply have to go back to source, then destination becomes source
+                                        bDecoded=true;
+                                        std::cout << "[webserver] send NOT ACCEPTED WSResponse to : " << strFunctionName << "\n";
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if(strProtocolTypeID == (std::string)"DED1.00.01")
+                                {
+                                    /// Handling future protocol
+                                    /// A connect request following protocol version DED1.00.01 has been received
+                                }
+                                //else-if(strProtocolTypeID == (std::string)"DED1.00.02")
+                                //TODO: consider sending a dataframe back with info about unknown DED version!!
+                            }
+                        }
+                        break;
+                        case PythonConnect:
+                        {
+                            /// Handle protocol DED1.00.00
+                            if( DED_GET_USHORT( decoder_ptr, "TransID", iTransID) &&
+                                    DED_GET_STDSTRING( decoder_ptr, "protocolTypeID", strProtocolTypeID ) && strProtocolTypeID == (std::string)"DED1.00.00" )
+                            {
+                                if( DED_GET_STDSTRING( decoder_ptr, "functionName", strFunctionName ) )
+                                {
+                                    /// A connect request following protocol version DED1.00.00 has been received
+                                    std::cout << "[webserver] A javaScriptclient connect request following protocol version DED1.00.00 has been received\n";
+
+                                    /// fetch username and password
+                                    if( DED_GET_STDSTRING( decoder_ptr, "username", strUserName ) && DED_GET_STDSTRING( decoder_ptr, "password", strPassword ))
+                                    {
+                                        /// Add participant to vip list of DFD functions online
+                                        removevipparticipant(strFunctionName); /// First remove previous connection info
+                                        if(findvipparticipant(strFunctionName) == 0)
+                                        {
+                                            vipparticipants_.push_back(new vipparticipants(source,strFunctionName));
+
+                                            /// Send Request to DFD_1.1 and send a response if not online, if online then DFD will send a response
+                                            std::string strDFD = "DFD_1.1";
+                                            participant_ptr dfddest = findvipparticipant(strDFD);
+                                            if(dfddest==0)
+                                            {
+                                                /// TODO: if DFD is NOT online then do something smart - perhaps restart it !?
+                                                std::cout << "[webserver] ERROR DFD_1.1 is NOT online " << "\n";
+
+                                                /// Create a dataframe for response to new participant
+                                                DED_START_ENCODER(encoder_ptr);
+                                                DED_PUT_STRUCT_START( encoder_ptr, "WSResponse" );
+                                                DED_PUT_METHOD	( encoder_ptr, "Method",  "PythonConnect" );
+                                                DED_PUT_USHORT	( encoder_ptr, "TransID",	(unsigned short)iTransID);
+                                                DED_PUT_STDSTRING	( encoder_ptr, "protocolTypeID", (std::string)strProtocolTypeID );
+                                                DED_PUT_STDSTRING	( encoder_ptr, "functionName", (std::string)strFunctionName );
+                                                DED_PUT_STDSTRING	( encoder_ptr, "status", (std::string)"ACCEPTED" );
+                                                DED_PUT_STRUCT_END( encoder_ptr, "WSResponse" );
+
+                                                /// Create a binary dataframe with above DED inside payload
+                                                dataframe tempframe;
+                                                DED_GET_ENCODED_DATAFRAME(encoder_ptr, tempframe);
+
+                                                /// set dataframe as response frame
+                                                frmResponse=tempframe;
+                                                destination=source; // since reply have to go back to source, then destination becomes source
+                                                bDecoded=true;
+                                                std::cout << "[webserver] send WSResponse to : " << strFunctionName << "\n";
+                                            }
+                                            else
+                                            {
+                                                /// client is now connected and accepted, however now it needs to login to its profile
+
+                                                /// Send Request Login to profile - profile will send response dataframe to Client with status
+                                                dataframe dfRequest;
+                                                DED_START_ENCODER(encoder_ptr2);
+                                                DED_PUT_STRUCT_START( encoder_ptr2, "DFDRequest" );
+                                                //+ fixed area start
+                                                DED_PUT_METHOD	( encoder_ptr2, "Method",  "1_1_6_LoginProfile" );
+                                                DED_PUT_USHORT	( encoder_ptr2, "TransID",	(unsigned short)iTransID);
+                                                DED_PUT_STDSTRING	( encoder_ptr2, "protocolTypeID", (std::string)"DED1.00.00" );
+                                                DED_PUT_STDSTRING	( encoder_ptr2, "dest", (std::string)"DFD_1.1" ); // destination is profile DFD
+                                                DED_PUT_STDSTRING	( encoder_ptr2, "src", (std::string)strFunctionName ); /// destination is a client
+                                                //+ Profile request area start
+                                                DED_PUT_STDSTRING	( encoder_ptr2, "STARTrequest", (std::string)"LoginProfileRequest" );
+                                                DED_PUT_STDSTRING	( encoder_ptr2, "STARTDATAstream", (std::string)"116" ); // TODO: add datadictionary id for the datastream
+                                                DED_PUT_STDSTRING	( encoder_ptr2, "profileID", (std::string)strFunctionName ); // unique id for registered profile - this is actually the name of the main profile entityfile
+                                                DED_PUT_STDSTRING	( encoder_ptr2, "username", (std::string)strUserName ); // TODO: find a way to use fx. hashing of user and password
+                                                DED_PUT_STDSTRING	( encoder_ptr2, "password", (std::string)strPassword );
+                                                DED_PUT_STDSTRING	( encoder_ptr2, "ENDDATAstream", (std::string)"116" ); // TODO: add datadictionary id for the datastream
+                                                DED_PUT_STDSTRING	( encoder_ptr2, "ENDrequest", (std::string)"LoginProfileRequest" );
+                                                //- Profile request area end
+                                                DED_PUT_STRUCT_END( encoder_ptr2, "DFDRequest" );
+                                                DED_GET_ENCODED_DATAFRAME(encoder_ptr2, dfRequest);
+
+                                                /// set dataframe as response frame
+                                                frmResponse=dfRequest; /// this is actually a request to DFD however it will just be treated as a normal response dataframe transfer
+                                                destination=dfddest;
+                                                //destination=source; // since reply have to go back to source, then destination becomes source
+                                                bDecoded=true;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        /// Create a dataframe for response to unknown new participant
+                                        DED_START_ENCODER(encoder_ptr);
+                                        DED_PUT_STRUCT_START( encoder_ptr, "WSResponse" );
+                                        DED_PUT_METHOD	( encoder_ptr, "Method",  "PythonConnect" );
+                                        DED_PUT_USHORT	( encoder_ptr, "TransID",	(unsigned short)iTransID);
+                                        DED_PUT_STDSTRING	( encoder_ptr, "protocolTypeID", (std::string)strProtocolTypeID );
+                                        DED_PUT_STDSTRING	( encoder_ptr, "functionName", (std::string)strFunctionName );
+                                        DED_PUT_STDSTRING	( encoder_ptr, "status", (std::string)"NOT ACCEPTED" );
+                                        DED_PUT_STRUCT_END( encoder_ptr, "WSResponse" );
+                                        DED_GET_ENCODED_DATA(encoder_ptr,data_ptr,iLengthOfTotalData,pCompressedData,sizeofCompressedData);
+
+                                        /// Create a binary dataframe with above DED inside payload
+                                        dataframe frame;
+                                        frame.opcode = dataframe::binary_frame;
+                                        if(sizeofCompressedData==0) sizeofCompressedData = iLengthOfTotalData; // if sizeofcompresseddata is 0 then compression was not possible and size is the same as for uncompressed
+                                        frame.putBinaryInPayload(pCompressedData,sizeofCompressedData); // Put DED structure in dataframe payload
+
+                                        /// set dataframe as response frame
+                                        frmResponse=frame;
+                                        destination=source; // since reply have to go back to source, then destination becomes source
+                                        bDecoded=true;
+                                        std::cout << "[webserver] send NOT ACCEPTED WSResponse to : " << strFunctionName << "\n";
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if(strProtocolTypeID == (std::string)"DED1.00.01")
+                                {
+                                    /// Handling future protocol
+                                    /// A connect request following protocol version DED1.00.01 has been received
+                                }
+                                //else-if(strProtocolTypeID == (std::string)"DED1.00.02")
+                                //TODO: consider sending a dataframe back with info about unknown DED version!!
+                            }
+                        }
+                        break;
+                        case CSharpConnect:
+                        {
+                            /// Handle protocol DED1.00.00
+                            if( DED_GET_USHORT( decoder_ptr, "TransID", iTransID) &&
+                                    DED_GET_STDSTRING( decoder_ptr, "protocolTypeID", strProtocolTypeID ) && strProtocolTypeID == (std::string)"DED1.00.00" )
+                            {
+                                if( DED_GET_STDSTRING( decoder_ptr, "functionName", strFunctionName ) )
+                                {
+                                    /// A connect request following protocol version DED1.00.00 has been received
+                                    std::cout << "[webserver] A Client connect request following protocol version DED1.00.00 has been received\n";
+
+                                    /// fetch username and password
+                                    if( DED_GET_STDSTRING( decoder_ptr, "username", strUserName ) && DED_GET_STDSTRING( decoder_ptr, "password", strPassword ))
+                                    {
+                                        /// Add participant to vip list of DFD functions online
+                                        removevipparticipant(strFunctionName); /// First remove previous connection info
+                                        if(findvipparticipant(strFunctionName) == 0)
+                                        {
+                                            vipparticipants_.push_back(new vipparticipants(source,strFunctionName));
+
+                                            /// Send Request to DFD_1.1 and send a response if not online, if online then DFD will send a response
+                                            std::string strDFD = "DFD_1.1";
+                                            participant_ptr dfddest = findvipparticipant(strDFD);
+                                            if(dfddest==0)
+                                            {
+                                                /// TODO: if DFD is NOT online then do something smart - perhaps restart it !?
+                                                std::cout << "[webserver] ERROR DFD_1.1 is NOT online " << "\n";
+
+ /*
+ //TODO: MAKE WSRESPONSE PROTOCOL FOLLOW BASIC PART OF DATAFRAME PROTOCOL -- TOP FIXED PART !!!!
+ */                                               /// Create a dataframe for response to new participant
+                                                DED_START_ENCODER(encoder_ptr);
+                                                DED_PUT_STRUCT_START( encoder_ptr, "WSResponse" );
+                                                DED_PUT_METHOD	( encoder_ptr, "Method",  "CSharpConnect" );
+                                                DED_PUT_USHORT	( encoder_ptr, "TransID",	(unsigned short)iTransID);
+                                                DED_PUT_STDSTRING	( encoder_ptr, "protocolTypeID", (std::string)strProtocolTypeID );
+                                                DED_PUT_STDSTRING	( encoder_ptr, "functionName", (std::string)strFunctionName );
+                                                DED_PUT_STDSTRING	( encoder_ptr, "status", (std::string)"ACCEPTED" );
+                                                DED_PUT_STRUCT_END( encoder_ptr, "WSResponse" );
+                                                /// Create a binary dataframe with above DED inside payload
+                                                dataframe tempframe;
+                                                DED_GET_ENCODED_DATAFRAME(encoder_ptr, tempframe);
+
+                                                /// set dataframe as response frame
+                                                frmResponse=tempframe;
+                                                destination=source; // since reply have to go back to source, then destination becomes source
+                                                bDecoded=true;
+                                                std::cout << "[webserver] send WSResponse to : " << strFunctionName << "\n";
+                                            }
+                                            else
+                                            {
+                                                /// Client is now connected and accepted, however now it needs to login to its profile
+
+                                                /// Send Request Login to profile - profile will send response dataframe to Java Client with status
+                                                dataframe dfRequest;
+                                                DED_START_ENCODER(encoder_ptr2);
+                                                DED_PUT_STRUCT_START( encoder_ptr2, "DFDRequest" );
+                                                //+ fixed area start
+                                                DED_PUT_METHOD	( encoder_ptr2, "Method",  "1_1_6_LoginProfile" );
+                                                DED_PUT_USHORT	( encoder_ptr2, "TransID",	(unsigned short)iTransID);
+                                                DED_PUT_STDSTRING	( encoder_ptr2, "protocolTypeID", (std::string)"DED1.00.00" );
+                                                DED_PUT_STDSTRING	( encoder_ptr2, "dest", (std::string)"DFD_1.1" ); // destination is profile DFD
+                                                DED_PUT_STDSTRING	( encoder_ptr2, "src", (std::string)strFunctionName ); /// destination is a JavaScript client
+                                                //+ Profile request area start
+                                                DED_PUT_STDSTRING	( encoder_ptr2, "STARTrequest", (std::string)"LoginProfileRequest" );
+                                                DED_PUT_STDSTRING	( encoder_ptr2, "STARTDATAstream", (std::string)"116" ); // TODO: add datadictionary id for the datastream
+                                                DED_PUT_STDSTRING	( encoder_ptr2, "profileID", (std::string)strFunctionName ); // unique id for registered profile - this is actually the name of the main profile entityfile
+                                                DED_PUT_STDSTRING	( encoder_ptr2, "username", (std::string)strUserName ); // TODO: find a way to use fx. hashing of user and password
+                                                DED_PUT_STDSTRING	( encoder_ptr2, "password", (std::string)strPassword );
+                                                DED_PUT_STDSTRING	( encoder_ptr2, "ENDDATAstream", (std::string)"116" ); // TODO: add datadictionary id for the datastream
+                                                DED_PUT_STDSTRING	( encoder_ptr2, "ENDrequest", (std::string)"LoginProfileRequest" );
+                                                //- Profile request area end
+                                                DED_PUT_STRUCT_END( encoder_ptr2, "DFDRequest" );
+                                                DED_GET_ENCODED_DATAFRAME(encoder_ptr2, dfRequest);
+
+                                                /// set dataframe as response frame
+                                                frmResponse=dfRequest; /// this is actually a request to DFD however it will just be treated as a normal response dataframe transfer
+                                                destination=dfddest;
+                                                //destination=source; // since reply have to go back to source, then destination becomes source
+                                                bDecoded=true;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        /// Create a dataframe for response to unknown new participant
+                                        DED_START_ENCODER(encoder_ptr);
+                                        DED_PUT_STRUCT_START( encoder_ptr, "WSResponse" );
+                                        DED_PUT_METHOD	( encoder_ptr, "Method",  "CSharpConnect" );
                                         DED_PUT_USHORT	( encoder_ptr, "TransID",	(unsigned short)iTransID);
                                         DED_PUT_STDSTRING	( encoder_ptr, "protocolTypeID", (std::string)strProtocolTypeID );
                                         DED_PUT_STDSTRING	( encoder_ptr, "functionName", (std::string)strFunctionName );

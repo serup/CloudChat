@@ -33,7 +33,7 @@ function getURLParameter(name) {
 function insertChatWidget(homepageAlias,managerID,urlManagerImg, ypxpos,xpxpos, title)
 {
 	
-category = getURLParameter('category');managerid = getURLParameter('managerid');if(managerid==""){managerid="DADER2D26BAA30E8AD733671370FECFC"};imageurl = getURLParameter('imageurl');if(imageurl == null){imageurl="http://77.75.165.130/DOPS/CloudChat/CloudChatManager/images/"};ypos = getURLParameter('ypos');if(ypos == null){ypos = 0};xpos = getURLParameter('xpos');if(xpos == null){xpos = 0};
+category = getURLParameter('category');managerid = getURLParameter('managerid');if(managerid==""){managerid="DADER2D26BAA30E8AD733671370FECFC"};imageurl = getURLParameter('imageurl');if(imageurl == null){imageurl="http://cloudchatmanager.com/CloudChatManager/images/"};ypos = getURLParameter('ypos');if(ypos == null){ypos = 0};xpos = getURLParameter('xpos');if(xpos == null){xpos = 0};
 
 	if(ypos !== null || xpos !== null) {
 		ypxpos = ypos;
@@ -43,7 +43,7 @@ category = getURLParameter('category');managerid = getURLParameter('managerid');
 		managerID = managerid;
 	if(homepageAlias=="")
 		homepageAlias=category;
-	var strUrlManager = "REMOTE";
+	var strUrlManager = "BACKEND";
 	if(imageurl !== null)
 		urlManagerImg = imageurl;
 	if(urlManagerImg == "LOCAL") // used when testing local, then write LOCL in urlManagerImg parameter - client will then login to localhost server
@@ -52,9 +52,9 @@ category = getURLParameter('category');managerid = getURLParameter('managerid');
 		urlManagerImg = "";
 	}
 	else {
-		strUrlManager = "REMOTE";
+		strUrlManager = "BACKEND";
 		if(imageurl == null)
-			urlManagerImg = "http://77.75.165.130/DOPS/CloudChat/CloudChatManager/images/"
+			urlManagerImg = "http://cloudchatmanager.com/CloudChatManager/images/"
 	}
         clientID = guid();
         var stringAliasClientID = clientID;
@@ -90,7 +90,7 @@ category = getURLParameter('category');managerid = getURLParameter('managerid');
         strLoginHiddenSection = "<div > <input class=\"hidden\" type=\"text\" size=\"32\" id=\"destination_address\" value=\""+managerID+"\" /> \
             <button id=\"connectBtn\"  class=\"hidden btn btn-default btn-block serverconnect\" > connect with server </button></div> \
             <div class=\"hidden\"> \
-                <input type=\"text\" placeholder=\"REMOTE\" id=\"wsUri\" value=\""+strUrlManager+"\" > \
+                <input type=\"text\" placeholder=\"BACKEND\" id=\"wsUri\" value=\""+strUrlManager+"\" > \
             </div> \
             <div class=\"hidden\"> \
                 <input type=\"text\" placeholder=\"uniqueId\" id=\"uniqueId\" value=\""+clientID+"\"> \
@@ -155,7 +155,29 @@ function ChatWidget()
 //	if(right==true)	hide_rightpane();
 //}
 
-   
+function openWindow() {
+    var i, l, options = [{
+       value: 'first',
+       text: 'First'
+    }, {
+       value: 'second',
+       text: 'Second'
+    }],
+    newWindow = window.open("", null, "height=200,width=400,status=yes,toolbar=no,menubar=no,location=no");  
+
+    newWindow.document.write("<select onchange='window.opener.setValue(this.value);'>");
+    for(i=0,l=options.length; i<l; i++) {
+        newWindow.document.write("<option value='"+options[i].value+"'>");  
+        newWindow.document.write(options[i].text);  
+        newWindow.document.write("</option>");
+    }
+    newWindow.document.write("</select>");
+    newWindow.document.write("<div id="chatwidget-zone"><script src="js/scanva.js"></script><script>ChatWidget();</script></div>");
+}
+
+function setValue(value) {
+    document.getElementById('value').value = value;
+}   
 
 var _timer_startup=setInterval(function(){
 if(/loaded|complete/.test(document.readyState)){

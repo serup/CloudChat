@@ -15,7 +15,7 @@
         }
         
         function connect() {
-            var socket = new SockJS('/hello');
+            var socket = new SockJS('/JavaServicesApp');
             stompClient = Stomp.over(socket);            
             stompClient.connect({}, function(frame) {
                 setConnected(true);
@@ -36,7 +36,7 @@
         
         function sendName() {
             var name = document.getElementById('name').value;
-            stompClient.send("/app/hello", {}, JSON.stringify({ 'name': name }));
+            stompClient.send("/app/JavaServicesApp", {}, JSON.stringify({ 'name': name }));
         }
         
         function showGreeting(message) {

@@ -1,9 +1,6 @@
 #!/bin/sh
 
-# Run on VM to bootstrap Puppet Agent nodes
-
 sudo rm -rf /var/lib/puppet/ssl/*
-
 sudo cp /vagrant/sources.list /etc/apt/sources.list
 
 if ps aux | grep "puppet agent" | grep -v grep 2> /dev/null

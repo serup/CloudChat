@@ -77,14 +77,34 @@ else
       git clone https://review.gerrithub.io/serup/CloudChat
       cd CloudChat
       git checkout serup
+      git pull
       echo "CloudChat installed - from GitHub"
       echo "****************"
       echo "Set up swapfile"
       echo "****************"
       bash addswapfile.sh
+      # http://www.tweaking4all.com/software/linux-software/use-xrdp-remote-access-ubuntu-14-04/ 
+      # NB! use Remmina - remote desktop client with RDP, on your Ubuntu to connect to this node
+      echo "***********************************************"
+      echo "Set up Remote desktop handling - XRDP and XFCE" 
+      echo "***********************************************"
+      sudo apt-get update
+      sudo apt-get install -yq xrdp
+      sudo apt-get install -yq xfce4
+      # install XFCE4 terminal (way better than xterm)
+      sudo apt-get install -yq xfce4-terminal
+      # Install icon sets
+      sudo apt-get install -yq gnome-icon-theme-full tango-icon-theme
+      echo xfce4-session >~/.xsession
+      sudo sed -i 's/. \/etc\/X11\/Xsession/startxfce4/' /etc/xrdp/startwm.sh
+      sudo service xrdp restart
+      echo "*** use second ip to connect via Remmina with RDP, or backend.scanva.com"
+      hostname -I
+      echo "- end setup of remote desktop handling"
       echo "****************"
       echo "First time build"
       echo "****************"
+      #alias make="/usr/bin/make -j 8"
       echo "Building CloudChat project takes a long time - results are in file build.log - PLEASE WAIT!"
       ./run.sh > build.log 2> tmp3
       echo "done build - see detailed info in file build.log"
