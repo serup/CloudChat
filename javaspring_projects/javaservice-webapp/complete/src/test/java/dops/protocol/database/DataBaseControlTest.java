@@ -99,7 +99,7 @@ public class DataBaseControlTest {
     public void testReadEntitiyFile() throws Exception {
         // This is a dummy database file - it is following protocol as DataDictionary is stating in its DataDictionary/Entities/DD_TOAST.xml file
         String fileResource = "DataDictionary/Database/ENTITIEs/355760fb6afaf9c41d17ac5b9397fd45.xml"; // This is a profile database file
-        String EntityFileName = "/tmp/355760fb6afaf9c41d17ac5b9397fd45.xml"; // This is the extracted file on local
+        String EntityFileName = "/temp/355760fb6afaf9c41d17ac5b9397fd45.xml"; // This is the extracted file on local
         String EntityName       = "Profile"; // since this file is a customer profile database file, its entity name is 'Profile' -- DD_PROFILE.xml MUST reside in DataDictionary/Entities
 
         // 1. extract resource dummy file to local filesystem
