@@ -123,8 +123,8 @@ public class DOPsMapperReducerTest {
         MapReduceDriver<LongWritable, Text, Text, Text, Text, Text> mapReduceDriver;
 
         // 2. Setup search information - username - for profile to be found
-        mapper.dbctrl.setRelativeENTITIES_DATABASE_PLACE("/tmp/");  // reset default value to work with test
-        mapper.dbctrl.setRelativeTOASTS_DATABASE_PLACE("/tmp/"); // reset default value to work with test
+        mapper.dbctrl.setRelativeENTITIES_DATABASE_PLACE("/temp/");  // reset default value to work with test
+        mapper.dbctrl.setRelativeTOASTS_DATABASE_PLACE("/temp/"); // reset default value to work with test
         reducer.setElementOfInterest("username");
         reducer.setElementOfInterestValue("johnnytest@email.com");
         mapReduceDriver = MapReduceDriver.newMapReduceDriver(mapper, reducer);
@@ -142,7 +142,7 @@ public class DOPsMapperReducerTest {
 
         // 4. Extract toast file to tmp area - mapper will use input and parse for toast file name, then try to read it and parse it, hence the need for extract of test toast file
         File resourceFileToast       = new File(this.getClass().getClassLoader().getResource("DataDictionary/Database/TOASTs/355760fb6afaf9c41d17ac5b9397fd45_toast.xml").getFile());
-        File destinationFile         = new File("/tmp/355760fb6afaf9c41d17ac5b9397fd45_toast.xml");
+        File destinationFile         = new File("/temp/355760fb6afaf9c41d17ac5b9397fd45_toast.xml");
         try {
             Files.deleteIfExists(destinationFile.toPath());
             Files.copy(resourceFileToast.toPath(), destinationFile.toPath());
