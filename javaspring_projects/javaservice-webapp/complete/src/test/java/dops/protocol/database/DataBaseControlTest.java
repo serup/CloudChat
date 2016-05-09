@@ -2,12 +2,11 @@ package dops.protocol.database;
 
 
 import dops.database.DataBaseControl;
+import dops.testEnvironmentSetup;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.util.Iterator;
 
@@ -18,44 +17,17 @@ import static junit.framework.TestCase.assertEquals;
  */
 public class DataBaseControlTest {
 
-    DataBaseControl dbctrl;
-    private String executeCommand(String command, String path) {
-
-        StringBuffer output = new StringBuffer();
-        File dir = new File(path);
-
-        // create a process and execute cmd and currect environment
-        try {
-            Process process = Runtime.getRuntime().exec(command, null, dir);
-
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            process.waitFor();
-
-            String line = "";
-            while ((line = reader.readLine())!= null) {
-                output.append(line + "\n");
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            output.append(e.getMessage());
-        }
-
-        return output.toString();
-    }
+    DataBaseControl dbctrl=null;
+    testEnvironmentSetup env=null;
 
     @Before
     public void setUp() throws Exception {
-        dbctrl = new DataBaseControl();
-        String path = new File(".").getCanonicalPath();
-        String cmd = "mkdir temp";
-        try {
-            String result = executeCommand(cmd, path);
-            System.out.println(result);
-        } catch (Exception e) {
-            e.printStackTrace();
+        if(dbctrl == null)
+            dbctrl = new DataBaseControl();
+        if(env == null) {
+            env = new testEnvironmentSetup();
+            env.setupTemporaryFolder();
         }
-
     }
 
     @Test
