@@ -873,6 +873,16 @@ bool C1_1_Profile::fn118_FetchProfile(FetchProfileInfo datastream, FetchProfileR
             }
         }
     }
+    if(bResult==false)
+    {
+        /// Fetch profile from the Hadoop system - a profile file should ONLY exist locally when active, otherwise it should be closed and stored in hadoop hdfs
+        std::cout << "[fn118_FetchProfile] Profile was NOT found - now looking for it in hadoop system" << "\n";
+        std::string profile_index_name = requestProfileFromHadoop("username", username);
+        if(profile_index_name != "<not_found>") {
+            record_value.clear();
+            bResult = CDbCtrl.ftgt( realm_name, profile_index_name, record_value );
+        }
+    }
     if(bResult==true)
     {
         response.enumresp = FetchProfileRequestResponse::enumResponse::ProfileFoundInDatabase;
@@ -889,14 +899,6 @@ bool C1_1_Profile::fn118_FetchProfile(FetchProfileInfo datastream, FetchProfileR
             response.strSubscriptionExpireDate = tmp;
         }
     }
-    else
-    {
-        /// Fetch profile from the Hadoop system - a profile file should ONLY exist locally when active, otherwise it should be closed and stored in hadoop hdfs
-        std::cout << "[fn118_FetchProfile] Profile was NOT found - now looking for it in hadoop system" << "\n";
-
-
-    }
-
     if(bResult==true && response.eAccountStatus == FetchProfileRequestResponse::AccountValid)
     {
 
@@ -939,6 +941,13 @@ bool C1_1_Profile::fn118_FetchProfile(FetchProfileInfo datastream, FetchProfileR
     }
 
     return bResult;
+}
+
+std::string C1_1_Profile::requestProfileFromHadoop(std::string elementOfInterest, std::string elementOfInterestValue)
+{
+    std::string result="<not_found>";
+
+    return result;
 }
 
 /** \brief Update Image URL

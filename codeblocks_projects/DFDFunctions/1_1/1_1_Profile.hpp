@@ -142,6 +142,7 @@ public:
     bool fn1191_AddToLog(unsigned short iTransID, ProfileLogMessage profileLogMsg, ProfileLogResponse &response);
 
     /// tools
+    std::string requestProfileFromHadoop(std::string elementOfInterest, std::string elementOfInterestValue);
     bool extractUpdateImageUrl(FetchProfileInfo datastream, std::vector<Elements> record_value);
     bool SendBinarydataframe(unsigned char *pCompressedData,unsigned int sizeofCompressedData);
     bool SendDataframe(wsclient::dataframe frame);
