@@ -371,7 +371,6 @@ bool C1_1_Profile::HandleDataframe_Response(wsclient::CDED* pDED)
                         DED_GET_STDSTRING( decoder_ptr, "sizeofProfileData", newProfileInfo.strSizeofProfileData ) &&
                         DED_GET_STDSTRING( decoder_ptr, "profile_chunk_id", newProfileInfo.strProfile_chunk_id ) &&
                         DED_GET_STDSTRING( decoder_ptr, "AccountStatus", newProfileInfo.strAccountStatus ) &&
-//                        DED_GET_STDSTRING( decoder_ptr, "SubscriptionExpireDate", newProfileInfo.strSubscriptionExpireDate ) &&
                         DED_GET_STDSTRING( decoder_ptr, "ExpireDate", newProfileInfo.strSubscriptionExpireDate ) &&
                         DED_GET_STDSTRING( decoder_ptr, "ProfileStatus", newProfileInfo.strProfileStatus ))
                         {
@@ -843,24 +842,19 @@ bool C1_1_Profile::fn118_FetchProfile(FetchProfileInfo datastream, FetchProfileR
         {
             //TODO: make a mapping file and search thru that first and if not found there, then do this and add to map file if file is not existing there, thus updating the mapping file
 
-            // fetch profile
             record_value.clear(); // clear previous use
             bResult = CDbCtrl.ftgt( realm_name, f_index_name, record_value );
-
-            // fetch the username and password -- if match, then take breakout of foreach
             if(bResult==true)
             {
                 /// fetch the username
                 Elements element;
                 bResult = CDbCtrl.fetch_element(record_value,(std::string)"username", element);
                 std::string _username(element.ElementData.begin(),element.ElementData.end());
-                /// fetch the password
                 if(bResult!=false)
                 {
+                    /// fetch the password
                     bResult = CDbCtrl.fetch_element(record_value,(std::string)"password", element);
                     std::string _password(element.ElementData.begin(),element.ElementData.end());
-
-                    /// compare username and password
                     if(bResult==true)
                     {
                         if(username == _username && password == _password)
@@ -870,11 +864,6 @@ bool C1_1_Profile::fn118_FetchProfile(FetchProfileInfo datastream, FetchProfileR
                             bResult = CDbCtrl.fetch_element(record_value,(std::string)"profileID", element);
                             std::string _ProfileID(element.ElementData.begin(),element.ElementData.end());
                             datastream.strProfileID = _ProfileID;
-                            ///+tst foto
-                            //Elements fotoelement;
-                            //CDbCtrl.fetch_element(record_value,(std::string)"foto", fotoelement);
-                            //std::string _strfoto(fotoelement.ElementData.begin(),fotoelement.ElementData.end());
-                            ///-tst
                             break; // no need to iterate further
                         }
                         else
@@ -900,105 +889,35 @@ bool C1_1_Profile::fn118_FetchProfile(FetchProfileInfo datastream, FetchProfileR
             response.strSubscriptionExpireDate = tmp;
         }
     }
+    else
+    {
+        /// Fetch profile from the Hadoop system - a profile file should ONLY exist locally when active, otherwise it should be closed and stored in hadoop hdfs
+        std::cout << "[fn118_FetchProfile] Profile was NOT found - now looking for it in hadoop system" << "\n";
+
+
+    }
 
     if(bResult==true && response.eAccountStatus == FetchProfileRequestResponse::AccountValid)
     {
-        // TODO: take the embedded foto from record_value and write to image file in /var/www/img/xxxxx.jpg, then give URI to this extracted file instead of base64 embedded image - this is due to performance issues - it takes too long in JavaScript to receive a large base64 image inside DED
-        //+ Due to performance issues, the embedded foto is extracted and a new URI is given to client
-        {
-            Elements fotoelement;
-            bool bFound = CDbCtrl.fetch_element(record_value,(std::string)"foto", fotoelement);
-            if(bFound==true) {
-                std::string _strfoto(fotoelement.ElementData.begin(),fotoelement.ElementData.end());
 
-                boost::system_time const systime=boost::get_system_time();
-                std::stringstream sstream;
-                sstream << systime;
-
-                std::string filenamepath = "/var/www/img/" + datastream.strProfileID + "_" + sstream.str() + ".jpg"; // TODO: add a guid filename to newly created image -- NB! filepath should be inside /var/www/img/   -- to make sure client can access it
-                bool bExtracted = extractBase64TojpgImagefile(filenamepath,_strfoto);
-                if(bExtracted == true)
-                {
-                    std::vector<unsigned char> ElementData;
-                    // Add timestamp to image name, this will make sure that the image will be refreshed at receivers browser, however
-                    // TODO: add at receivers end Automatic cleanup of old image files
-                    //namespace pt = boost::posix_time;
-                    //pt::ptime now = pt::second_clock::local_time();
-                    //std::stringstream sstream;
-                    //sstream << now;
-                    std::string imageURI = "img/" + datastream.strProfileID + "_" + sstream.str() + ".jpg";
-           //         std::string strTimeNow = pt::to_simple_string(now);
-           //         std::string imageURI = "img/" + datastream.strProfileID + "_" + pt::to_iso_string(now) + ".jpg";
-
-                    // TODO: Automatic replication of extracted images to cloudchatmanager.com
-                    // INFO: fx. scp the foto to cloudchatmanager machine - it should reside in relative img/<profileid>.jpg - NB! This is necessary since no extracted data is allowed on backend.scanva.com server
-                    // sudo scp -r img/ vagrant@cloudchatmanager.com:/home/vagrant/.
-                    // TODO: remove tmp local stored image - no extracted data is allowed on backend.scanva.com
-
-                    // Image is now created in temp area, so update the record_value with the new path
-                    // NB! ONLY the cash record value is updated - NOT the file record value, since that would destroy the embedded profile image
-                    std::copy( imageURI.begin(), imageURI.end(), std::back_inserter(ElementData));
-                    CDbCtrl.update_element_value(record_value,"foto",ElementData);
-                    // Wait a moment, so background automatic replication can transfer image
-                    sleep(1); // wait seconds
-                }
-            }
-        }
-        //-
+        bool bUpdated = extractUpdateImageUrl(datastream, record_value);
+        if(!bUpdated)
+            std::cout << "[fn118_FetchProfile] FAILURE when trying to handle embedded foto element" << "\n";
 
         /// Profile was read, now make a response "ProfileFoundInDatabase"
         response.enumresp = FetchProfileRequestResponse::enumResponse::ProfileFoundInDatabase;
 
         DED_START_ENCODER(encoder_ptr);
         DED_PUT_STRUCT_START( encoder_ptr, "DFDResponse" );
-        DED_PUT_METHOD	( encoder_ptr, "Method",  "JSCGetProfile" );
-        DED_PUT_USHORT	( encoder_ptr, "TransID",	(unsigned short)datastream.iTransID);
-        DED_PUT_STDSTRING	( encoder_ptr, "protocolTypeID", (std::string)"DED1.00.00" );
-        DED_PUT_STDSTRING	( encoder_ptr, "dest", (std::string)datastream.strSource); // Send back to requester
-        DED_PUT_STDSTRING	( encoder_ptr, "src", (std::string)"DFD_1.1" );// This is HERE!!!
-        DED_PUT_STDSTRING	( encoder_ptr, "status", (std::string)"ProfileFoundInDatabase" );
-        DED_PUT_TOAST_ELEMENTS( encoder_ptr, "profile", record_value );
-        DED_PUT_STRUCT_END( encoder_ptr, "DFDResponse" );
+            DED_PUT_METHOD	        ( encoder_ptr, "Method",            "JSCGetProfile" );
+            DED_PUT_USHORT	        ( encoder_ptr, "TransID",	        (unsigned short)datastream.iTransID);
+            DED_PUT_STDSTRING	    ( encoder_ptr, "protocolTypeID",    (std::string)"DED1.00.00" );
+            DED_PUT_STDSTRING	    ( encoder_ptr, "dest",              (std::string)datastream.strSource); // Send back to requester
+            DED_PUT_STDSTRING	    ( encoder_ptr, "src",               (std::string)"DFD_1.1" );// This is HERE!!!
+            DED_PUT_STDSTRING	    ( encoder_ptr, "status",            (std::string)"ProfileFoundInDatabase" );
+            DED_PUT_TOAST_ELEMENTS  ( encoder_ptr, "profile",           record_value );
+        DED_PUT_STRUCT_END  ( encoder_ptr, "DFDResponse" );
         DED_GET_WSCLIENT_DATAFRAME(encoder_ptr, response.frame)
-/*// 2014-11-13 after decompression was altered to handle a compression larger than decompressed - it worked
-// 2014-11-17 FAILED with grisefant image size 1617191  -- somehow zeroes at pos: 1487940 -- SUCCESS after increasing compression area
-///+test - see if large dataframes get decoded correct
-        std::string strtmp = "";
-        unsigned short stmp;
-        CreateNewProfileInfo _newProfileInfo;
-        DED_PUT_DATA_IN_DECODER(tst_decoder_ptr,(unsigned char*)&response.frame.payload[0],response.frame.payload.size());
-        DED_GET_STRUCT_START( tst_decoder_ptr, "DFDResponse" );
-        DED_GET_METHOD( tst_decoder_ptr, "Method", strtmp );
-        DED_GET_USHORT( tst_decoder_ptr, "TransID", stmp);
-        DED_GET_STDSTRING( tst_decoder_ptr, "protocolTypeID", strtmp );
-        DED_GET_STDSTRING( tst_decoder_ptr, "dest", strtmp );
-        DED_GET_STDSTRING( tst_decoder_ptr, "src", strtmp );
-        DED_GET_STDSTRING( tst_decoder_ptr, "status", strtmp );
-        DED_GET_TOAST( tst_decoder_ptr, "profile", _newProfileInfo.vecElements);
-        /// test if vecElements has correct element
-        BOOST_FOREACH(Elements f, _newProfileInfo.vecElements)
-        {
-            BOOST_FOREACH(Elements v, record_value)
-            {
-                if(v.strElementID == f.strElementID)
-                {
-                    ///found element
-                    std::string strValueID(f.strElementID.begin(),f.strElementID.end());
-                    std::string strValue(f.ElementData.begin(),f.ElementData.end());
-                    std::string strValueOld(v.ElementData.begin(),v.ElementData.end());
-                    std::string strChk = "";
-                    if(f.ElementData == v.ElementData)
-                        strChk = "OK";
-                    else {
-                        strChk = "CORRUPT";
-                        std::cout << "ID: " << strValueID << "\n" << "Value length: " << strValue.size() << " check : " << strChk << " Old length: " << v.ElementData.size() << "\n";
-                    }
-                }
-            }
-        }
-///-test
-*/
-
         bResult=true;
     }
     else
@@ -1008,36 +927,61 @@ bool C1_1_Profile::fn118_FetchProfile(FetchProfileInfo datastream, FetchProfileR
 
         DED_START_ENCODER(encoder_ptr);
         DED_PUT_STRUCT_START( encoder_ptr, "DFDResponse" );
-        DED_PUT_METHOD	( encoder_ptr, "Method",  "JSCGetProfile" );
-        DED_PUT_USHORT	( encoder_ptr, "TransID",	(unsigned short)datastream.iTransID);
-        DED_PUT_STDSTRING	( encoder_ptr, "protocolTypeID", (std::string)"DED1.00.00" );
-        DED_PUT_STDSTRING	( encoder_ptr, "dest", (std::string)datastream.strSource); // Send back to requester
-        DED_PUT_STDSTRING	( encoder_ptr, "src", (std::string)"DFD_1.1" );// This is HERE!!!
-        DED_PUT_STDSTRING	( encoder_ptr, "status", (std::string)"ProfileNotFoundInDatabase" );
-        DED_PUT_STRUCT_END( encoder_ptr, "DFDResponse" );
-/*
-//        //  ---------------------------
-//        DED_GET_ENCODED_DATA(encoder_ptr,data_ptr,iLengthOfTotalData,pCompressedData,sizeofCompressedData);
-//
-//        /// Create a binary dataframe
-//        response.frame.opcode = wsclient::dataframe::operation_code::binary_frame;
-//        if(sizeofCompressedData==0) sizeofCompressedData = iLengthOfTotalData; // if sizeofcompresseddata is 0 then compression was not possible and size is the same as for uncompressed
-//        assert(data_ptr != 0);
-//        assert(iLengthOfTotalData != 0);
-//        assert(pCompressedData != 0);
-//        response.frame.putBinaryInPayload(pCompressedData,sizeofCompressedData); // Put DED structure in dataframe payload
-//        //  ---------------------------
-//
-//        // DED_GET_ENCODED_DATAFRAME(encoder_ptr, response.frame)
-*/
+            DED_PUT_METHOD	    ( encoder_ptr, "Method",            "JSCGetProfile" );
+            DED_PUT_USHORT	    ( encoder_ptr, "TransID",	        (unsigned short)datastream.iTransID);
+            DED_PUT_STDSTRING	( encoder_ptr, "protocolTypeID",    (std::string)"DED1.00.00" );
+            DED_PUT_STDSTRING	( encoder_ptr, "dest",              (std::string)datastream.strSource); // Send back to requester
+            DED_PUT_STDSTRING	( encoder_ptr, "src",               (std::string)"DFD_1.1" );// This is HERE!!!
+            DED_PUT_STDSTRING	( encoder_ptr, "status",            (std::string)"ProfileNotFoundInDatabase" );
+        DED_PUT_STRUCT_END  ( encoder_ptr, "DFDResponse" );
         DED_GET_WSCLIENT_DATAFRAME(encoder_ptr, response.frame)
-
         bResult=false;
     }
 
     return bResult;
 }
 
+/** \brief Update Image URL
+
+* Take the embedded foto from record_value and write to image file in /var/www/img/xxxxx.jpg, then give URI to this extracted file
+* instead of base64 embedded image - this is due to performance issues - it takes too long in JavaScript to receive a large base64 image inside DED
+*
+*  \param FetchProfileInfo datastream
+*  \param std::vector<Elements> record_value
+*  \return true/false
+*/
+bool C1_1_Profile::extractUpdateImageUrl(FetchProfileInfo datastream, std::vector<Elements> record_value)
+{
+    bool bResult=false;
+    //+ Due to performance issues, the embedded foto is extracted and a new URI is given to client
+    Elements fotoelement;
+    CDatabaseControl CDbCtrl;
+    bool bFound = CDbCtrl.fetch_element(record_value,(std::string)"foto", fotoelement);
+    if(bFound==true) {
+        std::string _strfoto(fotoelement.ElementData.begin(),fotoelement.ElementData.end());
+
+        boost::system_time const systime=boost::get_system_time();
+        std::stringstream sstream;
+        sstream << systime;
+
+        std::string filenamepath = "/var/www/img/" + datastream.strProfileID + "_" + sstream.str() + ".jpg"; // TODO: add a guid filename to newly created image -- NB! filepath should be inside /var/www/img/   -- to make sure client can access it
+        bool bExtracted = extractBase64TojpgImagefile(filenamepath,_strfoto);
+        if(bExtracted == true)
+        {
+            std::vector<unsigned char> ElementData;
+            std::string imageURI = "img/" + datastream.strProfileID + "_" + sstream.str() + ".jpg";
+            std::copy( imageURI.begin(), imageURI.end(), std::back_inserter(ElementData));
+            CDbCtrl.update_element_value(record_value,"foto",ElementData);
+            // Wait a moment, so background automatic replication can transfer image
+            // INFO: fx. scp the foto to cloudchatmanager machine - it should reside in relative img/<profileid>.jpg - NB! This is necessary since no extracted data is allowed on backend.scanva.com server
+            // sudo scp -r img/ vagrant@cloudchatmanager.com:/home/vagrant/.
+            sleep(1); // wait seconds
+            bResult = bExtracted;
+        }
+    }
+    //-
+    return bResult;
+}
 
 /** \brief Create Profile DFD 1.1.1
  *
