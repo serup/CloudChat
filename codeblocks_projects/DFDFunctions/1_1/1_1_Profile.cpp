@@ -947,7 +947,19 @@ std::string C1_1_Profile::requestProfileFromHadoop(std::string elementOfInterest
 {
     std::string result="<not_found>";
 
+    if(isHadoopJavaServiceAppOnline())
+    {
+
+    }
+
     return result;
+}
+
+bool C1_1_Profile::isHadoopJavaServiceAppOnline()
+{
+    bool bOnline=false;
+
+    return bOnline;
 }
 
 /** \brief Update Image URL
