@@ -12,6 +12,20 @@ TESTFLAGS3= --report_format=XML --report_level=detailed
 CONVERT=xsltproc -o test_results.html ../test_results.xslt 1_1_1_test_results.xml
 CONVERT2=xsltproc -o test_results.txt ../test_results_text.xslt 1_1_1_test_results.xml
 
+info:
+	@ echo "------------------------"
+	@ echo " Build options..."
+	@ echo "------------------------"
+	@ echo "compile        -- builds the project"
+	@ echo "test           -- runs all testcases"
+	@ echo "all            -- builds and run tests"
+	@ echo "list	       -- list of unittest"
+	@ echo "------------------------"
+	@ echo " "
+
+list : 
+	@ ./listUnitTestcases.sh
+
 all: compile test
 
 compile:
