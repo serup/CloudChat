@@ -5,7 +5,9 @@ import dops.database.DataBaseControl;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.util.Iterator;
 
@@ -17,10 +19,43 @@ import static junit.framework.TestCase.assertEquals;
 public class DataBaseControlTest {
 
     DataBaseControl dbctrl;
+    private String executeCommand(String command, String path) {
+
+        StringBuffer output = new StringBuffer();
+        File dir = new File(path);
+
+        // create a process and execute cmd and currect environment
+        try {
+            Process process = Runtime.getRuntime().exec(command, null, dir);
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            process.waitFor();
+
+            String line = "";
+            while ((line = reader.readLine())!= null) {
+                output.append(line + "\n");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            output.append(e.getMessage());
+        }
+
+        return output.toString();
+    }
 
     @Before
     public void setUp() throws Exception {
         dbctrl = new DataBaseControl();
+        String path = new File(".").getCanonicalPath();
+        String cmd = "mkdir temp";
+        try {
+            String result = executeCommand(cmd, path);
+            System.out.println(result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Test
@@ -99,7 +134,7 @@ public class DataBaseControlTest {
     public void testReadEntitiyFile() throws Exception {
         // This is a dummy database file - it is following protocol as DataDictionary is stating in its DataDictionary/Entities/DD_TOAST.xml file
         String fileResource = "DataDictionary/Database/ENTITIEs/355760fb6afaf9c41d17ac5b9397fd45.xml"; // This is a profile database file
-        String EntityFileName = "/tmp/355760fb6afaf9c41d17ac5b9397fd45.xml"; // This is the extracted file on local
+        String EntityFileName = "temp/355760fb6afaf9c41d17ac5b9397fd45.xml"; // This is the extracted file on local
         String EntityName       = "Profile"; // since this file is a customer profile database file, its entity name is 'Profile' -- DD_PROFILE.xml MUST reside in DataDictionary/Entities
 
         // 1. extract resource dummy file to local filesystem
@@ -123,7 +158,7 @@ public class DataBaseControlTest {
     public void testFtgt() throws Exception {
         // This is a dummy database file - it is following protocol as DataDictionary is stating in its DataDictionary/Entities/DD_TOAST.xml file
         String fileResource = "DataDictionary/Database/ENTITIEs/355760fb6afaf9c41d17ac5b9397fd45.xml"; // This is a profile database file
-        String EntityFileName = "/tmp/355760fb6afaf9c41d17ac5b9397fd45.xml"; // This is the extracted file on local
+        String EntityFileName = "temp/355760fb6afaf9c41d17ac5b9397fd45.xml"; // This is the extracted file on local
         String EntityName       = "Profile"; // since this file is a customer profile database file, its entity name is 'Profile' -- DD_PROFILE.xml MUST reside in DataDictionary/Entities
 
         // 1. extract resource dummy file(s) to local filesystem
@@ -132,15 +167,15 @@ public class DataBaseControlTest {
         Files.deleteIfExists(destinationFile.toPath());
         Files.copy(resourceFile.toPath(), destinationFile.toPath());
         resourceFile            = new File(this.getClass().getClassLoader().getResource("DataDictionary/Database/TOASTs/355760fb6afaf9c41d17ac5b9397fd45_toast.xml").getFile());
-        destinationFile         = new File("/tmp/355760fb6afaf9c41d17ac5b9397fd45_toast.xml");
+        destinationFile         = new File("temp/355760fb6afaf9c41d17ac5b9397fd45_toast.xml");
         Files.deleteIfExists(destinationFile.toPath());
         Files.copy(resourceFile.toPath(), destinationFile.toPath());
 
         // 2. use it as input to method to be tested
         String indexName = "355760fb6afaf9c41d17ac5b9397fd45"; // The id of the profile
         DataBaseControl.DEDElements record_value = this.dbctrl.createDEDElements(); // Placeholder for retrieved DataEncoderDecoder elements
-        this.dbctrl.setRelativeENTITIES_DATABASE_PLACE("/tmp/");  // reset default value to work with test
-        this.dbctrl.setRelativeTOASTS_DATABASE_PLACE("/tmp/"); // reset default value to work with test
+        this.dbctrl.setRelativeENTITIES_DATABASE_PLACE("temp/");  // reset default value to work with test
+        this.dbctrl.setRelativeTOASTS_DATABASE_PLACE("temp/"); // reset default value to work with test
         boolean bResult =  this.dbctrl.ftgt(EntityName,indexName,record_value); // Fetch and Get the profile with indexName
 
 
