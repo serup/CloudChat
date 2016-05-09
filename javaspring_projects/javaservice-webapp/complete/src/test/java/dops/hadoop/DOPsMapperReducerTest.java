@@ -6,6 +6,7 @@ import dops.hadoop.mappers.ProfileFileMapper;
 import dops.hadoop.mappers.XMLFileMapper;
 import dops.hadoop.reducers.ProfileFileReducer;
 import dops.hadoop.reducers.XMLFileReducer;
+import dops.testEnvironmentSetup;
 import hadoop.mappers.FindFileWithPatternInsideMapper;
 import hadoop.reducers.FindFileWithPatternInsideReducer;
 import org.apache.hadoop.io.IntWritable;
@@ -25,9 +26,14 @@ import java.nio.file.Files;
  */
 public class DOPsMapperReducerTest {
 
+    testEnvironmentSetup env=null;
 
     @Before
     public void setUp() throws Exception {
+        if(env == null) {
+            env = new testEnvironmentSetup();
+            env.setupTemporaryFolder();
+        }
     }
 
     public String readResource(final String fileName, Charset charset) throws Exception {
