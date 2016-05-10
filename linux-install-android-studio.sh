@@ -9,6 +9,14 @@ if [ "" == "$PKG_OK" ]; then
         sudo apt-get update
         sudo apt-get install oracle-java7-installer oracle-java8-installer 
 fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 lib32stdc* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install lib32stdc on ubuntu, to use for mksdcard SDK tool in android-studio "
+  sudo apt-get install -yq lib32stdc++6
+  echo " - done."
+else
+  echo "- lib32stdc already installed"
+fi
 
 wget -O "/tmp/$ANDROID_STUDIO_PACKAGE" https://dl.google.com/dl/android/studio/ide-zips/2.1.0.9/$ANDROID_STUDIO_PACKAGE
 cd /tmp
