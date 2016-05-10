@@ -75,6 +75,14 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- oracle-java already installed"
 fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 lib32stdc* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install lib32stdc on ubuntu, to use for mksdcard SDK tool in android-studio "
+  sudo apt-fast install -yq lib32stdc++6 
+  echo " - done."
+else
+  echo "- lib32stdc already installed"
+fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 gitk* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install gitk on ubuntu, to use for visualizing git repos "
