@@ -39,7 +39,7 @@ if [ -f "/tmp/$WXWIDGET_PACKAGE" ]; then
 
 fi
 
-cd /tmp/$WXWIDGET_PACKAGE
+cd $WXWIDGET_EXTRACTED_FOLDER
 
 echo "Compile wxWidgets "
 if [ -d "gtk-build" ]; then
