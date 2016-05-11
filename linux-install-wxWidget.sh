@@ -34,7 +34,7 @@ cd /tmp
 if [ -f "/tmp/$WXWIDGET_PACKAGE" ]; then
   tar -xjvf "$WXWIDGET_PACKAGE" 
 
-  WXWIDGET_EXTRACTED_FOLDER=`ls -dt wxWidget* | head -1`
+  WXWIDGET_EXTRACTED_FOLDER=`ls -dt wxWidget* | grep -v *.tar* | head -1`
   sudo rsync -av "$WXWIDGET_EXTRACTED_FOLDER" /opt/wxwidget
 
 fi
