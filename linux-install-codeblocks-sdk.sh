@@ -6,31 +6,24 @@ sudo apt-get install -yq libgtk2.0-dev build-essential checkinstall
 sudo apt-get install -yq autoconf
 sudo apt-get install -yq subversion
 
-wget -O "/tmp/$CODEBLOCKS_PACKAGE" http://sourceforge.net/projects/codeblocks/files/Sources/16.01/$CODEBLOCKS_PACKAGE
-cd /tmp
+## if issues with gtk-3 - then remove it
+## dpkg -r gtk
 
-if [ -f "/tmp/$CODEBLOCKS_PACKAGE" ]; then
-  tar -xjvf "$CODEBLOCKS_PACKAGE" 
-
-  CODEBLOCKS_EXTRACTED_FOLDER=`ls -dt codeblocks-16* | head -1`
-  sudo rsync -av "$CODEBLOCKS_EXTRACTED_FOLDER" /opt/codeblocks
-
-fi
-
-cd $CODEBLOCKS_EXTRACTED_FOLDER
-
-# if issues with gtk-3 - then remove it
-# dpkg -r gtk
-
-
+# using svn trunk
+#svn checkout svn://svn.code.sf.net/p/codeblocks/code/trunk codeblocks-code
+svn checkout http://svn.code.sf.net/p/codeblocks/code/trunk codeblocks-code
+cd codeblocks-code
+./update_revision.sh
 ./bootstrap
-autoreconf -vfi
-#./configure
-#automake
-#make
-#sudo make install
 ./configure 
-# set version to 16.01 -- important!!!
-#sudo checkinstall
 sudo make
 sudo make install
+
+# Add the following line to the file /etc/ld.so.conf:
+
+/usr/local/lib
+
+...and run:
+
+ldconfig
+
