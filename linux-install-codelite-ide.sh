@@ -1,5 +1,3 @@
-# Specify IDEA version here.  -- NB! MUST RUN as administrator
-CODELITE_PACKAGE=ideaIC-2016.1.tar.gz
 
 # Assuming we already did this during the previous steps:
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 codelite* |grep "install ok installed")
