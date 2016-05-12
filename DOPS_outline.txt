@@ -1,0 +1,18 @@
+                                                                                             
+   DDDDDDDDDDDDD                  DDDDDD          DDDDDDDDDDDDD            SSSSSSSSSSSSSSS  
+   D::::::::::::DDD            DDD::::::DDD       D::::::::::::DDD       SS:::::::::::::::S
+   D:::::::::::::::DD        DD::::::::::::DD     D:::::::::::::::DD    S:::::SSSSSS::::::S
+   DDD:::::DDDDD:::::D      D:::::DDDDDD:::::D    DDD:::::DDDDD:::::D   S:::::S     SSSSSSS
+     D:::::D    D:::::D    D:::::D      D:::::D     D:::::D    D:::::D  S:::::S            
+     D:::::D     D:::::D  D:::::D        D:::::D    D:::::D     D:::::   S:::::S            
+     D:::::D     D:::::D  D:::::D        D:::::D    D:::::D    D:::::D    S::::SSSS         
+     D:::::D     D:::::D  D:::::D        D:::::D    D:::::DDDDD:::::D      SS::::::SSSSS    
+     D:::::D     D:::::D  D:::::D        D:::::D    D:::::::::::::DD         SSS::::::::SS  
+     D:::::D     D:::::D  D:::::D        D:::::D    D::::::::::DDD              SSSSSS::::S 
+     D:::::D     D:::::D  D:::::D        D:::::D    D:::::DDDDD                      S:::::S
+     D:::::D    D:::::D    D:::::D      D:::::D     D:::::D                          S:::::S
+   DDD:::::DDDDD:::::D      D:::::DDDDDD:::::D    DDD:::::DDDDDD         SSSSSSS     S:::::S
+   D:::::::::::::::DD        DD::::::::::::DD     D::::::::::::D         S::::::SSSSSS:::::S
+   D::::::::::::DDD            DDD::::::DDD       D::::::::::::D         S:::::::::::::::SS 
+   DDDDDDDDDDDDD                  DDDDDD          DDDDDDDDDDDDDD          SSSSSSSSSSSSSSS   
+    Copyright @ Johnny Serup
