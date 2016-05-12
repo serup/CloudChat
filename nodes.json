@@ -1,7 +1,7 @@
 {
   "nodes": {
     "dops.puppet.master": {
-      "nodeOS": "ubuntu/vivid32",
+      "nodeOS": "mwe/vivid32",
       "bootstrap": "bootstrap-master.sh",
       ":ip": "192.168.31.8",
       "ports": [],
@@ -9,7 +9,7 @@
       ":hostname" :  "puppet.dev.dops.scanva.com"
     },
     "gerrit": {
-      "nodeOS": "ubuntu/vivid32",
+      "nodeOS": "mwe/vivid32",
       "bootstrap": "bootstrap-node-gerrit.sh",
       ":ip": "192.168.31.14",
       "ports": [],
@@ -17,7 +17,7 @@
       ":hostname" :  "gerrit.dops.scanva.com"
     },
     "jekyll": {
-      "nodeOS": "ubuntu/vivid32",
+      "nodeOS": "mwe/vivid32",
       "bootstrap": "bootstrap-node-jekyll.sh",
       ":ip": "192.168.31.15",
       "ports": [],
@@ -25,7 +25,7 @@
       ":hostname" :  "jekyll.dops.scanva.com"
     },
     "nginx": {
-      "nodeOS": "ubuntu/vivid32",
+      "nodeOS": "mwe/vivid32",
       "bootstrap": "bootstrap-node-nginx.sh",
       ":ip": "192.168.31.16",
       "ports": [],
@@ -33,7 +33,7 @@
       ":hostname":  "nginx.dops.scanva.com"
     },
     "bamboo": {
-      "nodeOS": "ubuntu/vivid32",
+      "nodeOS": "mwe/vivid32",
       "bootstrap": "bootstrap-node-bamboo.sh",
       ":ip": "192.168.31.17",
       "ports": [
@@ -43,7 +43,7 @@
       ":hostname":  "bamboo.dops.scanva.com"
     },
     "nexus": {
-      "nodeOS": "ubuntu/vivid32",
+      "nodeOS": "mwe/vivid32",
       "bootstrap": "bootstrap-node-nexus.sh",
       ":ip": "192.168.31.18",
       "ports": [],
@@ -51,7 +51,7 @@
       ":hostname":  "nexus.dops.scanva.com"
     },
     "javaservices": {
-      "nodeOS": "ubuntu/vivid32",
+      "nodeOS": "mwe/vivid32",
       "bootstrap": "bootstrap-node-javaservices.sh",
       ":ip": "192.168.31.19",
       "ports": [],
@@ -59,7 +59,7 @@
       ":hostname":  "javaservices.dops.scanva.com"
     },
     "jenkins": {
-      "nodeOS": "ubuntu/vivid32",
+      "nodeOS": "mwe/vivid32",
       "bootstrap": "bootstrap-node-jenkins.sh",
       ":ip": "192.168.31.20",
       "ports": [
@@ -69,7 +69,7 @@
       ":hostname":  "jenkins.dops.scanva.com"
     },
     "backend": {
-      "nodeOS": "ubuntu/vivid32",
+      "nodeOS": "mwe/vivid32",
       "bootstrap": "bootstrap-node-backend.sh",
       ":ip": "192.168.31.21",
       "ports": [
@@ -79,7 +79,7 @@
       ":hostname":  "backend.scanva.com"
     },
     "cloudchatmanager": {
-      "nodeOS": "ubuntu/vivid32",
+      "nodeOS": "mwe/vivid32",
       "bootstrap": "bootstrap-node-manager.sh",
       ":ip": "192.168.31.22",
       "ports": [],
@@ -87,7 +87,7 @@
       ":hostname":  "cloudchatmanager.com"
     },
     "cloudchatclient": {
-      "nodeOS": "ubuntu/vivid32",
+      "nodeOS": "mwe/vivid32",
       "bootstrap": "bootstrap-node-client.sh",
       ":ip": "192.168.31.23",
       "ports": [],
