@@ -1,4 +1,5 @@
 #!/usr/bin/env bash -l
+cat DOPS_outline.txt
 echo "********************************************************"
 echo "** Installing vagrant, puppetlabs, virtualbox, docker **"
 echo "********************************************************"
@@ -195,14 +196,6 @@ if [ "" == "$PKG_OK" ]; then
   echo " - done."
 else
   echo "- p7zip-rar already installed"
-fi
-PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 lzma* |grep "install ok installed")
-if [ "" == "$PKG_OK" ]; then
-  echo -n "- install LZMA "
-  sudo apt-fast install -yq LZMA 
-  echo " - done."
-else
-  echo "- LZMA already installed"
 fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 lcov* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
