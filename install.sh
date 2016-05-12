@@ -1,7 +1,9 @@
 #!/usr/bin/env bash -l
+cat DOPS_outline.txt
 echo "********************************************************"
 echo "** Installing vagrant, puppetlabs, virtualbox, docker **"
 echo "********************************************************"
+echo "MUST run as '. ./install.sh' or as 'sudo bash ./install.sh' otherwise it will fail !!!"
 
 function set-title() {
   if [[ -z "$ORIG" ]]; then
@@ -75,6 +77,14 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- oracle-java already installed"
 fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 lib32stdc* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install lib32stdc on ubuntu, to use for mksdcard SDK tool in android-studio "
+  sudo apt-fast install -yq lib32stdc++6 
+  echo " - done."
+else
+  echo "- lib32stdc already installed"
+fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 gitk* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install gitk on ubuntu, to use for visualizing git repos "
@@ -91,7 +101,7 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- wireshark already installed"
 fi
-PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 vim |grep "install ok installed")
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 vim* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install vim on ubuntu "
   sudo apt-fast install -yq vim 
@@ -145,14 +155,19 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 scene* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install javaFX Scene builder "
+   echo "NB! IMPORTANT go manually in on following homepage [http://www.oracle.com/technetwork/java/javase/downloads/index-jsp-138363.html]  and press download then press the  Accept the Oracle Binary Code License Agreement for Java SE -- then paste into browser this URL:"
    echo "PLEASE manually download http://download.oracle.com/otn-pub/java/javafx_scenebuilder/2.0-b20/javafx_scenebuilder-2_0-linux-i586.deb"
+   echo "then do following commands with downloaded file : "
+   echo "sudo dpkg -i javafx_scenebuilder-2_0-linux-i586.deb"
+   echo "sudo apt-fast install -yq  scenebuilder"
+   echo "sudo apt-get update"
    #wget http://download.oracle.com/otn-pub/java/javafx_scenebuilder/2.0-b20/javafx_scenebuilder-2_0-linux-i586.deb && \
    #sudo dpkg -i javafx_scenebuilder-2_0-linux-i586.deb && \
    #sudo dpkg -i javafx_scenebuilder-2_0-linux-x64.deb && \
    # find it using this command: dpkg-query  -S scene*
    # then add in intellij under settings/language.../JavaFX/path to scenebuilder
    sudo apt-fast install -yq  scenebuilder
-   sudo apt-get update 
+   #sudo apt-get update 
   echo " - done."
 else
   echo "- JavaFX Scene builder already installed"
@@ -181,14 +196,6 @@ if [ "" == "$PKG_OK" ]; then
   echo " - done."
 else
   echo "- p7zip-rar already installed"
-fi
-PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 lzma* |grep "install ok installed")
-if [ "" == "$PKG_OK" ]; then
-  echo -n "- install LZMA "
-  sudo apt-fast install -yq LZMA 
-  echo " - done."
-else
-  echo "- LZMA already installed"
 fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 lcov* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
@@ -455,45 +462,46 @@ else
 fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 virtualbox |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
-  echo -n "- install Virtualbox "
-  sudo apt-get --force-yes --yes install virtualbox 
-  echo " - done."
+  echo -n "- install Virtualbox -- PARAMOUNT DO NOT HAVE SECURE BOOT ENABLED otherwise install of virtualbox will fail"
+
+   wget http://download.virtualbox.org/virtualbox/5.0.20/virtualbox-5.0_5.0.20-106931~Ubuntu~xenial_amd64.deb && \
+   sudo dpkg -i virtualbox-5.0_5.0.20-106931~Ubuntu~xenial_amd64.deb && \
+   sudo apt-get update 
+   sudo wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add -
+   sudo wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
+   sudo apt-get update
+   sudo apt-get install -yq virtualbox-5.0
 else
   echo "- Virtualbox installed"
 fi
 
-# if a box is not possible to find like ubuntu/vivid32 because it is deprecated, then create and use one like this
-# vagrant package --base gerrit --output ubuntuvivid32.box
-# http://stackoverflow.com/questions/19094024/is-there-any-way-to-clone-a-vagrant-box-that-is-already-installed
-PKG_OK=$(vagrant box list | grep vivid32)
-if [ "" == "$PKG_OK" ]; then
-  echo -n "- install Virtualbox ubuntu/vivid32 from saved version "
-#  vagrant box add ubuntu/vivid32 ubuntuvivid32.box
-  vagrant box add ubuntu/vivid32 mwe/vivid32 
-  echo " - done."
-else
-  echo "- ubuntu/vivid32 box already present"
-fi 
-
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 virtualbox-guest* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install Virtualbox guest addition "
+  #http://download.virtualbox.org/virtualbox/5.0.16/VBoxGuestAdditions_5.0.16.iso
   sudo apt-fast install -yq virtualbox-guest-additions-iso
   sudo mkdir -p /media/VirtualBoxGuestAdditions
   sudo mount -t iso9660 -o loop /usr/share/virtualbox/VBoxGuestAdditions.iso /media/VirtualBoxGuestAdditions/
   sudo /media/VirtualBoxGuestAdditions/VBoxLinuxAdditions.run
+  # vagrant-vbguest 0.10.1 requirement
+  if [ ! -f /etc/init.d/vboxadd ]
+  then
+	vboxadd=$(find /opt -name vboxadd | head -n 1)
+	if [ -f "$vboxadd" ]
+	then
+		sudo ln -s $vboxadd /etc/init.d
+	fi
+  fi
   sudo /etc/init.d/vboxadd setup
   echo " - done."
 else
   echo "- Virtualbox guest addition installed"
 fi
+
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 puppet-co* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
-#  echo "puppetlabs-release was not found, now it will be installed - please wait..."
-  echo -n "- install puppetlabs-release "
-  sudo apt-fast install -yq puppet-common
-#  wget https://apt.puppetlabs.com/puppetlabs-release-trusty.deb
-#  sudo dpkg -i puppetlabs-release-trusty.deb
+   echo -n "- install puppetlabs-release "
+   sudo apt-fast install -yq puppet-common
    wget https://apt.puppetlabs.com/puppetlabs-release-pc1-vivid.deb && \
    sudo dpkg -i puppetlabs-release-pc1-vivid.deb && \
    sudo apt-get update 
@@ -776,10 +784,7 @@ fi
 VBOX_OK=$(vagrant box list|awk 'BEGIN {strtmp=$1} END {print $strtmp}')
 if [ "" == "$VBOX_OK" ]; then
   echo "vbox not found - installing.."
-  #vagrant box add ubuntu/trusty64 https://atlas.hashicorp.com/ubuntu/boxes/trusty64/versions/14.04/providers/virtualbox.box
-  #vagrant box add ubuntu/vivid32 
-  #vagrant box add ubuntu/xenial32 
-  vagrant box add ubuntu/vivid32 mwe/vivid32 
+  vagrant box add mwe/vivid32 mwe/vivid32 
 else
   echo "- vbox installed"
 fi

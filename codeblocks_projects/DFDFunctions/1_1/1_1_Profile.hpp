@@ -124,7 +124,8 @@ public:
     bool WaitForFetchProfile(long milliseconds); // will time out after parameter milliseconds
     bool WaitForCompletion(); // will join internal thread
     bool StopHandling(); // sends stop dataframe and close down
-/// DFD streams
+
+    /// DFD streams
     bool fn116_LoginProfile(LoginProfileRequest datastream, LoginProfileRequestResponse &response);
     bool fn1161_Authentication(LoginProfileRequest &datastream, AuthenticationResponse &response);
     bool fn11611_FetchProfile(LoginProfileRequest &datastream, std::vector<Elements> &record_value, FetchProfileResponse &response);
@@ -136,25 +137,18 @@ public:
     bool fn118_FetchProfile(FetchProfileInfo datastream, FetchProfileRequestResponse &response); ///TODO: consider redesign based on fn11611_FetchProfile
     bool fn1111_HandleProfileInfo(CreateNewProfileInfo datastream);
     bool fn1112_CheckForProfile(ProfileInfo datastream);
-
     bool fn1113_SaveProfile(CreateNewProfileInfo datastream);
-
- /*   bool fn111x1_CreateTemporaryProfile(CreateNewProfileInfo);
-    bool fn111x2_CheckForConflicts(CreateNewProfileInfo);
-    bool fn111x3_CreateEntity(CreateNewProfileInfo);
-    bool fn111x4_SendConfirmationRequest(CreateNewProfileInfo);
-    bool fn111x5_Authenticate(CreateNewProfileInfo);
-    bool fn111x6_CleanupAndEraseProfile(CreateNewProfileInfo);
-    bool fn111x7_SendFundingRequest(CreateNewProfileInfo);
-    bool fn111x8_ApplyFunding(CreateNewProfileInfo);
-    bool fn111x9_CreateAccount(CreateNewProfileInfo);
-*/
     bool fn119_HandleProfileLog(ProfileLogRequest profileLogReq, ProfileLogResponse &response);
     bool fn1191_AddToLog(unsigned short iTransID, ProfileLogMessage profileLogMsg, ProfileLogResponse &response);
 
+    /// tools
+    std::string requestProfileFromHadoop(std::string elementOfInterest, std::string elementOfInterestValue);
+    bool extractUpdateImageUrl(FetchProfileInfo datastream, std::vector<Elements> record_value);
+    bool isHadoopJavaServiceAppOnline();
     bool SendBinarydataframe(unsigned char *pCompressedData,unsigned int sizeofCompressedData);
     bool SendDataframe(wsclient::dataframe frame);
     bool SendDataframe(websocket::dataframe frame);
+
 
     class wsclient::CDED trashbucketDED;
     std::vector<char> trashdata;

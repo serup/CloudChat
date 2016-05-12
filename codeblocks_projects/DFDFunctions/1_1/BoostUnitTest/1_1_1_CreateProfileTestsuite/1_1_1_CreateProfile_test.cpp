@@ -232,7 +232,7 @@ BOOST_AUTO_TEST_CASE(CreateProfile)
         DED_PUT_ELEMENT( encoder_ptr, "profile", "lifecyclestate", "1") /// will add profile_chunk_id and profile_chunk_data
         DED_PUT_ELEMENT( encoder_ptr, "profile", "username", "johndoe" )
         DED_PUT_ELEMENT( encoder_ptr, "profile", "password", "12345678" )
-        DED_PUT_ELEMENT( encoder_ptr, "profile", "devicelist", " " )
+        DED_PUT_ELEMENT( encoder_ptr, "profile", "devicelist", "..." )
         DED_PUT_ELEMENT( encoder_ptr, "profile", "firstname", "John" )
         DED_PUT_ELEMENT( encoder_ptr, "profile", "lastname", "Doe" )
         DED_PUT_ELEMENT( encoder_ptr, "profile", "streetname", "nostreet" )
@@ -313,7 +313,7 @@ BOOST_AUTO_TEST_CASE(CreateProfile)
                 ADD_ELEMENT(vec, "lifecyclestate","1");
                 ADD_ELEMENT(vec, "username","johndoe");
                 ADD_ELEMENT(vec, "password","12345678");
-                ADD_ELEMENT(vec, "devicelist"," ");
+                ADD_ELEMENT(vec, "devicelist","...");
                 ADD_ELEMENT(vec, "firstname","John");
                 ADD_ELEMENT(vec, "lastname","Doe");
                 ADD_ELEMENT(vec, "streetname", "nostreet" );
@@ -424,7 +424,7 @@ BOOST_AUTO_TEST_CASE(CreateProfile_with_embedded_foto)
         DED_PUT_ELEMENT( encoder_ptr, "profile", "lifecyclestate", "1") /// will add profile_chunk_id and profile_chunk_data
         DED_PUT_ELEMENT( encoder_ptr, "profile", "username", "serup" )
         DED_PUT_ELEMENT( encoder_ptr, "profile", "password", "sussiskoller" )
-        DED_PUT_ELEMENT( encoder_ptr, "profile", "devicelist", " " )
+        DED_PUT_ELEMENT( encoder_ptr, "profile", "devicelist", "..." )
         DED_PUT_ELEMENT( encoder_ptr, "profile", "firstname", "Johnny" )
         DED_PUT_ELEMENT( encoder_ptr, "profile", "lastname", "Serup" )
         DED_PUT_ELEMENT( encoder_ptr, "profile", "streetname", "..." )
@@ -485,7 +485,7 @@ BOOST_AUTO_TEST_CASE(CreateProfile_with_embedded_foto)
                 ADD_ELEMENT(vec, "lifecyclestate","1");
                 ADD_ELEMENT(vec, "username","serup");
                 ADD_ELEMENT(vec, "password","sussiskoller");
-                ADD_ELEMENT(vec, "devicelist"," ");
+                ADD_ELEMENT(vec, "devicelist","...");
                 ADD_ELEMENT(vec, "firstname","Johnny");
                 ADD_ELEMENT(vec, "lastname","Serup");
                 ADD_ELEMENT(vec, "streetname", "..." );
