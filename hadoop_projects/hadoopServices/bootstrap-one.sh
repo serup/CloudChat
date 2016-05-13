@@ -1,5 +1,3 @@
-PLATFORM=$(uname -i)
-if [ "x86_64" != $PLATFORM ]; then
 echo "yum upgrade -- please wait..."
 sudo yum -y clean all
 sudo yum -y check 
@@ -7,12 +5,11 @@ sudo yum -y upgrade
 echo "install java..."
 sudo yum -y install java
 
+PLATFORM=$(uname -i)
+if [ "x86_64" != $PLATFORM ]; then
 export JAVA_HOME=/usr/jdk/jdk1.6.0_31/bin
-
 else
-
 export JAVA_HOME=/usr/jdk64/jdk1.6.0_31/bin
-
 fi
 
 export PATH=${JAVA_HOME}/bin:${PATH}
