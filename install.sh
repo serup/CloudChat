@@ -531,6 +531,15 @@ else
   echo "- maestrodev-bamboo puppet module installed"
 fi
 
+MODULE_OK=$(puppet module list --modulepath ./hadoop_projects/hadoopServices/modules | grep vzach-ambari*)
+if [ "" == "$MODULE_OK" ]; then
+  echo -n "- install vzach-ambari puppet module"
+  puppet module install vzach-ambari --modulepath ./hadoop_projects/hadoopServices/modules
+  echo " - done."
+else
+  echo "- vzach-ambari puppet module installed"
+fi
+
 #MODULE_OK=$(puppet module list --modulepath ./hadoop_projects/hadoopServices/modules | grep bcarpio-hadoop*)
 #if [ "" == "$MODULE_OK" ]; then
 #  echo -n "- install hadoop puppet module"
