@@ -55,18 +55,19 @@ public class HadoopFileSystemTest {
     public void test_copy_file_to_hdfs() {
         try {
             String fileResource= "dummyFiles/helloworld.txt";
+            String fileResourceWithoutPath = "helloworld.txt";
             String destFolder="tmp";
             URL fileResourceUrl = this.getClass().getClassLoader().getResource(fileResource);
             fshandlerDriver.copyTo(fileResourceUrl.getPath(), "/"+destFolder);
 
             // verify that file is in hdfs
             List<String> itemsToAdd = new ArrayList<String>();
-            String filepathname = destFolder+"/"+fileResource;
+            String filepathname = destFolder+"/"+fileResourceWithoutPath;
             itemsToAdd.add(fshandlerDriver.uri+filepathname);
             assertEquals("Expected 1 item in hdfs ls list", itemsToAdd, fshandlerDriver.ls("/"+filepathname));
 
             // cleanup - when after testing - file will be deleted on exit
-            String newfileName = "/" + destFolder + "/" + fileResource;
+            String newfileName = "/" + destFolder + "/" + fileResourceWithoutPath;
             fshandlerDriver.remove(newfileName);
         } catch (IOException e) {
             e.printStackTrace();
