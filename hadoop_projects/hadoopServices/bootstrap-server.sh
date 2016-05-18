@@ -7,6 +7,7 @@ ISOK=$(sudo ambari-server status|grep 'Ambari Server PID at')
 if [ "" == "$ISOK" ]; then
   	echo -e "${YELLOW}STATUS: ${NC}Server is ${RED}NOT ${NC}running, now start it"
 	sudo ambari-server start
+	sudo ambari-agent start
 else
 	echo -e "${YELLOW}STATUS: ${NC}Server is ${GREEN}running${NC}"
 fi
