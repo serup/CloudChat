@@ -1,4 +1,4 @@
-# Specify IDEA version here.  -- NB! MUST RUN as administrator
+# Specify IDE version here.  -- NB! MUST RUN as administrator
 VSCODE_PACKAGE=VSCode-linux-x64-stable.zip
 
 wget -O "/tmp/$VSCODE_PACKAGE" https://az764295.vo.msecnd.net/stable/def9e32467ad6e4f48787d38caf190acbfee5880/$VSCODE_PACKAGE
@@ -12,7 +12,7 @@ if [ -f "/tmp/$VSCODE_PACKAGE" ]; then
   sudo cp $VSCODE_EXTRACTED_FOLDER/resources/app/resources/linux/code.png /usr/share/pixmaps/
 
   echo '[Desktop Entry]
-Name=VSCODE IDEA
+Name=VSCODE IDE
 Type=Application
 Exec=/opt/vscode/VSCode-linux-x64/bin/code
 Icon=/opt/vscode/VSCode-linux-x64/resources/app/resources/linux/code.png
@@ -29,6 +29,6 @@ Name[en]=VSCODE IDEA
   sudo ln -s /opt/vscode/VSCode-linux-x64/bin/code /usr/local/bin/code
 
 else
-  echo "error"
+  echo "error - installation of vscode ide failed"
 fi
 
