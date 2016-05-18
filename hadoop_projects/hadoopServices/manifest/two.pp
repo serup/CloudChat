@@ -8,7 +8,7 @@ include ntp
 
 # Ensure that servers can find themselves even in absence of dns
 class { 'etchosts':
-  ownhostname => 'one.cluster'
+  ownhostname => 'two.cluster'
 }
 
 
