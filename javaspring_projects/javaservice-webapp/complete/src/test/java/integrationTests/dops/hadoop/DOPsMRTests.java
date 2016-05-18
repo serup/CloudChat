@@ -26,6 +26,7 @@ public class DOPsMRTests {
 
     private DOPsHDFSHandler fshandlerDriver;
     private final IntegrationEnvironmentSetup env = new IntegrationEnvironmentSetup();
+    private boolean bSetupOK=true;
 
     @SuppressWarnings("unused")
     @Before
@@ -38,21 +39,25 @@ public class DOPsMRTests {
         //make sure directory exists
         if (!directory.exists()) {
             // Directory does not exist
-            if(!directory.mkdir())
+            if(!directory.mkdirs())
                     throw new IOException("Could NOT create folder: /tmp/output/findprofile");
         }
         else {
                 env.delete(directory); // clean out old
-                if(!directory.mkdir())
+                if(!directory.mkdirs())
                     throw new IOException("Could NOT create folder: /tmp/output/findprofile"); // create for this test
         }
         } catch (Exception e) {
+            bSetupOK=false;
             e.printStackTrace();
         }
+        assertEquals(true,bSetupOK);
     }
 
     @Test
     public void testFindProfileFile() {
+
+        boolean bTestOK=true;
 
         try {
             Configuration conf = new Configuration();
@@ -88,11 +93,15 @@ public class DOPsMRTests {
             URL fileResourceUrl = this.getClass().getClassLoader().getResource(fileResource1);
             URL fileResourceUrl2 = this.getClass().getClassLoader().getResource(fileResource2);
             if(fileResourceUrl!=null) {
-                fshandlerDriver.copyTo(fileResourceUrl.getPath(), "/" + destFolder + "/355760fb6afaf9c41d17ac5b9397fd45.xml");
-                if (fileResourceUrl2 != null)
-                    fshandlerDriver.copyTo(fileResourceUrl2.getPath(), "/" + destFolder + "/toast" + "/355760fb6afaf9c41d17ac5b9397fd45_toast.xml");
+                if (fshandlerDriver.copyTo(fileResourceUrl.getPath(), "/" + destFolder + "/355760fb6afaf9c41d17ac5b9397fd45.xml"))
+                {
+                    if (fileResourceUrl2 != null)
+                        fshandlerDriver.copyTo(fileResourceUrl2.getPath(), "/" + destFolder + "/toast" + "/355760fb6afaf9c41d17ac5b9397fd45_toast.xml");
+                    else
+                        throw new IOException("Resource file NOT present");
+                }
                 else
-                    throw new IOException("Resource file NOT present");
+                    throw new IOException("could NOT copy file to HDFS");
             }
             else
                 throw new IOException("Resource file NOT present");
@@ -125,7 +134,10 @@ public class DOPsMRTests {
             System.out.println("FindProfileFile - mapreduce job finished - status : SUCCESS");
         } catch (Exception e) {
             e.printStackTrace();
+            bTestOK=false;
         }
+
+        assertEquals(true,bTestOK);
     }
 
 }

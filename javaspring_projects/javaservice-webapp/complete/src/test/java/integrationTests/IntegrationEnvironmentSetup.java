@@ -133,6 +133,7 @@ public class IntegrationEnvironmentSetup {
                     cmd = "vagrant status one.cluster";
                     result = executeCommand(cmd, path);
                     if (result.isEmpty() || !result.contains("running")) {
+                        System.out.println("VM hadoop cluster was not present - now if vagrant up takes too long time, then perhaps nodes needs to be started manually and ambari installed againg");
                         // cmd = "vagrant up"; // will start all nodes described in Vagrantfile
                         cmd = "vagrant up one"; // will start 1 nodes
                         result = executeCommand(cmd, path);
