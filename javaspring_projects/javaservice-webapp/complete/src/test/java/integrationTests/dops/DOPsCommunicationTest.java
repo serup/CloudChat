@@ -1,6 +1,7 @@
 package integrationTests.dops;
 
 import JavaServicesApp.ClientEndpoint.JavaWebSocketClientEndpoint;
+import JavaServicesApp.ProtocolHandlings.DOPsCommunication;
 import dops.protocol.DOPS;
 import dops.protocol.ded.DEDDecoder;
 import dops.protocol.ded.DEDEncoder;
@@ -47,6 +48,21 @@ public class DOPsCommunicationTest {
         assertEquals(true,dops.isOpen()); // even though login to profile failed, then connection to DOPS main part should have been established
 
         System.out.println("done - success");
+    }
+
+    @Test
+    public void testConnectToDOPs() throws Exception {
+        DOPsCommunication dopsCommunications = new DOPsCommunication();
+            String uniqueId = "HadoopJavaServiceApp";
+            //String uniqueId = "985998707DF048B2A796B44C89345494";
+            String username = "johndoe@email.com";
+            String password = "12345";
+
+            if(dopsCommunications.connectToDOPs(uniqueId, username, password)) {
+                System.out.println("connected - success");
+            }
+            else
+                throw new Exception("Connection with REAL DOPS server - FAILED");
     }
 
     @Test

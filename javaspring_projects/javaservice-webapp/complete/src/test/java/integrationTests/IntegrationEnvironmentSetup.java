@@ -89,9 +89,15 @@ public class IntegrationEnvironmentSetup {
                     assertEquals(true, result.contains("Vagrant"));
 
                     cmd = "vagrant up backend";
-                    result = executeCommand(cmd, path);
-                    assertEquals(true, containsAny(result, new String[]{"VM is already running", "Machine booted and ready"}));
-
+                    try {
+                        result = executeCommand(cmd, path);
+                        assertEquals(true, containsAny(result, new String[]{"VM is already running", "Machine booted and ready"}));
+                    }catch (Exception e)
+                    {
+                        cmd = "vagrant resume backend";
+                        result = executeCommand(cmd, path);
+                        assertEquals(true, containsAny(result, new String[]{"VM is already running", "Machine booted and ready"}));
+                    }
                     System.out.println("VM is started - Integration Environment ready");
                 }
             }catch(Exception e){
