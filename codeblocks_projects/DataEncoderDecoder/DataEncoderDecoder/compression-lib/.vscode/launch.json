@@ -8,7 +8,7 @@
             "launchOptionType": "Local",
             "miDebuggerPath": "/usr/bin/gdb",
             "targetArchitecture": "x64",
-            "program": "${workspaceRoot}/BoostUnitTest/bin/Debug/DataEncoderTestSuite",
+            "program": "${workspaceRoot}/BoostUnitTest/bin/Debug/compressiontest",
             "args": [],
             "stopAtEntry": true,
             "cwd": "${workspaceRoot}",
