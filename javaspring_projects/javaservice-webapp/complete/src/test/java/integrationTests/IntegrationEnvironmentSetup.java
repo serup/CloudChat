@@ -112,6 +112,15 @@ public class IntegrationEnvironmentSetup {
         if (!bHadoopIntegrationEnvironmentAlreadySetup) {
             try {
                 System.out.println("Check if main node in hadoop cluster is running...");
+                System.out.println("* if cluster is corrupt then do following: ");
+                System.out.println("* vagrant ssh one ");
+                System.out.println("* sudo -su hdfs ");
+                System.out.println("* hadoop  fsck /");
+                System.out.println("* hadoop  dfsadmin -safemode leave");
+                System.out.println("* hadoop  -rmr -skipTrash /tmp/input");
+                System.out.println("* hadoop  fsck -files delete /");
+                System.out.println("* hadoop  fsck /");
+                System.out.println("*  - status should be HEALTHY now - then manually restart everything in Ambari one.cluster:8080 admin admin");
                 String path = new File(".").getCanonicalPath();
                 path = trimOffLastFileSeperator(path, 3);
                 String cmd = "ping one.cluster -c 1";
