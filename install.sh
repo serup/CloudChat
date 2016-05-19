@@ -434,6 +434,15 @@ else
   echo "- g++ already installed"
 fi
 
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 npm* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install npm "
+  sudo apt-fast install -yq npm 
+  echo " - done."
+else
+  echo "- npm already installed"
+fi
+
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 lcov* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo "install LCOV for code coverage"
