@@ -40,6 +40,7 @@ test:
 clean:
 	rm -f *.o
 	rm -f *.txt
-	rm -f *.html	
+	rm -f *.html
 	rm -f *.gcda
 	rm -f *.gcno
+	rm -f test_results.xml
