@@ -1,0 +1,81 @@
+﻿<Properties StartupItem="ccAdmin/ccAdmin.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="ccAdmin/MainWindow.cs">
+    <Files>
+      <File FileName="ccAdmin/MainWindow.cs" Line="6" Column="12" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore>
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.Test/unittests/DEDencoderDecoderTests.cs" line="42" column="38" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.Test/unittests/DEDencoderDecoderTests.cs" line="41" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices/LZSS.cs" line="496" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices/LZSS.cs" line="472" column="7" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices/LZSS.cs" line="473" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.Test/unittests/DEDencoderDecoderTests.cs" line="58" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.Test/unittests/DEDencoderDecoderTests.cs" line="55" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.Test/unittests/DEDencoderDecoderTests.cs" line="61" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.Test/unittests/DEDencoderDecoderTests.cs" line="62" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.Test/unittests/DEDencoderDecoderTests.cs" line="155" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/DOPsConnectTests.cs" line="72" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/DOPsConnectTests.cs" line="94" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/DOPsConnectTests.cs" line="119" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/DOPsConnectTests.cs" line="86" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/DOPsConnectTests.cs" line="84" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.Test/unittests/DEDencoderDecoderTests.cs" line="38" column="3" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices/WebSocket/Client.cs" line="301" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices/WebSocket/Client.cs" line="340" column="7" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices/WebSocket/Client.cs" line="345" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices/WebSocket/Client.cs" line="321" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices/WebSocket/Client.cs" line="322" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.Test/unittests/WebSocketConnectionInfoTests.cs" line="35" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.Test/unittests/WebSocketConnectionInfoTests.cs" line="37" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.Test/unittests/WebSocketConnectionInfoTests.cs" line="43" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.Test/mocks/mockDOPsServer.cs" line="279" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.Test/mocks/mockDOPsServer.cs" line="200" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.Test/mocks/mockDOPsServer.cs" line="206" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.Test/mocks/mockDOPsServer.cs" line="211" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.Test/mocks/mockDOPsServer.cs" line="216" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.Test/mocks/mockDOPsServer.cs" line="222" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.Test/mocks/mockDOPsServer.cs" line="226" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.Test/mocks/mockDOPsServer.cs" line="240" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.Test/mocks/mockDOPsServer.cs" line="235" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.Test/mocks/mockDOPsServer.cs" line="230" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices/WebSocket/Client.cs" line="319" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.Test/unittests/WebSocketServerTests.cs" line="96" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.Test/unittests/WebSocketServerTests.cs" line="99" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.Test/unittests/WebSocketServerTests.cs" line="106" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices/WebSocket/Client.cs" line="212" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices/WebSocket/Client.cs" line="214" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices/WebSocket/Client.cs" line="216" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices/WebSocket/Client.cs" line="217" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices/WebSocket/Client.cs" line="219" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices/WebSocket/Client.cs" line="221" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.Test/unittests/WebSocketServerTests.cs" line="102" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices/WebSocket/Client.cs" line="279" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices/WebSocket/Client.cs" line="281" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices/WebSocket/Client.cs" line="228" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices/WebSocket/Client.cs" line="236" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices/WebSocket/Client.cs" line="234" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.Test/unittests/WebSocketServerTests.cs" line="86" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.Test/unittests/WebSocketServerTests.cs" line="109" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices/WebSocket/Client.cs" line="309" column="1" />
+      <Breakpoint enabled="false" file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices/WebSocket/Client.cs" line="231" column="1" />
+      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/hadoopTests.cs" line="108" column="1" />
+      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/hadoopTests.cs" line="112" column="1" />
+      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/hadoopTests.cs" line="110" column="31" />
+      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/hadoopTests.cs" line="132" column="1" />
+      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/hadoopTests.cs" line="129" column="34" />
+      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/hadoopTests.cs" line="140" column="1" />
+      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/hadoopTests.cs" line="143" column="1" />
+      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices/WebHDFS.cs" line="80" column="1" />
+      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices/WebHDFS.cs" line="84" column="1" />
+      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/hadoopTests.cs" line="60" column="1" />
+      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/hadoopTests.cs" line="61" column="1" />
+      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/hadoopTests.cs" line="46" column="1" />
+      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/NamespaceReducer.cs" line="14" column="1" />
+      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/NamespaceMapper.cs" line="18" column="1" />
+    </BreakpointStore>
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
