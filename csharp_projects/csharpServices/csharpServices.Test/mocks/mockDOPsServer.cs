@@ -276,7 +276,7 @@ class MockDOPsServer {
 
 		// Put the main thread to sleep for minTimeout millisecond to 
 		// allow the worker thread to do some work:
-		Thread.Sleep(1);
+		Thread.Sleep(2);
 
 	}
 

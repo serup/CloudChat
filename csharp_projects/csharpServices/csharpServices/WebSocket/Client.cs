@@ -228,7 +228,7 @@ namespace WebSocketClient
 			if (webSocket.State == WebSocketState.Open)
 			{
 //				webSocket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Binary, false, CancellationToken.None).Wait();
-				webSocket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Binary, true, CancellationToken.None).Wait();
+				await webSocket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Binary, false, CancellationToken.None);
 				LogStatus(false, buffer, buffer.Length);
 
 				await Task.Delay(delay);
