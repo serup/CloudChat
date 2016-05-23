@@ -120,10 +120,10 @@ else
       echo "****************"
       echo "copy cron replication job to /usr/local/bin - the job is started by incron, and it copies from backend to cloudchatmanager"
       cp ./replication.sh /usr/local/bin/.
-      chown vagrant:vagrant /usr/local/bin/replication.sh
+      chown root:root /usr/local/bin/replication.sh
       chmod +x /usr/local/bin/replication.sh
       cp ./cronStartServer.sh /usr/local/bin/.
-      chown vagrant:vagrant /usr/local/bin/cronStartServer.sh
+      chown root:root /usr/local/bin/cronStartServer.sh
       chmod +x /usr/local/bin/cronStartServer.sh
       echo "replication deamon - should copy files using sshpass scp - its setup as a cron job"
       incrontab -l | { cat; echo '/var/www/img IN_CREATE /usr/local/bin/replication.sh >> /var/log/replication.log 2>&1 $@/$#'; } | incrontab -
