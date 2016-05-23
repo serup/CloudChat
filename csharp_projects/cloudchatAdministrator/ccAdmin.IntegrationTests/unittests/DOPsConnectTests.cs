@@ -5,6 +5,7 @@ using WebSocketClient;
 //using System.Threading;
 //using System.Threading.Tasks;
 //using System.Net.WebSockets;
+using csharpServices;
 
 namespace DOPSTests
 {
@@ -125,5 +126,11 @@ namespace DOPSTests
 			Client.WSDisconnect(_handles);
 		}
 
+		[Test]
+		public void testDOPsHandler()
+		{
+			DOPSHandler dopsHandler = new DOPSHandler();
+			Assert.IsTrue (dopsHandler.connectToDOPsServer());
+		}
 	}
 }

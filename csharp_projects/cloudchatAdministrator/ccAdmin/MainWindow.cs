@@ -7,7 +7,6 @@ using csharpServices;
 public partial class MainWindow: Gtk.Window
 {
 	DOPSHandler dopsHandler = new DOPSHandler();
-	Label status = new Label();
 	protected Boolean bIsConnected=false;
 	public MainWindow () : base (Gtk.WindowType.Toplevel)
 	{

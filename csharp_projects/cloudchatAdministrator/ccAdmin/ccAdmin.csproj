@@ -117,6 +117,7 @@
     <Compile Include="WebHDFS.cs" />
     <Compile Include="BetterWebClient.cs" />
     <Compile Include="gtk-gui\MainWindow.cs" />
+    <Compile Include="Handlers\DOPSHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
