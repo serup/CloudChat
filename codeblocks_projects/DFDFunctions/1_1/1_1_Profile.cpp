@@ -999,6 +999,10 @@ bool C1_1_Profile::extractUpdateImageUrl(FetchProfileInfo datastream, std::vecto
             sleep(1); // wait seconds
             bResult = bExtracted;
         }
+        else
+        {
+            std::cout << "[C1_1_Profile::extractUpdateImageUrl] ERROR: it was not possible to change embedded image to png file url " << "\n";
+        }
     }
     //-
     return bResult;
