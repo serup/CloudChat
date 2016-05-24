@@ -99,7 +99,7 @@ bool extractBase64TojpgImagefile(std::string filenamepath, std::string strBase64
     bool bResult=false;
 
     // Check if embedded image is of following type : data:image/jpeg;base64,
-    std::string s = "data:image/jpeg;base64,";
+    std::string s = "data:image/png;base64,";
     std::string::size_type i = strBase64Image.find(s);
     if (i != std::string::npos) {
        strBase64Image.erase(i, s.length()); // trim off the header
@@ -109,6 +109,19 @@ bool extractBase64TojpgImagefile(std::string filenamepath, std::string strBase64
         outfile.write ((const char*)decodedData.data(),decodedData.size());
         outfile.close();
         bResult=true;
+    }
+    else {
+        std::string s = "data:image/jpeg;base64,";
+        std::string::size_type i = strBase64Image.find(s);
+        if (i != std::string::npos) {
+            strBase64Image.erase(i, s.length()); // trim off the header
+            std::vector<BYTE> decodedData = base64_decode(strBase64Image);
+            // Write decoded image to a real image file
+            std::ofstream outfile (filenamepath,std::ofstream::binary);
+            outfile.write ((const char*)decodedData.data(),decodedData.size());
+            outfile.close();
+            bResult=true;
+        }
     }
 
     return bResult;
