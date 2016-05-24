@@ -282,9 +282,17 @@ var timeout_url_foto;
                    //source = $('#profileimg').val();
                    //source = jQuery(".xyro_refresh").attr("src");
                    //remove previously added timestamps
+                   var new_source = "";
                    source = source.split("?", 1);//turns "image.jpg?timestamp=1234" into "image.jpg" avoiding infinitely adding new timestamps
-                   //prep new src attribute by adding a timestamp
-                   var new_source = source + "?timestamp="  + new Date().getTime();
+                   if (source.toLowerCase().indexOf("data:image") >= 0)
+                   {
+                       // since image was NOT extracted and is still an embedded image, then due to the issue around adding timestamp to embedded images, then do NOT add timestamp
+                       new_source = source;
+                   }
+                   else {
+                       //prep new src attribute by adding a timestamp
+                       new_source = source + "?timestamp="  + new Date().getTime();
+                   } 
                    //alert(new_source); //you may want to alert that during developement to see if you're getting what you wanted
                    //set the new src attribute
                    $('#profileimg').removeAttr("src").attr("src", new_source);
