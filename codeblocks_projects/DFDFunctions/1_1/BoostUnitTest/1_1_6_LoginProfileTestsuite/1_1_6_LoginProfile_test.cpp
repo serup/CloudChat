@@ -611,6 +611,7 @@ BOOST_AUTO_TEST_CASE( _118_FetchProfile )
     DED_GET_METHOD	( decoder_ptr, "Method", strValue ))
     {
         bool bFound = C11.HandleDFDRequest_1_1_8_FetchProfile(decoder_ptr);
+        bResult=bFound;
     }
 
 

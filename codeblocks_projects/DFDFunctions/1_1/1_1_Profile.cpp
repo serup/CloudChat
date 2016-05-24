@@ -971,7 +971,7 @@ bool C1_1_Profile::isHadoopJavaServiceAppOnline()
 *  \param std::vector<Elements> record_value
 *  \return true/false
 */
-bool C1_1_Profile::extractUpdateImageUrl(FetchProfileInfo datastream, std::vector<Elements> record_value)
+bool C1_1_Profile::extractUpdateImageUrl(FetchProfileInfo datastream, std::vector<Elements> &record_value)
 {
     bool bResult=false;
     //+ Due to performance issues, the embedded foto is extracted and a new URI is given to client
