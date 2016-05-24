@@ -284,7 +284,7 @@ var timeout_url_foto;
                    //remove previously added timestamps
                    var new_source = "";
                    source = source.split("?", 1);//turns "image.jpg?timestamp=1234" into "image.jpg" avoiding infinitely adding new timestamps
-                   if (source.toLowerCase().indexOf("data:image") >= 0)
+                   if (/data:image/i.test(source))
                    {
                        // since image was NOT extracted and is still an embedded image, then due to the issue around adding timestamp to embedded images, then do NOT add timestamp
                        new_source = source;
