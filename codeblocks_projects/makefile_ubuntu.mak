@@ -43,10 +43,10 @@ msgbegin:
 compress: msgbegin compress2 msgend
 compress2: 
 	@ cd DataEncoderDecoder/DataEncoderDecoder/compression-lib/BoostUnitTest;\
-	make -j8 -f makefile_ubuntu.mak > ../../../../output1.txt
+	make -f makefile_ubuntu.mak > ../../../../output1.txt
 compress3:
 	@ cd DataEncoderDecoder/DataEncoderDecoder/compression-lib/BoostUnitTest;\
-	make -j8 -f makefile_ubuntu.mak test > ../../../../output1.txt
+	make -f makefile_ubuntu.mak test > ../../../../output1.txt
 dataencoder: msgbegin dataencoder2 msgend	
 dataencoder2:
 	@ cd DataEncoderDecoder/DataEncoderDecoder/BoostUnitTest/DataEncoderTestSuite;\
