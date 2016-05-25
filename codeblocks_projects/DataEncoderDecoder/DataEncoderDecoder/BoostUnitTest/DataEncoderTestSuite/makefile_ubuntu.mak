@@ -17,7 +17,9 @@ CONVERT=xsltproc -o test_results.html ../test_results.xslt test_results.xml
 CONVERT2=xsltproc -o test_results.txt ../test_results_text.xslt test_results.xml
 
 
-all: $(SOURCES) $(EXECUTABLE) clean test
+all: $(SOURCES) $(EXECUTABLE) test
+
+total: $(SOURCES) $(EXECUTABLE) test
 
 $(EXECUTABLE): $(OBJECTS)
 	@ $(CC) $(LDFLAGS) $(OBJECTS) -o $@
@@ -53,4 +55,7 @@ test:
 	@ rm test_txt_result.txt
 	@ rm error2.txt
 clean:
+	@ rm *.gcda
+	@ rm *.gcno
 	@ rm *.o
+

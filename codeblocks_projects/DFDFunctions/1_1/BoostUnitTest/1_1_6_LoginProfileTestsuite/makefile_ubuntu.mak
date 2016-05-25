@@ -18,14 +18,16 @@ info:
 	@ echo "------------------------------"
 	@ echo " 1_1_6_LoginProfile test info "
 	@ echo "------------------------------"
+	@ echo "to build all : make -f makefile_ubuntu.mak total"
 	@ echo "to test one unittest use following format: make -f makefile_ubuntu.mak unittest unittest=_118_FetchProfile"
 	@ echo " "
 	@ echo '**************************';echo 'UNIT TESTCASES :';echo '**************************';echo; fgrep BOOST_AUTO_TEST_CASE *.cpp | sed -e 's/BOOST_AUTO_TEST_CASE(//g' | sed -e 's/)//g'; echo '**************************';
 
+all: compile test
+total: compile test
 list:
 	@ echo '**************************';echo 'UNIT TESTCASES :';echo '**************************';echo; fgrep BOOST_AUTO_TEST_CASE *.cpp | sed -e 's/BOOST_AUTO_TEST_CASE(//g' | sed -e 's/)//g'; echo '**************************';
 
-all: compile test
 
 compile:
 	@ echo "------------------------"
@@ -71,4 +73,6 @@ unittest:
 	@ cat test_txt_result.txt > test_results.txt
 	@ rm test_txt_result.txt
 	@ rm error2.txt
+	@ rm output*.txt
 
+.PHONY: info
