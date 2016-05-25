@@ -14,13 +14,20 @@ CONVERT2=xsltproc -o test_results.txt ../test_results_text.xslt test_results.xml
 CFLAGS= --coverage  -Wno-unused-but-set-variable
 
 all: compile test
+clean:
+	@ echo "Cleaning..."
+	@ sudo rm *.gcno *.gcda total_result.txt output.txt *.xml *.html test_results.txt
+	@ sudo rm bin/Debug/webserver_test
+	@ find -type f -name *.gcno -exec rm -f {} \;
+	@ find -type f -name *.o -exec rm -f {} \;
+
 
 compile:
 	@ echo "-----------------------------------------------" 
 	@ echo " Build started - please wait..." 
 	@ echo " Start building websocketserver testsuite"
 	@ echo "-----------------------------------------------" 
-	@ $(CC) $(CFLAGS) 2>tmp
+	@ $(CC) $(CFLAGS) 2>erroroutput.txt
 	@ echo "Finished build"
 	@ echo "-----------------------------------------------" 
 testxml:
