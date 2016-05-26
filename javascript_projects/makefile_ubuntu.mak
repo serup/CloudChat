@@ -34,20 +34,21 @@ msgbegintotal:
 	@ echo "----------------------------------"
 dataencoder: msgbegin dataencoder2 msgend	
 dataencoder2:
-	@ cd DataEncoderDecoder; make -f Makefile > ../output.txt
+	@ cd DataEncoderDecoder; make -f Makefile > ../javascriptoutput.txt
 compress: msgbegin compress2 msgend
 compress2:
-	@ cd DataEncoderDecoder/compression-lib; make -f Makefile >> ../../output.txt
+	@ cd DataEncoderDecoder/compression-lib; make -f Makefile >> ../../javascriptoutput.txt
 cloudmanager: msgbegin cloudmanager2 msgend
 cloudmanager2:
-	@ cd CloudChat; make -f makefile_ubuntu.mak >> ../output.txt
+	@ cd CloudChat; make -f makefile_ubuntu.mak >> ../javascriptoutput.txt
 ssapi: msgbegin ssapi2 msgend
 ssapi2:
-	@ cd socketserverAPI; sudo make -f makefile_ubuntu.mak >> ../output.txt
+	@ cd socketserverAPI; sudo make -f makefile_ubuntu.mak >> ../javascriptoutput.txt
 msgend:
 	@ echo "Build ended --"
 	@ echo "------------------------"
-	@ (cat output.txt | grep 'Failed\|Passed\|---\|Test of\|OK\|FAIL' > result.txt; cat result.txt; (cat result.txt|grep -c 'OK';printf "")>pass.txt; (cat result.txt|grep -c 'FAIL';printf "")>fail.txt; echo Total; printf "Passed: ";cat pass.txt; printf "Failed: "; cat fail.txt ; echo ---------)>_total_result.txt; rm result.txt; rm fail.txt; rm pass.txt ; rm output.txt 
+	@ cat javascriptoutput.txt > output.txt
+	@ (cat output.txt | grep 'Failed\|Passed\|---\|Test of\|OK\|FAIL' > result.txt; cat result.txt; (cat result.txt|grep -c 'OK';printf "")>pass.txt; (cat result.txt|grep -c 'FAIL';printf "")>fail.txt; echo Total javascript tests; printf "Passed: ";cat pass.txt; printf "Failed: "; cat fail.txt ; echo ---------)>_total_result.txt; rm result.txt; rm fail.txt; rm pass.txt ; rm output.txt 
 	@ cat _total_result.txt | sed '$$!N; /^\(.*\)\n\1$$/!P; D' > total_result.txt
 	@ cat total_result.txt
 	@ rm _total_result.txt
