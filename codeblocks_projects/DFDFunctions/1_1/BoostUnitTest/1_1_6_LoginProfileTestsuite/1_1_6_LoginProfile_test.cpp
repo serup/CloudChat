@@ -610,8 +610,44 @@ BOOST_AUTO_TEST_CASE( _118_FetchProfile )
     if(DED_GET_STRUCT_START( decoder_ptr, "DFDRequest" ) &&
     DED_GET_METHOD	( decoder_ptr, "Method", strValue ))
     {
-        bool bFound = C11.HandleDFDRequest_1_1_8_FetchProfile(decoder_ptr);
-        bResult=bFound;
+        //bool bFound = C11.HandleDFDRequest_1_1_8_FetchProfile(decoder_ptr); // this will try to send to socket, and since this is a test then it will fail, thus use below snippet instead
+
+        bool bDecoded=false;
+        std::string strProtocolTypeID="";
+        unsigned short iTransID=0;
+        /// Fetchprofile request
+        if(  DED_GET_USHORT( decoder_ptr, "TransID", iTransID) && /// iTransID should be used in a dataframe reply to this received dataframe
+                DED_GET_STDSTRING( decoder_ptr, "protocolTypeID", strProtocolTypeID ) && strProtocolTypeID == (std::string)"DED1.00.00" )
+        {
+            /// Handle version DED1.00.00 for FetchProfile
+            std::string strDestination=(std::string)"";
+            std::string strSource=(std::string)"";
+            std::string strStartRequest=(std::string)"";
+            std::string strStartdatastream=(std::string)"";
+
+            if(  DED_GET_STDSTRING( decoder_ptr, "dest", strDestination ) && strDestination == (std::string)"DFD_1.1" &&
+                    DED_GET_STDSTRING( decoder_ptr, "src", strSource ) &&
+                    DED_GET_STDSTRING( decoder_ptr, "STARTrequest", strStartRequest ) && strStartRequest == (std::string)"FetchProfileRequest" &&
+                    DED_GET_STDSTRING( decoder_ptr, "STARTDATAstream", strStartdatastream ) && strStartdatastream == (std::string)"118" )
+            {
+                /// Take profile info and transfer to 1.1.8 Fetch Profile
+                /// DFD stream "Fetch Profile Info" -> "Fetch Profile 1.1.8"
+
+                FetchProfileInfo foundProfileInfo;
+                foundProfileInfo.iTransID = iTransID;
+                foundProfileInfo.strSource = strSource;
+                if (DED_GET_STDSTRING( decoder_ptr, "profileID", foundProfileInfo.strProfileID ) &&
+                    DED_GET_STDSTRING( decoder_ptr, "profileName", foundProfileInfo.strProfileName ) &&
+                    DED_GET_STDSTRING( decoder_ptr, "password", foundProfileInfo.strPassword ))
+                {
+                    bDecoded=true;
+                    FetchProfileRequestResponse response;
+                    /// transfer to bool fn118_FetchProfile(FetchProfileInfo datastream); as a datastream
+                    bDecoded=C11.fn118_FetchProfile(foundProfileInfo, response);
+                    bResult = bDecoded;
+                }
+            }
+        }
     }
 
 

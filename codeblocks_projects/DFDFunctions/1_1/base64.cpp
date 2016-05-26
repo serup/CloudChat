@@ -94,34 +94,74 @@ std::vector<BYTE> base64_decode(std::string const& encoded_string) {
   return ret;
 }
 
+std::string extractBase64ToImageFile(std::string filenameWithoutSuffixType, std::string strBase64Image)
+{
+    std::string returnType="unknown";
+    bool bFoundType=false;
+    std::string strImageSuffixType = ".unknown";
+    std::string filenamepath = "unknown_file";
+    std::string s;
+
+    s = "data:image/png;base64,";
+    std::string::size_type i = strBase64Image.find(s);
+    if (i != std::string::npos) {
+        strImageSuffixType = ".png";
+        filenamepath = filenameWithoutSuffixType + strImageSuffixType;
+        bFoundType=true;
+    }
+    else {
+    s = "data:image/jpeg;base64,";
+    i = strBase64Image.find(s);
+    if (i != std::string::npos) {
+        strImageSuffixType = ".jpg";
+        filenamepath = filenameWithoutSuffixType + strImageSuffixType;
+        bFoundType=true;
+    }
+    }
+
+    if(bFoundType) {
+        strBase64Image.erase(i, s.length()); // trim off the header
+        std::vector<BYTE> decodedData = base64_decode(strBase64Image);
+        // Write decoded image to a real image file
+        std::ofstream outfile (filenamepath,std::ofstream::binary);
+        if( !outfile.is_open() )
+        {
+            std::cerr << "[extractBase64ToImageFile] ERROR: could not open output file: " << filenamepath << " Perhaps folder destination is write protected? "<< "\n";
+        }
+        else {
+            outfile.write ((const char*)decodedData.data(),decodedData.size());
+            outfile.flush();
+            if(outfile.bad())    //bad() function will check for badbit
+            {
+                std::cerr << "[extractBase64ToImageFile] ERROR: Writing to file failed,  " << filenamepath << "\n";
+            }
+            outfile.close();
+
+            //works
+            //std::ofstream ofs ("test.txt", std::ofstream::out);
+            //ofs << "lorem ipsum";
+            //ofs.close();
+        }
+        returnType=strImageSuffixType;
+    }
+    return returnType;
+}
+
 bool extractBase64TojpgImagefile(std::string filenamepath, std::string strBase64Image)
 {
     bool bResult=false;
 
     // Check if embedded image is of following type : data:image/jpeg;base64,
-    std::string s = "data:image/png;base64,";
+    std::string s = "data:image/jpeg;base64,";
     std::string::size_type i = strBase64Image.find(s);
     if (i != std::string::npos) {
-       strBase64Image.erase(i, s.length()); // trim off the header
+        strBase64Image.erase(i, s.length()); // trim off the header
         std::vector<BYTE> decodedData = base64_decode(strBase64Image);
         // Write decoded image to a real image file
         std::ofstream outfile (filenamepath,std::ofstream::binary);
         outfile.write ((const char*)decodedData.data(),decodedData.size());
         outfile.close();
         bResult=true;
-    }
-    else {
-        std::string s = "data:image/jpeg;base64,";
-        std::string::size_type i = strBase64Image.find(s);
-        if (i != std::string::npos) {
-            strBase64Image.erase(i, s.length()); // trim off the header
-            std::vector<BYTE> decodedData = base64_decode(strBase64Image);
-            // Write decoded image to a real image file
-            std::ofstream outfile (filenamepath,std::ofstream::binary);
-            outfile.write ((const char*)decodedData.data(),decodedData.size());
-            outfile.close();
-            bResult=true;
-        }
     }
 
     return bResult;

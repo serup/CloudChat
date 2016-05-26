@@ -985,19 +985,19 @@ bool C1_1_Profile::extractUpdateImageUrl(FetchProfileInfo datastream, std::vecto
         std::stringstream sstream;
         sstream << systime;
 
-        std::string filenamepath = "/var/www/img/" + datastream.strProfileID + "_" + sstream.str() + ".jpg"; // TODO: add a guid filename to newly created image -- NB! filepath should be inside /var/www/img/   -- to make sure client can access it
-        bool bExtracted = extractBase64TojpgImagefile(filenamepath,_strfoto);
-        if(bExtracted == true)
+        std::string filenamepath = "/var/www/img/" + datastream.strProfileID + "_" + sstream.str(); // TODO: add a guid filename to newly created image -- NB! filepath should be inside /var/www/img/   -- to make sure client can access it
+        std::string filetype = extractBase64ToImageFile(filenamepath, _strfoto);
+        if(filetype != "unknown")
         {
             std::vector<unsigned char> ElementData;
-            std::string imageURI = "img/" + datastream.strProfileID + "_" + sstream.str() + ".jpg";
+            std::string imageURI = "img/" + datastream.strProfileID + "_" + sstream.str() + filetype;
             std::copy( imageURI.begin(), imageURI.end(), std::back_inserter(ElementData));
             CDbCtrl.update_element_value(record_value,"foto",ElementData);
             // Wait a moment, so background automatic replication can transfer image
             // INFO: fx. scp the foto to cloudchatmanager machine - it should reside in relative img/<profileid>.jpg - NB! This is necessary since no extracted data is allowed on backend.scanva.com server
             // sudo scp -r img/ vagrant@cloudchatmanager.com:/home/vagrant/.
             sleep(1); // wait seconds
-            bResult = bExtracted;
+            bResult = true;
         }
         else
         {
