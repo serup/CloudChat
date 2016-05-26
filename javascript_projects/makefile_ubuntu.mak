@@ -1,4 +1,4 @@
-#
+
 # http://mrbook.org/tutorials/make/
 # http://www.cs.northwestern.edu/academics/courses/211/html/make.html
 # http://www.cs.umd.edu/class/fall2002/cmsc214/Tutorial/makefile.html
@@ -6,9 +6,9 @@
 # IMPORTANT! HAVE LINKS AFTER THE OBJECTS FILES, LINK ORDER MATTERS
 # TODO: try to make this makefile fetch obj files from obj folder, thus making
 # it compatible with the C::B project build - sofar I did not succeed in this
-
+#
 # http://stackoverflow.com/questions/3140974/how-to-use-sed-in-a-makefile
-
+#
 all:
 	@ echo "------------------------"
 	@ echo " Build options..."

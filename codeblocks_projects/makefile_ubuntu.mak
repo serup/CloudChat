@@ -6,7 +6,16 @@
 # IMPORTANT! HAVE LINKS AFTER THE OBJECTS FILES, LINK ORDER MATTERS
 # TODO: try to make this makefile fetch obj files from obj folder, thus making
 # it compatible with the C::B project build - sofar I did not succeed in this
-
+#
+# IMPORTANT! It is important to be careful when using parallel execution 
+# (the -j switch; see Parallel Execution) and archives. If multiple ar commands run
+# at the same time on the same archive file, they will not know about each other 
+# and can corrupt the file.
+#
+# Possibly a future version of make will provide a mechanism to circumvent this 
+# problem by serializing all recipes that operate on the same archive file.
+# But for the time being, you must either write your makefiles to avoid this problem in some other way, or not use -j. 
+#
 
 info:
 	@ echo "------------------------"
@@ -50,25 +59,25 @@ compress3:
 dataencoder: msgbegin dataencoder2 msgend	
 dataencoder2:
 	@ cd DataEncoderDecoder/DataEncoderDecoder/BoostUnitTest/DataEncoderTestSuite;\
-	make -j8 -f makefile_ubuntu.mak > ../../../../output2.txt
+	make -f makefile_ubuntu.mak > ../../../../output2.txt
 database: msgbegin database2 msgend
 database2:
 	@ cd DataBaseControl/BoostUnitTest/databasecontrol_testsuite;\
-	make -j8 -f makefile_ubuntu.mak > ../../../output3.txt
+	make -f makefile_ubuntu.mak > ../../../output3.txt
 websocketserver: msgbegin websocketserver2 msgend
 websocketserver2:
 	@ cd websocket_server;\
-	make -j8 -f makefile_webserver_ubuntu.mak > ../output4.txt
+	make -f makefile_webserver_ubuntu.mak > ../output4.txt
 	@ cd websocket_server/BoostUnitTest/websocketserver_testsuite;\
 	make -f makefile_ubuntu.mak > ../../../output5.txt
 ringbuf: msgbegin ringbuf2 msgend
 ringbuf2:
 	@ cd Ringbuffer/BoostUnitTest/ringbuffer_testsuite;\
-	make -j8 -f makefile_ubuntu.mak > ../../../output6.txt
+	make -f makefile_ubuntu.mak > ../../../output6.txt
 dfdfunc: msgbegin dfdfunc2 dfdfunc3 dfdfunc4 dfdfunc5 msgend
 dfdfunc2:
 	@ cd DFDFunctions/1_1;\
-	make -j8 -f makefile_ubuntu.mak > ../../output7.txt
+	make -f makefile_ubuntu.mak > ../../output7.txt
 dfdfunc3:
 	@ cd DFDFunctions/1_1/BoostUnitTest/1_1_1_CreateProfileTestsuite;\
 	make -f makefile_ubuntu.mak total > ../../../../output8.txt
