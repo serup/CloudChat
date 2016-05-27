@@ -22,7 +22,7 @@ test:
 	#@ (../../../codeblocks_projects/serup/websocket_server/bin/Debug/scanvaserver 0.0.0.0 7798 & echo $$! > running.pid ) > tmp & 
 	#@ (cd ../../../codeblocks_projects/serup/DFDFunctions/1_1/bin/Debug && pwd && ./1_1 127.0.0.1 7798 & echo $$! >> running.pid) > tmp2 &
 	@ (../../codeblocks_projects/websocket_server/bin/Debug/scanvaserver 0.0.0.0 7798 & echo $$! > running.pid ) > tmp & 
-	@ (cd ../../codeblocks_projects/DFDFunctions/1_1/bin/Debug && pwd && ./1_1 127.0.0.1 7798 & echo $$! >> running.pid) > tmp2 &
+	@ (cd ../../codeblocks_projects/DFDFunctions/1_1/bin/Debug && pwd && ./1_1 127.0.0.1 7798 & echo $$! ) > tmp2 &
 	@ echo "var WebSocket = require('ws')" > test/result_index.js
 	@ cat ../socketserverAPI/socketserverAPI.js >> test/result_index.js
 	@ cat ../DataEncoderDecoder/dataencoderdecoder.js >> test/result_index.js
