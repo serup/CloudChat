@@ -19,6 +19,9 @@ test:
 	@ echo " ----------------------------------------------------------- "	
 	@ echo "  Test of cloudchat is initializing - please wait... "	
 	@ echo " ----------------------------------------------------------- "	
+        @ test -f running.pid && rm running.pid
+        @ test -f tmp && rm tmp 
+        @ test -f tmp2 && rm tmp2 
 	#@ (../../../codeblocks_projects/serup/websocket_server/bin/Debug/scanvaserver 0.0.0.0 7798 & echo $$! > running.pid ) > tmp & 
 	#@ (cd ../../../codeblocks_projects/serup/DFDFunctions/1_1/bin/Debug && pwd && ./1_1 127.0.0.1 7798 & echo $$! >> running.pid) > tmp2 &
 	@ (../../codeblocks_projects/websocket_server/bin/Debug/scanvaserver 0.0.0.0 7798 & echo $$! > running.pid ) > tmp & 
