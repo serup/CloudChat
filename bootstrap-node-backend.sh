@@ -114,7 +114,7 @@ else
       echo "************************************"
       lcov --capture --directory . --output-file coverage.info
       echo "generate html code coverage info in /www/lcov"
-      genhtml coverage.info --output-directory /var/www/lcov > /dev/null
+      genhtml coverage.info --output-directory /var/www/lcov 2> /dev/null
       echo "****************"
       echo "setup incron job"
       echo "****************"
