@@ -2,6 +2,7 @@
 # start scanvaserver and DFD1
 touch /var/www/serverlog.txt
 touch /var/www/databaselog.txt
+touch /var/log/replication.log
 curdir=/home/vagrant/CloudChat/codeblocks_projects
 cd $curdir/websocket_server/bin/Debug
 ./scanvaserver 0.0.0.0 7777 > /var/www/serverlog.txt &  echo $! > /var/tmp/runningServerProcessID
