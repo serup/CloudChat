@@ -84,8 +84,8 @@ else
       sudo ./run.sh > build.log
       echo "done build - see info in file build.log"
       echo "Deploy to www"
+      sudo mkdir -p /var/www/html/CloudChatManager/img
       sudo bash deploy_www.sh
-      mkdir -p /var/www/html/CloudChatManager/img
       echo "**************************" 
       echo " cron job for cleaning "
       echo "**************************" 
