@@ -13,13 +13,25 @@ public partial class MainWindow
 	
 	private global::Gtk.Action connectAction;
 	
+	private global::Gtk.Action AdminAction;
+	
+	private global::Gtk.Action UniqueIdAction;
+	
+	private global::Gtk.Action changeUniqueIDAction;
+	
 	private global::Gtk.VBox vbox1;
 	
-	private global::Gtk.MenuBar menubar5;
+	private global::Gtk.MenuBar menubar;
+	
+	private global::Gtk.HBox hbox2;
 	
 	private global::Gtk.Toolbar toolbar2;
 	
+	private global::Gtk.HBox hbox3;
+	
 	private global::Gtk.VBox vbox2;
+	
+	private global::Gtk.HBox hbox1;
 	
 	private global::Gtk.Statusbar statusbar6;
 
@@ -39,6 +51,15 @@ public partial class MainWindow
 		w1.Add (this.helpAction, null);
 		this.connectAction = new global::Gtk.Action ("connectAction", null, null, "gtk-connect");
 		w1.Add (this.connectAction, "F8");
+		this.AdminAction = new global::Gtk.Action ("AdminAction", global::Mono.Unix.Catalog.GetString ("Admin"), null, null);
+		this.AdminAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("Admin");
+		w1.Add (this.AdminAction, null);
+		this.UniqueIdAction = new global::Gtk.Action ("UniqueIdAction", global::Mono.Unix.Catalog.GetString ("UniqueId"), null, null);
+		this.UniqueIdAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("UniqueId");
+		w1.Add (this.UniqueIdAction, null);
+		this.changeUniqueIDAction = new global::Gtk.Action ("changeUniqueIDAction", global::Mono.Unix.Catalog.GetString ("changeUniqueID"), null, null);
+		this.changeUniqueIDAction.ShortLabel = global::Mono.Unix.Catalog.GetString ("changeUniqueID");
+		w1.Add (this.changeUniqueIDAction, null);
 		this.UIManager.InsertActionGroup (w1, 0);
 		this.AddAccelGroup (this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
@@ -50,50 +71,73 @@ public partial class MainWindow
 		this.vbox1.Name = "vbox1";
 		this.vbox1.Spacing = 6;
 		// Container child vbox1.Gtk.Box+BoxChild
-		this.UIManager.AddUiFromString ("<ui><menubar name='menubar5'/></ui>");
-		this.menubar5 = ((global::Gtk.MenuBar)(this.UIManager.GetWidget ("/menubar5")));
-		this.menubar5.Name = "menubar5";
-		this.vbox1.Add (this.menubar5);
-		global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.menubar5]));
+		this.UIManager.AddUiFromString ("<ui><menubar name='menubar'><menu name='AdminAction' action='AdminAction'><menu name='UniqueIdAction' action='UniqueIdAction'><menuitem name='changeUniqueIDAction' action='changeUniqueIDAction'/></menu></menu></menubar></ui>");
+		this.menubar = ((global::Gtk.MenuBar)(this.UIManager.GetWidget ("/menubar")));
+		this.menubar.Name = "menubar";
+		this.vbox1.Add (this.menubar);
+		global::Gtk.Box.BoxChild w2 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.menubar]));
 		w2.Position = 0;
 		w2.Expand = false;
 		w2.Fill = false;
 		// Container child vbox1.Gtk.Box+BoxChild
+		this.hbox2 = new global::Gtk.HBox ();
+		this.hbox2.Name = "hbox2";
+		this.hbox2.Spacing = 6;
+		// Container child hbox2.Gtk.Box+BoxChild
 		this.UIManager.AddUiFromString ("<ui><toolbar name='toolbar2'><toolitem name='connectAction1' action='connectAction1'/></toolbar></ui>");
 		this.toolbar2 = ((global::Gtk.Toolbar)(this.UIManager.GetWidget ("/toolbar2")));
 		this.toolbar2.Name = "toolbar2";
 		this.toolbar2.ShowArrow = false;
-		this.vbox1.Add (this.toolbar2);
-		global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.toolbar2]));
-		w3.Position = 1;
-		w3.Expand = false;
-		w3.Fill = false;
+		this.hbox2.Add (this.toolbar2);
+		global::Gtk.Box.BoxChild w3 = ((global::Gtk.Box.BoxChild)(this.hbox2 [this.toolbar2]));
+		w3.Position = 0;
+		this.vbox1.Add (this.hbox2);
+		global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.hbox2]));
+		w4.Position = 1;
+		w4.Expand = false;
+		w4.Fill = false;
+		// Container child vbox1.Gtk.Box+BoxChild
+		this.hbox3 = new global::Gtk.HBox ();
+		this.hbox3.Name = "hbox3";
+		this.hbox3.Spacing = 6;
+		this.vbox1.Add (this.hbox3);
+		global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.hbox3]));
+		w5.Position = 2;
 		// Container child vbox1.Gtk.Box+BoxChild
 		this.vbox2 = new global::Gtk.VBox ();
 		this.vbox2.Name = "vbox2";
 		this.vbox2.Spacing = 6;
 		// Container child vbox2.Gtk.Box+BoxChild
+		this.hbox1 = new global::Gtk.HBox ();
+		this.hbox1.Name = "hbox1";
+		this.hbox1.Spacing = 6;
+		this.vbox2.Add (this.hbox1);
+		global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.hbox1]));
+		w6.Position = 0;
+		// Container child vbox2.Gtk.Box+BoxChild
 		this.statusbar6 = new global::Gtk.Statusbar ();
 		this.statusbar6.Name = "statusbar6";
 		this.statusbar6.Spacing = 6;
 		this.vbox2.Add (this.statusbar6);
-		global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.statusbar6]));
-		w4.Position = 2;
-		w4.Expand = false;
-		w4.Fill = false;
+		global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.statusbar6]));
+		w7.Position = 2;
+		w7.Expand = false;
+		w7.Fill = false;
 		this.vbox1.Add (this.vbox2);
-		global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.vbox2]));
-		w5.Position = 2;
+		global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.vbox2]));
+		w8.Position = 4;
 		this.Add (this.vbox1);
 		if ((this.Child != null)) {
 			this.Child.ShowAll ();
 		}
-		this.DefaultWidth = 825;
+		this.DefaultWidth = 888;
 		this.DefaultHeight = 473;
 		this.Show ();
 		this.DeleteEvent += new global::Gtk.DeleteEventHandler (this.OnDeleteEvent);
 		this.connectAction1.Activated += new global::System.EventHandler (this.OnConnectActionActivated);
 		this.helpAction.Activated += new global::System.EventHandler (this.OnHelpActionActivated);
 		this.connectAction.Activated += new global::System.EventHandler (this.OnConnectActionActivated);
+		this.changeUniqueIDAction.Activated += new global::System.EventHandler (this.OnChangeUniqueIDActionActivated);
+		this.menubar.ActivateCurrent += new global::Gtk.ActivateCurrentHandler (this.OnMenubarActivateCurrent);
 	}
 }

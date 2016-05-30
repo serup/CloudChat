@@ -56,13 +56,20 @@ namespace csharpServices
 			Client.SendBLOB (request, _handles.webSocket).Wait (); 
 		}
 
+		public void setUniqueID(string ID)
+		{
+			this.uniqueId = ID;
+		}
+
 		private byte[] createLoginRequest()
 		{
 			/**
          	* prepare data for the request
          	*/
 			trans_id = 69;
-			uniqueId = "985998707DF048B2A796B44C89345494";
+			if(uniqueId == "")
+				uniqueId = "985998707DF048B2A796B44C89345494";
+
 			String username = "johndoe@email.com"; // TODO: find a way to safely handle retrieval of username,password - should NOT be stored in source code
 			String password = "12345";
 

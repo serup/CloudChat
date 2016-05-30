@@ -67,4 +67,19 @@ public partial class MainWindow: Gtk.Window
 	{
 		throw new NotImplementedException ();
 	}
+
+	protected void OnMenubarActivateCurrent(object o, ActivateCurrentArgs args)
+	{
+		throw new NotImplementedException();
+	}
+
+
+	protected void OnChangeUniqueIDActionActivated(object sender, EventArgs e)
+	{
+		csharpServices.changeUniqueID changeUniqueIdDlg = new csharpServices.changeUniqueID();
+		if(changeUniqueIdDlg.Run() == (int)ResponseType.Ok) {
+			dopsHandler.setUniqueID(changeUniqueIdDlg.UniqueID);
+		}
+		changeUniqueIdDlg.Destroy();
+	}
 }

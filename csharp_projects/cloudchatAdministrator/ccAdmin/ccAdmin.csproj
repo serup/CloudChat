@@ -118,6 +118,8 @@
     <Compile Include="BetterWebClient.cs" />
     <Compile Include="gtk-gui\MainWindow.cs" />
     <Compile Include="Handlers\DOPSHandler.cs" />
+    <Compile Include="changeUniqueID.cs" />
+    <Compile Include="gtk-gui\csharpServices.changeUniqueID.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
