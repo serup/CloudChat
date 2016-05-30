@@ -33,7 +33,8 @@ namespace csharpServices
 		private bool connectToDOPsServer(string url)
 		{
 			bool bResult = false;
-			_handles = Client.WSConnect ("ws://backend.scanva.com:7777");
+//			_handles = Client.WSConnect ("ws://backend.scanva.com:7777");
+			_handles = Client.WSConnect (url);
 			if(_handles != null) {
 				if(_handles.webSocket.State == System.Net.WebSockets.WebSocketState.Connecting) {
 					Thread.Sleep(2000); // wait a little time
@@ -72,7 +73,7 @@ namespace csharpServices
          	* prepare data for the request
          	*/
 			trans_id = 69;
-			if(uniqueId == "")
+			if(uniqueId == null)
 				uniqueId = "985998707DF048B2A796B44C89345494";
 
 			String username = "johndoe@email.com"; // TODO: find a way to safely handle retrieval of username,password - should NOT be stored in source code
