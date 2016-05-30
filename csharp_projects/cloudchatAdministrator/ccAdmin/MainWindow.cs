@@ -29,6 +29,13 @@ public partial class MainWindow: Gtk.Window
 				this.UpdateStatusBarText("Communication with DOPs SERVER is established");
 				Thread.Sleep(2000);
 				((Gtk.Action)o).ShortLabel = "";
+				byte[] data = dopsHandler.waitForIncomming();
+				if(data != null) {
+					this.UpdateStatusBarText("Receiving incomming data from DOPs SERVER...");
+				}
+				else {
+					this.UpdateStatusBarText("Failed to receive incomming data from DOPs SERVER");
+				}
 			}
 			else {
 				// connection failed - perhaps try again later

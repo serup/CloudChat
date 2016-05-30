@@ -106,6 +106,13 @@ namespace csharpServices
 			return receivedData;
 		}
 
+		public byte[] waitForIncomming()
+		{
+			byte[] receivedData = null;
+			receivedData = Client.FetchReceived (_handles);
+			return receivedData;
+		}
+
 		/**
 		 * handleServerReply 
 		 * 
