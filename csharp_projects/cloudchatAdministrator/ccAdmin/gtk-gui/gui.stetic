@@ -197,6 +197,7 @@
       <widget class="Gtk.VBox" id="changeUniqueID">
         <property name="MemberName" />
         <property name="BorderWidth">2</property>
+        <signal name="Shown" handler="OnChangeUniqueIDShown" after="yes" />
         <child>
           <widget class="Gtk.Entry" id="entryUniqueID">
             <property name="MemberName" />

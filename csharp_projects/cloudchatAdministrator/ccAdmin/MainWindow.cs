@@ -76,7 +76,8 @@ public partial class MainWindow: Gtk.Window
 
 	protected void OnChangeUniqueIDActionActivated(object sender, EventArgs e)
 	{
-		csharpServices.changeUniqueID changeUniqueIdDlg = new csharpServices.changeUniqueID();
+		csharpServices.changeUniqueID changeUniqueIdDlg = new csharpServices.changeUniqueID(dopsHandler.getUniqueID());
+		//changeUniqueIdDlg.UniqueID = dopsHandler.getUniqueID();
 		if(changeUniqueIdDlg.Run() == (int)ResponseType.Ok) {
 			dopsHandler.setUniqueID(changeUniqueIdDlg.UniqueID);
 		}

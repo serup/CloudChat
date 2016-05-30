@@ -61,6 +61,11 @@ namespace csharpServices
 			this.uniqueId = ID;
 		}
 
+		public string getUniqueID()
+		{
+			return this.uniqueId;
+		}
+
 		private byte[] createLoginRequest()
 		{
 			/**
