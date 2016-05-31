@@ -9,96 +9,12 @@ public partial class MainWindow: Gtk.Window
 	DOPSHandler dopsHandler = new DOPSHandler();
 	cloudChatHandler chatHandler = new cloudChatHandler();
 	protected Boolean bIsConnected=false;
+	handleManagerTreeView hmTreeView;
+
 	public MainWindow () : base (Gtk.WindowType.Toplevel)
 	{
 		Build();
-
-		// Create a column for the name
-		Gtk.TreeViewColumn nameColumn = new Gtk.TreeViewColumn ();
-		nameColumn.Title = "Name";
-
-		// Create a column for the song title
-		Gtk.TreeViewColumn sColumn = new Gtk.TreeViewColumn ();
-		sColumn.Title = "Song Title";
-
-		// Add the columns to the TreeView
-		this.nodeviewManagers.NodeSelection.NodeView.AppendColumn(nameColumn);
-		this.nodeviewManagers.NodeSelection.NodeView.AppendColumn(sColumn);
-
-		// Create a model that will hold two strings -  Name and Song Title
-		Gtk.ListStore mListStore = new Gtk.ListStore (typeof (string), typeof (string));
-
-		// Assign the model to the TreeView
-		this.nodeviewManagers.NodeSelection.NodeView.Model = mListStore;
-
-		// Add some data to the store
-		mListStore.AppendValues ("Garbage", "Dog New Tricks");
-
-		// Create the text cell that will display the artist name
-		Gtk.CellRendererText NameCell = new Gtk.CellRendererText ();
-
-		// Add the cell to the column
-		nameColumn.PackStart (NameCell, true);
-
-		// Do the same for the song title column
-		Gtk.CellRendererText sTitleCell = new Gtk.CellRendererText ();
-		sColumn.PackStart (sTitleCell, true);
-
-		// Tell the Cell Renderers which items in the model to display
-		nameColumn.AddAttribute (NameCell, "text", 0);
-		sColumn.AddAttribute (sTitleCell, "text", 1);
-
-
-//		//////////////////////////////////////////////////////////////////////////
-//		// example spawning new window 
-//		// Create a Window
-//		Gtk.Window window = new Gtk.Window ("TreeView Example");
-//		window.SetSizeRequest (500,200);
-//
-//		// Create our TreeView
-//		Gtk.TreeView tree = new Gtk.TreeView ();
-//
-//		// Add our tree to the window
-//		window.Add (tree);
-//
-//		// Create a column for the artist name
-//		Gtk.TreeViewColumn artistColumn = new Gtk.TreeViewColumn ();
-//		artistColumn.Title = "Artist";
-//
-//		// Create a column for the song title
-//		Gtk.TreeViewColumn songColumn = new Gtk.TreeViewColumn ();
-//		songColumn.Title = "Song Title";
-//
-//		// Add the columns to the TreeView
-//		tree.AppendColumn (artistColumn);
-//		tree.AppendColumn (songColumn);
-//
-//		// Create a model that will hold two strings - Artist Name and Song Title
-//		Gtk.ListStore musicListStore = new Gtk.ListStore (typeof (string), typeof (string));
-//
-//
-//		// Assign the model to the TreeView
-//		tree.Model = musicListStore;
-//
-//		// Add some data to the store
-//		musicListStore.AppendValues ("Garbage", "Dog New Tricks");
-//
-//		// Create the text cell that will display the artist name
-//		Gtk.CellRendererText artistNameCell = new Gtk.CellRendererText ();
-//
-//		// Add the cell to the column
-//		artistColumn.PackStart (artistNameCell, true);
-//
-//		// Do the same for the song title column
-//		Gtk.CellRendererText songTitleCell = new Gtk.CellRendererText ();
-//		songColumn.PackStart (songTitleCell, true);
-//
-//		// Tell the Cell Renderers which items in the model to display
-//		artistColumn.AddAttribute (artistNameCell, "text", 0);
-//		songColumn.AddAttribute (songTitleCell, "text", 1);
-//
-//		// Show the window and everything on it
-//		window.ShowAll ();
+		hmTreeView = new handleManagerTreeView(this.nodeviewManagers);
 	}
 
 	protected void OnDeleteEvent (object sender, DeleteEventArgs a)
