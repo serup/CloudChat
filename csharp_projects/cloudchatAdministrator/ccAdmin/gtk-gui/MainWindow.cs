@@ -29,9 +29,21 @@ public partial class MainWindow
 	
 	private global::Gtk.HBox hbox3;
 	
-	private global::Gtk.VBox vbox2;
+	private global::Gtk.Notebook notebook1;
 	
-	private global::Gtk.HBox hbox1;
+	private global::Gtk.ScrolledWindow GtkScrolledWindow;
+	
+	private global::Gtk.NodeView nodeviewManagers;
+	
+	private global::Gtk.Label Managers;
+	
+	private global::Gtk.ScrolledWindow GtkScrolledWindow1;
+	
+	private global::Gtk.NodeView nodeviewCustomers;
+	
+	private global::Gtk.Label Customers;
+	
+	private global::Gtk.VBox vbox2;
 	
 	private global::Gtk.Statusbar statusbar6;
 
@@ -104,28 +116,65 @@ public partial class MainWindow
 		global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.hbox3]));
 		w5.Position = 2;
 		// Container child vbox1.Gtk.Box+BoxChild
+		this.notebook1 = new global::Gtk.Notebook ();
+		this.notebook1.CanFocus = true;
+		this.notebook1.Name = "notebook1";
+		this.notebook1.CurrentPage = 1;
+		// Container child notebook1.Gtk.Notebook+NotebookChild
+		this.GtkScrolledWindow = new global::Gtk.ScrolledWindow ();
+		this.GtkScrolledWindow.Name = "GtkScrolledWindow";
+		this.GtkScrolledWindow.ShadowType = ((global::Gtk.ShadowType)(1));
+		// Container child GtkScrolledWindow.Gtk.Container+ContainerChild
+		this.nodeviewManagers = new global::Gtk.NodeView ();
+		this.nodeviewManagers.CanFocus = true;
+		this.nodeviewManagers.Name = "nodeviewManagers";
+		this.GtkScrolledWindow.Add (this.nodeviewManagers);
+		this.notebook1.Add (this.GtkScrolledWindow);
+		// Notebook tab
+		this.Managers = new global::Gtk.Label ();
+		this.Managers.Name = "Managers";
+		this.Managers.LabelProp = global::Mono.Unix.Catalog.GetString ("Managers");
+		this.notebook1.SetTabLabel (this.GtkScrolledWindow, this.Managers);
+		this.Managers.ShowAll ();
+		// Container child notebook1.Gtk.Notebook+NotebookChild
+		this.GtkScrolledWindow1 = new global::Gtk.ScrolledWindow ();
+		this.GtkScrolledWindow1.Name = "GtkScrolledWindow1";
+		this.GtkScrolledWindow1.ShadowType = ((global::Gtk.ShadowType)(1));
+		// Container child GtkScrolledWindow1.Gtk.Container+ContainerChild
+		this.nodeviewCustomers = new global::Gtk.NodeView ();
+		this.nodeviewCustomers.CanFocus = true;
+		this.nodeviewCustomers.Name = "nodeviewCustomers";
+		this.GtkScrolledWindow1.Add (this.nodeviewCustomers);
+		this.notebook1.Add (this.GtkScrolledWindow1);
+		global::Gtk.Notebook.NotebookChild w9 = ((global::Gtk.Notebook.NotebookChild)(this.notebook1 [this.GtkScrolledWindow1]));
+		w9.Position = 1;
+		// Notebook tab
+		this.Customers = new global::Gtk.Label ();
+		this.Customers.Name = "Customers";
+		this.Customers.LabelProp = global::Mono.Unix.Catalog.GetString ("Customers");
+		this.notebook1.SetTabLabel (this.GtkScrolledWindow1, this.Customers);
+		this.Customers.ShowAll ();
+		this.vbox1.Add (this.notebook1);
+		global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.notebook1]));
+		w10.Position = 3;
+		// Container child vbox1.Gtk.Box+BoxChild
 		this.vbox2 = new global::Gtk.VBox ();
 		this.vbox2.Name = "vbox2";
 		this.vbox2.Spacing = 6;
-		// Container child vbox2.Gtk.Box+BoxChild
-		this.hbox1 = new global::Gtk.HBox ();
-		this.hbox1.Name = "hbox1";
-		this.hbox1.Spacing = 6;
-		this.vbox2.Add (this.hbox1);
-		global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.hbox1]));
-		w6.Position = 0;
 		// Container child vbox2.Gtk.Box+BoxChild
 		this.statusbar6 = new global::Gtk.Statusbar ();
 		this.statusbar6.Name = "statusbar6";
 		this.statusbar6.Spacing = 6;
 		this.vbox2.Add (this.statusbar6);
-		global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.statusbar6]));
-		w7.Position = 2;
-		w7.Expand = false;
-		w7.Fill = false;
+		global::Gtk.Box.BoxChild w11 = ((global::Gtk.Box.BoxChild)(this.vbox2 [this.statusbar6]));
+		w11.Position = 0;
+		w11.Expand = false;
+		w11.Fill = false;
 		this.vbox1.Add (this.vbox2);
-		global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.vbox2]));
-		w8.Position = 4;
+		global::Gtk.Box.BoxChild w12 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.vbox2]));
+		w12.Position = 4;
+		w12.Expand = false;
+		w12.Fill = false;
 		this.Add (this.vbox1);
 		if ((this.Child != null)) {
 			this.Child.ShowAll ();

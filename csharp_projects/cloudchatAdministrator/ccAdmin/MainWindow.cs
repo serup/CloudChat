@@ -37,6 +37,10 @@ public partial class MainWindow: Gtk.Window
 					this.UpdateStatusBarText(dana.type);
 				}
 				this.UpdateStatusBarText("STOPPED receiving incomming data from DOPs SERVER - possible ERROR");
+				// connection failed - perhaps try again later
+				((Gtk.Action)o).ShortLabel = "";
+				((Gtk.Action)o).StockId = "gtk-connect"; // change icon indicating a connection is established and if pressing again then a disconnect will happen
+				((Gtk.Action)o).Tooltip = "Will connect to DOPs server - allowing cloud chat administrator to communicate with cloud chat managers and cloudchat clients";
 			}
 			else {
 				// connection failed - perhaps try again later

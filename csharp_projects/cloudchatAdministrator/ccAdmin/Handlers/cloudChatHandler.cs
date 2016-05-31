@@ -7,8 +7,31 @@ namespace csharpServices
 	{
 		public string type;
 		public bool bDecoded;
+		public Object elements; // will contain an object of following below type:
 	}
 
+	// Objects for elements in dedAnalyzed
+	public class ForwardInfoRequestObj : Object
+	{
+		public short  transactionsID;
+		public string protocolTypeID;
+		public string dest;
+		public string src;
+		public string srcAlias;
+	}
+
+	public class ChatInfoObj : Object
+	{
+		public short  transactionsID;
+		public string protocolTypeID;
+		public string dest;
+		public string src;
+		public string srcAlias;
+		public string srcHomepageAlias;
+		public string lastEntryTime;
+	}
+
+	// General handler for communication with cloudchatmanager and cloudchatclients
 	public class cloudChatHandler
 	{
 		public cloudChatHandler()
@@ -30,27 +53,31 @@ namespace csharpServices
 					switch (method)
 					{
 					case "JSCForwardInfo":
- 						if((DED2.GET_USHORT("TransID")) != -1 &&
-						   (DED2.GET_STDSTRING("protocolTypeID")).Equals("DED1.00.00") &&
-						   (DED2.GET_STDSTRING("dest")).Length > 0 &&
-						   (DED2.GET_STDSTRING("src")).Length > 0 &&
-						   (DED2.GET_STDSTRING("srcAlias")).Length > 0 &&
+						ForwardInfoRequestObj fio = new ForwardInfoRequestObj();
+						if((fio.transactionsID = DED2.GET_USHORT("TransID")) != -1 &&
+						    (fio.protocolTypeID = DED2.GET_STDSTRING("protocolTypeID")).Equals("DED1.00.00") &&
+							(fio.dest = DED2.GET_STDSTRING("dest")).Length > 0 &&
+							(fio.src = DED2.GET_STDSTRING("src")).Length > 0 &&
+							(fio.srcAlias = DED2.GET_STDSTRING("srcAlias")).Length > 0 &&
 						   (DED2.GET_STRUCT_END("CloudManagerRequest")).Equals(1)) {
 							dana.bDecoded = true;
 							dana.type = "ForwardInfoRequest";
+							dana.elements = fio;
 						} 
 						break;
 					case "JSCChatInfo":
-						if((DED2.GET_USHORT("TransID")) != -1 &&
-						   (DED2.GET_STDSTRING("protocolTypeID")).Equals("DED1.00.00") &&
-						   (DED2.GET_STDSTRING("dest")).Length > 0 &&
-						   (DED2.GET_STDSTRING("src")).Length > 0 &&
-						   (DED2.GET_STDSTRING("srcAlias")).Length > 0 &&
-						   (DED2.GET_STDSTRING("srcHomepageAlias")).Length > 0 &&
-						   (DED2.GET_STDSTRING("lastEntryTime")).Length > 0 &&
+						ChatInfoObj cio = new ChatInfoObj();
+						if((cio.transactionsID = DED2.GET_USHORT("TransID")) != -1 &&
+							(cio.protocolTypeID = DED2.GET_STDSTRING("protocolTypeID")).Equals("DED1.00.00") &&
+							(cio.dest = DED2.GET_STDSTRING("dest")).Length > 0 &&
+							(cio.src = DED2.GET_STDSTRING("src")).Length > 0 &&
+							(cio.srcAlias = DED2.GET_STDSTRING("srcAlias")).Length > 0 &&
+							(cio.srcHomepageAlias = DED2.GET_STDSTRING("srcHomepageAlias")).Length > 0 &&
+							(cio.lastEntryTime = DED2.GET_STDSTRING("lastEntryTime")).Length > 0 &&
 						   (DED2.GET_STRUCT_END("ClientChatRequest")).Equals(1)) {
 							dana.bDecoded = true;
 							dana.type = "ChatInfo";
+							dana.elements = cio;
 						}
 						break;
 					
