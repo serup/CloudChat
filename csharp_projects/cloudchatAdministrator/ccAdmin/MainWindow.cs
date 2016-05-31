@@ -30,15 +30,13 @@ public partial class MainWindow: Gtk.Window
 				this.UpdateStatusBarText("Communication with DOPs SERVER is established");
 				Thread.Sleep(2000);
 				((Gtk.Action)o).ShortLabel = "";
-				byte[] data = dopsHandler.waitForIncomming();
-				if(data != null) {
+				byte[] data = null;
+				while( (data = dopsHandler.waitForIncomming()).Length > 0 && ((Gtk.Action)o).StockId == "gtk-disconnect") {
 					this.UpdateStatusBarText("Receiving incomming data from DOPs SERVER...");
 					dedAnalyzed dana = chatHandler.parseDEDpacket(data);
 					this.UpdateStatusBarText(dana.type);
 				}
-				else {
-					this.UpdateStatusBarText("Failed to receive incomming data from DOPs SERVER");
-				}
+				this.UpdateStatusBarText("STOPPED receiving incomming data from DOPs SERVER - possible ERROR");
 			}
 			else {
 				// connection failed - perhaps try again later
