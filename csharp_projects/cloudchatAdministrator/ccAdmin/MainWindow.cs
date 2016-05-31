@@ -7,6 +7,7 @@ using csharpServices;
 public partial class MainWindow: Gtk.Window
 {
 	DOPSHandler dopsHandler = new DOPSHandler();
+	cloudChatHandler chatHandler = new cloudChatHandler();
 	protected Boolean bIsConnected=false;
 	public MainWindow () : base (Gtk.WindowType.Toplevel)
 	{
@@ -32,6 +33,8 @@ public partial class MainWindow: Gtk.Window
 				byte[] data = dopsHandler.waitForIncomming();
 				if(data != null) {
 					this.UpdateStatusBarText("Receiving incomming data from DOPs SERVER...");
+					dedAnalyzed dana = chatHandler.parseDEDpacket(data);
+					this.UpdateStatusBarText(dana.type);
 				}
 				else {
 					this.UpdateStatusBarText("Failed to receive incomming data from DOPs SERVER");

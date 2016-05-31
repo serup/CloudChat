@@ -36,6 +36,7 @@
     <Compile Include="unittests\WebSocketServerTests.cs" />
     <Compile Include="unittests\WebSocketConnectionInfoTests.cs" />
     <Compile Include="mocks\mockDOPsServer.cs" />
+    <Compile Include="unittests\cloudchatTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Moq">

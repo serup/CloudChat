@@ -48,12 +48,29 @@ namespace DED
 
 		public short bytesToShort(byte[] byteArray)
 		{
-			return BitConverter.ToInt16 (byteArray,0);
+			short res = 0;
+			if(byteArray.Length == 1) {
+				byte[] b = new byte[2];
+				b[0] = byteArray[0];
+				b[1] = 0;
+				res = BitConverter.ToInt16(b, 0); 
+			}
+			else
+				res = BitConverter.ToInt16 (byteArray,0);
+
+			return res;
 		}
 
 		public long bytesToLong(byte[] byteArray)
 		{
-			return BitConverter.ToInt64 (byteArray, 0);
+			long res = 0;
+			if(byteArray.Length < 8) {
+				throw  new System.InvalidOperationException("byteArray was not correct length");
+			}
+			else
+				res = BitConverter.ToInt64 (byteArray,0);
+
+			return res;
 		}
 
 	}
@@ -459,6 +476,7 @@ namespace DED
 				DEDobject.length = 0;
 				int found = decoder_ptr._GetElement(DEDobject);
 				if (found == 1) {
+					short res = 0;
 					result = byteUtils.bytesToShort(DEDobject.value);
 				}
 			}
