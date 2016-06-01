@@ -1,6 +1,7 @@
 ﻿using System;
 using DED;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace csharpServices
 {
@@ -13,13 +14,34 @@ namespace csharpServices
 		{
 			List<string> result = new List<string>();
 			Object obj = this.elements;
-			var prop = obj.GetType().GetFields();
 			foreach (var field in obj.GetType().GetFields())
 			{
 				result.Add(field.Name);
 			}
 			return result.ToArray();
 		}
+
+		public element[] getElementNamesAndValues()
+		{
+			List<element> result = new List<element>();
+			Object obj = this.elements;
+			FieldInfo[] fields = obj.GetType().GetFields();
+			String str = "";
+			foreach(FieldInfo f in fields){
+				element eObj = new element();
+				eObj.name = f.Name;
+				eObj.value = f.GetValue(obj).ToString();
+				result.Add(eObj);
+				//str += f.Name + " = " + f.GetValue(obj) + "\r\n";
+			}
+			return result.ToArray();
+		}
+	}
+
+	public class element : Object
+	{
+		public string name;
+		public string value;
 	}
 
 	// Objects for elements in dedAnalyzed
