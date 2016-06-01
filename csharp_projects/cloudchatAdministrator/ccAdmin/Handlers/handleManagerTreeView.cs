@@ -23,7 +23,7 @@ namespace csharpServices
 		public void initNodeView(NodeView nodeviewManagers)
 		{
 			this.nodeviewManagers = nodeviewManagers;
-			createColumnsAndCells(2);
+			createColumnsAndCells(10);
 			createModel();
 		}
 
@@ -58,6 +58,15 @@ namespace csharpServices
 		public void setTitleOnColumn(int index, string title)
 		{
 			Columns[index].Title = title;
+		}
+
+		public void setTitlesOnColumns(params string[] titles)
+		{
+			int i = 0;
+			foreach(string title in titles) {
+				setTitleOnColumn(i,title);
+				i++;
+			}
 		}
 
 		public void addDataToTreeView(params string[] str)
