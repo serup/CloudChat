@@ -35,7 +35,6 @@ namespace csharpServices
 
 			int i=0;
 			foreach(Gtk.TreeViewColumn clm in Columns) {
-				i++;
 				clm.Title = "Column " + i.ToString();
 				// Add the columns to the TreeView
 				nodeviewManagers.NodeSelection.NodeView.AppendColumn(clm);
@@ -43,7 +42,8 @@ namespace csharpServices
 				Gtk.CellRendererText Cell = new Gtk.CellRendererText();
 				clm.PackStart(Cell, true);
 				// Tell the Cell Renderers which items in the model to display
-				clm.AddAttribute(Cell, "text", 0);
+				clm.AddAttribute(Cell, "text", i);
+				i++;
 			}
 		}
 
