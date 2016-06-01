@@ -5,43 +5,65 @@ namespace csharpServices
 {
 	public class handleManagerTreeView
 	{
+		private NodeView nodeviewManagers;
+		private Gtk.ListStore mListStore;
+		private Gtk.TreeViewColumn[] Columns = null;
+
 		public handleManagerTreeView(NodeView nodeviewManagers)
 		{
-			// Create a column for the name
-			Gtk.TreeViewColumn nameColumn = new Gtk.TreeViewColumn ();
-			nameColumn.Title = "Name";
+			// Create TreeView with cells and attached model for control
+			initNodeView(nodeviewManagers);
 
-			// Create a column for the song title
-			Gtk.TreeViewColumn sColumn = new Gtk.TreeViewColumn ();
-			sColumn.Title = "Song Title";
+			// Set titles on columns
+			setTitleOnColumn(0, "First column");
+			// Add some data to the model treeview store
+			addDataToTreeView("-", "-");
+		}
 
-			// Add the columns to the TreeView
-			nodeviewManagers.NodeSelection.NodeView.AppendColumn(nameColumn);
-			nodeviewManagers.NodeSelection.NodeView.AppendColumn(sColumn);
+		public void initNodeView(NodeView nodeviewManagers)
+		{
+			this.nodeviewManagers = nodeviewManagers;
+			createColumnsAndCells(2);
+			createModel();
+		}
 
+		public void createColumnsAndCells(int Amount)
+		{
+			Columns = new Gtk.TreeViewColumn[Amount];
+			for(int n=0;n<Amount;n++)
+				Columns[n] = new Gtk.TreeViewColumn();
+
+			int i=0;
+			foreach(Gtk.TreeViewColumn clm in Columns) {
+				i++;
+				clm.Title = "Column " + i.ToString();
+				// Add the columns to the TreeView
+				nodeviewManagers.NodeSelection.NodeView.AppendColumn(clm);
+				// Create the text cell 
+				Gtk.CellRendererText Cell = new Gtk.CellRendererText();
+				clm.PackStart(Cell, true);
+				// Tell the Cell Renderers which items in the model to display
+				clm.AddAttribute(Cell, "text", 0);
+			}
+		}
+
+		public void createModel()
+		{
 			// Create a model that will hold two strings -  Name and Song Title
-			Gtk.ListStore mListStore = new Gtk.ListStore (typeof (string), typeof (string));
-
+			mListStore = new Gtk.ListStore(typeof(string), typeof(string));
 			// Assign the model to the TreeView
 			nodeviewManagers.NodeSelection.NodeView.Model = mListStore;
+		}
 
+		public void setTitleOnColumn(int index, string title)
+		{
+			Columns[index].Title = title;
+		}
+
+		public void addDataToTreeView(params string[] str)
+		{
 			// Add some data to the store
-			mListStore.AppendValues ("Garbage", "Dog New Tricks");
-
-			// Create the text cell that will display the artist name
-			Gtk.CellRendererText NameCell = new Gtk.CellRendererText ();
-
-			// Add the cell to the column
-			nameColumn.PackStart (NameCell, true);
-
-			// Do the same for the song title column
-			Gtk.CellRendererText sTitleCell = new Gtk.CellRendererText ();
-			sColumn.PackStart (sTitleCell, true);
-
-			// Tell the Cell Renderers which items in the model to display
-			nameColumn.AddAttribute (NameCell, "text", 0);
-			sColumn.AddAttribute (sTitleCell, "text", 1);
-
+			mListStore.AppendValues (str);
 		}
 	}
 }

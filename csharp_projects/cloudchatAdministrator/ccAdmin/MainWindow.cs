@@ -23,23 +23,6 @@ public partial class MainWindow: Gtk.Window
 		a.RetVal = true;
 	}
 
-	[Gtk.TreeNode (ListOnly=true)]
-	public class MyTreeNode : Gtk.TreeNode {
-
-		string song_title;
-
-		public MyTreeNode (string artist, string song_title)
-		{
-			Artist = artist;
-			this.song_title = song_title;
-		}
-
-		[Gtk.TreeNodeValue (Column=0)]
-		public string Artist;
-
-		[Gtk.TreeNodeValue (Column=1)]
-		public string SongTitle {get { return song_title; } }
-	}
 
 	protected void handleConnectionWithServer(object o, bool bIsConnected)
 	{
