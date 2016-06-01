@@ -35,7 +35,7 @@ namespace csharpServices
 
 			int i=0;
 			foreach(Gtk.TreeViewColumn clm in Columns) {
-				clm.Title = "Column " + i.ToString();
+				clm.Title = "Column " + (i +1).ToString();
 				// Add the columns to the TreeView
 				nodeviewManagers.NodeSelection.NodeView.AppendColumn(clm);
 				// Create the text cell 
