@@ -157,6 +157,7 @@ public partial class MainWindow
 		this.vbox1.Add (this.notebook1);
 		global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.vbox1 [this.notebook1]));
 		w10.Position = 3;
+		w10.Expand = false;
 		// Container child vbox1.Gtk.Box+BoxChild
 		this.vbox2 = new global::Gtk.VBox ();
 		this.vbox2.Name = "vbox2";
