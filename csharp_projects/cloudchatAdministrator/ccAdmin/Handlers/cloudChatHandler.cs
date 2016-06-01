@@ -1,5 +1,6 @@
 ﻿using System;
 using DED;
+using System.Collections.Generic;
 
 namespace csharpServices
 {
@@ -8,6 +9,16 @@ namespace csharpServices
 		public string type;
 		public bool bDecoded;
 		public Object elements; // will contain an object of following below type:
+		public string[] getElementNames(Object obj)
+		{
+			List<string> result = new List<string>();
+			var prop = obj.GetType().GetFields();
+			foreach (var field in obj.GetType().GetFields())
+			{
+				result.Add(field.Name);
+			}
+			return result.ToArray();
+		}
 	}
 
 	// Objects for elements in dedAnalyzed

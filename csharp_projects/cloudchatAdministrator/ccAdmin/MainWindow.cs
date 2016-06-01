@@ -3,6 +3,9 @@ using Gtk;
 using System.Threading.Tasks;
 using System.Threading;
 using csharpServices;
+using System.Linq.Expressions;
+using System.Collections.Generic;
+using System.Reflection;
 
 public partial class MainWindow: Gtk.Window
 {
@@ -39,6 +42,9 @@ public partial class MainWindow: Gtk.Window
 					this.UpdateStatusBarText("Receiving incomming data from DOPs SERVER...");
 					dedAnalyzed dana = chatHandler.parseDEDpacket(data);
 
+					string[] elementNames = dana.getElementNames(dana.elements);
+					hmTreeView.setTitlesOnColumns(elementNames);
+
 					this.UpdateStatusBarText(dana.type);
 				}
 				this.UpdateStatusBarText("STOPPED receiving incomming data from DOPs SERVER - possible ERROR");
@@ -56,6 +62,7 @@ public partial class MainWindow: Gtk.Window
 			}
 		}).Start();
 	}
+
 
 	private void UpdateStatusBarText(string text)
 	{
