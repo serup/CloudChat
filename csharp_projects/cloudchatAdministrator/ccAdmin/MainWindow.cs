@@ -42,8 +42,13 @@ public partial class MainWindow: Gtk.Window
 					this.UpdateStatusBarText("Receiving incomming data from DOPs SERVER...");
 					dedAnalyzed dana = chatHandler.parseDEDpacket(data);
 
-					string[] elementNames = dana.getElementNames();
-					hmTreeView.setTitlesOnColumns(elementNames);
+					//string[] elementNames = dana.getElementNames();
+					//hmTreeView.setTitlesOnColumns(elementNames);
+
+					if(dana.type == "ForwardInfoRequest") {
+						element[] elements = dana.getElementNamesAndValues();
+						hmTreeView.addDataToTreeView("idle", elements[4].value);
+					}
 
 					this.UpdateStatusBarText(dana.type);
 				}

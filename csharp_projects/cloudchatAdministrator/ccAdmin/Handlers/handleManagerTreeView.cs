@@ -15,15 +15,15 @@ namespace csharpServices
 			initNodeView(nodeviewManagers);
 
 			// Set titles on columns
-			setTitleOnColumn(0, "First column");
+			setTitlesOnColumns("Status", "Name");
 			// Add some data to the model treeview store
-			addDataToTreeView("-", "-");
+			addDataToTreeView("Idle", "John doe");
 		}
 
 		public void initNodeView(NodeView nodeviewManagers)
 		{
 			this.nodeviewManagers = nodeviewManagers;
-			createColumnsAndCells(10);
+			createColumnsAndCells(7);
 			createModel();
 		}
 
@@ -35,7 +35,8 @@ namespace csharpServices
 
 			int i=0;
 			foreach(Gtk.TreeViewColumn clm in Columns) {
-				clm.Title = "Column " + (i +1).ToString();
+//				clm.Title = "Column " + (i +1).ToString();
+				clm.Title = "";
 				// Add the columns to the TreeView
 				nodeviewManagers.NodeSelection.NodeView.AppendColumn(clm);
 				// Create the text cell 
