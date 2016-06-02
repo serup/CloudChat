@@ -25,15 +25,22 @@ namespace csharpServices
 		{
 			List<element> result = new List<element>();
 			Object obj = this.elements;
-			FieldInfo[] fields = obj.GetType().GetFields();
-			String str = "";
-			foreach(FieldInfo f in fields){
-				element eObj = new element();
-				eObj.name = f.Name;
-				eObj.value = f.GetValue(obj).ToString();
-				result.Add(eObj);
-				//str += f.Name + " = " + f.GetValue(obj) + "\r\n";
+			try {
+				FieldInfo[] fields = obj.GetType().GetFields();
+				//String str = "";
+				foreach(FieldInfo f in fields){
+					element eObj = new element();
+					eObj.name = f.Name;
+					eObj.value = f.GetValue(obj).ToString();
+					result.Add(eObj);
+					//str += f.Name + " = " + f.GetValue(obj) + "\r\n";
+				}
 			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e.ToString());
+			}
+
 			return result.ToArray();
 		}
 	}

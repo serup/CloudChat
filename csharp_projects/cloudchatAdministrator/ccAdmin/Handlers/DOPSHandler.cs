@@ -74,7 +74,7 @@ namespace csharpServices
          	*/
 			trans_id = 69;
 			if(uniqueId == null)
-				uniqueId = "985998707DF048B2A796B44C89345494";
+				uniqueId = "e3d6bf3f38ae9d32566ff9a6f85d145a";
 
 			String username = "johndoe@email.com"; // TODO: find a way to safely handle retrieval of username,password - should NOT be stored in source code
 			String password = "12345";
@@ -112,6 +112,7 @@ namespace csharpServices
 			receivedData = Client.FetchReceived (_handles);
 			return receivedData;
 		}
+
 
 		/**
 		 * handleServerReply 

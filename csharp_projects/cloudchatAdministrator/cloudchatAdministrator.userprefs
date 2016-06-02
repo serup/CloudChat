@@ -1,9 +1,37 @@
 ﻿<Properties StartupItem="ccAdmin/ccAdmin.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="ccAdmin/MainWindow.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="ccAdmin/Handlers/handleManagerTreeView.cs">
     <Files>
-      <File FileName="ccAdmin/MainWindow.cs" Line="6" Column="12" />
+      <File FileName="ccAdmin/MainWindow.cs" Line="47" Column="37" />
+      <File FileName="ccAdmin/Handlers/handleManagerTreeView.cs" Line="102" Column="1" />
+      <File FileName="ccAdmin/Handlers/handleCustomerTreeView.cs" Line="26" Column="27" />
+      <File FileName="ccAdmin/Handlers/DOPSHandler.cs" Line="174" Column="23" />
+      <File FileName="ccAdmin.Test/unittests/cloudchatTests.cs" Line="54" Column="41" />
+      <File FileName="ccAdmin/Handlers/cloudChatHandler.cs" Line="13" Column="28" />
+      <File FileName="ccAdmin/WebSocket/QueuedStream.cs" Line="67" Column="112" />
+      <File FileName="ccAdmin/DEDEncoderDecoder.cs" Line="816" Column="5" />
+      <File FileName="ccAdmin/WebSocket/WebSocketServer.cs" Line="67" Column="19" />
+      <File FileName="ccAdmin/Program.cs" Line="12" Column="40" />
     </Files>
+    <Pads>
+      <Pad Id="MonoDevelop.Debugger.WatchPad">
+        <State>
+          <Value>dana</Value>
+          <Value>dana.elements.dest.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public);</Value>
+          <Value>dana.elements.GetType().GetFields()</Value>
+          <Value>dana.elements.transactionsID</Value>
+          <Value>dana.elements.GetType()</Value>
+          <Value>fi</Value>
+          <Value>fi[2].FieldType</Value>
+          <Value>fi[2].GetType().GetProperties()</Value>
+        </State>
+      </Pad>
+      <Pad Id="MonoDevelop.NUnit.TestPad">
+        <State name="__root__">
+          <Node name="cloudchatAdministrator" expanded="True" selected="True" />
+        </State>
+      </Pad>
+    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>

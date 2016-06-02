@@ -3,16 +3,16 @@ using Gtk;
 
 namespace csharpServices
 {
-	public class handleManagerTreeView
+	public class handleCustomerTreeView
 	{
-		private NodeView nodeviewManagers;
+		private NodeView nodeviewCustomers;
 		private Gtk.ListStore mListStore;
 		private Gtk.TreeViewColumn[] Columns = null;
 
-		public handleManagerTreeView(NodeView nodeviewManagers)
+		public handleCustomerTreeView(NodeView nodeviewCustomers)
 		{
 			// Create TreeView with cells and attached model for control
-			initNodeView(nodeviewManagers);
+			initNodeView(nodeviewCustomers);
 
 			// Set titles on columns
 			setTitlesOnColumns("Status", "Name");
@@ -20,9 +20,9 @@ namespace csharpServices
 			//addDataToTreeView("Idle", "John doe");
 		}
 
-		public void initNodeView(NodeView nodeviewManagers)
+		public void initNodeView(NodeView nodeviewCustomers)
 		{
-			this.nodeviewManagers = nodeviewManagers;
+			this.nodeviewCustomers = nodeviewCustomers;
 			createColumnsAndCells(2);
 			createModel();
 		}
@@ -35,10 +35,9 @@ namespace csharpServices
 
 			int i=0;
 			foreach(Gtk.TreeViewColumn clm in Columns) {
-//				clm.Title = "Column " + (i +1).ToString();
 				clm.Title = "";
 				// Add the columns to the TreeView
-				nodeviewManagers.NodeSelection.NodeView.AppendColumn(clm);
+				nodeviewCustomers.NodeSelection.NodeView.AppendColumn(clm);
 				// Create the text cell 
 				Gtk.CellRendererText Cell = new Gtk.CellRendererText();
 				clm.PackStart(Cell, true);
@@ -53,7 +52,7 @@ namespace csharpServices
 			// Create a model that will hold two strings -  Name and Song Title
 			mListStore = new Gtk.ListStore(typeof(string), typeof(string));
 			// Assign the model to the TreeView
-			nodeviewManagers.NodeSelection.NodeView.Model = mListStore;
+			nodeviewCustomers.NodeSelection.NodeView.Model = mListStore;
 		}
 
 		public void setTitleOnColumn(int index, string title)
@@ -74,7 +73,7 @@ namespace csharpServices
 		{
 			try {
 				System.Type type = dana.elements.GetType();
-				if(type == typeof(ForwardInfoRequestObj)) {
+				if(type == typeof(ChatInfoObj)) {
 					element[] elements = dana.getElementNamesAndValues();
 					addDataToTreeView("idle", elements[4].value);
 				}
@@ -86,20 +85,14 @@ namespace csharpServices
 			{
 				Console.WriteLine(e.ToString());
 			}
-
 		}
 
 		public void addDataToTreeView(params string[] str)
 		{
-			try {
-				// Add some data to the store
-				mListStore.AppendValues (str);
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine(e.ToString());
-			}
+			// Add some data to the store
+			mListStore.AppendValues (str);
 		}
 	}
 }
+
 

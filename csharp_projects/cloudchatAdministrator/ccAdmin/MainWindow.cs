@@ -12,12 +12,15 @@ public partial class MainWindow: Gtk.Window
 	DOPSHandler dopsHandler = new DOPSHandler();
 	cloudChatHandler chatHandler = new cloudChatHandler();
 	protected Boolean bIsConnected=false;
-	handleManagerTreeView hmTreeView;
+	handleManagerTreeView managerTreeView;
+	handleCustomerTreeView customerTreeView;
 
 	public MainWindow () : base (Gtk.WindowType.Toplevel)
 	{
 		Build();
-		hmTreeView = new handleManagerTreeView(this.nodeviewManagers);
+		// Fetch handles to the treeviews
+		managerTreeView = new handleManagerTreeView(this.nodeviewManagers);
+		customerTreeView = new handleCustomerTreeView(this.nodeviewCustomers);
 	}
 
 	protected void OnDeleteEvent (object sender, DeleteEventArgs a)
@@ -35,20 +38,14 @@ public partial class MainWindow: Gtk.Window
 				((Gtk.Action)o).StockId = "gtk-disconnect"; // change icon indicating a connection is established and if pressing again then a disconnect will happen
 				((Gtk.Action)o).ShortLabel = "disconnect";
 				this.UpdateStatusBarText("Communication with DOPs SERVER is established");
-				Thread.Sleep(2000);
+				Thread.Sleep(1500);
 				((Gtk.Action)o).ShortLabel = "";
 				byte[] data = null;
 				while( (data = dopsHandler.waitForIncomming()).Length > 0 && ((Gtk.Action)o).StockId == "gtk-disconnect") {
 					this.UpdateStatusBarText("Receiving incomming data from DOPs SERVER...");
 					dedAnalyzed dana = chatHandler.parseDEDpacket(data);
-
-					//string[] elementNames = dana.getElementNames();
-					//hmTreeView.setTitlesOnColumns(elementNames);
-
-					if(dana.type == "ForwardInfoRequest") {
-						element[] elements = dana.getElementNamesAndValues();
-						hmTreeView.addDataToTreeView("idle", elements[4].value);
-					}
+					managerTreeView.updateWithIncomingData(dana);
+					customerTreeView.updateWithIncomingData(dana);
 
 					this.UpdateStatusBarText(dana.type);
 				}
@@ -67,7 +64,6 @@ public partial class MainWindow: Gtk.Window
 			}
 		}).Start();
 	}
-
 
 	private void UpdateStatusBarText(string text)
 	{
