@@ -194,10 +194,10 @@ namespace WebSocketClient
 		public static wshandles WSConnect (string uri)
 		{
 			Client.Connect(uri);
+			Thread.Sleep(100); // Wait for establishment
 			wshandles _handles = new wshandles();
 			_handles.webSocket = Client.webSocket;
 			_handles.waitHandle = Client._waitHandle;
-			//_handles.waitHandle = Client.token.WaitHandle;
 			_handles.token = Client.token;
 			return _handles;
 		}
@@ -305,8 +305,11 @@ namespace WebSocketClient
 		public static byte[] FetchReceived (wshandles _handles)
 		{
 			Console.WriteLine ("Waiting...");
-			_handles.waitHandle.WaitOne();                // Wait for notification
-			Console.WriteLine ("Notified");
+			if(_handles.webSocket.State == WebSocketState.Open) {
+				_handles.waitHandle.WaitOne();                // Wait for notification
+				Console.WriteLine("Notified");
+			} else
+				Console.WriteLine("Waiting - aborted - socket is closed");
 			return receivedBuffer;
 		}
 
@@ -355,37 +358,43 @@ namespace WebSocketClient
 			byte[] buffer = new byte[1024];
 			Console.WriteLine("WebSocketClient Receive setup");
 			receivedBuffer = null;
-
-			while (webSocket.State == WebSocketState.Open)
-			{                
-				var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), token);
-				if (result.MessageType == WebSocketMessageType.Close )
-				{
-					if(webSocket.State == WebSocketState.Open)
-						await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, token);
-				}
-				else
-				{
-					if (buffer.Length < result.Count) {
-						Console.WriteLine ("WARNING - incomming data is larger than internal buffer - trying to receive and merge rest !!!");
-						receivedBuffer = null;
-						/*  DOES NOT WORK - MISSING BYTES IN BETWEEN - FIND A BETTER WAY
-						int restBytes = result.Count - buffer.Length;
-						byte[] restBuffer = new byte[restBytes];
-						receivedBuffer = new byte[result.Count]; // make room for ALL data
-						Buffer.BlockCopy (buffer, 0, receivedBuffer, 0, buffer.Length); // copy first part
-						// try to receive waiting bytes
-						result = await webSocket.ReceiveAsync(new ArraySegment<byte>(restBuffer), CancellationToken.None);
-						Buffer.BlockCopy (restBuffer, 0, receivedBuffer, buffer.Length-1, restBuffer.Length); // copy rest part
-						*/
-						WaitHandle.Set (); // signal that data has been received - this will wake up WaitForData() - which will then return it to user
+			try {
+				while (webSocket.State == WebSocketState.Open)
+				{                
+					var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), token);
+					if (result.MessageType == WebSocketMessageType.Close )
+					{
+						if(webSocket.State == WebSocketState.Open)
+							await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, token);
 					}
-					else {
-						receivedBuffer = new byte[result.Count];
-						Buffer.BlockCopy (buffer, 0, receivedBuffer, 0, result.Count);
-						WaitHandle.Set (); // signal that data has been received - this will wake up WaitForData() - which will then return it to user
+					else
+					{
+						if (buffer.Length < result.Count) {
+							Console.WriteLine ("WARNING - incomming data is larger than internal buffer - trying to receive and merge rest !!!");
+							receivedBuffer = null;
+							/*  DOES NOT WORK - MISSING BYTES IN BETWEEN - FIND A BETTER WAY
+							int restBytes = result.Count - buffer.Length;
+							byte[] restBuffer = new byte[restBytes];
+							receivedBuffer = new byte[result.Count]; // make room for ALL data
+							Buffer.BlockCopy (buffer, 0, receivedBuffer, 0, buffer.Length); // copy first part
+							// try to receive waiting bytes
+							result = await webSocket.ReceiveAsync(new ArraySegment<byte>(restBuffer), CancellationToken.None);
+							Buffer.BlockCopy (restBuffer, 0, receivedBuffer, buffer.Length-1, restBuffer.Length); // copy rest part
+							*/
+							WaitHandle.Set (); // signal that data has been received - this will wake up WaitForData() - which will then return it to user
+						}
+						else {
+							receivedBuffer = new byte[result.Count];
+							Buffer.BlockCopy (buffer, 0, receivedBuffer, 0, result.Count);
+							WaitHandle.Set (); // signal that data has been received - this will wake up WaitForData() - which will then return it to user
+						}
 					}
 				}
+			}
+			catch (Exception e)
+			{
+				//Console.WriteLine(e.ToString());
+				Console.WriteLine("Exception: NO longer possible to receive data from DOPs");
 			}
 			Console.WriteLine("WebSocket Receive ending!");
 		}

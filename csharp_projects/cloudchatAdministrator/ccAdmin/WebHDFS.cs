@@ -230,7 +230,7 @@ namespace SharpHadoop
 		string username { get; set; }
 		string password { get; set; }
 
-		string WEBHDFS_CONTEXT_ROOT = "/webhdfs/v1";
+		//string WEBHDFS_CONTEXT_ROOT = "/webhdfs/v1";
 
 		///<summary>
 		///Public Constructor takes two required, one optional parameters

@@ -141,6 +141,7 @@ namespace csharpServices
 	                b[off + i] = (byte)c;
 	            }
 	        } catch (Exception ee) {
+				Console.WriteLine(ee.ToString());
 	        }
 	        return i;
 	    }
