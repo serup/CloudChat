@@ -24,7 +24,7 @@ namespace csharpServices
 			this.entryUniqueID = new global::Gtk.Entry ();
 			this.entryUniqueID.CanFocus = true;
 			this.entryUniqueID.Name = "entryUniqueID";
-			this.entryUniqueID.Text = global::Mono.Unix.Catalog.GetString ("985998707DF048B2A796B44C89345494");
+			this.entryUniqueID.Text = global::Mono.Unix.Catalog.GetString ("e3d6bf3f38ae9d32566ff9a6f85d145a");
 			this.entryUniqueID.IsEditable = true;
 			this.entryUniqueID.MaxLength = 32;
 			this.entryUniqueID.InvisibleChar = '•';

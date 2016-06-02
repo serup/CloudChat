@@ -1,5 +1,6 @@
 ﻿using System;
 using Gtk;
+using System.Numerics;
 
 namespace csharpServices
 {
@@ -75,7 +76,7 @@ namespace csharpServices
 				System.Type type = dana.elements.GetType();
 				if(type == typeof(ChatInfoObj)) {
 					element[] elements = dana.getElementNamesAndValues();
-					addDataToTreeView("idle", elements[4].value);
+					updateDataOfListStoreInTreeView("idle", elements[4].value);
 				}
 				else {
 					//throw new NotSupportedException("ERROR: incomming type of data object is currently NOT supported");
@@ -87,10 +88,18 @@ namespace csharpServices
 			}
 		}
 
-		public void addDataToTreeView(params string[] str)
+		public void updateDataOfListStoreInTreeView(params string[] str)
 		{
-			// Add some data to the store
-			mListStore.AppendValues (str);
+			bool bUpdated = false;
+			TreeIter tmpTreeIter; 
+			for(System.Numerics.BigInteger i=0; mListStore.GetIterFromString(out tmpTreeIter, i.ToString())==true;i++) 
+			{ 
+				mListStore.SetValues(tmpTreeIter,str); 
+				bUpdated = true;
+			}
+
+			if(!bUpdated) 
+				mListStore.AppendValues (str);
 		}
 	}
 }

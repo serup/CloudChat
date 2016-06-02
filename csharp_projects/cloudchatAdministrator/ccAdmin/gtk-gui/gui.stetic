@@ -57,7 +57,9 @@
     <property name="MemberName" />
     <property name="Title" translatable="yes">cloudchatAdministratorTEST</property>
     <property name="Icon">stock:gtk-execute Menu</property>
-    <property name="WindowPosition">CenterOnParent</property>
+    <property name="WindowPosition">CenterAlways</property>
+    <property name="Modal">True</property>
+    <property name="AllowShrink">True</property>
     <signal name="DeleteEvent" handler="OnDeleteEvent" />
     <child>
       <widget class="Gtk.VBox" id="vbox1">
@@ -237,7 +239,7 @@
           <widget class="Gtk.Entry" id="entryUniqueID">
             <property name="MemberName" />
             <property name="CanFocus">True</property>
-            <property name="Text" translatable="yes">985998707DF048B2A796B44C89345494</property>
+            <property name="Text" translatable="yes">e3d6bf3f38ae9d32566ff9a6f85d145a</property>
             <property name="IsEditable">True</property>
             <property name="MaxLength">32</property>
             <property name="InvisibleChar">•</property>

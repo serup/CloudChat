@@ -33,7 +33,6 @@ namespace csharpServices
 		private bool connectToDOPsServer(string url)
 		{
 			bool bResult = false;
-//			_handles = Client.WSConnect ("ws://backend.scanva.com:7777");
 			_handles = Client.WSConnect (url);
 			if(_handles != null) {
 				if(_handles.webSocket.State == System.Net.WebSockets.WebSocketState.Connecting) {
@@ -84,12 +83,12 @@ namespace csharpServices
          	*/
 			DEDEncoder DED = new DEDEncoder ();
 			DED.PUT_STRUCT_START ("WSRequest");
-			DED.PUT_METHOD ("Method", "CSharpConnect");
-			DED.PUT_USHORT ("TransID", trans_id);
-			DED.PUT_STDSTRING ("protocolTypeID", "DED1.00.00");
-			DED.PUT_STDSTRING ("functionName", uniqueId);
-			DED.PUT_STDSTRING ("username", username);
-			DED.PUT_STDSTRING ("password", password);
+			 DED.PUT_METHOD ("Method", "CSharpConnect");
+			 DED.PUT_USHORT ("TransID", trans_id);
+			 DED.PUT_STDSTRING ("protocolTypeID", "DED1.00.00");
+			 DED.PUT_STDSTRING ("functionName", uniqueId);
+			 DED.PUT_STDSTRING ("username", username);
+			 DED.PUT_STDSTRING ("password", password);
 			DED.PUT_STRUCT_END ("WSRequest");
 
 			/**
@@ -143,11 +142,11 @@ namespace csharpServices
 			if (DED2.GET_STRUCT_START ("WSResponse") == 1 &&
 			    (strMethod = DED2.GET_METHOD ("Method")).Equals ("1_1_6_LoginProfile")) {
 				// DFD was online and responded - now validate the response
-				if ((uTrans_id = DED2.GET_USHORT ("TransID")) != -1 &&
+				if ((uTrans_id         = DED2.GET_USHORT ("TransID")) != -1 &&
 				    (strProtocolTypeID = DED2.GET_STDSTRING ("protocolTypeID")).Length > 0 &&
-				    (strDest = DED2.GET_STDSTRING ("dest")).Length > 0 &&
-				    (strSrc = DED2.GET_STDSTRING ("src")).Equals ("DFD_1.1") &&
-				    (strStatus = DED2.GET_STDSTRING ("status")).Length > 0 &&
+				    (strDest           = DED2.GET_STDSTRING ("dest")).Length > 0 &&
+				    (strSrc            = DED2.GET_STDSTRING ("src")).Equals ("DFD_1.1") &&
+				    (strStatus         = DED2.GET_STDSTRING ("status")).Length > 0 &&
 				    DED2.GET_STRUCT_END ("DFDResponse") == 1) {
 					if (strDest.Equals (uniqueId) && strSrc.Equals ("DFD_1.1")) {
 						Console.WriteLine ("DED packet validated - OK");
@@ -161,8 +160,8 @@ namespace csharpServices
 			} else {
 				if ((uTrans_id = DED2.GET_USHORT ("TransID")) != -1 &&
 				    (strProtocolTypeID = DED2.GET_STDSTRING ("protocolTypeID")).Length > 0 &&
-				    (strFunctionName = DED2.GET_STDSTRING ("functionName")).Length > 0 &&
-				    (strStatus = DED2.GET_STDSTRING ("status")).Length > 0 &&
+				    (strFunctionName   = DED2.GET_STDSTRING ("functionName")).Length > 0 &&
+				    (strStatus         = DED2.GET_STDSTRING ("status")).Length > 0 &&
 				    DED2.GET_STRUCT_END ("WSResponse") == 1) {
 					bDecoded = true;
 					Console.WriteLine ("DED packet decoded - now validate");
