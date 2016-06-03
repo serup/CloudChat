@@ -75,10 +75,9 @@ public partial class MainWindow
 		this.UIManager.InsertActionGroup (w1, 0);
 		this.AddAccelGroup (this.UIManager.AccelGroup);
 		this.Name = "MainWindow";
-		this.Title = global::Mono.Unix.Catalog.GetString ("cloudchatAdministratorTEST");
-		this.Icon = global::Stetic.IconLoader.LoadIcon (this, "gtk-execute", global::Gtk.IconSize.Menu);
+		this.Title = global::Mono.Unix.Catalog.GetString ("cloudchatAdministrator");
+		this.Icon = global::Stetic.IconLoader.LoadIcon (this, "gtk-indent", global::Gtk.IconSize.Menu);
 		this.WindowPosition = ((global::Gtk.WindowPosition)(3));
-		this.Modal = true;
 		this.AllowShrink = true;
 		// Container child MainWindow.Gtk.Container+ContainerChild
 		this.vbox1 = new global::Gtk.VBox ();

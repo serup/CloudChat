@@ -55,10 +55,9 @@
       </action>
     </action-group>
     <property name="MemberName" />
-    <property name="Title" translatable="yes">cloudchatAdministratorTEST</property>
-    <property name="Icon">stock:gtk-execute Menu</property>
+    <property name="Title" translatable="yes">cloudchatAdministrator</property>
+    <property name="Icon">stock:gtk-indent Menu</property>
     <property name="WindowPosition">CenterAlways</property>
-    <property name="Modal">True</property>
     <property name="AllowShrink">True</property>
     <signal name="DeleteEvent" handler="OnDeleteEvent" />
     <child>

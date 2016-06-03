@@ -6,7 +6,13 @@ using csharpServices;
 using System.Linq.Expressions;
 using System.Collections.Generic;
 using System.Reflection;
-
+/**
+ * This Administrators primary job is to handle:
+ * Automated Alternate Routing
+ * and this means that incoming 'pings' from clients/customers will automatic reroute to online managers and then they
+ * will pick out a call and handle it
+ * - just like an old fasion phone switch system in a company with many sales people
+ */
 public partial class MainWindow: Gtk.Window
 {
 	DOPSHandler dopsHandler = new DOPSHandler();
@@ -32,6 +38,9 @@ public partial class MainWindow: Gtk.Window
 
 	protected void handleConnectionWithServer(object o, bool bIsConnected)
 	{
+		((Gtk.Action)o).StockId = "gtk-stop"; // change icon indicating a connection is established and if pressing again then a disconnect will happen
+		((Gtk.Action)o).ShortLabel = " please wait...";
+
 		new Task(() => {
 			if(dopsHandler.connectToDOPsServer())
 			{
@@ -63,20 +72,20 @@ public partial class MainWindow: Gtk.Window
 				this.UpdateStatusBarText("Failed to communicate with DOPs SERVER");
 			}
 		}).Start();
+
 	}
 
 	private void UpdateStatusBarText(string text)
 	{
 		var contextId = this.statusbar6.GetContextId("info");
 		this.statusbar6.Push(contextId, text );
+		this.ShowAll();
 	}
 
 	protected void OnConnectActionActivated (object o, EventArgs args)
 	{
 		bIsConnected = dopsHandler.isConnected();
 		if (!bIsConnected) {
-			((Gtk.Action)o).StockId = "gtk-stop"; // change icon indicating a connection is established and if pressing again then a disconnect will happen
-			((Gtk.Action)o).ShortLabel = " please wait...";
 			handleConnectionWithServer(o, bIsConnected);
 		} else {
 			bIsConnected = false;
@@ -102,7 +111,6 @@ public partial class MainWindow: Gtk.Window
 	protected void OnChangeUniqueIDActionActivated(object sender, EventArgs e)
 	{
 		csharpServices.changeUniqueID changeUniqueIdDlg = new csharpServices.changeUniqueID(dopsHandler.getUniqueID());
-		//changeUniqueIdDlg.UniqueID = dopsHandler.getUniqueID();
 		if(changeUniqueIdDlg.Run() == (int)ResponseType.Ok) {
 			dopsHandler.setUniqueID(changeUniqueIdDlg.UniqueID);
 		}

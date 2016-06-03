@@ -194,11 +194,15 @@ namespace WebSocketClient
 		public static wshandles WSConnect (string uri)
 		{
 			Client.Connect(uri);
-			Thread.Sleep(100); // Wait for establishment
+			Thread.Sleep(1000); // Wait for establishment
 			wshandles _handles = new wshandles();
 			_handles.webSocket = Client.webSocket;
 			_handles.waitHandle = Client._waitHandle;
 			_handles.token = Client.token;
+			if (Client.webSocket != null) {
+				if (Client.webSocket.State == WebSocketState.Connecting || webSocket.State == WebSocketState.CloseReceived)
+					Client.webSocket.Dispose (); // Somehow no backend to connect to - disconnect to try again later
+			}
 			return _handles;
 		}
 

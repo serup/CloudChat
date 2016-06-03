@@ -1,13 +1,24 @@
 ﻿<Properties StartupItem="ccAdmin/ccAdmin.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="ccAdmin/changeUniqueID.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="ccAdmin/Handlers/handleManagerTreeView.cs">
     <Files>
-      <File FileName="ccAdmin/changeUniqueID.cs" Line="14" Column="34" />
+      <File FileName="ccAdmin/Handlers/cloudChatHandler.cs" Line="117" Column="30" />
+      <File FileName="ccAdmin/Handlers/DOPSHandler.cs" Line="191" Column="24" />
+      <File FileName="ccAdmin/Handlers/handleCustomerTreeView.cs" Line="104" Column="1" />
+      <File FileName="ccAdmin/MainWindow.cs" Line="48" Column="32" />
+      <File FileName="ccAdmin/WebSocket/Client.cs" Line="189" Column="38" />
+      <File FileName="ccAdmin/Handlers/handleManagerTreeView.cs" Line="102" Column="1" />
     </Files>
     <Pads>
       <Pad Id="MonoDevelop.NUnit.TestPad">
         <State name="__root__">
-          <Node name="cloudchatAdministrator" expanded="True" selected="True" />
+          <Node name="cloudchatAdministrator" expanded="True" selected="True">
+            <Node name="ccAdmin.Test" expanded="True">
+              <Node name="cloudchat" expanded="True">
+                <Node name="cloudchatTests" expanded="True" />
+              </Node>
+            </Node>
+          </Node>
         </State>
       </Pad>
     </Pads>
@@ -82,7 +93,6 @@
       <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/hadoopTests.cs" line="46" column="1" />
       <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/NamespaceReducer.cs" line="14" column="1" />
       <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/NamespaceMapper.cs" line="18" column="1" />
-      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/cloudchatAdministrator/ccAdmin/WebSocket/Client.cs" line="196" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
