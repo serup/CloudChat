@@ -16,7 +16,7 @@ namespace csharpServices
 			initNodeView(nodeviewCustomers);
 
 			// Set titles on columns
-			setTitlesOnColumns("Status", "Name");
+			setTitlesOnColumns("Status", "Name", "visit on Homepage");
 			// Add some data to the model treeview store
 			//addDataToTreeView("Idle", "John doe");
 		}
@@ -24,8 +24,9 @@ namespace csharpServices
 		public void initNodeView(NodeView nodeviewCustomers)
 		{
 			this.nodeviewCustomers = nodeviewCustomers;
-			createColumnsAndCells(2);
-			createModel();
+			int AmountOfColumns = 3;
+			createColumnsAndCells(AmountOfColumns);
+			createModel(AmountOfColumns);
 		}
 
 		public void createColumnsAndCells(int Amount)
@@ -48,11 +49,11 @@ namespace csharpServices
 			}
 		}
 
-		public void createModel()
+		public void createModel(int AmountOfColumnsToHandle)
 		{
-			// Create a model that will hold two strings -  Name and Song Title
-			mListStore = new Gtk.ListStore(typeof(string), typeof(string));
-			// Assign the model to the TreeView
+			Type[] types = new Type[AmountOfColumnsToHandle];
+			for(int i=0;i<AmountOfColumnsToHandle;i++) { types[i] = typeof(string); }
+			mListStore = new Gtk.ListStore(types);
 			nodeviewCustomers.NodeSelection.NodeView.Model = mListStore;
 		}
 
@@ -75,11 +76,7 @@ namespace csharpServices
 			try {
 				System.Type type = dana.elements.GetType();
 				if(type == typeof(ChatInfoObj)) {
-					element[] elements = dana.getElementNamesAndValues();
-					updateDataOfListStoreInTreeView("idle", elements[4].value);
-				}
-				else {
-					//throw new NotSupportedException("ERROR: incomming type of data object is currently NOT supported");
+					updateDataOfListStoreInTreeView("idle", dana.getElement("srcAlias").value, dana.getElement("srcHomepageAlias").value);
 				}
 			}
 			catch (Exception e)

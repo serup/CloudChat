@@ -10,6 +10,7 @@ namespace csharpServices
 		public string type;
 		public bool bDecoded;
 		public Object elements; // will contain an object of following below type:
+
 		public string[] getElementNames()
 		{
 			List<string> result = new List<string>();
@@ -38,10 +39,34 @@ namespace csharpServices
 			}
 			catch (Exception e)
 			{
-				Console.WriteLine(e.ToString());
+				Console.WriteLine(e.Message.ToString());
 			}
 
 			return result.ToArray();
+		}
+
+		public element getElement(string name)
+		{
+			element result = null;
+			Object obj = this.elements;
+			try {
+				FieldInfo[] fields = obj.GetType().GetFields();
+				element eObj = new element();
+				foreach(FieldInfo f in fields){
+					if(f.Name == name)
+					{
+						eObj.name = f.Name;
+						eObj.value = f.GetValue(obj).ToString();
+						result = eObj;
+						break;
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e.Message.ToString());
+			}
+			return result;
 		}
 	}
 
@@ -51,6 +76,7 @@ namespace csharpServices
 		public string value;
 	}
 
+	// object types 
 	// Objects for elements in dedAnalyzed
 	public class ForwardInfoRequestObj : Object
 	{
@@ -73,9 +99,9 @@ namespace csharpServices
 	}
 
 	// General handler for communication with cloudchatmanager and cloudchatclients
-	public class cloudChatHandler
+	public class cloudChatPacketHandler
 	{
-		public cloudChatHandler()
+		public cloudChatPacketHandler()
 		{
 		}
 

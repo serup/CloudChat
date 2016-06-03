@@ -76,7 +76,9 @@ namespace csharpServices
 				System.Type type = dana.elements.GetType();
 				if(type == typeof(ForwardInfoRequestObj)) {
 					element[] elements = dana.getElementNamesAndValues();
-					updateDataOfListStoreInTreeView("idle", elements[4].value);
+					//updateDataOfListStoreInTreeView("idle", elements[4].value);
+					updateDataOfListStoreInTreeView("idle", dana.getElement("srcAlias").value);
+
 				}
 				else {
 					//throw new NotSupportedException("ERROR: incomming type of data object is currently NOT supported");

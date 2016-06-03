@@ -122,9 +122,10 @@
     <Compile Include="Handlers\DOPSHandler.cs" />
     <Compile Include="changeUniqueID.cs" />
     <Compile Include="gtk-gui\csharpServices.changeUniqueID.cs" />
-    <Compile Include="Handlers\cloudChatHandler.cs" />
     <Compile Include="Handlers\handleManagerTreeView.cs" />
     <Compile Include="Handlers\handleCustomerTreeView.cs" />
+    <Compile Include="Handlers\AARHandler.cs" />
+    <Compile Include="Handlers\cloudChatPacketHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

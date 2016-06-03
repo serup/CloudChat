@@ -16,7 +16,7 @@ using System.Reflection;
 public partial class MainWindow: Gtk.Window
 {
 	DOPSHandler dopsHandler = new DOPSHandler();
-	cloudChatHandler chatHandler = new cloudChatHandler();
+	cloudChatPacketHandler chatHandler = new cloudChatPacketHandler();
 	protected Boolean bIsConnected=false;
 	handleManagerTreeView managerTreeView;
 	handleCustomerTreeView customerTreeView;
@@ -36,7 +36,7 @@ public partial class MainWindow: Gtk.Window
 	}
 
 
-	protected void handleConnectionWithServer(object o, bool bIsConnected)
+	protected void handleConnectionWithServer(object o)
 	{
 		setConnectIconToStop(o);
 
@@ -82,12 +82,14 @@ public partial class MainWindow: Gtk.Window
 	{
 		try {
 			byte[] data = null;
+			AARHandler aar = new AARHandler();
 			// run forever until user disconnect or an error occurs
 			while( (data = dopsHandler.waitForIncomming()).Length > 0 && ((Gtk.Action)o).StockId == "gtk-disconnect") {
 				UpdateStatusBarText("Receiving incomming data from DOPs SERVER...");
 				dedAnalyzed dana = chatHandler.parseDEDpacket(data);
 				managerTreeView.updateWithIncomingData(dana);
 				customerTreeView.updateWithIncomingData(dana);
+				aar.handleRouting(dana);
 				UpdateStatusBarText(dana.type);
 			}
 			shutdownCommunication(o);
@@ -119,7 +121,7 @@ public partial class MainWindow: Gtk.Window
 	{
 		bIsConnected = dopsHandler.isConnected();
 		if (!bIsConnected) {
-			handleConnectionWithServer(o, bIsConnected);
+			handleConnectionWithServer(o);
 		} else {
 			bIsConnected = false;
 			dopsHandler.disconnectFromDOPsServer();
