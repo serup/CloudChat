@@ -38,48 +38,80 @@ public partial class MainWindow: Gtk.Window
 
 	protected void handleConnectionWithServer(object o, bool bIsConnected)
 	{
-		((Gtk.Action)o).StockId = "gtk-stop"; // change icon indicating a connection is established and if pressing again then a disconnect will happen
-		((Gtk.Action)o).ShortLabel = " please wait...";
+		setConnectIconToStop(o);
 
 		new Task(() => {
-			if(dopsHandler.connectToDOPsServer())
-			{
-				((Gtk.Action)o).StockId = "gtk-disconnect"; // change icon indicating a connection is established and if pressing again then a disconnect will happen
-				((Gtk.Action)o).ShortLabel = "disconnect";
-				this.UpdateStatusBarText("Communication with DOPs SERVER is established");
-				Thread.Sleep(1500);
-				((Gtk.Action)o).ShortLabel = "";
-				byte[] data = null;
-				while( (data = dopsHandler.waitForIncomming()).Length > 0 && ((Gtk.Action)o).StockId == "gtk-disconnect") {
-					this.UpdateStatusBarText("Receiving incomming data from DOPs SERVER...");
-					dedAnalyzed dana = chatHandler.parseDEDpacket(data);
-					managerTreeView.updateWithIncomingData(dana);
-					customerTreeView.updateWithIncomingData(dana);
-
-					this.UpdateStatusBarText(dana.type);
-				}
+			if(dopsHandler.connectToDOPsServer()) {
+				this.setConnectIconToDisconnect(o);
+				this.handleCommunication(o);
 				this.UpdateStatusBarText("STOPPED receiving incomming data from DOPs SERVER - possible ERROR");
-				// connection failed - perhaps try again later
-				((Gtk.Action)o).ShortLabel = "";
-				((Gtk.Action)o).StockId = "gtk-connect"; // change icon indicating a connection is established and if pressing again then a disconnect will happen
-				((Gtk.Action)o).Tooltip = "Will connect to DOPs server - allowing cloud chat administrator to communicate with cloud chat managers and cloudchat clients";
+				this.setConnectIconToConnect(o);
 			}
 			else {
-				// connection failed - perhaps try again later
-				((Gtk.Action)o).ShortLabel = "";
-				((Gtk.Action)o).StockId = "gtk-connect"; // change icon indicating a connection is established and if pressing again then a disconnect will happen
-				((Gtk.Action)o).Tooltip = "Will connect to DOPs server - allowing cloud chat administrator to communicate with cloud chat managers and cloudchat clients";
+				setConnectIconToConnect(o);
 				this.UpdateStatusBarText("Failed to communicate with DOPs SERVER");
 			}
 		}).Start();
 
 	}
 
+	protected void setConnectIconToStop(object o)
+	{
+		((Gtk.Action)o).StockId = "gtk-stop"; // change icon indicating a connection is established and if pressing again then a disconnect will happen
+		((Gtk.Action)o).ShortLabel = " please wait...";
+		((Gtk.Action)o).Tooltip = "-- currently busy trying to communicate with server";
+	}
+
+	protected void setConnectIconToConnect(object o)
+	{
+		((Gtk.Action)o).ShortLabel = "";
+		((Gtk.Action)o).StockId = "gtk-connect"; // change icon indicating a connection is established and if pressing again then a disconnect will happen
+		((Gtk.Action)o).Tooltip = "Will connect to DOPs server - allowing cloud chat administrator to communicate with cloud chat managers and cloudchat clients";
+	}
+
+	protected void setConnectIconToDisconnect(object o)
+	{
+		((Gtk.Action)o).StockId = "gtk-disconnect"; // change icon indicating a connection is established and if pressing again then a disconnect will happen
+		((Gtk.Action)o).ShortLabel = "disconnect";
+		this.UpdateStatusBarText("Communication with DOPs SERVER is established");
+		Thread.Sleep(1500);
+		((Gtk.Action)o).ShortLabel = "";
+	}
+
+	protected void handleCommunication(object o)
+	{
+		try {
+			byte[] data = null;
+			// run forever until user disconnect or an error occurs
+			while( (data = dopsHandler.waitForIncomming()).Length > 0 && ((Gtk.Action)o).StockId == "gtk-disconnect") {
+				UpdateStatusBarText("Receiving incomming data from DOPs SERVER...");
+				dedAnalyzed dana = chatHandler.parseDEDpacket(data);
+				managerTreeView.updateWithIncomingData(dana);
+				customerTreeView.updateWithIncomingData(dana);
+				UpdateStatusBarText(dana.type);
+			}
+			shutdownCommunication(o);
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine("ERROR: Serious error happened during communication : " );
+			Console.WriteLine(e.Message.ToString());
+		}
+	}
+
+	private void shutdownCommunication(object o)
+	{
+		bIsConnected = false;
+		dopsHandler.disconnectFromDOPsServer();
+		setConnectIconToConnect(o); // Since communication is lost, then connection is also lost, thus reset icon
+		UpdateStatusBarText("DOPs SERVER is disconnected");
+	}
+
 	private void UpdateStatusBarText(string text)
 	{
 		var contextId = this.statusbar6.GetContextId("info");
-		this.statusbar6.Push(contextId, text );
-		this.ShowAll();
+		statusbar6.Push(contextId, text );
+		ShowAll();
 	}
 
 	protected void OnConnectActionActivated (object o, EventArgs args)
@@ -90,12 +122,10 @@ public partial class MainWindow: Gtk.Window
 		} else {
 			bIsConnected = false;
 			dopsHandler.disconnectFromDOPsServer();
-			((Gtk.Action)o).StockId = "gtk-connect"; // change icon indicating a connection is established and if pressing again then a disconnect will happen
-			((Gtk.Action)o).Tooltip = "Will connect to DOPs server - allowing cloud chat administrator to communicate with cloud chat managers and cloudchat clients";
-			this.UpdateStatusBarText("DOPs SERVER is disconnected");
+			setConnectIconToConnect(o);
+			UpdateStatusBarText("DOPs SERVER is disconnected");
 		}
 	}
-
 
 	protected void OnHelpActionActivated (object sender, EventArgs e)
 	{
@@ -106,7 +136,6 @@ public partial class MainWindow: Gtk.Window
 	{
 		throw new NotImplementedException();
 	}
-
 
 	protected void OnChangeUniqueIDActionActivated(object sender, EventArgs e)
 	{
