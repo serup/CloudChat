@@ -227,9 +227,21 @@ namespace cloudchat
 			dana = chatHandler.parseDEDpacket(data);
 			aar.handleRouting(dana);
 			Assert.True(aar.getManagerListCount() == 1);
-
 		}
 
+		[Test]
+		public void avoidMultipleEntriesInListTest()
+		{
+			// Same ded should NOT create multiple entries in list
+			AARHandler aar = new AARHandler();
+			byte[] data = createChatInfo("4086d4ab369e14ca1b6be7364d88cf22","SERUP4");
+			dedAnalyzed dana = chatHandler.parseDEDpacket(data);
+			aar.handleRouting(dana);
+			data = createChatInfo("4086d4ab369e14ca1b6be7364d88cf22","SERUP4");
+			dana = chatHandler.parseDEDpacket(data);
+			aar.handleRouting(dana);
+			Assert.True(aar.getManagerListCount() == 1);
+		}
 	}
 }
 
