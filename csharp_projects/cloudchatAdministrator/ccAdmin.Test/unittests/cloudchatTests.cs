@@ -195,6 +195,23 @@ namespace cloudchat
 			Assert.True(aar.getManagerListCount() == 1);
 		}
 
+		[Test]
+		public void addMultipleManagerToListTest() {
+			AARHandler aar = new AARHandler();
+			byte[] data = createChatInfo("4086d4ab369e14ca1b6be7364d88cf85","SERUP");
+			dedAnalyzed dana = chatHandler.parseDEDpacket(data);
+			aar.handleRouting(dana);
+			data = createChatInfo("4086d4ab369e14ca1b6be7364d88cf44","SERUP2");
+			dana = chatHandler.parseDEDpacket(data);
+			aar.handleRouting(dana);
+			data = createChatInfo("4086d4ab369e14ca1b6be7364d88cf45","SERUP3");
+			dana = chatHandler.parseDEDpacket(data);
+			aar.handleRouting(dana);
+			data = createChatInfo("4086d4ab369e14ca1b6be7364d88cf46","SERUP4");
+			dana = chatHandler.parseDEDpacket(data);
+			aar.handleRouting(dana);
+			Assert.True(aar.getManagerListCount() == 4);
+		}
 
 
 		[Test]
@@ -212,7 +229,6 @@ namespace cloudchat
 			aar.handleRouting(dana);
 			Assert.True(aar.getManagerListCount() == 2);
 
-			// Wait for max timespan
 			WaitWorker ww = new WaitWorker ();
 			ww.WaitForMilliseconds (Interval/2); // TODO: find a way to do relative sleep, meaning no actual time is spend (push / pop actual time, warping effect)
 
@@ -221,6 +237,7 @@ namespace cloudchat
 			aar.handleRouting(dana);
 			Assert.False(aar.getManagerListCount() == 1); // There where still managers in list which did not exceed the time span allowed to be in list, hence the failure
 
+			// Wait for max timespan
 			ww.WaitForMilliseconds (aar.getMaxIdleTimeInList()); // TODO: find a way to do relative sleep, meaning no actual time is spend (push / pop actual time, warping effect)
 
 			data = createChatInfo("4086d4ab369e14ca1b6be7364d88cf22","SERUP4");
