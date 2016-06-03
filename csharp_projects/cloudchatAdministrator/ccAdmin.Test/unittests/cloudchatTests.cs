@@ -25,6 +25,25 @@ namespace cloudchat
 			Assert.IsNotNull (byteArray);
 			return byteArray;
 		}
+
+		private byte[] createChatInfo() {
+			
+			DEDEncoder DED = DEDEncoder.DED_START_ENCODER();
+			DED.PUT_STRUCT_START ("ClientChatRequest");
+				DED.PUT_METHOD ("Method", "JSCChatInfo");
+				DED.PUT_USHORT ("TransID", 23);
+				DED.PUT_STDSTRING("protocolTypeID", "DED1.00.00");
+				DED.PUT_STDSTRING("dest", "ccAdmin");  // This Admins uniqueID, since this is a test it really does not matter
+				DED.PUT_STDSTRING("src", "4086d4ab369e14ca1b6be7364d88cf85"); // CloudChatManager uniqueID
+				DED.PUT_STDSTRING("srcAlias", "SERUP");
+				DED.PUT_STDSTRING("srcHomepageAlias", "Montenegro");
+				DED.PUT_STDSTRING("lastEntryTime", "20160101");
+				DED.PUT_STRUCT_END("ClientChatRequest");
+			byte[] byteArray = DED.GET_ENCODED_BYTEARRAY_DATA ();
+			Assert.IsNotNull (byteArray);
+			return byteArray;
+		}
+
 		// this method is run before each [Test] method is called. You can put
 		// variable initialization, etc. here that is common to each test.
 		// Just leave the method empty if you don't need to use it.
@@ -49,10 +68,18 @@ namespace cloudchat
 
 		[Test]
 		public void incommingCloudManagerForwardInfoRequestDEDTest() {
-			
+
 			byte[] data = createForwardInfoRequest();
 			dedAnalyzed dana = chatHandler.parseDEDpacket(data);
 			Assert.True(dana.type == "ForwardInfoRequest");
+		}
+
+		[Test]
+		public void incommingCloudChatInfoDEDTest() {
+
+			byte[] data = createChatInfo();
+			dedAnalyzed dana = chatHandler.parseDEDpacket(data);
+			Assert.True(dana.type == "ChatInfo");
 		}
 
 	}

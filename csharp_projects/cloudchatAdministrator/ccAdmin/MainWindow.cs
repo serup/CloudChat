@@ -96,6 +96,7 @@ public partial class MainWindow: Gtk.Window
 		{
 			Console.WriteLine("ERROR: Serious error happened during communication : " );
 			Console.WriteLine(e.Message.ToString());
+			shutdownCommunication(o);
 		}
 	}
 
