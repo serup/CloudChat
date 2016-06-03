@@ -3,9 +3,11 @@ using NUnit.Framework;
 using csharpServices;
 using DED;
 using System.Threading;
+using Moq;
 
 namespace cloudchat
 {
+
 	[TestFixture]
 	public class cloudchatTests : Assert {
 
@@ -85,9 +87,52 @@ namespace cloudchat
 
 	}
 
+
 	[TestFixture]
 	public class AARTests : Assert {
-		
+
+
+		class WaitWorker {
+			private volatile bool _shouldStop;
+			public EventWaitHandle WaitHandleExternal;
+			public int IntervalInMilliseconds;
+			public void DoWork ()
+			{
+				while (!_shouldStop)
+				{
+					Console.WriteLine("worker thread: working...");
+					Thread.Sleep(IntervalInMilliseconds);
+					WaitHandleExternal.Set();
+				}
+			}
+
+			public void RequestStop()
+			{
+				_shouldStop = true;
+			}
+
+			public void WaitForMilliseconds(int Interval)
+			{
+				EventWaitHandle _waitHandle = new AutoResetEvent (false); // is signaled value change to true
+
+				// start a thread which will after a small time set an event
+				WaitWorker workerObject = new WaitWorker ();
+				workerObject.IntervalInMilliseconds = Interval;
+				workerObject.WaitHandleExternal = _waitHandle;
+				Thread workerThread = new Thread(workerObject.DoWork);
+
+				// Start the worker thread.
+				workerThread.Start();
+
+				Console.WriteLine ("Waiting...");
+				_waitHandle.WaitOne();                // Wait for notification
+				Console.WriteLine ("Notified");
+
+				// Stop the worker thread.
+				workerObject.RequestStop();
+			}
+		}
+
 		cloudChatPacketHandler chatHandler;
 
 		private byte[] createForwardInfoRequest() {
@@ -129,7 +174,9 @@ namespace cloudchat
 		// Just leave the method empty if you don't need to use it.
 		// The name of the method does not matter; the attribute does.
 		[SetUp]
-		public void GetReady() { chatHandler = new cloudChatPacketHandler();}
+		public void GetReady() { 
+			chatHandler = new cloudChatPacketHandler();
+		}
 
 		// this method is run after each Test* method is called. You can put
 		// clean-up code, etc. here.  Whatever needs to be done after each test.
@@ -148,11 +195,15 @@ namespace cloudchat
 			Assert.True(aar.getManagerListCount() == 1);
 		}
 
+
+
 		[Test]
 		public void removeOfflineManagerTest() {
 
 			// First add some managers
 			AARHandler aar = new AARHandler();
+			const int Interval = 1000;
+			aar.setMaxIdleTimeInList (Interval);  
 			byte[] data = createChatInfo("4086d4ab369e14ca1b6be7364d88cf85","SERUP");
 			dedAnalyzed dana = chatHandler.parseDEDpacket(data);
 			aar.handleRouting(dana);
@@ -162,9 +213,17 @@ namespace cloudchat
 			Assert.True(aar.getManagerListCount() == 2);
 
 			// Wait for max timespan
-			Thread.Sleep(3000); // This should cause all entries to be too old, hence removal will happen
+			WaitWorker ww = new WaitWorker ();
+			ww.WaitForMilliseconds (Interval/2); // TODO: find a way to do relative sleep, meaning no actual time is spend (push / pop actual time, warping effect)
 
 			data = createChatInfo("4086d4ab369e14ca1b6be7364d88cf77","SERUP3");
+			dana = chatHandler.parseDEDpacket(data);
+			aar.handleRouting(dana);
+			Assert.False(aar.getManagerListCount() == 1); // There where still managers in list which did not exceed the time span allowed to be in list, hence the failure
+
+			ww.WaitForMilliseconds (aar.getMaxIdleTimeInList()); // TODO: find a way to do relative sleep, meaning no actual time is spend (push / pop actual time, warping effect)
+
+			data = createChatInfo("4086d4ab369e14ca1b6be7364d88cf22","SERUP4");
 			dana = chatHandler.parseDEDpacket(data);
 			aar.handleRouting(dana);
 			Assert.True(aar.getManagerListCount() == 1);

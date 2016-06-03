@@ -1,4 +1,4 @@
-﻿<Properties StartupItem="ccAdmin/ccAdmin.csproj">
+﻿<Properties StartupItem="ccAdmin/ccAdmin.csproj" RefactoringSettings.EnableRefactorings="True">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
   <MonoDevelop.Ide.Workbench ActiveDocument="ccAdmin/Handlers/handleManagerTreeView.cs">
     <Files>

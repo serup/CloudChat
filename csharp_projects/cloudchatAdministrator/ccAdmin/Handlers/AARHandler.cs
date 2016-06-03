@@ -39,10 +39,19 @@ namespace csharpServices
 	{
 		private List<Manager> managersList = new List<Manager>();
 		private List<Customer> customersList = new List<Customer>();
-		private int maxIdleTimeInList = 30;
+		private int maxIdleTimeInMillisecondsInList = 10000;
 
 		public AARHandler()
 		{
+		}
+
+		public void setMaxIdleTimeInList(int IntervalInMilliseconds = 10000)
+		{
+			maxIdleTimeInMillisecondsInList = IntervalInMilliseconds;
+		}
+
+		public int getMaxIdleTimeInList() {
+			return maxIdleTimeInMillisecondsInList;
 		}
 
 		public void handleRouting(dedAnalyzed dana)
@@ -85,16 +94,11 @@ namespace csharpServices
 		private void removeOfflineManagers()
 		{
 			try {
-
-				//var list = new List<int>(Enumerable.Range(1, 10));
 				for (int i = managersList.Count - 1; i >= 0; i--)
 				{
-					if((DateTime.Now - managersList[i].lastTimeStamp).TotalSeconds > maxIdleTimeInList)
-					//if (managersList[i] > 5)
+					if((DateTime.Now - managersList[i].lastTimeStamp).TotalMilliseconds > maxIdleTimeInMillisecondsInList)
 						managersList.RemoveAt(i);
 				}
-				//managersList.ForEach(i => Console.WriteLine(i));
-
 			}
 			catch (Exception e)
 			{
