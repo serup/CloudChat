@@ -11,6 +11,15 @@ function set-title() {
   fi
   TITLE="\[\e]2;$@\a\]"
   PS1=${ORIG}${TITLE}
+  #export PS1='\e[0;34m\w> '
+  echo "put this in ~/.bashrc : "
+  echo "GREEN='\[$(tput setaf 2)\]'"
+  echo "RESET='\[$(tput sgr0)\]'"
+  echo "export PS1='${GREEN}\w${RESET}> '"
+
+  GREEN="\[$(tput setaf 2)\]"
+  RESET="\[$(tput sgr0)\]"
+  export PS1="${GREEN}\w${RESET}> "
 }
 
 set-title environment for DOPS ok
@@ -77,7 +86,7 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- oracle-java already installed"
 fi
-PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 lib32stdc* |grep "install ok installed")
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 *stdc* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install lib32stdc on ubuntu, to use for mksdcard SDK tool in android-studio "
   sudo apt-fast install -yq lib32stdc++6 
