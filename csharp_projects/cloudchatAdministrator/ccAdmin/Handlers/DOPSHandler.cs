@@ -18,7 +18,7 @@ namespace csharpServices
 			bool bResult = false;
 			if (connectToDOPsServer("ws://backend.scanva.com:7777")) {
 				bConnected = true;
-				sendRequestToServer(createLoginRequest());
+				sendToDOPsServer(createLoginRequest());
 				switch (handleServerReply(waitForServerReply())) {
 				case "Request accepted":
 					bResult = true;
@@ -51,9 +51,9 @@ namespace csharpServices
 			return bResult;
 		}
 
-		private void sendRequestToServer(byte[] request)
+		public void sendToDOPsServer(byte[] blob)
 		{
-			Client.SendBLOB (request, _handles.webSocket).Wait (); 
+			Client.SendBLOB (blob, _handles.webSocket).Wait (); 
 		}
 
 		public void setUniqueID(string ID)

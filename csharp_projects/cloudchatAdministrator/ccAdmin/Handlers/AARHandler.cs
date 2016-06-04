@@ -54,12 +54,18 @@ namespace csharpServices
 			return maxIdleTimeInMillisecondsInList;
 		}
 
+		/**
+		 * Main method handling Automatic Alternate Routing
+		 * - if a customer does NOT have a handler (manager) assigned, then ALL managers 
+		 *   will receive its chatInfo ping
+		 * 
+		 */ 
 		public void handleRouting(dedAnalyzed dana)
 		{
 			updateManagerList(dana);
 			updateCustomerList(dana);
-			updateOnlineManagersWithIncomingChatInfo(dana);
 			removeOfflineManagers();
+			updateOnlineManagersWithIncomingChatInfo(dana);
 		}
 
 		private void updateManagerList(dedAnalyzed dana)
