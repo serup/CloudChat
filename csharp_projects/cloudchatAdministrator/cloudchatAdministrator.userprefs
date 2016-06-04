@@ -1,22 +1,32 @@
 ﻿<Properties StartupItem="ccAdmin/ccAdmin.csproj" RefactoringSettings.EnableRefactorings="True">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="ccAdmin/Handlers/handleManagerTreeView.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="ccAdmin.Test/unittests/cloudchatTests.cs">
     <Files>
-      <File FileName="ccAdmin/Handlers/cloudChatHandler.cs" Line="117" Column="30" />
-      <File FileName="ccAdmin/Handlers/DOPSHandler.cs" Line="191" Column="24" />
-      <File FileName="ccAdmin/Handlers/handleCustomerTreeView.cs" Line="104" Column="1" />
-      <File FileName="ccAdmin/MainWindow.cs" Line="48" Column="32" />
-      <File FileName="ccAdmin/WebSocket/Client.cs" Line="189" Column="38" />
+      <File FileName="ccAdmin/Handlers/DOPSHandler.cs" Line="1" Column="1" />
+      <File FileName="ccAdmin/Handlers/handleCustomerTreeView.cs" Line="1" Column="1" />
+      <File FileName="ccAdmin/MainWindow.cs" Line="1" Column="1" />
+      <File FileName="ccAdmin/WebSocket/Client.cs" Line="1" Column="1" />
       <File FileName="ccAdmin/Handlers/handleManagerTreeView.cs" Line="102" Column="1" />
+      <File FileName="ccAdmin.Test/unittests/cloudchatTests.cs" Line="199" Column="43" />
+      <File FileName="ccAdmin/Handlers/AARHandler.cs" Line="69" Column="3" />
+      <File FileName="ccAdmin.IntegrationTests/unittests/DOPsConnectTests.cs" Line="86" Column="3" />
+      <File FileName="ccAdmin.Test/unittests/WebSocketConnectionInfoTests.cs" Line="67" Column="1" />
     </Files>
     <Pads>
       <Pad Id="MonoDevelop.NUnit.TestPad">
         <State name="__root__">
-          <Node name="cloudchatAdministrator" expanded="True" selected="True">
+          <Node name="cloudchatAdministrator" expanded="True">
+            <Node name="ccAdmin.IntegrationTests" expanded="True">
+              <Node name="DOPSTests" expanded="True">
+                <Node name="DOPsWebSocketConnectionTests" expanded="True" />
+              </Node>
+            </Node>
             <Node name="ccAdmin.Test" expanded="True">
               <Node name="cloudchat" expanded="True">
                 <Node name="cloudchatTests" expanded="True" />
+                <Node name="AARTests" expanded="True" selected="True" />
               </Node>
+              <Node name="WebSocketTests" expanded="True" />
             </Node>
           </Node>
         </State>
