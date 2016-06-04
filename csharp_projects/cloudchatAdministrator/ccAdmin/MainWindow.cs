@@ -43,7 +43,7 @@ public partial class MainWindow: Gtk.Window
 		new Task(() => {
 			if(dopsHandler.connectToDOPsServer()) {
 				this.setConnectIconToDisconnect(o);
-				this.handleCommunication(o);
+				this.handleCommunication(o, dopsHandler);
 				this.UpdateStatusBarText("STOPPED receiving incomming data from DOPs SERVER - possible ERROR");
 				this.setConnectIconToConnect(o);
 			}
@@ -78,11 +78,11 @@ public partial class MainWindow: Gtk.Window
 		((Gtk.Action)o).ShortLabel = "";
 	}
 
-	protected void handleCommunication(object o)
+	protected void handleCommunication(object o, DOPSHandler dopsHandler)
 	{
 		try {
 			byte[] data = null;
-			AARHandler aar = new AARHandler();
+			AARHandler aar = new AARHandler(dopsHandler);
 			// run forever until user disconnect or an error occurs
 			while( (data = dopsHandler.waitForIncomming()).Length > 0 && ((Gtk.Action)o).StockId == "gtk-disconnect") {
 				UpdateStatusBarText("Receiving incomming data from DOPs SERVER...");

@@ -40,9 +40,15 @@ namespace csharpServices
 		private List<Manager> managersList = new List<Manager>();
 		private List<Customer> customersList = new List<Customer>();
 		private int maxIdleTimeInMillisecondsInList = 10000;
+		private DOPSHandler dops = null;
 
 		public AARHandler()
 		{
+		}
+
+		public AARHandler(DOPSHandler dopsHandler)
+		{
+			dops = dopsHandler;
 		}
 
 		public void setMaxIdleTimeInList(int IntervalInMilliseconds = 10000)
@@ -127,6 +133,10 @@ namespace csharpServices
 
 		private void updateOnlineManagersWithIncomingChatInfo(dedAnalyzed dana)
 		{
+			if(dops != null) {
+				byte[] blob = null; //TODO: create DED 
+				dops.sendToDOPsServer (blob);
+			}
 
 		}
 
