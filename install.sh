@@ -10,16 +10,10 @@ function set-title() {
     ORIG=$PS1
   fi
   TITLE="\[\e]2;$@\a\]"
-  PS1=${ORIG}${TITLE}
+  #PS1=${ORIG}${TITLE}
   #export PS1='\e[0;34m\w> '
-  echo "put this in ~/.bashrc : "
-  echo "GREEN='\[$(tput setaf 2)\]'"
-  echo "RESET='\[$(tput sgr0)\]'"
-  echo "export PS1='${GREEN}\w${RESET}> '"
-
-  GREEN="\[$(tput setaf 2)\]"
-  RESET="\[$(tput sgr0)\]"
-  export PS1="${GREEN}\w${RESET}> "
+  echo "put PS1 statement in ~/.bashrc : "
+  export PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
 }
 
 set-title environment for DOPS ok
