@@ -219,7 +219,7 @@ namespace cloudchat
 
 			// First add some managers
 			AARHandler aar = new AARHandler();
-			const int Interval = 1000;
+			const int Interval = 30000;
 			aar.setMaxIdleTimeInList (Interval);  
 			byte[] data = createChatInfo("4086d4ab369e14ca1b6be7364d88cf85","SERUP");
 			dedAnalyzed dana = chatHandler.parseDEDpacket(data);
@@ -229,16 +229,17 @@ namespace cloudchat
 			aar.handleRouting(dana);
 			Assert.True(aar.getManagerListCount() == 2);
 
-			WaitWorker ww = new WaitWorker ();
-			ww.WaitForMilliseconds (Interval/2); // TODO: find a way to do relative sleep, meaning no actual time is spend (push / pop actual time, warping effect)
+			//WaitWorker ww = new WaitWorker ();
+			//ww.WaitForMilliseconds (Interval/2); // TODO: find a way to do relative sleep, meaning no actual time is spend (push / pop actual time, warping effect)
+			aar.InitiateWarpTime(Interval/2); // This will add milliseconds to relative time, thus warping it
 
 			data = createChatInfo("4086d4ab369e14ca1b6be7364d88cf77","SERUP3");
 			dana = chatHandler.parseDEDpacket(data);
 			aar.handleRouting(dana);
-			Assert.False(aar.getManagerListCount() == 1); // There where still managers in list which did not exceed the time span allowed to be in list, hence the failure
+			Assert.False(aar.getManagerListCount() == 1); // There where still previous added manager in list which did not exceed the time span allowed to be in list, hence the failure
 
 			// Wait for max timespan
-			aar.InitiateWarpTime(aar.getMaxIdleMillisecondTimeInList()); // This will add milliseconds to relative time, thus warping it
+			aar.InitiateWarpTime(aar.getMaxIdleMillisecondTimeInList()+(Interval/2)); // This will add milliseconds to relative time, thus warping it
 
 			data = createChatInfo("4086d4ab369e14ca1b6be7364d88cf22","SERUP4");
 			dana = chatHandler.parseDEDpacket(data);
