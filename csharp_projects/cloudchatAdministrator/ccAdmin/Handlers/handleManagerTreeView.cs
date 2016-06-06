@@ -100,11 +100,12 @@ namespace csharpServices
 
 				mListStore.GetIterFirst(out tmpTreeIter);
 				object o = mListStore.GetValue(tmpTreeIter, 1);
-				while(o!=null || bUpdated==true)
+				while(o!=null)
 				{
 					if(o.ToString()==str[1].ToString()) {
 						mListStore.SetValues(tmpTreeIter,str); // update row
 						bUpdated=true;
+						break;
 					}
 					if(mListStore.IterNext(ref tmpTreeIter)) {
 						o = mListStore.GetValue(tmpTreeIter, 1);
