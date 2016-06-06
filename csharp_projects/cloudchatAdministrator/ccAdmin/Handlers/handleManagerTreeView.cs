@@ -75,9 +75,10 @@ namespace csharpServices
 			try {
 				System.Type type = dana.elements.GetType();
 				if(type == typeof(ForwardInfoRequestObj)) {
-					element[] elements = dana.getElementNamesAndValues();
+					//element[] elements = dana.getElementNamesAndValues();
 					//updateDataOfListStoreInTreeView("idle", elements[4].value);
-					updateDataOfListStoreInTreeView("idle", dana.getElement("srcAlias").value);
+//					updateDataOfListStoreInTreeView("idle", dana.getElement("srcAlias").value);
+					updateDataOfListStoreInTreeView("idle", dana.getElement("src").value);
 
 				}
 				else {
@@ -96,10 +97,20 @@ namespace csharpServices
 			try {
 				bool bUpdated = false;
 				TreeIter tmpTreeIter; 
-				for(System.Numerics.BigInteger i=0; mListStore.GetIterFromString(out tmpTreeIter, i.ToString())==true;i++) 
-				{ 
-					mListStore.SetValues(tmpTreeIter,str); 
-					bUpdated = true;
+
+				mListStore.GetIterFirst(out tmpTreeIter);
+				object o = mListStore.GetValue(tmpTreeIter, 1);
+				while(o!=null || bUpdated==true)
+				{
+					if(o.ToString()==str[1].ToString()) {
+						mListStore.SetValues(tmpTreeIter,str); // update row
+						bUpdated=true;
+					}
+					if(mListStore.IterNext(ref tmpTreeIter)) {
+						o = mListStore.GetValue(tmpTreeIter, 1);
+					}
+					else 
+						o = null;
 				}
 
 				if(!bUpdated)  

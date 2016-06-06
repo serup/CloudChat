@@ -35,13 +35,34 @@ namespace csharpServices
 		public string currentHandlerAlias; // a manager id (srcAlias), if any
 	}
 
+	public class dopsAPI : Object 
+	{
+		private DOPSHandler dops = null;
+
+		public void setAPIhandler(DOPSHandler dopsHandler)
+		{
+			this.dops = dopsHandler;
+		}
+
+		public void sendToDOPsServer(byte[] blob)
+		{
+			if(dops != null)
+			{
+				dops.sendToDOPsServer(blob);
+			} 
+			else
+				throw new Exception("WARNING [updateOnlineManagersWithIncomingChatInfo]: dops API not initiated, thus no communication will work");
+		}
+	}
+
 	public class AARHandler
 	{
 		private List<Manager> managersList = new List<Manager>();
 		private List<Customer> customersList = new List<Customer>();
 		private int maxIdleTimeInMillisecondsInList = 10000;
-		private DOPSHandler dops = null;
-		public double warpFactorInMilliseconds = 0; // default no time warp -- only used for testing 
+		private dopsAPI dops = new dopsAPI();
+		private double warpFactorInMilliseconds = 0; // default no time warp -- only used for testing 
+		private cloudChatPacketHandler ccph = new cloudChatPacketHandler();
 
 		public AARHandler()
 		{
@@ -49,7 +70,7 @@ namespace csharpServices
 
 		public AARHandler(DOPSHandler dopsHandler)
 		{
-			dops = dopsHandler;
+			dops.setAPIhandler(dopsHandler);
 		}
 
 		public void setMaxIdleTimeInList(int IntervalInMilliseconds = 10000)
@@ -69,39 +90,32 @@ namespace csharpServices
 		 */ 
 		public void handleRouting(dedAnalyzed dana)
 		{
-			updateManagerList(dana);
-			updateCustomerList(dana);
-			removeOfflineManagers();
-			updateOnlineManagersWithIncomingChatInfo(dana);
+			try {
+				updateManagerList(dana);
+				updateCustomerList(dana);
+				removeOfflineManagers();
+				updateOnlineManagersWithIncomingChatInfo(dana);
+			} 
+			catch (Exception e) {
+				Console.WriteLine(e.Message.ToString());
+			}
 		}
 
 		private void updateManagerList(dedAnalyzed dana)
 		{
-			try {
-				if(dana.elements.GetType() == typeof(ChatInfoObj)) {
-					bool bUpdated=false;
-					foreach(Manager manager in managersList) {
-						if(manager.srcAlias == dana.getElement("srcAlias").value) {
-							manager.lastTimeStamp = this.getDateTimeNow();
-							manager.src  = dana.getElement("src").value;
-							bUpdated=true;
-						}
-						else {
-							// NOT ALLOWED
-							//if((DateTime.Now - manager.lastTimeStamp).TotalSeconds > maxIdleTimeInList)
-							//	managersList.Remove(manager);
-						}
+			if(dana.elements.GetType() == typeof(ForwardInfoRequestObj)) {
+				bool bUpdated=false;
+				foreach(Manager manager in managersList) {
+					if(manager.src == dana.getElement("src").value) {
+						manager.lastTimeStamp = this.getDateTimeNow();
+						manager.srcAlias  = dana.getElement("srcAlias").value;
+						bUpdated=true;
 					}
-					if(!bUpdated) 
-						appendManagerToList(dana);
-
 				}
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine(e.ToString());
-			}
+				if(!bUpdated) 
+					appendManagerToList(dana);
 
+			}
 		}
 
 		public void InitiateWarpTime(double warpFactorInMilliseconds)
@@ -127,25 +141,19 @@ namespace csharpServices
 
 		private void removeOfflineManagers()
 		{
-			try {
-				for (int i = managersList.Count - 1; i >= 0; i--)
-				{
-					if((this.getDateTimeNow() - managersList[i].lastTimeStamp).TotalMilliseconds > maxIdleTimeInMillisecondsInList)
-						managersList.RemoveAt(i);
-				}
-			}
-			catch (Exception e)
+			for (int i = managersList.Count - 1; i >= 0; i--)
 			{
-				Console.WriteLine(e.ToString());
+				if((this.getDateTimeNow() - managersList[i].lastTimeStamp).TotalMilliseconds > maxIdleTimeInMillisecondsInList)
+					managersList.RemoveAt(i);
 			}
 		}
 
 		private void appendManagerToList(dedAnalyzed dana)
 		{
-			Manager manager = new Manager();
-			manager.lastTimeStamp = this.getDateTimeNow();
-			manager.srcAlias = dana.getElement("srcAlias").value;
-			manager.src	     = dana.getElement("src").value;
+			Manager manager 		= new Manager();
+			manager.lastTimeStamp 	= this.getDateTimeNow();
+			manager.srcAlias 		= dana.getElement("srcAlias").value;
+			manager.src	     		= dana.getElement("src").value;
 			managersList.Add(manager);
 		}
 
@@ -155,11 +163,15 @@ namespace csharpServices
 
 		private void updateOnlineManagersWithIncomingChatInfo(dedAnalyzed dana)
 		{
-			if(dops != null) {
-				byte[] blob = null; //TODO: create DED 
-				dops.sendToDOPsServer (blob);
-			}
-
+			if(dana.elements.GetType() == typeof(ChatInfoObj)) {
+				foreach(Manager manager in managersList) {
+					((ChatInfoObj)dana.elements).dest = manager.src; // Set dest to managers src
+					dops.sendToDOPsServer(ccph.createDEDpackage(dana));
+				}
+			} 
+//			else {
+//				throw new Exception("WARNING [updateOnlineManagersWithIncomingChatInfo]: Unknown ded, thus it was NOT forwarded");
+//			}
 		}
 
 		public int getManagerListCount()

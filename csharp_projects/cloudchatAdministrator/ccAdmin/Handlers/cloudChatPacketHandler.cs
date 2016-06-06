@@ -10,6 +10,19 @@ namespace csharpServices
 		public string type;
 		public bool bDecoded;
 		public Object elements; // will contain an object of following below type:
+		private byte[] originalDED = null;
+
+		public byte[] getDED()
+		{
+			if(originalDED == null)
+				throw new Exception("ERROR: dedAnalyzed did NOT contain the original ded - FATAL");
+			return originalDED;
+		}
+
+		public void setDED(byte[] ded)
+		{
+			originalDED = ded;
+		}
 
 		public string[] getElementNames()
 		{
@@ -105,6 +118,33 @@ namespace csharpServices
 		{
 		}
 
+		public byte[] createDEDpackage(dedAnalyzed dana)
+		{
+			byte[] blob = null;
+			try {
+				if(dana.elements.GetType() == typeof(ChatInfoObj)) {
+					DEDEncoder DED = DEDEncoder.DED_START_ENCODER();
+					DED.PUT_STRUCT_START ("ClientChatRequest");
+					DED.PUT_METHOD ("Method", "JSCChatInfo");
+					DED.PUT_USHORT ("TransID", short.Parse(dana.getElement("transactionsID").value.ToString()));
+					DED.PUT_STDSTRING("protocolTypeID", dana.getElement("protocolTypeID").value.ToString());
+					DED.PUT_STDSTRING("dest", dana.getElement("dest").value.ToString());  // This Admins uniqueID, since this is a test it really does not matter
+					DED.PUT_STDSTRING("src", dana.getElement("src").value.ToString()); // uniqueID
+					DED.PUT_STDSTRING("srcAlias", dana.getElement("srcAlias").value.ToString());
+					DED.PUT_STDSTRING("srcHomepageAlias", dana.getElement("srcHomepageAlias").value.ToString());
+					DED.PUT_STDSTRING("lastEntryTime", dana.getElement("lastEntryTime").value.ToString());
+					DED.PUT_STRUCT_END("ClientChatRequest");
+					blob = DED.GET_ENCODED_BYTEARRAY_DATA ();
+				}
+			}
+			catch (Exception e) 
+			{
+				string msg = "ERROR: [cloudChatPacketHandler:createDEDpackage] Could not create a valid DED; " + e.Message;
+				throw new Exception(msg);
+			}
+			return blob;
+		}
+
 		public dedAnalyzed parseDEDpacket(byte[] DED)
 		{
 			dedAnalyzed dana = new dedAnalyzed();
@@ -129,6 +169,7 @@ namespace csharpServices
 						   (DED2.GET_STRUCT_END("CloudManagerRequest")).Equals(1)) {
 							dana.bDecoded = true;
 							dana.type = "ForwardInfoRequest";
+							dana.setDED(DED);
 							dana.elements = fio;
 						} 
 						break;
@@ -144,6 +185,7 @@ namespace csharpServices
 						   (DED2.GET_STRUCT_END("ClientChatRequest")).Equals(1)) {
 							dana.bDecoded = true;
 							dana.type = "ChatInfo";
+							dana.setDED(DED);
 							dana.elements = cio;
 						}
 						break;

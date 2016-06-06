@@ -135,7 +135,7 @@ namespace cloudchat
 
 		cloudChatPacketHandler chatHandler;
 
-		private byte[] createForwardInfoRequest() {
+		private byte[] createForwardInfoRequest(string src, string srcAlias) {
 
 			DEDEncoder DED = DEDEncoder.DED_START_ENCODER();
 			DED.PUT_STRUCT_START ("CloudManagerRequest");
@@ -143,8 +143,8 @@ namespace cloudchat
 			DED.PUT_USHORT ("TransID", 23);
 			DED.PUT_STDSTRING("protocolTypeID", "DED1.00.00");
 			DED.PUT_STDSTRING("dest", "ccAdmin");  // This Admins uniqueID, since this is a test it really does not matter
-			DED.PUT_STDSTRING("src", "4086d4ab369e14ca1b6be7364d88cf85"); // CloudChatManager uniqueID
-			DED.PUT_STDSTRING("srcAlias", "SERUP");
+			DED.PUT_STDSTRING("src", src); // CloudChatManager uniqueID
+			DED.PUT_STDSTRING("srcAlias", srcAlias);
 			DED.PUT_STRUCT_END("CloudManagerRequest");
 			byte[] byteArray = DED.GET_ENCODED_BYTEARRAY_DATA ();
 			Assert.IsNotNull (byteArray);
@@ -189,7 +189,7 @@ namespace cloudchat
 		[Test]
 		public void addManagerToListTest() {
 			AARHandler aar = new AARHandler();
-			byte[] data = createChatInfo("4086d4ab369e14ca1b6be7364d88cf85","SERUP");
+			byte[] data = createForwardInfoRequest("4086d4ab369e14ca1b6be7364d88cf85","SERUP");
 			dedAnalyzed dana = chatHandler.parseDEDpacket(data);
 			aar.handleRouting(dana);
 			Assert.True(aar.getManagerListCount() == 1);
@@ -198,16 +198,16 @@ namespace cloudchat
 		[Test]
 		public void addMultipleManagerToListTest() {
 			AARHandler aar = new AARHandler();
-			byte[] data = createChatInfo("4086d4ab369e14ca1b6be7364d88cf85","SERUP");
+			byte[] data = createForwardInfoRequest("4086d4ab369e14ca1b6be7364d88cf85","SERUP");
 			dedAnalyzed dana = chatHandler.parseDEDpacket(data);
 			aar.handleRouting(dana);
-			data = createChatInfo("4086d4ab369e14ca1b6be7364d88cf44","SERUP2");
+			data = createForwardInfoRequest("4086d4ab369e14ca1b6be7364d88cf44","SERUP2");
 			dana = chatHandler.parseDEDpacket(data);
 			aar.handleRouting(dana);
-			data = createChatInfo("4086d4ab369e14ca1b6be7364d88cf45","SERUP3");
+			data = createForwardInfoRequest("4086d4ab369e14ca1b6be7364d88cf45","SERUP3");
 			dana = chatHandler.parseDEDpacket(data);
 			aar.handleRouting(dana);
-			data = createChatInfo("4086d4ab369e14ca1b6be7364d88cf46","SERUP4");
+			data = createForwardInfoRequest("4086d4ab369e14ca1b6be7364d88cf46","SERUP4");
 			dana = chatHandler.parseDEDpacket(data);
 			aar.handleRouting(dana);
 			Assert.True(aar.getManagerListCount() == 4);
@@ -221,10 +221,10 @@ namespace cloudchat
 			AARHandler aar = new AARHandler();
 			const int Interval = 30000;
 			aar.setMaxIdleTimeInList (Interval);  
-			byte[] data = createChatInfo("4086d4ab369e14ca1b6be7364d88cf85","SERUP");
+			byte[] data = createForwardInfoRequest("4086d4ab369e14ca1b6be7364d88cf85","SERUP");
 			dedAnalyzed dana = chatHandler.parseDEDpacket(data);
 			aar.handleRouting(dana);
-			data = createChatInfo("4086d4ab369e14ca1b6be7364d88cf99","SERUP2");
+			data = createForwardInfoRequest("4086d4ab369e14ca1b6be7364d88cf99","SERUP2");
 			dana = chatHandler.parseDEDpacket(data);
 			aar.handleRouting(dana);
 			Assert.True(aar.getManagerListCount() == 2);
@@ -233,7 +233,7 @@ namespace cloudchat
 			//ww.WaitForMilliseconds (Interval/2); // TODO: find a way to do relative sleep, meaning no actual time is spend (push / pop actual time, warping effect)
 			aar.InitiateWarpTime(Interval/2); // This will add milliseconds to relative time, thus warping it
 
-			data = createChatInfo("4086d4ab369e14ca1b6be7364d88cf77","SERUP3");
+			data = createForwardInfoRequest("4086d4ab369e14ca1b6be7364d88cf77","SERUP3");
 			dana = chatHandler.parseDEDpacket(data);
 			aar.handleRouting(dana);
 			Assert.False(aar.getManagerListCount() == 1); // There where still previous added manager in list which did not exceed the time span allowed to be in list, hence the failure
@@ -241,10 +241,36 @@ namespace cloudchat
 			// Wait for max timespan
 			aar.InitiateWarpTime(aar.getMaxIdleMillisecondTimeInList()+(Interval/2)); // This will add milliseconds to relative time, thus warping it
 
-			data = createChatInfo("4086d4ab369e14ca1b6be7364d88cf22","SERUP4");
+			data = createForwardInfoRequest("4086d4ab369e14ca1b6be7364d88cf22","SERUP4");
 			dana = chatHandler.parseDEDpacket(data);
 			aar.handleRouting(dana);
 			Assert.True(aar.getManagerListCount() == 1);
+		}
+
+		[Test]
+		public void forwardChatInfoToOnlineManagersTest() {
+
+			// First add some managers
+			AARHandler aar = new AARHandler();
+			const int Interval = 30000;
+			aar.setMaxIdleTimeInList (Interval);  
+			byte[] data = createForwardInfoRequest("4086d4ab369e14ca1b6be7364d88cf85","SERUP");
+			dedAnalyzed dana = chatHandler.parseDEDpacket(data);
+			aar.handleRouting(dana);
+			data = createForwardInfoRequest("4086d4ab369e14ca1b6be7364d88cf99","SERUP2");
+			dana = chatHandler.parseDEDpacket(data);
+			aar.handleRouting(dana);
+			Assert.True(aar.getManagerListCount() == 2);
+
+			// Then create chatInfo
+			data = createChatInfo("4086d4ab369e14ca1b6be7364d88cf11","chatClient");
+			dana = chatHandler.parseDEDpacket(data);
+
+			// Then handle chatInfo - updateOnlineManagersWithIncomingChatInfo
+			aar.handleRouting(dana);
+
+			// Verify that dana dest was NOT changed to manager src, since NO dops API was initiated
+			Assert.False(dana.getElement("dest").value == "4086d4ab369e14ca1b6be7364d88cf99");
 		}
 
 		[Test]
@@ -252,10 +278,10 @@ namespace cloudchat
 		{
 			// Same ded should NOT create multiple entries in list
 			AARHandler aar = new AARHandler();
-			byte[] data = createChatInfo("4086d4ab369e14ca1b6be7364d88cf22","SERUP4");
+			byte[] data = createForwardInfoRequest("4086d4ab369e14ca1b6be7364d88cf22","SERUP4");
 			dedAnalyzed dana = chatHandler.parseDEDpacket(data);
 			aar.handleRouting(dana);
-			data = createChatInfo("4086d4ab369e14ca1b6be7364d88cf22","SERUP4");
+			data = createForwardInfoRequest("4086d4ab369e14ca1b6be7364d88cf22","SERUP4");
 			dana = chatHandler.parseDEDpacket(data);
 			aar.handleRouting(dana);
 			Assert.True(aar.getManagerListCount() == 1);
