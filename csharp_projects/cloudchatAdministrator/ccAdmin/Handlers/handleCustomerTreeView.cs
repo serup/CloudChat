@@ -85,19 +85,39 @@ namespace csharpServices
 			}
 		}
 
+
 		public void updateDataOfListStoreInTreeView(params string[] str)
 		{
-			bool bUpdated = false;
-			TreeIter tmpTreeIter; 
-			for(System.Numerics.BigInteger i=0; mListStore.GetIterFromString(out tmpTreeIter, i.ToString())==true;i++) 
-			{ 
-				mListStore.SetValues(tmpTreeIter,str); 
-				bUpdated = true;
-			}
+			try {
+				bool bUpdated = false;
+				TreeIter tmpTreeIter; 
 
-			if(!bUpdated) 
-				mListStore.AppendValues (str);
+				mListStore.GetIterFirst(out tmpTreeIter);
+				object o = mListStore.GetValue(tmpTreeIter, 1);
+				while(o!=null)
+				{
+					if(o.ToString()==str[1].ToString()) {
+						mListStore.SetValues(tmpTreeIter,str); // update row
+						bUpdated=true;
+						break;
+					}
+					if(mListStore.IterNext(ref tmpTreeIter)) {
+						o = mListStore.GetValue(tmpTreeIter, 1);
+					}
+					else 
+						o = null;
+				}
+
+				if(!bUpdated)  
+					mListStore.AppendValues (str); // Add some data to the store
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine("WARNING: adding to treeview caused exception");
+				Console.WriteLine(e.ToString());
+			}
 		}
+
 	}
 }
 
