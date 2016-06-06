@@ -238,7 +238,7 @@ namespace cloudchat
 			Assert.False(aar.getManagerListCount() == 1); // There where still managers in list which did not exceed the time span allowed to be in list, hence the failure
 
 			// Wait for max timespan
-			ww.WaitForMilliseconds (aar.getMaxIdleTimeInList()); // TODO: find a way to do relative sleep, meaning no actual time is spend (push / pop actual time, warping effect)
+			aar.InitiateWarpTime(aar.getMaxIdleMillisecondTimeInList()); // This will add milliseconds to relative time, thus warping it
 
 			data = createChatInfo("4086d4ab369e14ca1b6be7364d88cf22","SERUP4");
 			dana = chatHandler.parseDEDpacket(data);

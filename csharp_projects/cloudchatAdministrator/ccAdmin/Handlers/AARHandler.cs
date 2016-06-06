@@ -41,6 +41,7 @@ namespace csharpServices
 		private List<Customer> customersList = new List<Customer>();
 		private int maxIdleTimeInMillisecondsInList = 10000;
 		private DOPSHandler dops = null;
+		public double warpFactorInMilliseconds = 0; // default no time warp -- only used for testing 
 
 		public AARHandler()
 		{
@@ -56,7 +57,7 @@ namespace csharpServices
 			maxIdleTimeInMillisecondsInList = IntervalInMilliseconds;
 		}
 
-		public int getMaxIdleTimeInList() {
+		public int getMaxIdleMillisecondTimeInList() {
 			return maxIdleTimeInMillisecondsInList;
 		}
 
@@ -81,7 +82,7 @@ namespace csharpServices
 					bool bUpdated=false;
 					foreach(Manager manager in managersList) {
 						if(manager.srcAlias == dana.getElement("srcAlias").value) {
-							manager.lastTimeStamp = DateTime.Now;
+							manager.lastTimeStamp = this.getDateTimeNow();
 							manager.src  = dana.getElement("src").value;
 							bUpdated=true;
 						}
@@ -103,12 +104,33 @@ namespace csharpServices
 
 		}
 
+		public void InitiateWarpTime(double warpFactorInMilliseconds)
+		{
+			this.warpFactorInMilliseconds = warpFactorInMilliseconds;
+		}
+
+		public void resetWarpTime()
+		{
+			this.warpFactorInMilliseconds = 0;
+		}
+
+		private DateTime getDateTimeNow()
+		{
+			DateTime dt = DateTime.Now;
+			if(this.warpFactorInMilliseconds != 0) {
+				DateTime newDt = dt.AddMilliseconds(this.warpFactorInMilliseconds);
+				return newDt;
+			}
+			else
+				return dt;
+		}
+
 		private void removeOfflineManagers()
 		{
 			try {
 				for (int i = managersList.Count - 1; i >= 0; i--)
 				{
-					if((DateTime.Now - managersList[i].lastTimeStamp).TotalMilliseconds > maxIdleTimeInMillisecondsInList)
+					if((this.getDateTimeNow() - managersList[i].lastTimeStamp).TotalMilliseconds > maxIdleTimeInMillisecondsInList)
 						managersList.RemoveAt(i);
 				}
 			}
@@ -121,7 +143,7 @@ namespace csharpServices
 		private void appendManagerToList(dedAnalyzed dana)
 		{
 			Manager manager = new Manager();
-			manager.lastTimeStamp = DateTime.Now;
+			manager.lastTimeStamp = this.getDateTimeNow();
 			manager.srcAlias = dana.getElement("srcAlias").value;
 			manager.src	     = dana.getElement("src").value;
 			managersList.Add(manager);
