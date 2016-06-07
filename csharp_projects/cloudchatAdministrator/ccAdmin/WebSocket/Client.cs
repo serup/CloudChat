@@ -64,7 +64,8 @@ namespace WebSocketClient
 			{
 				// Define the cancellation token.
       			CancellationTokenSource source = new CancellationTokenSource();
-				token = source.Token;
+				//token = source.Token;
+				token = CancellationToken.None;
 				_waitHandle = new AutoResetEvent (false); // is signaled when data has been read
 				webSocket = new ClientWebSocket();
 				webSocket.ConnectAsync(new Uri(uri), token).Wait();
@@ -372,9 +373,12 @@ namespace WebSocketClient
 			Console.WriteLine("WebSocketClient Receive setup");
 			receivedBuffer = null;
 			try {
+				ArraySegment<byte> arraySegment = new ArraySegment<byte>(buffer);
 				while (webSocket.State == WebSocketState.Open)
-				{                
-					var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), token);
+				{            
+					try {
+						//var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), token);
+						var result = await webSocket.ReceiveAsync(arraySegment, token);
 					if (result.MessageType == WebSocketMessageType.Close )
 					{
 						if(webSocket.State == WebSocketState.Open)
@@ -402,17 +406,23 @@ namespace WebSocketClient
 							WaitHandle.Set (); // signal that data has been received - this will wake up WaitForData() - which will then return it to user
 						}
 					}
+					}
+					catch(Exception e)
+					{
+						Console.WriteLine("ERROR: reading on socket failed - will try to ignore it");
+						webSocket.Abort();
+					}
 				}
 			}
 			catch (Exception e)
 			{
+				Console.WriteLine(e.ToString());
 				Console.WriteLine(e.Message.ToString());
 				Console.WriteLine("Exception: NO longer possible to receive data from DOPs");
-				Console.WriteLine(e.ToString());
 				bClientError = true;
 			}
 			Console.WriteLine("WebSocket Receive ending!");
-			WaitHandle.Set (); // Signal to end a possible wait
+			//WaitHandle.Set (); // Signal to end a possible wait
 		}
 
 		private static void LogStatus(bool receiving, byte[] buffer, int length)
