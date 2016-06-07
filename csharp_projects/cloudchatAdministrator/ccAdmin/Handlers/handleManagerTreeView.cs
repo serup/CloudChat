@@ -3,7 +3,7 @@ using Gtk;
 
 namespace csharpServices
 {
-	public class handleManagerTreeView
+	public class handleManagerTreeView : TreeViewTools
 	{
 		private NodeView nodeviewManagers;
 		private Gtk.ListStore mListStore;
@@ -75,53 +75,14 @@ namespace csharpServices
 			try {
 				System.Type type = dana.elements.GetType();
 				if(type == typeof(ForwardInfoRequestObj)) {
-					//element[] elements = dana.getElementNamesAndValues();
-					//updateDataOfListStoreInTreeView("idle", elements[4].value);
-//					updateDataOfListStoreInTreeView("idle", dana.getElement("srcAlias").value);
-					updateDataOfListStoreInTreeView("idle", dana.getElement("src").value);
-
-				}
-				else {
-					//throw new NotSupportedException("ERROR: incomming type of data object is currently NOT supported");
+					updateDataOfListStoreInTreeView(mListStore, 1, "idle", dana.getElement("src").value);
 				}
 			}
 			catch (Exception e)
 			{
-				Console.WriteLine(e.ToString());
+				Console.WriteLine(e.Message.ToString());
 			}
 
-		}
-
-		public void updateDataOfListStoreInTreeView(params string[] str)
-		{
-			try {
-				bool bUpdated = false;
-				TreeIter tmpTreeIter; 
-
-				mListStore.GetIterFirst(out tmpTreeIter);
-				object o = mListStore.GetValue(tmpTreeIter, 1);
-				while(o!=null)
-				{
-					if(o.ToString()==str[1].ToString()) {
-						mListStore.SetValues(tmpTreeIter,str); // update row
-						bUpdated=true;
-						break;
-					}
-					if(mListStore.IterNext(ref tmpTreeIter)) {
-						o = mListStore.GetValue(tmpTreeIter, 1);
-					}
-					else 
-						o = null;
-				}
-
-				if(!bUpdated)  
-					mListStore.AppendValues (str); // Add some data to the store
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine("WARNING: adding to treeview caused exception");
-				Console.WriteLine(e.ToString());
-			}
 		}
 	}
 }

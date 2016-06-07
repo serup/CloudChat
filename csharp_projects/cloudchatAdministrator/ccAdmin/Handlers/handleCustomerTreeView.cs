@@ -4,27 +4,24 @@ using System.Numerics;
 
 namespace csharpServices
 {
-	public class handleCustomerTreeView
+	public class handleCustomerTreeView : TreeViewTools
 	{
 		private NodeView nodeviewCustomers;
 		private Gtk.ListStore mListStore;
 		private Gtk.TreeViewColumn[] Columns = null;
 
-		public handleCustomerTreeView(NodeView nodeviewCustomers)
+		public handleCustomerTreeView(NodeView nodeviewCustomers, params string[] titles)
 		{
 			// Create TreeView with cells and attached model for control
-			initNodeView(nodeviewCustomers);
-
+			initNodeView(nodeviewCustomers, titles.GetLength(0));
 			// Set titles on columns
-			setTitlesOnColumns("Status", "Name", "visit on Homepage");
-			// Add some data to the model treeview store
-			//addDataToTreeView("Idle", "John doe");
+			setTitlesOnColumns(titles);
 		}
 
-		public void initNodeView(NodeView nodeviewCustomers)
+		public void initNodeView(NodeView nodeviewCustomers, int AmountOfColumns)
 		{
+			if(nodeviewCustomers == null) throw new Exception("ERROR [handleCustomerTreeView]: nodeview object is null");
 			this.nodeviewCustomers = nodeviewCustomers;
-			int AmountOfColumns = 3;
 			createColumnsAndCells(AmountOfColumns);
 			createModel(AmountOfColumns);
 		}
@@ -76,7 +73,7 @@ namespace csharpServices
 			try {
 				System.Type type = dana.elements.GetType();
 				if(type == typeof(ChatInfoObj)) {
-					updateDataOfListStoreInTreeView("idle", dana.getElement("srcAlias").value, dana.getElement("srcHomepageAlias").value);
+					updateDataOfListStoreInTreeView(mListStore, 1, "idle", dana.getElement("srcAlias").value, dana.getElement("srcHomepageAlias").value);
 				}
 			}
 			catch (Exception e)
@@ -86,37 +83,6 @@ namespace csharpServices
 		}
 
 
-		public void updateDataOfListStoreInTreeView(params string[] str)
-		{
-			try {
-				bool bUpdated = false;
-				TreeIter tmpTreeIter; 
-
-				mListStore.GetIterFirst(out tmpTreeIter);
-				object o = mListStore.GetValue(tmpTreeIter, 1);
-				while(o!=null)
-				{
-					if(o.ToString()==str[1].ToString()) {
-						mListStore.SetValues(tmpTreeIter,str); // update row
-						bUpdated=true;
-						break;
-					}
-					if(mListStore.IterNext(ref tmpTreeIter)) {
-						o = mListStore.GetValue(tmpTreeIter, 1);
-					}
-					else 
-						o = null;
-				}
-
-				if(!bUpdated)  
-					mListStore.AppendValues (str); // Add some data to the store
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine("WARNING: adding to treeview caused exception");
-				Console.WriteLine(e.ToString());
-			}
-		}
 
 	}
 }

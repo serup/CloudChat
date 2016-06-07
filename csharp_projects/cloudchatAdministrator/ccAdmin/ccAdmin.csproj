@@ -48,10 +48,6 @@
       <SpecificVersion>False</SpecificVersion>
       <Package>glade-sharp-2.0</Package>
     </Reference>
-    <Reference Include="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
-      <SpecificVersion>False</SpecificVersion>
-      <Package>gtk-sharp-2.0</Package>
-    </Reference>
     <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
       <SpecificVersion>False</SpecificVersion>
       <Package>gtk-sharp-2.0</Package>
@@ -126,6 +122,7 @@
     <Compile Include="Handlers\handleCustomerTreeView.cs" />
     <Compile Include="Handlers\AARHandler.cs" />
     <Compile Include="Handlers\cloudChatPacketHandler.cs" />
+    <Compile Include="Handlers\TreeViewTools.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

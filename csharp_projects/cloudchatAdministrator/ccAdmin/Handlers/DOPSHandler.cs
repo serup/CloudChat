@@ -11,7 +11,7 @@ namespace csharpServices
 		private Client.wshandles _handles;
 		private short trans_id;
 		private String uniqueId;
-		private bool bConnected = false;
+		public bool bConnected = false;
 
 		public bool connectToDOPsServer()
 		{
