@@ -376,7 +376,7 @@ namespace WebSocketClient
 				ArraySegment<byte> arraySegment = new ArraySegment<byte>(buffer);
 				while (webSocket.State == WebSocketState.Open)
 				{            
-					try {
+//					try {
 						//var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), token);
 						var result = await webSocket.ReceiveAsync(arraySegment, token);
 					if (result.MessageType == WebSocketMessageType.Close )
@@ -406,12 +406,12 @@ namespace WebSocketClient
 							WaitHandle.Set (); // signal that data has been received - this will wake up WaitForData() - which will then return it to user
 						}
 					}
-					}
-					catch(Exception e)
-					{
-						Console.WriteLine("ERROR: reading on socket failed - will try to ignore it");
-						webSocket.Abort();
-					}
+//					}
+//					catch(Exception e)
+//					{
+//						Console.WriteLine("ERROR: reading on socket failed - will try to ignore it");
+//						webSocket.Abort();
+//					}
 				}
 			}
 			catch (Exception e)
@@ -422,7 +422,7 @@ namespace WebSocketClient
 				bClientError = true;
 			}
 			Console.WriteLine("WebSocket Receive ending!");
-			//WaitHandle.Set (); // Signal to end a possible wait
+			WaitHandle.Set (); // Signal to end a possible wait
 		}
 
 		private static void LogStatus(bool receiving, byte[] buffer, int length)
