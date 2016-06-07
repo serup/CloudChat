@@ -26,7 +26,7 @@ public partial class MainWindow: Gtk.Window
 	{
 		Build();
 		// Fetch handles to the treeviews
-		managerTreeView = new handleManagerTreeView(this.nodeviewManagers);
+		managerTreeView = new handleManagerTreeView(this.nodeviewManagers, "Status", "Name");
 		customerTreeView = new handleCustomerTreeView(this.nodeviewCustomers, "Status", "Name", "visit on Homepage");
 	}
 
