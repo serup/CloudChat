@@ -109,7 +109,13 @@ namespace csharpServices
 		public byte[] waitForIncomming()
 		{
 			byte[] receivedData = null;
-			receivedData = Client.FetchReceived (_handles);
+			try {
+				receivedData = Client.FetchReceived (_handles);
+			}
+			catch(Exception e) {
+				Console.WriteLine(e.Message.ToString());
+				bConnected = false;
+			}
 			return receivedData;
 		}
 

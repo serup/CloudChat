@@ -12,6 +12,7 @@ namespace WebSocketClient
 {
 	public class Client
 	{
+		public static bool bClientError = false;
 		private static object consoleLock = new object();
 		private const int sendChunkSize = 256;
 //		private const int receiveChunkSize = 64; // TODO: perhaps implement ringbuffer to handle incomming data
@@ -63,7 +64,7 @@ namespace WebSocketClient
 			{
 				// Define the cancellation token.
       			CancellationTokenSource source = new CancellationTokenSource();
-      			token = source.Token;
+				token = source.Token;
 				_waitHandle = new AutoResetEvent (false); // is signaled when data has been read
 				webSocket = new ClientWebSocket();
 				webSocket.ConnectAsync(new Uri(uri), token).Wait();
@@ -76,14 +77,16 @@ namespace WebSocketClient
 			finally
 			{
 				if (webSocket != null) {
-					if (webSocket.State == WebSocketState.Open || webSocket.State == WebSocketState.CloseReceived)
-						webSocket.Dispose ();
+					if(webSocket.State == WebSocketState.Open || webSocket.State == WebSocketState.CloseReceived) {
+						webSocket.Dispose();
+						webSocket.Abort();
+					}
 				}
-				Console.WriteLine("Connection with mockDOPsServer ended for WebSocketClient");
 
 				lock (consoleLock)
 				{
 					Console.ForegroundColor = ConsoleColor.Red;
+					Console.WriteLine("Connection with mockDOPsServer ended for WebSocketClient");
 					Console.WriteLine("WebSocket closed.");
 					Console.ResetColor();
 				}
@@ -258,45 +261,45 @@ namespace WebSocketClient
 			Console.WriteLine("WebSocket SendBLOB ending!");
 		}
 
-		private static async Task SendRandom(ClientWebSocket webSocket)
-		{
-			var random = new Random();
-			byte[] buffer = new byte[sendChunkSize];
-			Console.WriteLine("WebSocketClient Send setup");
+//		private static async Task SendRandom(ClientWebSocket webSocket)
+//		{
+//			var random = new Random();
+//			byte[] buffer = new byte[sendChunkSize];
+//			Console.WriteLine("WebSocketClient Send setup");
+//
+//			while (webSocket.State == WebSocketState.Open)
+//			{
+//				random.NextBytes(buffer);
+//
+//				await webSocket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Binary, false, CancellationToken.None);
+//				LogStatus(false, buffer, buffer.Length);
+//
+//				await Task.Delay(delay);
+//			}
+//			Console.WriteLine("WebSocket Send ending!");
+//		}
 
-			while (webSocket.State == WebSocketState.Open)
-			{
-				random.NextBytes(buffer);
-
-				await webSocket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Binary, false, CancellationToken.None);
-				LogStatus(false, buffer, buffer.Length);
-
-				await Task.Delay(delay);
-			}
-			Console.WriteLine("WebSocket Send ending!");
-		}
-
-		private static async Task Receive(ClientWebSocket webSocket)
-		{
-			byte[] buffer = new byte[receiveChunkSize];
-			Console.WriteLine("WebSocketClient Receive setup");
-			while (webSocket.State == WebSocketState.Open)
-			{                
-				var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-				if (result.MessageType == WebSocketMessageType.Close)
-				{
-					await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
-				}
-				else
-				{
-					if (buffer.Length < result.Count)
-						Console.WriteLine ("WARNING - incomming data is larger than internal buffer !!!");
-					else
-						LogStatus(true, buffer, result.Count);
-				}
-			}
-			Console.WriteLine("WebSocket Receive ending!");
-		}
+//		private static async Task Receive(ClientWebSocket webSocket)
+//		{
+//			byte[] buffer = new byte[receiveChunkSize];
+//			Console.WriteLine("WebSocketClient Receive setup");
+//			while (webSocket.State == WebSocketState.Open)
+//			{                
+//				var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+//				if (result.MessageType == WebSocketMessageType.Close)
+//				{
+//					await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
+//				}
+//				else
+//				{
+//					if (buffer.Length < result.Count)
+//						Console.WriteLine ("WARNING - incomming data is larger than internal buffer !!!");
+//					else
+//						LogStatus(true, buffer, result.Count);
+//				}
+//			}
+//			Console.WriteLine("WebSocket Receive ending!");
+//		}
 
 //		public static byte[] FetchReceived()
 //		{
@@ -308,13 +311,14 @@ namespace WebSocketClient
 
 		public static byte[] FetchReceived (wshandles _handles)
 		{
-			Console.WriteLine ("Waiting...");
 			try{
-			if(webSocket.State == WebSocketState.Open) {
-				_handles.waitHandle.WaitOne();                // Wait for notification
-				Console.WriteLine("Notified");
-			} else
-				Console.WriteLine("Waiting - aborted - socket is closed");
+				if(bClientError) return null;
+				Console.WriteLine("Waiting...");
+				if(_handles.webSocket.State == WebSocketState.Open) {
+					_handles.waitHandle.WaitOne();                // Wait for notification
+					Console.WriteLine("Notified");
+				} else
+					Console.WriteLine("Waiting - aborted - socket is closed");
 			}
 			catch (Exception e) {
 				Console.WriteLine(e.ToString());
@@ -322,45 +326,45 @@ namespace WebSocketClient
 			return receivedBuffer;
 		}
 
-		private static async Task ReceiveBLOB(ClientWebSocket webSocket)
-		{
-			byte[] buffer = new byte[1024];
-			Console.WriteLine("WebSocketClient Receive setup");
-			receivedBuffer = null;
-
-			while (webSocket.State == WebSocketState.Open)
-			{                
-				var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-				if (result.MessageType == WebSocketMessageType.Close)
-				{
-					await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
-				}
-				else
-				{
-					if (buffer.Length < result.Count) {
-						Console.WriteLine ("WARNING - incomming data is larger than internal buffer - trying to receive and merge rest !!!");
-						receivedBuffer = null;
-						/*  DOES NOT WORK - MISSING BYTES IN BETWEEN - FIND A BETTER WAY
-						int restBytes = result.Count - buffer.Length;
-						byte[] restBuffer = new byte[restBytes];
-						receivedBuffer = new byte[result.Count]; // make room for ALL data
-						Buffer.BlockCopy (buffer, 0, receivedBuffer, 0, buffer.Length); // copy first part
-						// try to receive waiting bytes
-						result = await webSocket.ReceiveAsync(new ArraySegment<byte>(restBuffer), CancellationToken.None);
-						Buffer.BlockCopy (restBuffer, 0, receivedBuffer, buffer.Length-1, restBuffer.Length); // copy rest part
-						*/
-						_waitHandle.Set (); // signal that data has been received - this will wake up WaitForData() - which will then return it to user
-					}
-					else {
-						receivedBuffer = new byte[result.Count];
-						Buffer.BlockCopy (buffer, 0, receivedBuffer, 0, result.Count);
-						_waitHandle.Set (); // signal that data has been received - this will wake up WaitForData() - which will then return it to user
-					}
-				}
-			}
-			Console.WriteLine("WebSocket Receive ending!");
-		}
-
+//		private static async Task ReceiveBLOB(ClientWebSocket webSocket)
+//		{
+//			byte[] buffer = new byte[1024];
+//			Console.WriteLine("WebSocketClient Receive setup");
+//			receivedBuffer = null;
+//
+//			while (webSocket.State == WebSocketState.Open)
+//			{                
+//				var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+//				if (result.MessageType == WebSocketMessageType.Close)
+//				{
+//					await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None);
+//				}
+//				else
+//				{
+//					if (buffer.Length < result.Count) {
+//						Console.WriteLine ("WARNING - incomming data is larger than internal buffer - trying to receive and merge rest !!!");
+//						receivedBuffer = null;
+//						/*  DOES NOT WORK - MISSING BYTES IN BETWEEN - FIND A BETTER WAY
+//						int restBytes = result.Count - buffer.Length;
+//						byte[] restBuffer = new byte[restBytes];
+//						receivedBuffer = new byte[result.Count]; // make room for ALL data
+//						Buffer.BlockCopy (buffer, 0, receivedBuffer, 0, buffer.Length); // copy first part
+//						// try to receive waiting bytes
+//						result = await webSocket.ReceiveAsync(new ArraySegment<byte>(restBuffer), CancellationToken.None);
+//						Buffer.BlockCopy (restBuffer, 0, receivedBuffer, buffer.Length-1, restBuffer.Length); // copy rest part
+//						*/
+//						_waitHandle.Set (); // signal that data has been received - this will wake up WaitForData() - which will then return it to user
+//					}
+//					else {
+//						receivedBuffer = new byte[result.Count];
+//						Buffer.BlockCopy (buffer, 0, receivedBuffer, 0, result.Count);
+//						_waitHandle.Set (); // signal that data has been received - this will wake up WaitForData() - which will then return it to user
+//					}
+//				}
+//			}
+//			Console.WriteLine("WebSocket Receive ending!");
+//		}
+//
 
 		private static async Task ReceiveBLOB(ClientWebSocket webSocket, EventWaitHandle WaitHandle)
 		{
@@ -405,7 +409,7 @@ namespace WebSocketClient
 				Console.WriteLine(e.Message.ToString());
 				Console.WriteLine("Exception: NO longer possible to receive data from DOPs");
 				Console.WriteLine(e.ToString());
-				webSocket.Abort();
+				bClientError = true;
 			}
 			Console.WriteLine("WebSocket Receive ending!");
 			WaitHandle.Set (); // Signal to end a possible wait
