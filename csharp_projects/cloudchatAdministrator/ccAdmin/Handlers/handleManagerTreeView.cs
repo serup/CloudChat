@@ -6,7 +6,7 @@ namespace csharpServices
 	public class handleManagerTreeView : TreeViewTools
 	{
 		private NodeView nodeviewManagers;
-		private Gtk.ListStore mListStore;
+		private Gtk.ListStore managerListStore;
 		private Gtk.TreeViewColumn[] Columns = null;
 
 		public handleManagerTreeView(NodeView nodeviewManagers)
@@ -51,9 +51,9 @@ namespace csharpServices
 		public void createModel()
 		{
 			// Create a model that will hold two strings -  Name and Song Title
-			mListStore = new Gtk.ListStore(typeof(string), typeof(string));
+			managerListStore = new Gtk.ListStore(typeof(string), typeof(string));
 			// Assign the model to the TreeView
-			nodeviewManagers.NodeSelection.NodeView.Model = mListStore;
+			nodeviewManagers.NodeSelection.NodeView.Model = managerListStore;
 		}
 
 		public void setTitleOnColumn(int index, string title)
@@ -75,7 +75,7 @@ namespace csharpServices
 			try {
 				System.Type type = dana.elements.GetType();
 				if(type == typeof(ForwardInfoRequestObj)) {
-					updateDataOfListStoreInTreeView(mListStore, 1, "idle", dana.getElement("src").value);
+					updateDataOfListStoreInTreeView(managerListStore, 1, "idle", dana.getElement("src").value);
 				}
 			}
 			catch (Exception e)

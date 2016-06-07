@@ -7,7 +7,7 @@ namespace csharpServices
 	public class handleCustomerTreeView : TreeViewTools
 	{
 		private NodeView nodeviewCustomers;
-		private Gtk.ListStore mListStore;
+		private Gtk.ListStore customerListStore;
 		private Gtk.TreeViewColumn[] Columns = null;
 
 		public handleCustomerTreeView(NodeView nodeviewCustomers, params string[] titles)
@@ -50,8 +50,8 @@ namespace csharpServices
 		{
 			Type[] types = new Type[AmountOfColumnsToHandle];
 			for(int i=0;i<AmountOfColumnsToHandle;i++) { types[i] = typeof(string); }
-			mListStore = new Gtk.ListStore(types);
-			nodeviewCustomers.NodeSelection.NodeView.Model = mListStore;
+			customerListStore = new Gtk.ListStore(types);
+			nodeviewCustomers.NodeSelection.NodeView.Model = customerListStore;
 		}
 
 		public void setTitleOnColumn(int index, string title)
@@ -73,7 +73,7 @@ namespace csharpServices
 			try {
 				System.Type type = dana.elements.GetType();
 				if(type == typeof(ChatInfoObj)) {
-					updateDataOfListStoreInTreeView(mListStore, 1, "idle", dana.getElement("srcAlias").value, dana.getElement("srcHomepageAlias").value);
+					updateDataOfListStoreInTreeView(customerListStore, 1, "idle", dana.getElement("srcAlias").value, dana.getElement("srcHomepageAlias").value);
 				}
 			}
 			catch (Exception e)
