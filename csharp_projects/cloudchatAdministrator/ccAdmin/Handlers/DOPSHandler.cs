@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using WebSocketClient;
 using DED;
 using System.Threading;
+using System.Net.WebSockets;
 
 namespace csharpServices
 {
@@ -193,6 +194,13 @@ namespace csharpServices
 
 		public bool isConnected()
 		{
+			try{
+			if(Client.webSocket.State != WebSocketState.Open)
+					bConnected = false;
+			}
+			catch( Exception e) {
+				bConnected = false;
+			}
 			return bConnected;
 		}
 		
@@ -202,9 +210,5 @@ namespace csharpServices
 			Client.WSDisconnect (_handles);
 			bConnected = false;
 		}
-
-
-
 	}
-
 }

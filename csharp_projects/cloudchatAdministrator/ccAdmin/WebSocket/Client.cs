@@ -25,37 +25,37 @@ namespace WebSocketClient
 		static EventWaitHandle _waitHandle = null; // is signaled when data has been read
 		static CancellationToken token;
 
-		public static async Task _Connect(string uri)
-		{
-			//ClientWebSocket webSocket = null;
-
-			try
-			{
-				webSocket = new ClientWebSocket();
-				webSocket.ConnectAsync(new Uri(uri), CancellationToken.None).Wait();
-				await Task.WhenAll(Receive(webSocket), SendRandom(webSocket));
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine("Exception: {0}", ex);
-			}
-			finally
-			{
-				if (webSocket != null) {
-					if (webSocket.State == WebSocketState.Open || webSocket.State == WebSocketState.CloseReceived)
-						webSocket.Dispose ();
-				}
-				Console.WriteLine("Connection with mockDOPsServer ended for WebSocketClient");
-
-				lock (consoleLock)
-				{
-					Console.ForegroundColor = ConsoleColor.Red;
-					Console.WriteLine("WebSocket closed.");
-					Console.ResetColor();
-				}
-			}
-		}
-
+//		public static async Task _Connect(string uri)
+//		{
+//			//ClientWebSocket webSocket = null;
+//
+//			try
+//			{
+//				webSocket = new ClientWebSocket();
+//				webSocket.ConnectAsync(new Uri(uri), CancellationToken.None).Wait();
+//				await Task.WhenAll(Receive(webSocket), SendRandom(webSocket));
+//			}
+//			catch (Exception ex)
+//			{
+//				Console.WriteLine("Exception: {0}", ex);
+//			}
+//			finally
+//			{
+//				if (webSocket != null) {
+//					if (webSocket.State == WebSocketState.Open || webSocket.State == WebSocketState.CloseReceived)
+//						webSocket.Dispose ();
+//				}
+//				Console.WriteLine("Connection with mockDOPsServer ended for WebSocketClient");
+//
+//				lock (consoleLock)
+//				{
+//					Console.ForegroundColor = ConsoleColor.Red;
+//					Console.WriteLine("WebSocket closed.");
+//					Console.ResetColor();
+//				}
+//			}
+//		}
+//
 
 		public static async Task Connect(string uri)
 		{
@@ -90,99 +90,99 @@ namespace WebSocketClient
 			}
 		}
 
-		public static async Task Connect(string uri, ClientWebSocket _webSocket)
-		{
-			try
-			{
-				webSocket = new ClientWebSocket();
-				webSocket.ConnectAsync(new Uri(uri), CancellationToken.None).Wait();
-				await Task.WhenAll(ReceiveBLOB(webSocket));  
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine("Exception: {0}", ex);
-			}
-			finally
-			{
-				if (webSocket != null) {
-					if (webSocket.State == WebSocketState.Open || webSocket.State == WebSocketState.CloseReceived)
-						webSocket.Dispose ();
-				}
-				Console.WriteLine("Connection with mockDOPsServer ended for WebSocketClient");
+//		public static async Task Connect(string uri, ClientWebSocket _webSocket)
+//		{
+//			try
+//			{
+//				webSocket = new ClientWebSocket();
+//				webSocket.ConnectAsync(new Uri(uri), CancellationToken.None).Wait();
+//				await Task.WhenAll(ReceiveBLOB(webSocket));  
+//			}
+//			catch (Exception ex)
+//			{
+//				Console.WriteLine("Exception: {0}", ex);
+//			}
+//			finally
+//			{
+//				if (webSocket != null) {
+//					if (webSocket.State == WebSocketState.Open || webSocket.State == WebSocketState.CloseReceived)
+//						webSocket.Dispose ();
+//				}
+//				Console.WriteLine("Connection with mockDOPsServer ended for WebSocketClient");
+//
+//				lock (consoleLock)
+//				{
+//					Console.ForegroundColor = ConsoleColor.Red;
+//					Console.WriteLine("WebSocket closed.");
+//					Console.ResetColor();
+//				}
+//			}
+//		}
 
-				lock (consoleLock)
-				{
-					Console.ForegroundColor = ConsoleColor.Red;
-					Console.WriteLine("WebSocket closed.");
-					Console.ResetColor();
-				}
-			}
-		}
+//		public static async Task Connect(string uri, Func<ClientWebSocket, Task> ReceiveDataFunction)
+//		{
+//			//ClientWebSocket webSocket = null;
+//
+//			try
+//			{
+//				webSocket = new ClientWebSocket();
+//				webSocket.ConnectAsync(new Uri(uri), CancellationToken.None).Wait();
+////				await Task.WhenAll(Receive(webSocket), SendRandom(webSocket));
+//				await Task.WhenAll(ReceiveDataFunction(webSocket));
+//			}
+//			catch (Exception ex)
+//			{
+//				Console.WriteLine("Exception: {0}", ex);
+//			}
+//			finally
+//			{
+//				if (webSocket != null) {
+//					if (webSocket.State == WebSocketState.Open || webSocket.State == WebSocketState.CloseReceived)
+//						webSocket.Dispose ();
+//				}
+//				Console.WriteLine("Connection with mockDOPsServer ended for WebSocketClient");
+//
+//				lock (consoleLock)
+//				{
+//					Console.ForegroundColor = ConsoleColor.Red;
+//					Console.WriteLine("WebSocket closed.");
+//					Console.ResetColor();
+//				}
+//			}
+//		}
 
-		public static async Task Connect(string uri, Func<ClientWebSocket, Task> ReceiveDataFunction)
-		{
-			//ClientWebSocket webSocket = null;
-
-			try
-			{
-				webSocket = new ClientWebSocket();
-				webSocket.ConnectAsync(new Uri(uri), CancellationToken.None).Wait();
-//				await Task.WhenAll(Receive(webSocket), SendRandom(webSocket));
-				await Task.WhenAll(ReceiveDataFunction(webSocket));
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine("Exception: {0}", ex);
-			}
-			finally
-			{
-				if (webSocket != null) {
-					if (webSocket.State == WebSocketState.Open || webSocket.State == WebSocketState.CloseReceived)
-						webSocket.Dispose ();
-				}
-				Console.WriteLine("Connection with mockDOPsServer ended for WebSocketClient");
-
-				lock (consoleLock)
-				{
-					Console.ForegroundColor = ConsoleColor.Red;
-					Console.WriteLine("WebSocket closed.");
-					Console.ResetColor();
-				}
-			}
-		}
-
-		public static async Task ConnectTo(string uri)
-		{
-			ClientWebSocket __webSocket = null;
-			EventWaitHandle WaitHandle = new AutoResetEvent (false); // is signaled when data has been read
-
-			try
-			{
-				__webSocket = new ClientWebSocket();
-				__webSocket.ConnectAsync(new Uri(uri), CancellationToken.None).Wait();
-				webSocket = __webSocket;
-				await Task.WhenAll(ReceiveBLOB(__webSocket, WaitHandle));
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine("Exception: {0}", ex);
-			}
-			finally
-			{
-				if (webSocket != null) {
-					if (webSocket.State == WebSocketState.Open || webSocket.State == WebSocketState.CloseReceived)
-						webSocket.Dispose ();
-				}
-				Console.WriteLine("Connection with mockDOPsServer ended for WebSocketClient");
-
-				lock (consoleLock)
-				{
-					Console.ForegroundColor = ConsoleColor.Red;
-					Console.WriteLine("WebSocket closed.");
-					Console.ResetColor();
-				}
-			}
-		}
+//		public static async Task ConnectTo(string uri)
+//		{
+//			ClientWebSocket __webSocket = null;
+//			EventWaitHandle WaitHandle = new AutoResetEvent (false); // is signaled when data has been read
+//
+//			try
+//			{
+//				__webSocket = new ClientWebSocket();
+//				__webSocket.ConnectAsync(new Uri(uri), CancellationToken.None).Wait();
+//				webSocket = __webSocket;
+//				await Task.WhenAll(ReceiveBLOB(__webSocket, WaitHandle));
+//			}
+//			catch (Exception ex)
+//			{
+//				Console.WriteLine("Exception: {0}", ex);
+//			}
+//			finally
+//			{
+//				if (webSocket != null) {
+//					if (webSocket.State == WebSocketState.Open || webSocket.State == WebSocketState.CloseReceived)
+//						webSocket.Dispose ();
+//				}
+//				Console.WriteLine("Connection with mockDOPsServer ended for WebSocketClient");
+//
+//				lock (consoleLock)
+//				{
+//					Console.ForegroundColor = ConsoleColor.Red;
+//					Console.WriteLine("WebSocket closed.");
+//					Console.ResetColor();
+//				}
+//			}
+//		}
 
 		public class wshandles 
 		{
@@ -298,22 +298,27 @@ namespace WebSocketClient
 			Console.WriteLine("WebSocket Receive ending!");
 		}
 
-		public static byte[] FetchReceived()
-		{
-			Console.WriteLine ("Waiting...");
-			_waitHandle.WaitOne();                // Wait for notification
-			Console.WriteLine ("Notified");
-			return receivedBuffer;
-		}
+//		public static byte[] FetchReceived()
+//		{
+//			Console.WriteLine ("Waiting...");
+//			_waitHandle.WaitOne();                // Wait for notification
+//			Console.WriteLine ("Notified");
+//			return receivedBuffer;
+//		}
 
 		public static byte[] FetchReceived (wshandles _handles)
 		{
 			Console.WriteLine ("Waiting...");
-			if(_handles.webSocket.State == WebSocketState.Open) {
+			try{
+			if(webSocket.State == WebSocketState.Open) {
 				_handles.waitHandle.WaitOne();                // Wait for notification
 				Console.WriteLine("Notified");
 			} else
 				Console.WriteLine("Waiting - aborted - socket is closed");
+			}
+			catch (Exception e) {
+				Console.WriteLine(e.ToString());
+			}
 			return receivedBuffer;
 		}
 
@@ -397,10 +402,13 @@ namespace WebSocketClient
 			}
 			catch (Exception e)
 			{
-				//Console.WriteLine(e.ToString());
+				Console.WriteLine(e.Message.ToString());
 				Console.WriteLine("Exception: NO longer possible to receive data from DOPs");
+				Console.WriteLine(e.ToString());
+				webSocket.Abort();
 			}
 			Console.WriteLine("WebSocket Receive ending!");
+			WaitHandle.Set (); // Signal to end a possible wait
 		}
 
 		private static void LogStatus(bool receiving, byte[] buffer, int length)

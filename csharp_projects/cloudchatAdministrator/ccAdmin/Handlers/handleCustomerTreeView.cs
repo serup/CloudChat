@@ -48,9 +48,6 @@ namespace csharpServices
 				Console.WriteLine(e.ToString());
 			}
 		}
-
-
-
 	}
 }
 

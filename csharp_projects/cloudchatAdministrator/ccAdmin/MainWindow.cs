@@ -90,7 +90,7 @@ public partial class MainWindow: Gtk.Window
 			byte[] data = null;
 			AARHandler aar = new AARHandler(dopsHandler);
 			// run forever until user disconnect or an error occurs
-			while( (data = dopsHandler.waitForIncomming()).Length > 0 && ((Gtk.Action)gtkObj).StockId == "gtk-disconnect" && dopsHandler.bConnected == true) {
+			while( (data = dopsHandler.waitForIncomming()).Length > 0 && ((Gtk.Action)gtkObj).StockId == "gtk-disconnect" && dopsHandler.isConnected()) {
 				//UpdateStatusBarText("Receiving incomming data from DOPs SERVER..."); // this causes -critical error for gtk -- somehow update ui from different thread is causing issues
 				dedAnalyzed dana = chatHandler.parseDEDpacket(data);
 				this.managerTreeView.updateWithIncomingData(dana);
@@ -118,9 +118,14 @@ public partial class MainWindow: Gtk.Window
 
 	private void UpdateStatusBarText(string text)
 	{
-		var contextId = this.statusbar6.GetContextId("info");
-		this.statusbar6.Push(contextId, text );
-		ShowAll();
+		try {
+			var contextId = this.statusbar6.GetContextId("info");
+			this.statusbar6.Push(contextId, text );
+			ShowAll();
+		}
+		catch (Exception e) {
+			Console.WriteLine(e.Message.ToString());
+		}
 	}
 
 	protected void OnConnectActionActivated (object gtkObj, EventArgs args)
