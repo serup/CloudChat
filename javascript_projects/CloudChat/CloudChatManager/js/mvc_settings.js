@@ -376,6 +376,12 @@ var imgUrl;
                 document.getElementById("camflow_validate").style.display = "inline";
                 document.getElementById("camflow_validate_upload").addEventListener("click", function() {
                     imgUrl = canvas.toDataURL();
+                    // Render thumbnail.
+                    var span2 = document.createElement('span');
+                    span2.innerHTML = ['<img id="profileimg" style="position: absolute;margin-top: 0px; height: 100%; width: 100%" onclick="settings_view_this.ProfileImageClicked.notify(' + "'USER'" + ');" src="', imgUrl,
+                    '" title="profile foto"/>'].join('');
+                    document.getElementById('placeholderProfileFoto').innerHTML = "";
+                    document.getElementById('placeholderProfileFoto').insertBefore(span2, null);
                     settings_controller_this.uploadFile();
                 });
                 document.getElementById("camflow_validate_capture").addEventListener("click", function() {
@@ -416,18 +422,13 @@ var imgUrl;
         },
         
         uploadFile: function() {
-            // Render thumbnail.
-            var span2 = document.createElement('span');
-            span2.innerHTML = ['<img id="profileimg" style="position: absolute;margin-top: 0px; height: 100%; width: 100%" onclick="settings_view_this.ProfileImageClicked.notify(' + "'USER'" + ');" src="', imgUrl,
-            '" title="profile foto"/>'].join('');
-            document.getElementById('placeholderProfileFoto').innerHTML = "";
-            document.getElementById('placeholderProfileFoto').insertBefore(span2, null);
 
             $('#photoModal').modal('hide'); // hide the camera modal
 
             // update profile in backend database
             var ClassItemObj = new classProfileSettingsInfoItemObject();
-            ClassItemObj.putItem("foto", imgUrl);
+            ClassItemObj.putItem("foto", this._view._elements.ulsettings.context.getElementById('profileimg').src)
+            //ClassItemObj.putItem("foto", imgUrl);
             UpdateProfileOnServer(ClassItemObj);  
         },
 
