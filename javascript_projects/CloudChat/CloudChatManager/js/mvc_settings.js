@@ -12,6 +12,7 @@ var settings_model_this;
 var settings_view_this;
 var settings_controller_this;
 var timeout_url_foto;
+var imgData;
 
 (function () {
     'use strict';
@@ -374,6 +375,7 @@ var timeout_url_foto;
                 document.getElementById("camflow_snap").style.display = "none";
                 document.getElementById("camflow_validate").style.display = "inline";
                 document.getElementById("camflow_validate_upload").addEventListener("click", function() {
+                    imgData = context.getImageData(10,10,50,50); // take a portion of the image
                     settings_controller_this.uploadFile();
                 });
                 document.getElementById("camflow_validate_capture").addEventListener("click", function() {
@@ -422,7 +424,6 @@ var timeout_url_foto;
             xhr.send(settings_model_this.myfile);
             */
 
-            var imgData = context.getImageData(10,10,50,50); // take a portion of the image
 
             // Render thumbnail.
             var span2 = document.createElement('span');
