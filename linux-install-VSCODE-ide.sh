@@ -1,7 +1,8 @@
 # Specify IDE version here.  -- NB! MUST RUN as administrator
 VSCODE_PACKAGE=VSCode-linux-x64-stable.zip
-
-wget -O "/tmp/$VSCODE_PACKAGE" https://az764295.vo.msecnd.net/stable/def9e32467ad6e4f48787d38caf190acbfee5880/$VSCODE_PACKAGE
+809e7b30e928e0c430141b3e6abf1f63aaf55589
+#wget -O "/tmp/$VSCODE_PACKAGE" https://az764295.vo.msecnd.net/stable/def9e32467ad6e4f48787d38caf190acbfee5880/$VSCODE_PACKAGE
+wget -O "/tmp/$VSCODE_PACKAGE" https://az764295.vo.msecnd.net/stable/809e7b30e928e0c430141b3e6abf1f63aaf55589/$VSCODE_PACKAGE
 cd /tmp
 
 if [ -f "/tmp/$VSCODE_PACKAGE" ]; then
