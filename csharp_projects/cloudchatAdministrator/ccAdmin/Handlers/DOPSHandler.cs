@@ -18,15 +18,19 @@ namespace csharpServices
 		{
 			bool bResult = false;
 			if (connectToDOPsServer("ws://backend.scanva.com:7777")) {
+//			if (connectToDOPsServer("ws://77.75.165.130:7777")) {
 				bConnected = true;
 				sendToDOPsServer(createLoginRequest());
-				switch (handleServerReply(waitForServerReply())) {
-				case "Request accepted":
-					bResult = true;
-					break;
-				case "Request denied":
-					break;
-				}
+				do {
+					string str = handleServerReply (waitForServerReply ());
+					switch (str) {
+					case "Request accepted":
+						bResult = true;
+						break;
+					case "Request denied":
+						break;
+					}
+				} while(bResult==false);
 			}
 			return bResult;
 		}
@@ -54,7 +58,8 @@ namespace csharpServices
 
 		public void sendToDOPsServer(byte[] blob)
 		{
-			Client.SendBLOB (blob, _handles.webSocket).Wait (); 
+//			Client.SendBLOB (blob, _handles.webSocket).Wait (); 
+			Client.SendBLOB (blob, _handles.webSocket); 
 		}
 
 		public void setUniqueID(string ID)

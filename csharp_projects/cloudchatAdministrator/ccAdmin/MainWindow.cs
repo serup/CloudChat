@@ -44,7 +44,7 @@ public partial class MainWindow: Gtk.Window
 
 		new Task(() => {
 			obj = gtkObj;
-			if(dopsHandler.connectToDOPsServer()) {
+			if(this.dopsHandler.connectToDOPsServer()) {
 				this.setConnectIconToDisconnect(this.obj);
 				this.handleCommunication(this.obj, dopsHandler);
 				this.UpdateStatusBarText("STOPPED receiving incomming data from DOPs SERVER - possible ERROR");
