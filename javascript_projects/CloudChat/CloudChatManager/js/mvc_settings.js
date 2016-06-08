@@ -12,7 +12,6 @@ var settings_model_this;
 var settings_view_this;
 var settings_controller_this;
 var timeout_url_foto;
-var imgData;
 var imgUrl;
 
 (function () {
@@ -376,7 +375,6 @@ var imgUrl;
                 document.getElementById("camflow_snap").style.display = "none";
                 document.getElementById("camflow_validate").style.display = "inline";
                 document.getElementById("camflow_validate_upload").addEventListener("click", function() {
-                    //imgData = context.getImageData(10,10,50,50); // take a portion of the image
                     imgUrl = canvas.toDataURL();
                     settings_controller_this.uploadFile();
                 });
@@ -401,7 +399,6 @@ var imgUrl;
                     document.getElementById("modalSelection").style.display = "none";
                     document.getElementById("selectfile").style.display = "inline";
 
-                    //document.getElementById('files').addEventListener('change', handleFileSelect, false);
                     document.getElementById('files').addEventListener('change', settings_controller_this.handleFileSelect, false);
 
                     $('#photoModal').modal('hide');
@@ -419,14 +416,6 @@ var imgUrl;
         },
         
         uploadFile: function() {
-            /*var xhr = new XMLHttpRequest(); // not possible to test local due to : Cross origin requests are only supported for protocol schemes: http, data, chrome-extension, https, chrome-extension-resource.
-            xhr.open('POST', 'php/upload_data.php', true);
-            xhr.onload = function() {
-            };
-            xhr.send(settings_model_this.myfile);
-            */
-
-
             // Render thumbnail.
             var span2 = document.createElement('span');
             span2.innerHTML = ['<img id="profileimg" style="position: absolute;margin-top: 0px; height: 100%; width: 100%" onclick="settings_view_this.ProfileImageClicked.notify(' + "'USER'" + ');" src="', imgUrl,
@@ -434,14 +423,10 @@ var imgUrl;
             document.getElementById('placeholderProfileFoto').innerHTML = "";
             document.getElementById('placeholderProfileFoto').insertBefore(span2, null);
 
-
             $('#photoModal').modal('hide'); // hide the camera modal
 
-             // Create ClassItemObj
+            // update profile in backend database
             var ClassItemObj = new classProfileSettingsInfoItemObject();
-            // add placeholderProfileFoto to ClassItemObj ref to foto in profile
-            //ClassItemObj.putItem("foto", "data:image/jpeg;base64,/9j/4AA"   ); // TODO: test since above somehow destroys dataframe -- testting 
-//            ClassItemObj.putItem("foto", this._view._elements.ulsettings.context.getElementById('profileimg').src)
             ClassItemObj.putItem("foto", imgUrl);
             UpdateProfileOnServer(ClassItemObj);  
         },
@@ -471,37 +456,31 @@ var imgUrl;
                     // Closure to capture the file information.
                     reader.onload = (function(theFile) { // lambda function
                         return function(e) {
-  			    // now resize image so it becomes smaller
-			    var image = new Image();
-			    var urlresult = "";
-			    image.src = e.target.result; // path to image
-			    image.onload = function () {
-				    //urlresult = resizeMe(image); // should return a data URL for resized image
+          			    // now resize image so it becomes smaller
+		        	    var image = new Image();
+			            var urlresult = "";
+			            image.src = e.target.result; // path to image
+			            image.onload = function () {
+        				    //TODO: urlresult = resizeMe(image); // should return a data URL for resized image
 
-				    // Render thumbnail.
-				    var span2 = document.createElement('span');
-				    span2.innerHTML = ['<img id="profileimg" style="position: absolute;margin-top: 0px; height: 100%; width: 100%" onclick="settings_view_this.ProfileImageClicked.notify(' + "'USER'" + ');" src="', e.target.result,
-				    //span2.innerHTML = ['<img id="profileimg" style="position: absolute;margin-top: 0px; height: 100%; width: 100%" onclick="settings_view_this.ProfileImageClicked.notify(' + "'USER'" + ');" src="', urlresult,
-				    '" title="', escape(theFile.name), '"/>'].join('');
-				    document.getElementById('placeholderProfileFoto').innerHTML = "";
-				    document.getElementById('placeholderProfileFoto').insertBefore(span2, null);
+        				    // Render thumbnail.
+	        			    var span2 = document.createElement('span');
+		        		    span2.innerHTML = ['<img id="profileimg" style="position: absolute;margin-top: 0px; height: 100%; width: 100%" onclick="settings_view_this.ProfileImageClicked.notify(' + "'USER'" + ');" src="', e.target.result,
+				            '" title="', escape(theFile.name), '"/>'].join('');
+				            document.getElementById('placeholderProfileFoto').innerHTML = "";
+				            document.getElementById('placeholderProfileFoto').insertBefore(span2, null);
 
-				    // upload the image and store in database file 
-				    settings_controller_this.uploadFile();
-			    };
-
-			};
-		    })(f);
+				            // upload the image and store in database file 
+				            settings_controller_this.uploadFile();
+			                };
+			            };
+		            })(f);
 
                     // Read in the image file as a data URL.
                     reader.readAsDataURL(f);
-		    // Read in the image file as a blob.
-                    //reader.readAsArrayBuffer(f);
                 }
             }
         },
-        //document.getElementById('imgfile').addEventListener('change', handleFileSelect, false);
-        //this._elements.ulsettings.context.getElementById('imgfile').addEventListener('change', settings_view_this.handleFileSelect.notify(false););
         
         editSettingsElement: function (id) {
             var element = document.getElementById(id);
