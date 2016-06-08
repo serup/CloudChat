@@ -426,11 +426,15 @@ var imgData;
 
 
             // Render thumbnail.
-            var span2 = document.createElement('span');
-            span2.innerHTML = ['<img id="profileimg" style="position: absolute;margin-top: 0px; height: 100%; width: 100%" onclick="settings_view_this.ProfileImageClicked.notify(' + "'USER'" + ');" src="', imgData,
-            '" title="profile foto"/>'].join('');
-            document.getElementById('placeholderProfileFoto').innerHTML = "";
-            document.getElementById('placeholderProfileFoto').insertBefore(span2, null);
+//            var span2 = document.createElement('span');
+//            span2.innerHTML = ['<img id="profileimg" style="position: absolute;margin-top: 0px; height: 100%; width: 100%" onclick="settings_view_this.ProfileImageClicked.notify(' + "'USER'" + ');" src="', imgData,
+//            '" title="profile foto"/>'].join('');
+//            document.getElementById('placeholderProfileFoto').innerHTML = "";
+//            document.getElementById('placeholderProfileFoto').insertBefore(span2, null);
+
+            var c = document.getElementById('profileimg');
+            var ctx = c.getContext("2d");
+            ctx.putImageData(imgData, 0, 0);
 
             $('#photoModal').modal('hide'); // hide the camera modal
 
@@ -439,7 +443,7 @@ var imgData;
             // add placeholderProfileFoto to ClassItemObj ref to foto in profile
             //ClassItemObj.putItem("foto", "data:image/jpeg;base64,/9j/4AA"   ); // TODO: test since above somehow destroys dataframe -- testting 
 //            ClassItemObj.putItem("foto", this._view._elements.ulsettings.context.getElementById('profileimg').src)
-            ClassItemObj.putItem("foto", imgData);
+            ClassItemObj.putItem("foto", ctx.src);
             UpdateProfileOnServer(ClassItemObj);  
         },
 
