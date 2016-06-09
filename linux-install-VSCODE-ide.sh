@@ -1,7 +1,17 @@
-# Specify IDE version here.  -- NB! MUST RUN as administrator
+#!/bin/sh
+# Specify IDE version here.  -- NB! MUST RUN as administrator - like this: sudo bash  ./linux-install-VSCODE-ide.sh
+
 VSCODE_PACKAGE=VSCode-linux-x64-stable.zip
 #wget -O "/tmp/$VSCODE_PACKAGE" https://az764295.vo.msecnd.net/stable/def9e32467ad6e4f48787d38caf190acbfee5880/$VSCODE_PACKAGE
-wget -O "/tmp/$VSCODE_PACKAGE" https://az764295.vo.msecnd.net/stable/809e7b30e928e0c430141b3e6abf1f63aaf55589/$VSCODE_PACKAGE
+#wget -O "/tmp/$VSCODE_PACKAGE" https://az764295.vo.msecnd.net/stable/809e7b30e928e0c430141b3e6abf1f63aaf55589/$VSCODE_PACKAGE
+
+if [ -f "/tmp/$VSCODE_PACKAGE" ]; then
+  echo "package exists already - no need to download"
+else
+  wget -O "/tmp/$VSCODE_PACKAGE" https://az764295.vo.msecnd.net/stable/def9e32467ad6e4f48787d38caf190acbfee5880/$VSCODE_PACKAGE
+  #wget -O "/tmp/$VSCODE_PACKAGE" https://az764295.vo.msecnd.net/stable/809e7b30e928e0c430141b3e6abf1f63aaf55589/$VSCODE_PACKAGE
+fi
+
 cd /tmp
 
 if [ -f "/tmp/$VSCODE_PACKAGE" ]; then
@@ -30,5 +40,15 @@ Name[en]=VSCODE IDEA
 
 else
   echo "error - installation of vscode ide failed"
+  echo "You can use Ubuntu Make to download and install Visual Studio Code:"
+
+  sudo add-apt-repository ppa:ubuntu-desktop/ubuntu-make
+  sudo apt-get update
+  sudo apt-get install ubuntu-make
+
+  echo "Then install Visual Studio Code:"
+
+  umake ide visual-studio-code
+
 fi
 
