@@ -79,6 +79,35 @@ namespace WebSocketTests
 		[Test]
 		public void SendReceiveBLOBMockDOPsServer()
 		{
+//			// instantiate the mock server
+//			var mockDOPsServer = new MockDOPsServer (8046,"/websockets/MockServerEndpoint");
+//
+//			// start mock DOPs Server
+//			mockDOPsServer.Start();
+//
+//			// connect to DOPs Server
+//			Client.wshandles _handles = Client.WSConnect ("ws://127.0.0.1:8046/websockets/MockServerEndpoint");
+//
+//			// create random bytes
+//			var random = new Random();
+//			byte[] byteArray = new byte[64];
+//			random.NextBytes(byteArray);
+//
+//			while(_handles.webSocket.State != WebSocketState.Open);
+//
+//			// Send the blob containing the random bytes to Server
+//			Client.SendBLOB (byteArray,_handles.webSocket); 
+//
+//			// Fetch the return data from the Server - in this case it should be an echo
+//			byte[] ReceiveBuffer = Client.FetchReceived (_handles);
+//
+//			// verify 
+//			Assert.IsNotNull (ReceiveBuffer);
+//			Assert.IsTrue(byteArray.SequenceEqual(ReceiveBuffer));
+//
+//			// wait for release
+//			mockDOPsServer.WaitForStop (1); 
+
 			// instantiate the mock server
 			var mockDOPsServer = new MockDOPsServer (8046,"/websockets/MockServerEndpoint");
 
@@ -86,20 +115,19 @@ namespace WebSocketTests
 			mockDOPsServer.Start();
 
 			// connect to DOPs Server
-			Client.wshandles _handles = Client.WSConnect ("ws://127.0.0.1:8046/websockets/MockServerEndpoint");
+			newClient nClient = new newClient();
+			nClient.Connect("ws://127.0.0.1:8046/websockets/MockServerEndpoint");
 
 			// create random bytes
 			var random = new Random();
 			byte[] byteArray = new byte[64];
 			random.NextBytes(byteArray);
 
-			while(_handles.webSocket.State != WebSocketState.Open);
-
 			// Send the blob containing the random bytes to Server
-			Client.SendBLOB (byteArray,_handles.webSocket); 
+			nClient.SendBLOB (byteArray); 
 
 			// Fetch the return data from the Server - in this case it should be an echo
-			byte[] ReceiveBuffer = Client.FetchReceived (_handles);
+			byte[] ReceiveBuffer = nClient.FetchReceived ();
 
 			// verify 
 			Assert.IsNotNull (ReceiveBuffer);
@@ -107,6 +135,7 @@ namespace WebSocketTests
 
 			// wait for release
 			mockDOPsServer.WaitForStop (1); 
+
 		}
 
         [Test]

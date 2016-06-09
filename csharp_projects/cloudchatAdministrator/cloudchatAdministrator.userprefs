@@ -1,32 +1,30 @@
 ﻿<Properties StartupItem="ccAdmin/ccAdmin.csproj" RefactoringSettings.EnableRefactorings="True">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="ccAdmin.Test/unittests/cloudchatTests.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="ccAdmin/MainWindow.cs">
     <Files>
-      <File FileName="ccAdmin/Handlers/DOPSHandler.cs" Line="1" Column="1" />
-      <File FileName="ccAdmin/Handlers/handleCustomerTreeView.cs" Line="1" Column="1" />
-      <File FileName="ccAdmin/MainWindow.cs" Line="1" Column="1" />
-      <File FileName="ccAdmin/WebSocket/Client.cs" Line="1" Column="1" />
-      <File FileName="ccAdmin/Handlers/handleManagerTreeView.cs" Line="102" Column="1" />
+      <File FileName="ccAdmin/Handlers/TreeViewTools.cs" Line="65" Column="54" />
+      <File FileName="ccAdmin/Handlers/DOPSHandler.cs" Line="57" Column="6" />
+      <File FileName="ccAdmin/Handlers/handleManagerTreeView.cs" Line="18" Column="1" />
+      <File FileName="ccAdmin/Handlers/handleCustomerTreeView.cs" Line="17" Column="34" />
+      <File FileName="ccAdmin/MainWindow.cs" Line="54" Column="39" />
+      <File FileName="ccAdmin/WebSocket/Client.cs" Line="82" Column="1" />
       <File FileName="ccAdmin.Test/unittests/cloudchatTests.cs" Line="199" Column="43" />
-      <File FileName="ccAdmin/Handlers/AARHandler.cs" Line="69" Column="3" />
-      <File FileName="ccAdmin.IntegrationTests/unittests/DOPsConnectTests.cs" Line="86" Column="3" />
-      <File FileName="ccAdmin.Test/unittests/WebSocketConnectionInfoTests.cs" Line="67" Column="1" />
+      <File FileName="ccAdmin/Handlers/AARHandler.cs" Line="51" Column="21" />
+      <File FileName="ccAdmin.IntegrationTests/unittests/DOPsConnectTests.cs" Line="1" Column="1" />
+      <File FileName="ccAdmin.Test/unittests/WebSocketConnectionInfoTests.cs" Line="1" Column="1" />
+      <File FileName="ccAdmin/Program.cs" Line="14" Column="1" />
     </Files>
     <Pads>
       <Pad Id="MonoDevelop.NUnit.TestPad">
         <State name="__root__">
           <Node name="cloudchatAdministrator" expanded="True">
-            <Node name="ccAdmin.IntegrationTests" expanded="True">
-              <Node name="DOPSTests" expanded="True">
-                <Node name="DOPsWebSocketConnectionTests" expanded="True" />
-              </Node>
-            </Node>
             <Node name="ccAdmin.Test" expanded="True">
               <Node name="cloudchat" expanded="True">
-                <Node name="cloudchatTests" expanded="True" />
                 <Node name="AARTests" expanded="True" selected="True" />
               </Node>
-              <Node name="WebSocketTests" expanded="True" />
+              <Node name="WebSocketTests" expanded="True">
+                <Node name="WebSocketServerTests" expanded="True" />
+              </Node>
             </Node>
           </Node>
         </State>
@@ -103,6 +101,19 @@
       <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/hadoopTests.cs" line="46" column="1" />
       <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/NamespaceReducer.cs" line="14" column="1" />
       <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/csharpServices/csharpServices.IntegrationTests/unittests/NamespaceMapper.cs" line="18" column="1" />
+      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/cloudchatAdministrator/ccAdmin/MainWindow.cs" line="101" column="20" />
+      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/cloudchatAdministrator/ccAdmin/WebSocket/Client.cs" line="49" column="80" />
+      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/cloudchatAdministrator/ccAdmin/WebSocket/Client.cs" line="115" column="80" />
+      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/cloudchatAdministrator/ccAdmin/WebSocket/Client.cs" line="147" column="80" />
+      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/cloudchatAdministrator/ccAdmin/WebSocket/Client.cs" line="180" column="80" />
+      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/cloudchatAdministrator/ccAdmin/WebSocket/Client.cs" line="424" column="4" />
+      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/cloudchatAdministrator/ccAdmin/WebSocket/Client.cs" line="401" column="1" />
+      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/cloudchatAdministrator/ccAdmin/WebSocket/Client.cs" line="82" column="1" />
+      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/cloudchatAdministrator/ccAdmin/WebSocket/Client.cs" line="80" column="1" />
+      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/cloudchatAdministrator/ccAdmin/MainWindow.cs" line="107" column="1" />
+      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/cloudchatAdministrator/ccAdmin/MainWindow.cs" line="47" column="1" />
+      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/cloudchatAdministrator/ccAdmin/MainWindow.cs" line="50" column="1" />
+      <Breakpoint file="/home/serup/GerritHub/CloudChat/csharp_projects/cloudchatAdministrator/ccAdmin/MainWindow.cs" line="106" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />

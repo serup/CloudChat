@@ -9,20 +9,21 @@ namespace csharpServices
 {
 	public class DOPSHandler
 	{
-		private Client.wshandles _handles;
+//		private Client.wshandles _handles;
+//		public Client.wshandles getHandles() { return _handles; }
 		private short trans_id;
 		private String uniqueId;
 		public bool bConnected = false;
+		private newClient Client = new newClient();
 
 		public bool connectToDOPsServer()
 		{
 			bool bResult = false;
 			if (connectToDOPsServer("ws://backend.scanva.com:7777")) {
-//			if (connectToDOPsServer("ws://77.75.165.130:7777")) {
 				bConnected = true;
 				sendToDOPsServer(createLoginRequest());
-				do {
-					string str = handleServerReply (waitForServerReply ());
+				//do {
+					string str = handleServerReply (waitForServerReply (true));
 					switch (str) {
 					case "Request accepted":
 						bResult = true;
@@ -30,7 +31,7 @@ namespace csharpServices
 					case "Request denied":
 						break;
 					}
-				} while(bResult==false);
+				//} while(bResult==false);
 			}
 			return bResult;
 		}
@@ -38,28 +39,13 @@ namespace csharpServices
 		private bool connectToDOPsServer(string url)
 		{
 			bool bResult = false;
-			_handles = Client.WSConnect (url);
-			if(_handles != null) {
-				if(_handles.webSocket.State == System.Net.WebSockets.WebSocketState.Connecting) {
-					Thread.Sleep(2000); // wait a little time
-					if(_handles.webSocket.State == System.Net.WebSockets.WebSocketState.Connecting) {
-						// Something is wrong - disconnect to try again later
-						disconnectFromDOPsServer();
-						bResult = false;
-					}
-					else
-						bResult = true;
-				} else
-					bResult = true;
-			}
-
+			bResult = Client.Connect(url);
 			return bResult;
 		}
 
-		public void sendToDOPsServer(byte[] blob)
+		public async void sendToDOPsServer(byte[] blob)
 		{
-//			Client.SendBLOB (blob, _handles.webSocket).Wait (); 
-			Client.SendBLOB (blob, _handles.webSocket); 
+			await Client.SendBLOB (blob); 
 		}
 
 		public void setUniqueID(string ID)
@@ -104,18 +90,18 @@ namespace csharpServices
 			return byteArray;
 		}
 
-		private byte[] waitForServerReply()
+		private byte[] waitForServerReply(bool bContinue)
 		{
 			byte[] receivedData = null;
-			receivedData = Client.FetchReceived (_handles);
+			receivedData = Client.FetchReceived (bContinue);
 			return receivedData;
 		}
 
-		public byte[] waitForIncomming()
+		public byte[] waitForIncomming(bool bContinue)
 		{
 			byte[] receivedData = null;
 			try {
-				receivedData = Client.FetchReceived (_handles);
+				receivedData = Client.FetchReceived (bContinue);
 			}
 			catch(Exception e) {
 				Console.WriteLine(e.Message.ToString());
@@ -206,7 +192,7 @@ namespace csharpServices
 		public bool isConnected()
 		{
 			try{
-			if(Client.webSocket.State != WebSocketState.Open)
+				if(Client.State != WebSocketState.Open)
 					bConnected = false;
 			}
 			catch( Exception e) {
@@ -218,7 +204,8 @@ namespace csharpServices
 		public void disconnectFromDOPsServer()
 		{
 			// Disconnect from server
-			Client.WSDisconnect (_handles);
+			Client.stopReceivingTask();
+			Client.Dispose();
 			bConnected = false;
 		}
 	}

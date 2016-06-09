@@ -222,7 +222,6 @@ namespace DEDTests
 	public class mockDOPsServerTest : Assert
 	{
 		MockDOPsServer mockDOPsServer = null;
-		Client.wshandles _handles = null;
 
 		// this method is run before first [Test] method is called. You can put
 		// variable initialization, etc. here that is common to all tests.
@@ -266,7 +265,8 @@ namespace DEDTests
 		public void SendReceiveDEDMockDOPsServer()
 		{
 			// connect to DOPs Server
-			Client.wshandles _handles = Client.WSConnect ("ws://localhost:8046/websockets/MockServerEndpoint");
+			newClient Client = new newClient();
+			Assert.IsTrue(Client.Connect("ws://localhost:8046/websockets/MockServerEndpoint"));
 
 			// setup DED packet to send to Server
 			short trans_id = 1;
@@ -283,11 +283,11 @@ namespace DEDTests
 			Assert.IsNotNull (byteArray);
 
 			// Send the DED packet to Server
-			Client.SendBLOB (byteArray, _handles.webSocket).Wait(); // NB! Not really necessary to add Wait() in this case since FetchReceived() will wait until data is ready
+			Client.SendBLOB (byteArray); // NB! Not really necessary to add Wait() in this case since FetchReceived() will wait until data is ready
 
 			// Fetch the return data from the Server
 			byte[] ReceiveBuffer = null;
-			ReceiveBuffer = Client.FetchReceived (_handles);
+			ReceiveBuffer = Client.FetchReceived ();
 
 			/**
 	         * decode incomming data
@@ -320,15 +320,15 @@ namespace DEDTests
 			}
 
 			// Disconnect from server
-			Client.WSDisconnect(_handles);
+			Client.Dispose();
 		}
 
 		[Test]
 		public void loginToMockDOPsServer()
 		{
 			// connect to DOPs Server
-//			Client.wshandles _handles = Client.WSConnect ("ws://localhost:8046/websockets/MockServerEndpoint");
-			Client.wshandles _handles = Client.WSConnect ("ws://127.0.0.1:8046/websockets/MockServerEndpoint");
+			newClient Client = new newClient();
+			Assert.IsTrue(Client.Connect("ws://127.0.0.1:8046/websockets/MockServerEndpoint"));
 
 			/**
 	         * prepare data to be send
@@ -356,11 +356,11 @@ namespace DEDTests
 			Assert.IsNotNull (byteArray);
 
 			// Send the DED packet to Server
-			Client.SendBLOB (byteArray, _handles.webSocket).Wait(); // NB! Not really necessary to add Wait() in this case since FetchReceived() will wait until data is ready
+			Client.SendBLOB (byteArray); // NB! Not really necessary to add Wait() in this case since FetchReceived() will wait until data is ready
 
 			// Fetch the return data from the Server
 			byte[] receivedData = null;
-			receivedData = Client.FetchReceived (_handles);
+			receivedData = Client.FetchReceived ();
 
 	        /**
 	         * decode incomming data
@@ -406,7 +406,7 @@ namespace DEDTests
 	        }
 
 			// Disconnect from server
-			Client.WSDisconnect(_handles);
+			Client.Dispose();
 		}
 	}
 }

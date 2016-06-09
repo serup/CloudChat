@@ -18,16 +18,24 @@ namespace DOPSTests
 		{
 		}
 
+
 		[Test]
-		public void connectToDOPsServer ()
+		public void testDOPsHandler()
 		{
-			// connect to DOPs Server
-			Client.wshandles _handles = Client.WSConnect ("ws://backend.scanva.com:7777");
-//			Client.wshandles _handles = Client.WSConnect ("ws://127.0.0.1:7778");
+			DOPSHandler dopsHandler = new DOPSHandler();
+			Assert.IsTrue (dopsHandler.connectToDOPsServer());
+			dopsHandler.disconnectFromDOPsServer();
+		}
+
+		[Test]
+		public void connectToDOPsServer()
+		{
+			newClient nClient = new newClient();
+			Assert.IsTrue(nClient.Connect("ws://backend.scanva.com:7777"));
 
 			/**
-	         * prepare data to be send
-	         */
+	         	* prepare data to be send
+	         	*/
 			short trans_id = 69;
 			//bool action = true;
 			String uniqueId = "985998707DF048B2A796B44C89345494";
@@ -35,8 +43,8 @@ namespace DOPSTests
 			String password = "12345";
 
 			/**
-	         * create DED connect datapacket for DOPS for java clients
-	         */
+	        	* create DED connect datapacket for DOPS for java clients
+	         	*/
 			DEDEncoder DED = new DEDEncoder ();
 			DED.PUT_STRUCT_START ("WSRequest");
 			DED.PUT_METHOD ("Method", "CSharpConnect");
@@ -51,15 +59,15 @@ namespace DOPSTests
 			Assert.IsNotNull (byteArray);
 
 			// Send the DED packet to Server
-			Client.SendBLOB (byteArray, _handles.webSocket).Wait (); // NB! Not really necessary to add Wait() in this case since FetchReceived() will wait until data is ready
+			nClient.SendBLOB (byteArray);
 
 			// Fetch the return data from the Server
 			byte[] receivedData = null;
-			receivedData = Client.FetchReceived (_handles);
+			receivedData = nClient.FetchReceived (true);
 
 			/**
-	         * decode incomming data
-	         */
+	         	* decode incomming data
+	         	*/
 			bool bDecoded = false;
 			String strMethod = "";
 			String strProtocolTypeID = "";
@@ -73,14 +81,14 @@ namespace DOPSTests
 			DEDDecoder DED2 = new DEDDecoder ();
 			DED2.PUT_DATA_IN_DECODER (receivedData, receivedData.Length);
 			if (DED2.GET_STRUCT_START ("WSResponse") == 1 &&
-			    (strMethod = DED2.GET_METHOD ("Method")).Equals ("1_1_6_LoginProfile")) {
+				(strMethod = DED2.GET_METHOD ("Method")).Equals ("1_1_6_LoginProfile")) {
 				// DFD was online and responded - now validate the response
 				if ((uTrans_id = DED2.GET_USHORT ("TransID")) != -1 &&
-				    (strProtocolTypeID = DED2.GET_STDSTRING ("protocolTypeID")).Length > 0 &&
-				    (strDest = DED2.GET_STDSTRING ("dest")).Length > 0 &&
-				    (strSrc = DED2.GET_STDSTRING ("src")).Equals ("DFD_1.1") &&
-				    (strStatus = DED2.GET_STDSTRING ("status")).Length > 0 &&
-				    DED2.GET_STRUCT_END ("DFDResponse") == 1) {
+					(strProtocolTypeID = DED2.GET_STDSTRING ("protocolTypeID")).Length > 0 &&
+					(strDest = DED2.GET_STDSTRING ("dest")).Length > 0 &&
+					(strSrc = DED2.GET_STDSTRING ("src")).Equals ("DFD_1.1") &&
+					(strStatus = DED2.GET_STDSTRING ("status")).Length > 0 &&
+					DED2.GET_STRUCT_END ("DFDResponse") == 1) {
 					if (strDest.Equals (uniqueId) && strSrc.Equals ("DFD_1.1"))
 						Console.WriteLine ("DED packet validated - OK");
 					else {
@@ -93,10 +101,10 @@ namespace DOPSTests
 			else 
 			{
 				if ((uTrans_id = DED2.GET_USHORT ("TransID")) != -1 &&
-				              (strProtocolTypeID = DED2.GET_STDSTRING ("protocolTypeID")).Length > 0 &&
-				              (strFunctionName = DED2.GET_STDSTRING ("functionName")).Length > 0 &&
-				              (strStatus = DED2.GET_STDSTRING ("status")).Length > 0 &&
-				              DED2.GET_STRUCT_END ("WSResponse") == 1) {
+					(strProtocolTypeID = DED2.GET_STDSTRING ("protocolTypeID")).Length > 0 &&
+					(strFunctionName = DED2.GET_STDSTRING ("functionName")).Length > 0 &&
+					(strStatus = DED2.GET_STDSTRING ("status")).Length > 0 &&
+					DED2.GET_STRUCT_END ("WSResponse") == 1) {
 					bDecoded = true;
 					Console.WriteLine ("DED packet decoded - now validate");
 
@@ -122,15 +130,19 @@ namespace DOPSTests
 					Assert.IsTrue (bDecoded);
 				}
 			}
-			// Disconnect from server
-			Client.WSDisconnect(_handles);
-		}
 
-		[Test]
-		public void testDOPsHandler()
-		{
-			DOPSHandler dopsHandler = new DOPSHandler();
-			Assert.IsTrue (dopsHandler.connectToDOPsServer());
+			// Send the DED packet to Server
+			nClient.SendBLOB (byteArray);
+
+			// Fetch the return data from the Server
+			receivedData = null;
+			receivedData = nClient.FetchReceived ();
+
+			nClient.stopReceivingTask();
+
+			// Gracefully close socket
+			Console.WriteLine("Close Client connection");
+			nClient.Dispose();
 		}
 	}
 }
