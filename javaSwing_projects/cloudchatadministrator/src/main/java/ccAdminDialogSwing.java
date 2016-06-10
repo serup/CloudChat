@@ -47,6 +47,15 @@ public class ccAdminDialogSwing extends JDialog {
                 super.focusGained(e);
             }
         });
+        buttonConnect.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                onConnect();
+            }
+        });
+    }
+
+    private void onConnect() {
+
     }
 
     private void onOK() {
@@ -61,8 +70,10 @@ public class ccAdminDialogSwing extends JDialog {
 
     public static void main(String[] args) {
         ccAdminDialogSwing dialog = new ccAdminDialogSwing();
+        dialog.setTitle("CloudChatAdministrator");
         dialog.pack();
         dialog.setVisible(true);
+        dialog.setDefaultLookAndFeelDecorated(true); //TODO: find a way to change the look and feel of the app
         System.exit(0);
     }
 

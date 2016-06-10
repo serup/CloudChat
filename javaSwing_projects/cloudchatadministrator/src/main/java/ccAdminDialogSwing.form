@@ -8,10 +8,10 @@
     <properties>
       <inheritsPopupMenu value="false"/>
       <minimumSize width="500" height="333"/>
-      <name value=""/>
+      <name resource-bundle="bundle" key="Title"/>
       <preferredSize width="500" height="333"/>
     </properties>
-    <border type="none" title-resource-bundle="bundle" title-key="Title" title-justification="1" title-position="2">
+    <border type="none" title="" title-justification="1" title-position="2">
       <font/>
     </border>
     <children>
