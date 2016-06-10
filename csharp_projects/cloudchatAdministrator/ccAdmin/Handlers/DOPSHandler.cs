@@ -14,7 +14,7 @@ namespace csharpServices
 		private short trans_id;
 		private String uniqueId;
 		public bool bConnected = false;
-		private newClient Client = new newClient();
+		private Client Client = new Client();
 
 		public bool connectToDOPsServer()
 		{

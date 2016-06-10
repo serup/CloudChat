@@ -30,7 +30,7 @@ namespace DOPSTests
 		[Test]
 		public void connectToDOPsServer()
 		{
-			newClient nClient = new newClient();
+			Client nClient = new Client();
 			Assert.IsTrue(nClient.Connect("ws://backend.scanva.com:7777"));
 
 			/**
