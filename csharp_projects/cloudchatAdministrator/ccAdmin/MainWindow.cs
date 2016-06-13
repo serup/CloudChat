@@ -90,6 +90,7 @@ public partial class MainWindow: Gtk.Window
 			byte[] data = null;
 			AARHandler aar = new AARHandler(dopsHandler);
 			// run forever until user disconnect or an error occurs
+
 			while( (data = dopsHandler.waitForIncomming(true)).Length > 0 && ((Gtk.Action)gtkObj).StockId == "gtk-disconnect" && dopsHandler.isConnected()) {
 				//UpdateStatusBarText("Receiving incomming data from DOPs SERVER..."); // this causes -critical error for gtk -- somehow update ui from different thread is causing issues
 				dedAnalyzed dana = chatHandler.parseDEDpacket(data);

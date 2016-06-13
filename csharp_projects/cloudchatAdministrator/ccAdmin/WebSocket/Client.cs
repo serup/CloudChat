@@ -36,60 +36,14 @@ namespace WebSocketClient
 			return bResult;
 		}
 
-		//TODO: due to ObjectDisposedException on async read on socket, then dev is suspended until mono v.4.3.2.467 or later gets released
-		// it seems that async operations are not fully implementet in mono v. 4.2.3.4-0xamarin2
-		// http://stackoverflow.com/questions/34033977/httprequestbase-getbufferedinputstream-not-found-when-doing-a-webapi-2-json-post/35502202
-		//
-		//
 		private bool setupReceiveTask()
 		{
 			bool bResult = true;
 			try {
-//				new Task(async () => {
-//					Console.WriteLine ("Receiving Task has started");
-//					var temporaryBuffer = new byte[BufferSize];
-//					var buffer = new byte[BufferSize*BufferAmplifier];
-//					var offset = 0;
-//					WebSocketReceiveResult response;
-//					do {
-//						do 
-//						{
-//							response = await ReceiveAsync(new ArraySegment<byte>(temporaryBuffer), CancellationToken.None);
-//							temporaryBuffer.CopyTo(buffer, offset);
-//							offset += response.Count;
-//							temporaryBuffer = new byte[BufferSize];
-//						} while (!response.EndOfMessage);
-//						if (response.MessageType != WebSocketMessageType.Close )
-//						{
-//							if (bufferForRead.Length < response.Count) {
-//								Console.WriteLine ("WARNING - incomming data is larger than internal buffer - trying to receive and merge rest !!!");
-//								receivedBuffer = null;
-//								/*  DOES NOT WORK - MISSING BYTES IN BETWEEN - FIND A BETTER WAY
-//								int restBytes = result.Count - buffer.Length;
-//								byte[] restBuffer = new byte[restBytes];
-//								receivedBuffer = new byte[result.Count]; // make room for ALL data
-//								Buffer.BlockCopy (buffer, 0, receivedBuffer, 0, buffer.Length); // copy first part
-//								// try to receive waiting bytes
-//								result = await webSocket.ReceiveAsync(new ArraySegment<byte>(restBuffer), CancellationToken.None);
-//								Buffer.BlockCopy (restBuffer, 0, receivedBuffer, buffer.Length-1, restBuffer.Length); // copy rest part
-//								*/
-//								signalDataHasArrived.Set (); // signal that data has been received - this will wake up WaitForData() - which will then return it to user
-//							}
-//							else {
-//								receivedBuffer = new byte[response.Count];
-//								Buffer.BlockCopy (buffer, 0, receivedBuffer, 0, response.Count);
-//								buffer = new byte[BufferSize*BufferAmplifier];
-//								offset = 0;
-//								signalDataHasArrived.Set (); // signal that data has been received - this will wake up WaitForData() - which will then return it to user
-//							}
-//						}
-//					}while(signalToStopReceiving==false && State == WebSocketState.Open);
-//					Console.WriteLine ("Receiving Task has stopped");
-//				}).Start();
 				_Receive().Start();
 			}
 			catch(Exception e) {
-				//Console.WriteLine(e.Message.ToString());
+				Console.WriteLine(e.Message.ToString());
 				Console.WriteLine("WARNING: Receiving Task was forcefylly stopped");
 				bResult = false;
 			}
@@ -126,6 +80,7 @@ namespace WebSocketClient
 						signalDataHasArrived.Set (); // signal that data has been received - this will wake up WaitForData() - which will then return it to user
 					}
 				}
+
 			}while(signalToStopReceiving==false && State == WebSocketState.Open);
 			Console.WriteLine ("Receiving Task has stopped");
 		}
@@ -158,6 +113,9 @@ namespace WebSocketClient
 		public void stopReceivingTask()
 		{
 			signalToStopReceiving = true;
+			signalDataHasArrived.Set(); // avoid waiting for data
+			CloseAsync(WebSocketCloseStatus.NormalClosure, "Close event received", CancellationToken.None);
+			Console.WriteLine ("Closing WebSocketClient");
 		}
 	}
 

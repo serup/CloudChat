@@ -14,7 +14,7 @@ namespace csharpServices
 		private short trans_id;
 		private String uniqueId;
 		public bool bConnected = false;
-		private Client Client = new Client();
+		private Client Client;
 
 		public bool connectToDOPsServer()
 		{
@@ -39,6 +39,7 @@ namespace csharpServices
 		private bool connectToDOPsServer(string url)
 		{
 			bool bResult = false;
+			Client = new Client();
 			bResult = Client.Connect(url);
 			return bResult;
 		}
