@@ -115,7 +115,7 @@ namespace WebSocketTests
 			mockDOPsServer.Start();
 
 			// connect to DOPs Server
-			newClient nClient = new newClient();
+			Client nClient = new Client();
 			nClient.Connect("ws://127.0.0.1:8046/websockets/MockServerEndpoint");
 
 			// create random bytes

@@ -265,7 +265,7 @@ namespace DEDTests
 		public void SendReceiveDEDMockDOPsServer()
 		{
 			// connect to DOPs Server
-			newClient Client = new newClient();
+			Client Client = new Client();
 			Assert.IsTrue(Client.Connect("ws://localhost:8046/websockets/MockServerEndpoint"));
 
 			// setup DED packet to send to Server
@@ -327,7 +327,7 @@ namespace DEDTests
 		public void loginToMockDOPsServer()
 		{
 			// connect to DOPs Server
-			newClient Client = new newClient();
+			Client Client = new Client();
 			Assert.IsTrue(Client.Connect("ws://127.0.0.1:8046/websockets/MockServerEndpoint"));
 
 			/**

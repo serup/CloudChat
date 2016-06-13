@@ -8,11 +8,14 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
+
 namespace WebSocketClient
 {
 	public class Client : ClientWebSocket
 	{
-		private static int maxAmountOfBytesToRead = 1024;
+		private const int BufferSize = 4096;
+		private const int BufferAmplifier = 20;
+		private static int maxAmountOfBytesToRead = BufferSize;
 		private byte[] bufferForRead = new byte[maxAmountOfBytesToRead];
 		private ArraySegment<byte> linkToBufferForRead;
 		private byte[] receivedBuffer = null;
@@ -23,6 +26,7 @@ namespace WebSocketClient
 			bool bResult = false;
 			try {
 				linkToBufferForRead = new ArraySegment<byte>(bufferForRead);
+
 				ConnectAsync(new Uri(uri), CancellationToken.None).Wait();
 				if(State == WebSocketState.Open) {
 					setupReceiveTask();
@@ -41,11 +45,21 @@ namespace WebSocketClient
 			try {
 				new Task(async () => {
 					Console.WriteLine ("Receiving Task has started");
+					var temporaryBuffer = new byte[BufferSize];
+					var buffer = new byte[BufferSize*BufferAmplifier];
+					var offset = 0;
+					WebSocketReceiveResult response;
 					do {
-						var taskReturn = await ReceiveAsync(linkToBufferForRead, CancellationToken.None);
-						if (taskReturn.MessageType != WebSocketMessageType.Close )
+						do 
 						{
-							if (bufferForRead.Length < taskReturn.Count) {
+							response = await ReceiveAsync(new ArraySegment<byte>(temporaryBuffer), CancellationToken.None);
+							temporaryBuffer.CopyTo(buffer, offset);
+							offset += response.Count;
+							temporaryBuffer = new byte[BufferSize];
+						} while (!response.EndOfMessage);
+						if (response.MessageType != WebSocketMessageType.Close )
+						{
+							if (bufferForRead.Length < response.Count) {
 								Console.WriteLine ("WARNING - incomming data is larger than internal buffer - trying to receive and merge rest !!!");
 								receivedBuffer = null;
 								/*  DOES NOT WORK - MISSING BYTES IN BETWEEN - FIND A BETTER WAY
@@ -60,8 +74,10 @@ namespace WebSocketClient
 								signalDataHasArrived.Set (); // signal that data has been received - this will wake up WaitForData() - which will then return it to user
 							}
 							else {
-								receivedBuffer = new byte[taskReturn.Count];
-								Buffer.BlockCopy (bufferForRead, 0, receivedBuffer, 0, taskReturn.Count);
+								receivedBuffer = new byte[response.Count];
+								Buffer.BlockCopy (buffer, 0, receivedBuffer, 0, response.Count);
+								buffer = new byte[BufferSize*BufferAmplifier];
+								offset = 0;
 								signalDataHasArrived.Set (); // signal that data has been received - this will wake up WaitForData() - which will then return it to user
 							}
 						}
