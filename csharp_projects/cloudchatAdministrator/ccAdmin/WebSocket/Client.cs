@@ -39,6 +39,11 @@ namespace WebSocketClient
 			return bResult;
 		}
 
+		//TODO: due to ObjectDisposedException on async read on socket, then dev is suspended until mono v.4.3.2.467 or later gets released
+		// it seems that async operations are not fully implementet in mono v. 4.2.3.4-0xamarin2
+		// http://stackoverflow.com/questions/34033977/httprequestbase-getbufferedinputstream-not-found-when-doing-a-webapi-2-json-post/35502202
+		//
+		//
 		private bool setupReceiveTask()
 		{
 			bool bResult = true;
