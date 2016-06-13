@@ -40,7 +40,7 @@ namespace WebSocketClient
 		{
 			bool bResult = true;
 			try {
-				_Receive().Start();
+				_Receive();
 			}
 			catch(Exception e) {
 				Console.WriteLine(e.Message.ToString());
