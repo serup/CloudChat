@@ -131,14 +131,19 @@ public partial class MainWindow: Gtk.Window
 
 	protected void OnConnectActionActivated (object gtkObj, EventArgs args)
 	{
-		bIsConnected = dopsHandler.isConnected();
-		if (!bIsConnected) {
-			handleConnectionWithServer(gtkObj);
-		} else {
-			bIsConnected = false;
-			dopsHandler.disconnectFromDOPsServer();
-			setConnectIconToConnect(gtkObj);
-			this.UpdateStatusBarText("DOPs SERVER is disconnected");
+		try {
+			bIsConnected = dopsHandler.isConnected();
+			if (!bIsConnected) {
+				handleConnectionWithServer(gtkObj);
+			} else {
+				bIsConnected = false;
+				dopsHandler.disconnectFromDOPsServer();
+				setConnectIconToConnect(gtkObj);
+				this.UpdateStatusBarText("DOPs SERVER is disconnected");
+			}
+		}
+		catch (Exception e) {
+			Console.WriteLine(e.Message.ToString());
 		}
 	}
 
