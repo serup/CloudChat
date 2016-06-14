@@ -69,7 +69,7 @@ public class CloudChatAdministratorApp extends JDialog {
             utils util = new utils();
             dopsCommunications = new DOPsCommunication();
             if(util.isEnvironmentOK()) {
-                String uniqueId = "HadoopJavaServiceApp";
+                String uniqueId = "CloudChatAdminApp";
                 //String uniqueId = "985998707DF048B2A796B44C89345494";
                 String username = "johndoe@email.com";
                 String password = "12345";
