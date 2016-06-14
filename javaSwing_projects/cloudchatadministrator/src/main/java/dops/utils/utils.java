@@ -1,8 +1,4 @@
-package JavaServicesApp;
-
-import JavaServicesApp.ProtocolHandlings.DOPsCommunication;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+package dops.utils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -12,30 +8,12 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-@SpringBootApplication
-public class Application {
+/**
+ * Created by serup on 6/14/16.
+ */
+public class utils {
 
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);  // https://spring.io/guides/gs/spring-boot/
-
-        DOPsCommunication dopsCommunications = new DOPsCommunication();
-        if(isEnvironmentOK()) {
-            String uniqueId = "HadoopJavaServiceApp";
-            //String uniqueId = "985998707DF048B2A796B44C89345494";
-            String username = "johndoe@email.com";
-            String password = "12345";
-
-            if(dopsCommunications.connectToDOPs(uniqueId, username, password)) {
-
-            }
-       }
-    }
-
-
-
-
-
-    private static boolean isEnvironmentOK() {
+    public static boolean isEnvironmentOK() {
         boolean bResult=true;
         try {
             System.out.println("Check if backend is running...");
@@ -113,4 +91,5 @@ public class Application {
         }
         return bResult;
     }
+
 }

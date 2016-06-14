@@ -4,22 +4,34 @@ import JavaServicesApp.ClientEndpoint.JavaWebSocketClientEndpoint;
 import dops.protocol.ded.DEDDecoder;
 import dops.protocol.ded.DEDEncoder;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
 /**
  * Created by serup on 09-05-16.
  */
 public class DOPsCommunication {
+    private JavaWebSocketClientEndpoint clientEndpoint=null;
 
     public boolean connectToDOPs(String uniqueId, String username, String password){
         boolean bResult;
-        JavaWebSocketClientEndpoint clientEndpoint = new JavaWebSocketClientEndpoint();
+        clientEndpoint = new JavaWebSocketClientEndpoint();
         clientEndpoint.connectToServer("ws://backend.scanva.com:7777");
 
         ByteBuffer data = prepareDataToSend(uniqueId, username, password);
         clientEndpoint.sendToServer(data);
         bResult = decodeIncomingData(clientEndpoint.receiveFromServer()).contains("dops.connected.status.ok");
 
+        return bResult;
+    }
+
+    public boolean disconnectFromDOPs() throws IOException {
+        boolean bResult=false;
+        if(clientEndpoint!=null)
+        {
+            clientEndpoint.clientSession.close();
+            bResult=true;
+        }
         return bResult;
     }
 

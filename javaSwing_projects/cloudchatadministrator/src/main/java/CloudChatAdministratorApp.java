@@ -1,7 +1,11 @@
+import JavaServicesApp.ProtocolHandlings.DOPsCommunication;
+import dops.utils.utils;
+
 import javax.swing.*;
 import java.awt.event.*;
+import java.io.IOException;
 
-public class ccAdminDialogSwing extends JDialog {
+public class CloudChatAdministratorApp extends JDialog {
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
@@ -10,9 +14,9 @@ public class ccAdminDialogSwing extends JDialog {
     private JList listCustomers;
     private JButton buttonConnect;
     private static boolean bConnected=false;
+    private DOPsCommunication dopsCommunications=null;
 
-
-    public ccAdminDialogSwing() {
+    public CloudChatAdministratorApp() {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
@@ -51,26 +55,39 @@ public class ccAdminDialogSwing extends JDialog {
         });
         buttonConnect.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                onConnect();
+                try {
+                    onConnect();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
             }
         });
     }
 
-    private void onConnect() {
+    private void onConnect() throws IOException {
         if(!bConnected) {
-            //TODO: connect to DOPS
+            utils util = new utils();
+            dopsCommunications = new DOPsCommunication();
+            if(util.isEnvironmentOK()) {
+                String uniqueId = "HadoopJavaServiceApp";
+                //String uniqueId = "985998707DF048B2A796B44C89345494";
+                String username = "johndoe@email.com";
+                String password = "12345";
 
-            // Set icon as connected
-            buttonConnect.setIcon(buttonConnect.getPressedIcon());
-            bConnected = true;
-        }
+                if(dopsCommunications.connectToDOPs(uniqueId, username, password)) {
+                    // Set icon as connected
+                    buttonConnect.setIcon(buttonConnect.getPressedIcon());
+                    bConnected = true;
+                }
+            }
+       }
         else
         {
-            //TODO: disconnect from DOPS
-
-            // Set icon as disconnected
-            buttonConnect.setIcon(buttonConnect.getDisabledIcon());
-            bConnected = false;
+            if(dopsCommunications.disconnectFromDOPs()) {
+                // Set icon as disconnected
+                buttonConnect.setIcon(buttonConnect.getDisabledIcon());
+                bConnected = false;
+            }
         }
     }
 
@@ -85,7 +102,7 @@ public class ccAdminDialogSwing extends JDialog {
     }
 
     public static void main(String[] args) {
-        ccAdminDialogSwing dialog = new ccAdminDialogSwing();
+        CloudChatAdministratorApp dialog = new CloudChatAdministratorApp();
         dialog.setTitle("CloudChatAdministrator");
         dialog.pack();
         dialog.setVisible(true);
