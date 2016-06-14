@@ -9,6 +9,8 @@ public class ccAdminDialogSwing extends JDialog {
     private JList listManagers;
     private JList listCustomers;
     private JButton buttonConnect;
+    private static boolean bConnected=false;
+
 
     public ccAdminDialogSwing() {
         setContentPane(contentPane);
@@ -55,7 +57,21 @@ public class ccAdminDialogSwing extends JDialog {
     }
 
     private void onConnect() {
+        if(!bConnected) {
+            //TODO: connect to DOPS
 
+            // Set icon as connected
+            buttonConnect.setIcon(buttonConnect.getPressedIcon());
+            bConnected = true;
+        }
+        else
+        {
+            //TODO: disconnect from DOPS
+
+            // Set icon as disconnected
+            buttonConnect.setIcon(buttonConnect.getDisabledIcon());
+            bConnected = false;
+        }
     }
 
     private void onOK() {
