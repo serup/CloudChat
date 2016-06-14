@@ -20,7 +20,22 @@ public class DOPsCommunication {
 
         ByteBuffer data = prepareDataToSend(uniqueId, username, password);
         clientEndpoint.sendToServer(data);
-        bResult = decodeIncomingData(clientEndpoint.receiveFromServer()).contains("dops.connected.status.ok");
+        bResult = decodeLoginResponse(clientEndpoint.receiveFromServer()).contains("dops.connected.status.ok");
+
+        return bResult;
+    }
+
+    public boolean setupCommunication() throws Exception {
+        boolean bResult=false;
+        if(clientEndpoint!=null) {
+            System.out.println("Setting up thread for handling incomming DOPs data packages");
+
+
+            bResult=true;
+            throw new Exception("not fully implemented ");
+        }
+        else
+            System.out.println("ERROR: NOT possible to setup thread for handling incomming DOPs data packages");
 
         return bResult;
     }
@@ -37,18 +52,12 @@ public class DOPsCommunication {
 
     private static ByteBuffer prepareDataToSend(String uniqueId, String username, String password) {
         short trans_id = 69;
-/*
-        String uniqueId = "985998707DF048B2A796B44C89345494";
-        String username = "johndoe@email.com"; // TODO: find a way to safely handle retrieval of username,password - should NOT be stored in source code
-        String password = "12345";
-*/
         ByteBuffer data = createDEDforDOPSJavaConnect(trans_id, uniqueId, username, password);
-
         return data;
     }
 
 
-    private static String decodeIncomingData(byte[] receivedData)
+    private static String decodeLoginResponse(byte[] receivedData)
     {
         String Result="dops.decode.status.error";
         boolean bDecoded=false;
@@ -117,6 +126,12 @@ public class DOPsCommunication {
         return Result;
     }
 
+    public static String decodeIncomingDED(byte[] receivedData)
+    {
+        String strResult = "<unknown>";
+
+        return strResult;
+    }
     private static ByteBuffer createDEDforDOPSJavaConnect(short trans_id, String uniqueId, String username, String password)
     {
         DEDEncoder DED = new DEDEncoder();
