@@ -7,7 +7,7 @@ import java.io.InputStreamReader;
 /**
  * Created by serup on 09-05-16.
  */
-public class testEnvironmentSetup {
+public class setupTestEnvironment {
     public boolean setupTemporaryFolder() {
         boolean bResult=true;
         try {

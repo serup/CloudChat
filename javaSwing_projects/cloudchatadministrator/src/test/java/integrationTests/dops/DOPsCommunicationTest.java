@@ -2,6 +2,7 @@ package integrationTests.dops;
 
 import JavaServicesApp.ClientEndpoint.JavaWebSocketClientEndpoint;
 import JavaServicesApp.ProtocolHandlings.DOPsCommunication;
+import JavaServicesApp.ProtocolHandlings.dedAnalyzed;
 import dops.protocol.DOPS;
 import dops.protocol.ded.DEDDecoder;
 import dops.protocol.ded.DEDEncoder;
@@ -9,12 +10,11 @@ import integrationTests.IntegrationEnvironmentSetup;
 import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Categories;
 
 import java.nio.ByteBuffer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * INTEGRATION TESTS
@@ -35,20 +35,41 @@ public class DOPsCommunicationTest {
         assertEquals(true,env.setupIntegrationEnvironment());
     }
 
+    // utils
+
+    private byte[] createChatInfo() {
+
+        DEDEncoder DED = new DEDEncoder();
+        DED.PUT_STRUCT_START ("ClientChatRequest");
+        DED.PUT_METHOD ("Method", "JSCChatInfo");
+        DED.PUT_USHORT ("TransID", (short)23);
+        DED.PUT_STDSTRING("protocolTypeID", "DED1.00.00");
+        DED.PUT_STDSTRING("dest", "ccAdmin");  // This Admins uniqueID, since this is a test it really does not matter
+        DED.PUT_STDSTRING("src", "4086d4ab369e14ca1b6be7364d88cf85"); //  uniqueID
+        DED.PUT_STDSTRING("srcAlias", "SERUP");
+        DED.PUT_STDSTRING("srcHomepageAlias", "Montenegro");
+        DED.PUT_STDSTRING("lastEntryTime", "20160101");
+        DED.PUT_STRUCT_END("ClientChatRequest");
+        byte[] byteArray = DED.GET_ENCODED_BYTEARRAY_DATA ();
+        assertNotNull(byteArray);
+        return byteArray;
+    }
+
+    // -------------------
     @Test
     public void connectToDOPs() throws Exception {
         DOPsCommunication dopsCommunications = new DOPsCommunication();
-            String uniqueId = "HadoopJavaServiceApp";
-            //String uniqueId = "985998707DF048B2A796B44C89345494";
-            String username = "johndoe@email.com";
-            String password = "12345";
+        String uniqueId = "HadoopJavaServiceApp";
+        //String uniqueId = "985998707DF048B2A796B44C89345494";
+        String username = "johndoe@email.com";
+        String password = "12345";
 
-            if(dopsCommunications.connectToDOPs(uniqueId, username, password)) {
-                System.out.println("connected - success");
-            }
-            else
-                throw new Exception("Connection with REAL DOPS server - FAILED");
-    }
+        if(dopsCommunications.connectToDOPs(uniqueId, username, password)) {
+            System.out.println("connected - success");
+        }
+        else
+            throw new Exception("Connection with REAL DOPS server - FAILED");
+}
 
     @Test
     public void setupCommunication() throws Exception {
@@ -83,9 +104,12 @@ public class DOPsCommunicationTest {
             throw new Exception("ERROR: connection / disconnect from DOPS failed");
     }
 
+
     @Test
     public void decodeIncomingDED() throws Exception {
-        throw new Exception("not implemented testcase");
+        byte[] data = createChatInfo();
+        dedAnalyzed dana = DOPsCommunication.decodeIncomingDED(data);
+        assertTrue(dana.type == "ChatInfo");
     }
 
     @Test

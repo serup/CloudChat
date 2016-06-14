@@ -126,11 +126,60 @@ public class DOPsCommunication {
         return Result;
     }
 
-    public static String decodeIncomingDED(byte[] receivedData)
+    public static dedAnalyzed decodeIncomingDED(byte[] DED) throws  Exception
     {
-        String strResult = "<unknown>";
+        dedAnalyzed dana = new dedAnalyzed();
 
-        return strResult;
+        if(DED == null) {
+            dana.type = "<unknown>";
+            dana.bDecoded = false;
+        } else {
+            // decode data ...
+            DEDDecoder DED2 = new DEDDecoder();
+            DED2.PUT_DATA_IN_DECODER( DED, DED.length);
+            if((DED2.GET_STRUCT_START("CloudManagerRequest") == 1)) {
+                String method = DED2.GET_METHOD("Method");
+                switch (method)
+                {
+                    case "JSCForwardInfo":
+                        ForwardInfoRequestObj fio = new ForwardInfoRequestObj();
+                        if((fio.transactionsID  = DED2.GET_USHORT("TransID")) != -1 &&
+                                (fio.protocolTypeID = DED2.GET_STDSTRING("protocolTypeID")).contains("DED1.00.00") &&
+                                (fio.dest           = DED2.GET_STDSTRING("dest")).length() > 0 &&
+                                (fio.src            = DED2.GET_STDSTRING("src")).length() > 0 &&
+                                (fio.srcAlias       = DED2.GET_STDSTRING("srcAlias")).length() > 0 &&
+                                (DED2.GET_STRUCT_END("CloudManagerRequest")) == 1) {
+                            dana.bDecoded = true;
+                            dana.type = "ForwardInfoRequest";
+                            dana.setDED(DED);
+                            dana.elements = fio;
+                        }
+                        break;
+                    case "JSCChatInfo":
+                        ChatInfoObj cio = new ChatInfoObj();
+                        if((cio.transactionsID    = DED2.GET_USHORT("TransID")) != -1 &&
+                                (cio.protocolTypeID   = DED2.GET_STDSTRING("protocolTypeID")).contains("DED1.00.00") &&
+                                (cio.dest             = DED2.GET_STDSTRING("dest")).length() > 0 &&
+                                (cio.src              = DED2.GET_STDSTRING("src")).length() > 0 &&
+                                (cio.srcAlias         = DED2.GET_STDSTRING("srcAlias")).length() > 0 &&
+                                (cio.srcHomepageAlias = DED2.GET_STDSTRING("srcHomepageAlias")).length() > 0 &&
+                                (cio.lastEntryTime    = DED2.GET_STDSTRING("lastEntryTime")).length() > 0 &&
+                                (DED2.GET_STRUCT_END("ClientChatRequest")) == 1) {
+                            dana.bDecoded = true;
+                            dana.type = "ChatInfo";
+                            dana.setDED(DED);
+                            dana.elements = cio;
+                        }
+                        break;
+
+                    default:
+                        dana.bDecoded = false;
+                        dana.type = "<unknown>";
+                        break;
+                }
+            }
+        }
+        return dana;
     }
     private static ByteBuffer createDEDforDOPSJavaConnect(short trans_id, String uniqueId, String username, String password)
     {
