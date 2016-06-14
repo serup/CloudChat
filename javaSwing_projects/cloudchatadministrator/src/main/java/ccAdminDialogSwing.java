@@ -93,7 +93,4 @@ public class ccAdminDialogSwing extends JDialog {
         System.exit(0);
     }
 
-    private void createUIComponents() {
-        // TODO: place custom component creation code here
-    }
 }
