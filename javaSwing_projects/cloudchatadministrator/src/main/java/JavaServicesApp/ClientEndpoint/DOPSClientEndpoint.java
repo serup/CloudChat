@@ -21,7 +21,7 @@ public class DOPSClientEndpoint extends JavaWebSocketClientEndpoint
 
     public DOPSClientEndpoint()
     {
-        msgHandler = new DEDMessageHandler();
+        msgHandler = new DEDMessageHandler(true);
         msgHandler.messageLatch = new CountDownLatch(1);
         msgHandler.dedLatch = new CountDownLatch(1);
     }
@@ -85,22 +85,5 @@ public class DOPSClientEndpoint extends JavaWebSocketClientEndpoint
         return data;
     }
 
-    public DOPsCommunication.dedAnalyzed receiveDEDFromServer()
-    {
-        DOPsCommunication.dedAnalyzed dana = null;
-        try{
-            if(msgHandler.dedLatch.await(100, TimeUnit.SECONDS)) // wait for incoming data -- data will arrive in JavaWebSocketClientMessageHandler onMessage and latch will be decreased to zero
-            {
-                dana = msgHandler.dana;
-            }
-            else
-            {
-                System.out.println("WARNING - Timeout when trying to receive DED package from server - NO DED received");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        msgHandler.dedLatch = new CountDownLatch(1); // prepare for next incoming packet
-        return dana;
-    }
+
 }

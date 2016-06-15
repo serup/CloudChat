@@ -1,10 +1,11 @@
 package JavaServicesApp.ClientMessageHandler;
 
 import JavaServicesApp.ProtocolHandlings.DOPsCommunication;
-
 import javax.websocket.MessageHandler;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
-
+import java.util.concurrent.TimeUnit;
 import static JavaServicesApp.ProtocolHandlings.DOPsCommunication.decodeIncomingDED;
 
 /**
@@ -16,6 +17,16 @@ public final class DEDMessageHandler implements MessageHandler.Whole<byte[]>
     public static CountDownLatch dedLatch;
     public byte[] receivedData=null;
     public DOPsCommunication.dedAnalyzed dana=null;
+    private static Thread dedDistributerThread=null;
+    public List<DOPsCommunication.dedAnalyzed> danaList = new ArrayList<>();
+
+    public DEDMessageHandler() {}
+
+    public DEDMessageHandler(boolean bRunDistributer)
+    {
+        if(bRunDistributer)
+            runDEDdistributerThread();
+    }
 
     @Override
     public void onMessage(byte[] message) {
@@ -25,6 +36,9 @@ public final class DEDMessageHandler implements MessageHandler.Whole<byte[]>
             dana = decodeIncomingDED(message);
             if(dana.bDecoded) {
                 System.out.println("- message was a valid DED package of type : " + dana.type);
+                if(dedDistributerThread!=null){
+                    addDEDtoDistributer(dana);
+                }
                 dedLatch.countDown(); // signal  a valid DED is ready for retrieval
             }
             else
@@ -36,4 +50,46 @@ public final class DEDMessageHandler implements MessageHandler.Whole<byte[]>
         receivedData = message;
         messageLatch.countDown(); // signal a valid message is ready for retrieval
     }
+
+    private void addDEDtoDistributer(DOPsCommunication.dedAnalyzed dana) {
+        danaList.add(dana);
+    }
+
+    private void runDEDdistributerThread() {
+        dedDistributerThread = new Thread() {
+            boolean bContinue = true;
+
+            public void run() {
+                try {
+                    // distribute DED objects to individual handlers
+                    do
+                    {
+                        if(dedLatch.await(100, TimeUnit.SECONDS)) // wait for signal that valid ded has arrived
+                        {
+                            for (DOPsCommunication.dedAnalyzed dana : danaList) {
+                                switch (dana.type) {
+                                    case "ChatInfo":
+                                        System.out.println("- Currently NO handlers for this type");
+
+                                        break;
+                                }
+
+                            }
+                            danaList.clear(); // all on list have been processed
+                        }
+                        dedLatch = new CountDownLatch(1); // prepare for next signal
+                    }
+                    while(bContinue);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            public void stopDistribution() { bContinue = false;  }
+        };
+        dedDistributerThread.start();
+    }
+
 }
+
+
