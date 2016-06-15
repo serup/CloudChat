@@ -5,8 +5,11 @@ import javax.websocket.MessageHandler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import static JavaServicesApp.ProtocolHandlings.DOPsCommunication.decodeIncomingDED;
 
@@ -22,6 +25,7 @@ public final class DEDMessageHandler implements MessageHandler.Whole<byte[]>
     private static Thread dedDistributerThread=null;
     public List<DOPsCommunication.dedAnalyzed> danaList = new ArrayList<>();
     ReentrantLock lock = new ReentrantLock();
+    public BiFunction<String, DOPsCommunication.dedAnalyzed, String> DEDHandlerFunction;
 
     public DEDMessageHandler() {}
 
@@ -75,8 +79,13 @@ public final class DEDMessageHandler implements MessageHandler.Whole<byte[]>
                             for (DOPsCommunication.dedAnalyzed dana : danaList) {
                                 switch (dana.type) {
                                     case "ChatInfo":
-                                        System.out.println("- Currently NO handlers for this type");
 
+                                        try { DEDHandlerFunction.apply(dana.type, dana);
+                                        }catch(Exception e) { System.out.println("- ERROR: DED handler function was a NULL pointer"); }
+
+                                        break;
+                                    default:
+                                        System.out.println("- Currently NO handler for this type");
                                         break;
                                 }
 
@@ -89,6 +98,7 @@ public final class DEDMessageHandler implements MessageHandler.Whole<byte[]>
                     while(bContinue);
                 } catch (Exception e) {
                     e.printStackTrace();
+                    System.out.println("ERROR: There will be NO distribution of DED packages due to Exception !!! ");
                 }
             }
 
