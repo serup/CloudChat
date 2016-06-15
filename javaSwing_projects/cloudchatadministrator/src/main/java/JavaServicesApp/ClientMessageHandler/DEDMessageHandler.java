@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
+
 import static JavaServicesApp.ProtocolHandlings.DOPsCommunication.decodeIncomingDED;
 
 /**
@@ -19,6 +21,7 @@ public final class DEDMessageHandler implements MessageHandler.Whole<byte[]>
     public DOPsCommunication.dedAnalyzed dana=null;
     private static Thread dedDistributerThread=null;
     public List<DOPsCommunication.dedAnalyzed> danaList = new ArrayList<>();
+    ReentrantLock lock = new ReentrantLock();
 
     public DEDMessageHandler() {}
 
@@ -52,7 +55,9 @@ public final class DEDMessageHandler implements MessageHandler.Whole<byte[]>
     }
 
     private void addDEDtoDistributer(DOPsCommunication.dedAnalyzed dana) {
+        lock.lock();
         danaList.add(dana);
+        lock.unlock();
     }
 
     private void runDEDdistributerThread() {
@@ -66,6 +71,7 @@ public final class DEDMessageHandler implements MessageHandler.Whole<byte[]>
                     {
                         if(dedLatch.await(100, TimeUnit.SECONDS)) // wait for signal that valid ded has arrived
                         {
+                            lock.lock();
                             for (DOPsCommunication.dedAnalyzed dana : danaList) {
                                 switch (dana.type) {
                                     case "ChatInfo":
@@ -76,6 +82,7 @@ public final class DEDMessageHandler implements MessageHandler.Whole<byte[]>
 
                             }
                             danaList.clear(); // all on list have been processed
+                            lock.unlock();
                         }
                         dedLatch = new CountDownLatch(1); // prepare for next signal
                     }
