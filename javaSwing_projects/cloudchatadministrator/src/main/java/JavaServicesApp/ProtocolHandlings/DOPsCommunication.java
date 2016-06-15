@@ -1,62 +1,37 @@
 package JavaServicesApp.ProtocolHandlings;
 
-import JavaServicesApp.ClientEndpoint.JavaWebSocketClientEndpoint;
+import JavaServicesApp.ClientEndpoint.DOPSClientEndpoint;
+import JavaServicesApp.ClientMessageHandler.DEDMessageHandler;
 import dops.protocol.ded.DEDDecoder;
 import dops.protocol.ded.DEDEncoder;
 
+import javax.websocket.Session;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.List;
 
 /**
+ * This class handles DED packet data communication between client and DOPS server
+ * It has methods for login to DOPS DFD server and it handles basic communication
+ * it is also a wrapper class for JavaWebSocketClientEndpoint
+ * <p>
  * Created by serup on 09-05-16.
  */
+
 public class DOPsCommunication {
-    private JavaWebSocketClientEndpoint clientEndpoint = null;
-    private Thread handlingIncomingDataThread;
+
+    private DOPSClientEndpoint clientEndpoint = null;
 
     public boolean connectToDOPs(String uniqueId, String username, String password) {
         boolean bResult;
-        clientEndpoint = new JavaWebSocketClientEndpoint();
+        clientEndpoint = new DOPSClientEndpoint();
         clientEndpoint.connectToServer("ws://backend.scanva.com:7777");
 
-        ByteBuffer data = prepareDataToSend(uniqueId, username, password);
+        ByteBuffer data = prepareConnectDEDToSend(uniqueId, username, password);
         clientEndpoint.sendToServer(data);
         bResult = decodeLoginResponse(clientEndpoint.receiveFromServer()).contains("dops.connected.status.ok");
 
         return bResult;
-    }
-
-    public boolean setupCommunication() throws Exception {
-        boolean bResult = false;
-        if (clientEndpoint != null) {
-            System.out.println("Setting up thread for handling incomming DOPs data packages");
-            bResult = startHandlingIncomingDataThread();
-
-        } else
-            System.out.println("ERROR: NOT possible to setup thread for handling incomming DOPs data packages");
-
-        return bResult;
-    }
-
-    private boolean startHandlingIncomingDataThread() throws InterruptedException {
-        final boolean[] bResult = {false};
-        handlingIncomingDataThread = new Thread() {
-            public void run() {
-                try {
-                    bResult[0] = true;
-
-                    while (clientEndpoint.receiveFromServer() != null);
-
-                    throw new Exception("handlingIncomingDataThread - stopped");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    bResult[0] = false;
-                }
-            }
-        };
-        handlingIncomingDataThread.start();
-        Thread.sleep(100); // wait a bit for thread to start
-        return bResult[0];
     }
 
     public boolean disconnectFromDOPs() throws IOException {
@@ -68,12 +43,11 @@ public class DOPsCommunication {
         return bResult;
     }
 
-    private static ByteBuffer prepareDataToSend(String uniqueId, String username, String password) {
+    private static ByteBuffer prepareConnectDEDToSend(String uniqueId, String username, String password) {
         short trans_id = 69;
         ByteBuffer data = createDEDforDOPSJavaConnect(trans_id, uniqueId, username, password);
         return data;
     }
-
 
     private static String decodeLoginResponse(byte[] receivedData) {
         String Result = "dops.decode.status.error";
@@ -132,7 +106,7 @@ public class DOPsCommunication {
     }
 
     public static dedAnalyzed decodeIncomingDED(byte[] DED) throws Exception {
-        dedAnalyzed dana = new dedAnalyzed();
+        DOPsCommunication.dedAnalyzed dana = new DOPsCommunication.dedAnalyzed();
 
         if (DED == null) {
             dana.type = "<unknown>";
@@ -143,42 +117,49 @@ public class DOPsCommunication {
             DED2.PUT_DATA_IN_DECODER(DED, DED.length);
             if ((DED2.GET_STRUCT_START("CloudManagerRequest") == 1)) {
                 String method = DED2.GET_METHOD("Method");
-                switch (method) {
-                    case "JSCForwardInfo":
-                        ForwardInfoRequestObj fio = new ForwardInfoRequestObj();
-                        if ((fio.transactionsID = DED2.GET_USHORT("TransID")) != -1 &&
-                                (fio.protocolTypeID = DED2.GET_STDSTRING("protocolTypeID")).contains("DED1.00.00") &&
-                                (fio.dest = DED2.GET_STDSTRING("dest")).length() > 0 &&
-                                (fio.src = DED2.GET_STDSTRING("src")).length() > 0 &&
-                                (fio.srcAlias = DED2.GET_STDSTRING("srcAlias")).length() > 0 &&
-                                (DED2.GET_STRUCT_END("CloudManagerRequest")) == 1) {
-                            dana.bDecoded = true;
-                            dana.type = "ForwardInfoRequest";
-                            dana.setDED(DED);
-                            dana.elements = fio;
-                        }
-                        break;
-                    case "JSCChatInfo":
-                        ChatInfoObj cio = new ChatInfoObj();
-                        if ((cio.transactionsID = DED2.GET_USHORT("TransID")) != -1 &&
-                                (cio.protocolTypeID = DED2.GET_STDSTRING("protocolTypeID")).contains("DED1.00.00") &&
-                                (cio.dest = DED2.GET_STDSTRING("dest")).length() > 0 &&
-                                (cio.src = DED2.GET_STDSTRING("src")).length() > 0 &&
-                                (cio.srcAlias = DED2.GET_STDSTRING("srcAlias")).length() > 0 &&
-                                (cio.srcHomepageAlias = DED2.GET_STDSTRING("srcHomepageAlias")).length() > 0 &&
-                                (cio.lastEntryTime = DED2.GET_STDSTRING("lastEntryTime")).length() > 0 &&
-                                (DED2.GET_STRUCT_END("ClientChatRequest")) == 1) {
-                            dana.bDecoded = true;
-                            dana.type = "ChatInfo";
-                            dana.setDED(DED);
-                            dana.elements = cio;
-                        }
-                        break;
+                try {
+                    switch (method) {
+                        case "JSCForwardInfo":
+                            ForwardInfoRequestObj fio = new DOPsCommunication.ForwardInfoRequestObj();
+                            if ((fio.transactionsID = DED2.GET_USHORT("TransID")) != -1 &&
+                                    (fio.protocolTypeID = DED2.GET_STDSTRING("protocolTypeID")).contains("DED1.00.00") &&
+                                    (fio.dest = DED2.GET_STDSTRING("dest")).length() > 0 &&
+                                    (fio.src = DED2.GET_STDSTRING("src")).length() > 0 &&
+                                    (fio.srcAlias = DED2.GET_STDSTRING("srcAlias")).length() > 0 &&
+                                    (DED2.GET_STRUCT_END("CloudManagerRequest")) == 1) {
+                                dana.bDecoded = true;
+                                dana.type = "ForwardInfoRequest";
+                                dana.setDED(DED);
+                                dana.elements = fio;
+                            }
+                            break;
+                        case "JSCChatInfo":
+                            ChatInfoObj cio = new DOPsCommunication.ChatInfoObj();
+                            if ((cio.transactionsID = DED2.GET_USHORT("TransID")) != -1 &&
+                                    (cio.protocolTypeID = DED2.GET_STDSTRING("protocolTypeID")).contains("DED1.00.00") &&
+                                    (cio.dest = DED2.GET_STDSTRING("dest")).length() > 0 &&
+                                    (cio.src = DED2.GET_STDSTRING("src")).length() > 0 &&
+                                    (cio.srcAlias = DED2.GET_STDSTRING("srcAlias")).length() > 0 &&
+                                    (cio.srcHomepageAlias = DED2.GET_STDSTRING("srcHomepageAlias")).length() > 0 &&
+                                    (cio.lastEntryTime = DED2.GET_STDSTRING("lastEntryTime")).length() > 0 &&
+                                    (DED2.GET_STRUCT_END("ClientChatRequest")) == 1) {
+                                dana.bDecoded = true;
+                                dana.type = "ChatInfo";
+                                dana.setDED(DED);
+                                dana.elements = cio;
+                            }
+                            break;
 
-                    default:
-                        dana.bDecoded = false;
-                        dana.type = "<unknown>";
-                        break;
+                        default:
+                            dana.bDecoded = false;
+                            dana.type = "<unknown>";
+                            break;
+                    }
+                } catch (Exception e) {
+                    dana.bDecoded = false;
+                    dana.type = method;
+                    dana.elements = null;
+                    System.out.println("- Exception happened trying to decode ded of type : " + dana.type);
                 }
             }
         }
@@ -200,5 +181,53 @@ public class DOPsCommunication {
         return data;
     }
 
+    public static class dedAnalyzed {
+
+        public String type;
+        public boolean bDecoded;
+        public Object elements; // will contain an object of following below type:
+        private byte[] originalDED = null;
+
+        public byte[] getDED() throws Exception {
+            if (originalDED == null)
+                throw new Exception("ERROR: dedAnalyzed did NOT contain the original ded - FATAL");
+            return originalDED;
+        }
+
+        public void setDED(byte[] ded) {
+            originalDED = ded;
+        }
+
+
+    }
+
+    class element {
+        public String name;
+        public String value;
+    }
+
+    // object types
+// Objects for elements in dedAnalyzed
+    static class ForwardInfoRequestObj {
+        public short transactionsID;
+        public String protocolTypeID;
+        public String dest;
+        public String src;
+        public String srcAlias;
+    }
+
+    static class ChatInfoObj {
+        public short transactionsID;
+        public String protocolTypeID;
+        public String dest;
+        public String src;
+        public String srcAlias;
+        public String srcHomepageAlias;
+        public String lastEntryTime;
+    }
 
 }
+
+
+
+

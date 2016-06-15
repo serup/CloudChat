@@ -6,7 +6,7 @@ import dops.protocol.ded.DEDEncoder;
 
 import java.nio.ByteBuffer;
 
-/**
+/**  -- will be DEPRECATED - instead use DOPsCommunication class
  * This class handles DED packet data communication between client and DOPS server
  * It has methods for login to DOPS DFD server and it handles basic communication
  * it is also a wrapper class for JavaWebSocketClientEndpoint

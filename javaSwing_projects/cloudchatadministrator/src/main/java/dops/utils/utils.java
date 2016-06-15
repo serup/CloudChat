@@ -1,5 +1,7 @@
 package dops.utils;
 
+import dops.protocol.ded.DEDEncoder;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
@@ -7,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by serup on 6/14/16.
@@ -91,5 +94,40 @@ public class utils {
         }
         return bResult;
     }
+
+    public static byte[] createChatInfo() {
+
+        DEDEncoder DED = new DEDEncoder();
+        DED.PUT_STRUCT_START ("ClientChatRequest");
+        DED.PUT_METHOD ("Method", "JSCChatInfo");
+        DED.PUT_USHORT ("TransID", (short)23);
+        DED.PUT_STDSTRING("protocolTypeID", "DED1.00.00");
+        DED.PUT_STDSTRING("dest", "ccAdmin");  // This Admins uniqueID, since this is a test it really does not matter
+        DED.PUT_STDSTRING("src", "4086d4ab369e14ca1b6be7364d88cf85"); //  uniqueID
+        DED.PUT_STDSTRING("srcAlias", "SERUP");
+        DED.PUT_STDSTRING("srcHomepageAlias", "Montenegro");
+        DED.PUT_STDSTRING("lastEntryTime", "20160101");
+        DED.PUT_STRUCT_END("ClientChatRequest");
+        byte[] byteArray = DED.GET_ENCODED_BYTEARRAY_DATA ();
+        assertNotNull(byteArray);
+        return byteArray;
+    }
+
+    public static byte[] createForwardInfoRequest() {
+
+        DEDEncoder DED = new DEDEncoder();
+        DED.PUT_STRUCT_START ("CloudManagerRequest");
+        DED.PUT_METHOD ("Method", "JSCForwardInfo");
+        DED.PUT_USHORT ("TransID", (short)23);
+        DED.PUT_STDSTRING("protocolTypeID", "DED1.00.00");
+        DED.PUT_STDSTRING("dest", "ccAdmin");  // This Admins uniqueID, since this is a test it really does not matter
+        DED.PUT_STDSTRING("src", "4086d4ab369e14ca1b6be7364d88cf85"); // CloudChatManager uniqueID
+        DED.PUT_STDSTRING("srcAlias", "SERUP");
+        DED.PUT_STRUCT_END("CloudManagerRequest");
+        byte[] byteArray = DED.GET_ENCODED_BYTEARRAY_DATA ();
+        assertNotNull(byteArray);
+        return byteArray;
+    }
+
 
 }
