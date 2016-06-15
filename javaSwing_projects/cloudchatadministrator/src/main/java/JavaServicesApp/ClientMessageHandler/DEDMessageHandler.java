@@ -13,24 +13,27 @@ import static JavaServicesApp.ProtocolHandlings.DOPsCommunication.decodeIncoming
 public final class DEDMessageHandler implements MessageHandler.Whole<byte[]>
 {
     public static CountDownLatch messageLatch;
+    public static CountDownLatch dedLatch;
     public byte[] receivedData=null;
-    private DOPsCommunication dops = new DOPsCommunication();
+    public DOPsCommunication.dedAnalyzed dana=null;
 
     @Override
     public void onMessage(byte[] message) {
         System.out.println("Received message of length : "+message.length);
         System.out.println("- determine if message is of type DED protocol");
         try {
-            DOPsCommunication.dedAnalyzed dana = decodeIncomingDED(message);
-            if(dana.bDecoded)
+            dana = decodeIncomingDED(message);
+            if(dana.bDecoded) {
                 System.out.println("- message was a valid DED package of type : " + dana.type);
+                dedLatch.countDown(); // signal  a valid DED is ready for retrieval
+            }
             else
                 System.out.println("- message was <unknown>.");
         } catch (Exception e) {
             //e.printStackTrace();
             System.out.println("- message was NOT a valid DED package.");
         }
-        this.messageLatch.countDown();
         receivedData = message;
+        messageLatch.countDown(); // signal a valid message is ready for retrieval
     }
 }

@@ -105,7 +105,7 @@ public class setupMockServer {
     {
         byte[] IncomingPacket=null;
         if(isOpen())
-            IncomingPacket = clientEndpoint.receiveFromServer();
+            IncomingPacket = clientEndpoint.receiveMessageFromServer();
         return IncomingPacket;
     }
 }

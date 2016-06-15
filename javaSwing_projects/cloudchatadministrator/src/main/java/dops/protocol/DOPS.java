@@ -74,7 +74,7 @@ public class DOPS extends JavaWebSocketClientEndpoint {
         /**
          * wait for incomming data response, then receive data
          */
-        byte[] receivedData = clientEndpoint.receiveFromServer();
+        byte[] receivedData = clientEndpoint.receiveMessageFromServer();
 
         /**
          * decode incomming data

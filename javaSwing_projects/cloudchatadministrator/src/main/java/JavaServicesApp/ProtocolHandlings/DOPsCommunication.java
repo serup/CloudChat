@@ -1,14 +1,11 @@
 package JavaServicesApp.ProtocolHandlings;
 
 import JavaServicesApp.ClientEndpoint.DOPSClientEndpoint;
-import JavaServicesApp.ClientMessageHandler.DEDMessageHandler;
 import dops.protocol.ded.DEDDecoder;
 import dops.protocol.ded.DEDEncoder;
 
-import javax.websocket.Session;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.List;
 
 /**
  * This class handles DED packet data communication between client and DOPS server
@@ -29,7 +26,7 @@ public class DOPsCommunication {
 
         ByteBuffer data = prepareConnectDEDToSend(uniqueId, username, password);
         clientEndpoint.sendToServer(data);
-        bResult = decodeLoginResponse(clientEndpoint.receiveFromServer()).contains("dops.connected.status.ok");
+        bResult = decodeLoginResponse(clientEndpoint.receiveMessageFromServer()).contains("dops.connected.status.ok");
 
         return bResult;
     }

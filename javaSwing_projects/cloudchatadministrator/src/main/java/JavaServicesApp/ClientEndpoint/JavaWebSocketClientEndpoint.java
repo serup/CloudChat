@@ -71,7 +71,7 @@ public class JavaWebSocketClientEndpoint extends Endpoint
         return result;
     }
 
-    public byte[] receiveFromServer()
+    public byte[] receiveMessageFromServer()
     {
         byte[] data = null;
         try{
