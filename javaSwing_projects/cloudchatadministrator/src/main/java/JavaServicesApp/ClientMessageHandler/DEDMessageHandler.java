@@ -1,6 +1,9 @@
 package JavaServicesApp.ClientMessageHandler;
 
 import JavaServicesApp.ProtocolHandlings.DOPsCommunication;
+import JavaServicesApp.ProtocolHandlings.DOPsCommunication.dedAnalyzed;
+import dops.protocol.DOPS;
+
 import javax.websocket.MessageHandler;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,11 +24,11 @@ public final class DEDMessageHandler implements MessageHandler.Whole<byte[]>
     public static CountDownLatch messageLatch;
     public static CountDownLatch dedLatch;
     public byte[] receivedData=null;
-    public DOPsCommunication.dedAnalyzed dana=null;
+    public dedAnalyzed dana=null;
     private static Thread dedDistributerThread=null;
-    public List<DOPsCommunication.dedAnalyzed> danaList = new ArrayList<>();
+    public List<dedAnalyzed> danaList = new ArrayList<>();
     ReentrantLock lock = new ReentrantLock();
-    public BiFunction<String, DOPsCommunication.dedAnalyzed, String> DEDHandlerFunction;
+    public BiFunction<String, dedAnalyzed, String> DEDHandlerFunction;
 
     public DEDMessageHandler() {}
 
@@ -58,7 +61,7 @@ public final class DEDMessageHandler implements MessageHandler.Whole<byte[]>
         messageLatch.countDown(); // signal a valid message is ready for retrieval
     }
 
-    private void addDEDtoDistributer(DOPsCommunication.dedAnalyzed dana) {
+    private void addDEDtoDistributer(dedAnalyzed dana) {
         lock.lock();
         danaList.add(dana);
         lock.unlock();
@@ -76,13 +79,16 @@ public final class DEDMessageHandler implements MessageHandler.Whole<byte[]>
                         if(dedLatch.await(100, TimeUnit.SECONDS)) // wait for signal that valid ded has arrived
                         {
                             lock.lock();
-                            for (DOPsCommunication.dedAnalyzed dana : danaList) {
+                            for (dedAnalyzed dana : danaList) {
                                 switch (dana.type) {
                                     case "ChatInfo":
 
                                         try { DEDHandlerFunction.apply(dana.type, dana);
-                                        }catch(Exception e) { System.out.println("- ERROR: DED handler function was a NULL pointer"); }
-
+                                        }catch(Exception e) {
+                                            System.out.println("- ERROR: DED handler function was a NULL pointer");
+                                            //BiFunction<String, dedAnalyzed, String> x = (k, v) -> v == null ? "ERROR ded is null" : defaultHandler(dana.type,dana);
+                                            DEDHandlerFunction = (k, v) -> v == null ? "ERROR ded is null" : defaultHandler(dana.type,dana);
+                                        }
                                         break;
                                     default:
                                         System.out.println("- Currently NO handler for this type");
@@ -107,6 +113,12 @@ public final class DEDMessageHandler implements MessageHandler.Whole<byte[]>
         dedDistributerThread.start();
     }
 
+    public String defaultHandler(String type, dedAnalyzed dana)
+    {
+        String strResult = "dummy default handler";
+        System.out.println("- WARNING: DED default handler function was called");
+        return strResult;
+    }
 }
 
 
