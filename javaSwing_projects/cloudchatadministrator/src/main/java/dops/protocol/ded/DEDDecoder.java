@@ -89,7 +89,14 @@ public class DEDDecoder {
 		}
 
 		public short bytesToShort(byte[] bytes) {
-			ByteBuffer buffer = ByteBuffer.wrap(bytes);
+			byte[] dest = new byte[2]; // Make sure that buffer has 2 bytes for 64bit short
+			try {
+				System.arraycopy(bytes,0,dest, 0,bytes.length);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			ByteBuffer buffer = ByteBuffer.wrap(dest);
 			buffer.order(ByteOrder.LITTLE_ENDIAN); // coming from server which, when running on linux, is a Little Endian architecture
 			short v=0;
 			while( buffer.hasRemaining()) {

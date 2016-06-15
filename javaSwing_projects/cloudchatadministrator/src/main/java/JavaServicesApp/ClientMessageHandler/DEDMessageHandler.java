@@ -23,7 +23,7 @@ public final class DEDMessageHandler implements MessageHandler.Whole<byte[]>
         try {
             DOPsCommunication.dedAnalyzed dana = decodeIncomingDED(message);
             if(dana.bDecoded)
-                System.out.println("- message was a valid DED package.");
+                System.out.println("- message was a valid DED package of type : " + dana.type);
             else
                 System.out.println("- message was <unknown>.");
         } catch (Exception e) {
