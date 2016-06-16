@@ -57,7 +57,6 @@ public class CloudChatAdministratorApp extends JDialog {
             }
         });
 
-
         buttonConnect.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {

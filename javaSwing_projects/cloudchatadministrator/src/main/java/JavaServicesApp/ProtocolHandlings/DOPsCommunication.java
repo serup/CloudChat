@@ -6,7 +6,9 @@ import dops.protocol.ded.DEDEncoder;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.List;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 /**
  * This class handles DED packet data communication between client and DOPS server
@@ -20,6 +22,13 @@ public class DOPsCommunication {
 
     private DOPSClientEndpoint clientEndpoint = null;
     private BiFunction<String, dedAnalyzed, String> customHandlerFunction;
+    private List<ActionHandlerObject> listOfActionHandlers;
+
+    private class ActionHandlerObject
+    {
+        String type;
+        BiFunction<String, dedAnalyzed, String> function;
+    }
 
     public DOPsCommunication()
     {
@@ -235,6 +244,18 @@ public class DOPsCommunication {
     }
 
     /**
+     * Function for adding handlers for retrieval of different types of DED analyzed objects
+     * fx. add a handlerfunction for retrieving 'ChatInfo' objects, so it can add to a viewcontroller listbox
+     */
+    public void addActionHandler(String type, BiFunction<String, dedAnalyzed, String> customHandlerFunction)
+    {
+        ActionHandlerObject actionHandlerObject = new ActionHandlerObject();
+        actionHandlerObject.type = type;
+        actionHandlerObject.function = customHandlerFunction;
+        listOfActionHandlers.add(actionHandlerObject);
+    }
+
+    /**
      * Main handler function for incoming data traffic from server
      * traffic should be DED datapackages
      *
@@ -246,9 +267,12 @@ public class DOPsCommunication {
     private String handleCommunication(String type, dedAnalyzed dana)
     {
         String strResult="Error in communication";
-        System.out.println("- handleCommunication handler function called ");
+        System.out.println("- handleCommunication ; transfer to custom handlers ");
 
-
+        listOfActionHandlers.stream()
+                            .filter(d -> d.type == type)
+                            .map(d -> d.function)
+                            .forEach(d -> d.apply(type, dana));
 
         return strResult;
     }
