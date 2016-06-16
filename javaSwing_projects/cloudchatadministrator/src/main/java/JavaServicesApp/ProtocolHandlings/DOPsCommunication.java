@@ -247,6 +247,9 @@ public class DOPsCommunication {
     {
         String strResult="Error in communication";
         System.out.println("- handleCommunication handler function called ");
+
+
+
         return strResult;
     }
 }

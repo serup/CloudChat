@@ -96,7 +96,7 @@
                         <properties/>
                         <border type="none"/>
                         <children>
-                          <component id="6388f" class="javax.swing.JList" binding="listManagers">
+                          <component id="129cc" class="javax.swing.JList" binding="listManagers">
                             <constraints/>
                             <properties>
                               <model>

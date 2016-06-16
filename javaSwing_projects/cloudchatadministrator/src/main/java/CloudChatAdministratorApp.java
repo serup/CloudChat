@@ -1,4 +1,5 @@
 import JavaServicesApp.ProtocolHandlings.DOPsCommunication;
+import ViewControllers.HandleManagerListBox;
 import dops.utils.utils;
 
 import javax.swing.*;
@@ -15,8 +16,10 @@ public class CloudChatAdministratorApp extends JDialog {
     private JButton buttonConnect;
     private static boolean bConnected=false;
     private DOPsCommunication dopsCommunications=null;
+    private HandleManagerListBox handleManagerListBox = new HandleManagerListBox(listManagers, new DefaultListModel());
 
     public CloudChatAdministratorApp() {
+        //handleManagerListBox = new HandleManagerListBox(listManagers, new DefaultListModel());
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
@@ -53,6 +56,8 @@ public class CloudChatAdministratorApp extends JDialog {
                 super.focusGained(e);
             }
         });
+
+
         buttonConnect.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
@@ -75,7 +80,9 @@ public class CloudChatAdministratorApp extends JDialog {
                 String password = "12345";
 
                 if(dopsCommunications.connectToDOPs(uniqueId, username, password)) {
-                    // Set icon as connected
+                    handleManagerListBox.addElementToListBox("Jane Doe");
+                    handleManagerListBox.addElementToListBox("John Smith");
+                   // Set icon as connected
                     buttonConnect.setIcon(buttonConnect.getPressedIcon());
                     bConnected = true;
                 }
@@ -101,6 +108,7 @@ public class CloudChatAdministratorApp extends JDialog {
         dispose();
     }
 
+
     public static void main(String[] args) {
         CloudChatAdministratorApp dialog = new CloudChatAdministratorApp();
         dialog.setTitle("CloudChatAdministrator");
@@ -109,5 +117,7 @@ public class CloudChatAdministratorApp extends JDialog {
         dialog.setDefaultLookAndFeelDecorated(true); //TODO: find a way to change the look and feel of the app
         System.exit(0);
     }
+
+
 
 }
