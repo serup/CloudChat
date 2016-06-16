@@ -24,11 +24,10 @@ public final class DEDMessageHandler implements MessageHandler.Whole<byte[]>
     public static CountDownLatch messageLatch;
     public static CountDownLatch dedLatch;
     public byte[] receivedData=null;
-    public dedAnalyzed dana=null;
     private static Thread dedDistributerThread=null;
-    public List<dedAnalyzed> danaList = new ArrayList<>();
-    ReentrantLock lock = new ReentrantLock();
-    public BiFunction<String, dedAnalyzed, String> DEDHandlerFunction;
+    private List<dedAnalyzed> danaList = new ArrayList<>();
+    private ReentrantLock lock = new ReentrantLock();
+    private BiFunction<String, dedAnalyzed, String> DEDHandlerFunction;
 
     public DEDMessageHandler() {}
 
@@ -43,7 +42,7 @@ public final class DEDMessageHandler implements MessageHandler.Whole<byte[]>
         System.out.println("Received message of length : "+message.length);
         System.out.println("- determine if message is of type DED protocol");
         try {
-            dana = decodeIncomingDED(message);
+            dedAnalyzed dana = decodeIncomingDED(message);
             if(dana.bDecoded) {
                 System.out.println("- message was a valid DED package of type : " + dana.type);
                 if(dedDistributerThread!=null){
