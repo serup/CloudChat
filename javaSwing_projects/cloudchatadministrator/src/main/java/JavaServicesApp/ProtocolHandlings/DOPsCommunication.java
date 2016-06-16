@@ -22,7 +22,7 @@ public class DOPsCommunication {
 
     public boolean connectToDOPs(String uniqueId, String username, String password) {
         boolean bResult;
-        BiFunction<String, dedAnalyzed, String> customHandlerFunction  = (k, v) -> handleCommunication(k,v);
+        BiFunction<String, dedAnalyzed, String> customHandlerFunction  = this::handleCommunication;
         clientEndpoint = new DOPSClientEndpoint();
         clientEndpoint.addHandlerFunction(customHandlerFunction);
         clientEndpoint.connectToServer("ws://backend.scanva.com:7777");
@@ -45,29 +45,25 @@ public class DOPsCommunication {
 
     private static ByteBuffer prepareConnectDEDToSend(String uniqueId, String username, String password) {
         short trans_id = 69;
-        ByteBuffer data = createDEDforDOPSJavaConnect(trans_id, uniqueId, username, password);
-        return data;
+        return createDEDforDOPSJavaConnect(trans_id, uniqueId, username, password);
     }
 
     private static String decodeLoginResponse(byte[] receivedData) {
         String Result = "dops.decode.status.error";
         boolean bDecoded = false;
-        String strMethod = "";
-        String strProtocolTypeID = "";
-        String strFunctionName = "";
-        String strStatus = "";
-        short uTrans_id = 0;
+        String strMethod;
+        String strStatus;
 
         // decode data ...
         DEDDecoder DED2 = new DEDDecoder();
         DED2.PUT_DATA_IN_DECODER(receivedData, receivedData.length);
         if (DED2.GET_STRUCT_START("WSResponse") == 1 &&
                 (strMethod = DED2.GET_METHOD("Method")).length() > 0 &&
-                (uTrans_id = DED2.GET_USHORT("TransID")) != -1 &&
-                (strProtocolTypeID = DED2.GET_STDSTRING("protocolTypeID")).length() > 0) {
+                (DED2.GET_USHORT("TransID")) != -1 &&
+                (DED2.GET_STDSTRING("protocolTypeID")).length() > 0) {
             if (strMethod.equals("1_1_6_LoginProfile")) {
-                String strDestination = "";
-                String strSource = "";
+                String strDestination;
+                String strSource;
                 // login response from DFD was received, now decode response
                 if ((strDestination = DED2.GET_STDSTRING("dest")).length() > 0 &&
                         (strSource = DED2.GET_STDSTRING("src")).length() > 0 &&
@@ -84,8 +80,8 @@ public class DOPsCommunication {
                 }
             } else { // When DFD is offline, then this type of packet is received
                 if (
-                        (strFunctionName = DED2.GET_STDSTRING("functionName")).length() > 0 &&
-                                (strStatus = DED2.GET_STDSTRING("status")).length() > 0 &&
+                        (DED2.GET_STDSTRING("functionName")).length() > 0 &&
+                                (DED2.GET_STDSTRING("status")).length() > 0 &&
                                 DED2.GET_STRUCT_END("WSResponse") == 1) {
                     bDecoded = true;
                     System.out.println("DED packet decoded - now validate");
@@ -105,7 +101,30 @@ public class DOPsCommunication {
         return Result;
     }
 
-    public static dedAnalyzed decodeIncomingDED(byte[] DED) throws Exception {
+    private static ByteBuffer createDEDforDOPSJavaConnect(short trans_id, String uniqueId, String username, String password) {
+        DEDEncoder DED = new DEDEncoder();
+        DED.PUT_STRUCT_START("WSRequest");
+        DED.PUT_METHOD("Method", "JavaConnect");
+        DED.PUT_USHORT("TransID", trans_id);
+        DED.PUT_STDSTRING("protocolTypeID", "DED1.00.00");
+        DED.PUT_STDSTRING("functionName", uniqueId);
+        DED.PUT_STDSTRING("username", username);
+        DED.PUT_STDSTRING("password", password);
+        DED.PUT_STRUCT_END("WSRequest");
+
+        return DED.GET_ENCODED_BYTEBUFFER_DATA();
+    }
+
+     /**
+     * Decodes the DED package and creates a result object containing type and fields
+     * this function is called on client connection level and helps with determining the
+     * incoming data traffic
+     *
+     * @param DED
+     * @return dedAnalyzed object -- contains decoded values of the DED package
+     * @throws Exception
+     */
+    public static dedAnalyzed decodeIncomingDED(byte[] DED) {
         DOPsCommunication.dedAnalyzed dana = new DOPsCommunication.dedAnalyzed();
 
         if (DED == null) {
@@ -166,21 +185,9 @@ public class DOPsCommunication {
         return dana;
     }
 
-    private static ByteBuffer createDEDforDOPSJavaConnect(short trans_id, String uniqueId, String username, String password) {
-        DEDEncoder DED = new DEDEncoder();
-        DED.PUT_STRUCT_START("WSRequest");
-        DED.PUT_METHOD("Method", "JavaConnect");
-        DED.PUT_USHORT("TransID", trans_id);
-        DED.PUT_STDSTRING("protocolTypeID", "DED1.00.00");
-        DED.PUT_STDSTRING("functionName", uniqueId);
-        DED.PUT_STDSTRING("username", username);
-        DED.PUT_STDSTRING("password", password);
-        DED.PUT_STRUCT_END("WSRequest");
-
-        ByteBuffer data = DED.GET_ENCODED_BYTEBUFFER_DATA();
-        return data;
-    }
-
+    /**
+     * The main object for decoded DED package
+     */
     public static class dedAnalyzed {
 
         public String type;
@@ -197,15 +204,13 @@ public class DOPsCommunication {
         public void setDED(byte[] ded) {
             originalDED = ded;
         }
-
-
     }
 
-    class element {
-        public String name;
-        public String value;
-    }
-
+    /**
+     * DED packages can contain different types of object
+     * here is a few
+     *
+     */
     private static class ForwardInfoRequestObj {
         public short transactionsID;
         public String protocolTypeID;
@@ -213,7 +218,6 @@ public class DOPsCommunication {
         public String src;
         public String srcAlias;
     }
-
     private static class ChatInfoObj {
         public short transactionsID;
         public String protocolTypeID;
