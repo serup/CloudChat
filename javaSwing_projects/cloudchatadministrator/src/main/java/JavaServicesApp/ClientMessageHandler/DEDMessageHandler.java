@@ -61,6 +61,16 @@ public final class DEDMessageHandler implements MessageHandler.Whole<byte[]>
         messageLatch.countDown(); // signal a valid message is ready for retrieval
     }
 
+    public boolean addHandlerFunction(BiFunction<String, dedAnalyzed, String> customHandlerFunction)
+    {
+        boolean bResult = false;
+        if(customHandlerFunction!=null) {
+            DEDHandlerFunction = customHandlerFunction;
+            bResult = true;
+        }
+        return bResult;
+    }
+
     private void addDEDtoDistributer(dedAnalyzed dana) {
         lock.lock();
         danaList.add(dana);
@@ -86,8 +96,8 @@ public final class DEDMessageHandler implements MessageHandler.Whole<byte[]>
                                         try { DEDHandlerFunction.apply(dana.type, dana);
                                         }catch(Exception e) {
                                             System.out.println("- ERROR: DED handler function was a NULL pointer");
-                                            //BiFunction<String, dedAnalyzed, String> x = (k, v) -> v == null ? "ERROR ded is null" : defaultHandler(dana.type,dana);
-                                            DEDHandlerFunction = (k, v) -> v == null ? "ERROR ded is null" : defaultHandler(dana.type,dana);
+                                            //DEDHandlerFunction = (k, v) -> v == null ? "ERROR ded is null" : defaultHandler(dana.type,dana);
+                                            DEDHandlerFunction = (k, v) -> defaultHandler(dana.type,dana);
                                         }
                                         break;
                                     default:

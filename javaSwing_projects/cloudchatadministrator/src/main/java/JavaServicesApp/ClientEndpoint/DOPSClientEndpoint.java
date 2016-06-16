@@ -10,6 +10,7 @@ import java.net.URI;
 import java.nio.ByteBuffer;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiFunction;
 
 /**
  * Created by serup on 6/15/16.
@@ -85,5 +86,18 @@ public class DOPSClientEndpoint extends JavaWebSocketClientEndpoint
         return data;
     }
 
+    public boolean addHandlerFunction(BiFunction<String, DOPsCommunication.dedAnalyzed, String> customHandlerFunction)
+    {
+        boolean bResult;
+        try {
+            bResult = msgHandler.addHandlerFunction(customHandlerFunction);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            bResult = false;
+        }
+        return bResult;
+    }
 
 }

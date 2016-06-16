@@ -6,6 +6,7 @@ import dops.protocol.ded.DEDEncoder;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.function.BiFunction;
 
 /**
  * This class handles DED packet data communication between client and DOPS server
@@ -21,7 +22,9 @@ public class DOPsCommunication {
 
     public boolean connectToDOPs(String uniqueId, String username, String password) {
         boolean bResult;
+        BiFunction<String, dedAnalyzed, String> customHandlerFunction  = (k, v) -> handleCommunication(k,v);
         clientEndpoint = new DOPSClientEndpoint();
+        clientEndpoint.addHandlerFunction(customHandlerFunction);
         clientEndpoint.connectToServer("ws://backend.scanva.com:7777");
 
         ByteBuffer data = prepareConnectDEDToSend(uniqueId, username, password);
@@ -203,9 +206,7 @@ public class DOPsCommunication {
         public String value;
     }
 
-    // object types
-// Objects for elements in dedAnalyzed
-    static class ForwardInfoRequestObj {
+    private static class ForwardInfoRequestObj {
         public short transactionsID;
         public String protocolTypeID;
         public String dest;
@@ -213,7 +214,7 @@ public class DOPsCommunication {
         public String srcAlias;
     }
 
-    static class ChatInfoObj {
+    private static class ChatInfoObj {
         public short transactionsID;
         public String protocolTypeID;
         public String dest;
@@ -223,6 +224,21 @@ public class DOPsCommunication {
         public String lastEntryTime;
     }
 
+    /**
+     * Main handler function for incoming data traffic from server
+     * traffic should be DED datapackages
+     *
+     * This function is added as a handlerfunction for internal client connection
+     *
+     * @param type  -- denotes the type of the analysed DED package - fx. 'ChatInfo'
+     * @param dana  -- this is the decoded DED package
+     */
+    private String handleCommunication(String type, dedAnalyzed dana)
+    {
+        String strResult="Error in communication";
+        System.out.println("- handleCommunication handler function called ");
+        return strResult;
+    }
 }
 
 
