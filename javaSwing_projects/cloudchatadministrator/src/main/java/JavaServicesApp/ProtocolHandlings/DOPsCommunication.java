@@ -24,13 +24,13 @@ public class DOPsCommunication {
     public DOPsCommunication()
     {
         customHandlerFunction  = this::handleCommunication;
-        clientEndpoint = new DOPSClientEndpoint();
     }
 
     public boolean connectToDOPs(String uniqueId, String username, String password) {
         boolean bResult=false;
 
         try {
+            clientEndpoint = new DOPSClientEndpoint();
             clientEndpoint.addHandlerFunction(customHandlerFunction);
             clientEndpoint.connectToServer("ws://backend.scanva.com:7777");
             clientEndpoint.sendToServer(prepareConnectDEDToSend(uniqueId, username, password));
