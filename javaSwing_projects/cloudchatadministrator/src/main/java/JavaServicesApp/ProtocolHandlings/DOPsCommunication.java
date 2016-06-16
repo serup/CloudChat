@@ -19,17 +19,23 @@ import java.util.function.BiFunction;
 public class DOPsCommunication {
 
     private DOPSClientEndpoint clientEndpoint = null;
+    private BiFunction<String, dedAnalyzed, String> customHandlerFunction;
+
+    public DOPsCommunication()
+    {
+        customHandlerFunction  = this::handleCommunication;
+        clientEndpoint = new DOPSClientEndpoint();
+    }
 
     public boolean connectToDOPs(String uniqueId, String username, String password) {
-        boolean bResult;
-        BiFunction<String, dedAnalyzed, String> customHandlerFunction  = this::handleCommunication;
-        clientEndpoint = new DOPSClientEndpoint();
-        clientEndpoint.addHandlerFunction(customHandlerFunction);
-        clientEndpoint.connectToServer("ws://backend.scanva.com:7777");
+        boolean bResult=false;
 
-        ByteBuffer data = prepareConnectDEDToSend(uniqueId, username, password);
-        clientEndpoint.sendToServer(data);
-        bResult = decodeLoginResponse(clientEndpoint.receiveMessageFromServer()).contains("dops.connected.status.ok");
+        try {
+            clientEndpoint.addHandlerFunction(customHandlerFunction);
+            clientEndpoint.connectToServer("ws://backend.scanva.com:7777");
+            clientEndpoint.sendToServer(prepareConnectDEDToSend(uniqueId, username, password));
+            bResult = decodeLoginResponse(clientEndpoint.receiveMessageFromServer()).contains("dops.connected.status.ok");
+        } catch (Exception e) { e.printStackTrace(); }
 
         return bResult;
     }
