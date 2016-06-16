@@ -212,20 +212,20 @@ public class DOPsCommunication {
      *
      */
     private static class ForwardInfoRequestObj {
-        public short transactionsID;
-        public String protocolTypeID;
-        public String dest;
-        public String src;
-        public String srcAlias;
+        short transactionsID;
+        String protocolTypeID;
+        String dest;
+        String src;
+        String srcAlias;
     }
     private static class ChatInfoObj {
-        public short transactionsID;
-        public String protocolTypeID;
-        public String dest;
-        public String src;
-        public String srcAlias;
-        public String srcHomepageAlias;
-        public String lastEntryTime;
+        short transactionsID;
+        String protocolTypeID;
+        String dest;
+        String src;
+        String srcAlias;
+        String srcHomepageAlias;
+        String lastEntryTime;
     }
 
     /**
