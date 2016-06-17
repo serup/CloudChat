@@ -75,7 +75,7 @@ public class DOPsCommunicationTest {
 
     @Test
     public void decodeIncomingDED() throws Exception {
-        byte[] data = createChatInfo();
+        byte[] data = createChatInfo("dummy");
         DOPsCommunication.dedAnalyzed dana = DOPsCommunication.decodeIncomingDED(data);
         assertTrue(dana.type == "ChatInfo");
 
@@ -276,7 +276,7 @@ public class DOPsCommunicationTest {
              */
             dopsCommunications.addActionHandler("ChatInfo", t::actionHandlercallbackfunction);
 
-            byte[] data = createChatInfo();
+            byte[] data = createChatInfo(uniqueId); // correct server should throw back unknown DED destinations to origin, thus uniqueId could be void
             DOPsCommunication.dedAnalyzed dana = DOPsCommunication.decodeIncomingDED(data);
             Assert.assertTrue(dana.type == "ChatInfo");
 

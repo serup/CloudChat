@@ -95,14 +95,14 @@ public class utils {
         return bResult;
     }
 
-    public static byte[] createChatInfo() {
+    public static byte[] createChatInfo(String dest) {
 
         DEDEncoder DED = new DEDEncoder();
         DED.PUT_STRUCT_START ("ClientChatRequest");
         DED.PUT_METHOD ("Method", "JSCChatInfo");
         DED.PUT_USHORT ("TransID", (short)23);
         DED.PUT_STDSTRING("protocolTypeID", "DED1.00.00");
-        DED.PUT_STDSTRING("dest", "ccAdmin");  // This Admins uniqueID, since this is a test it really does not matter
+        DED.PUT_STDSTRING("dest", dest);
         DED.PUT_STDSTRING("src", "4086d4ab369e14ca1b6be7364d88cf85"); //  uniqueID
         DED.PUT_STDSTRING("srcAlias", "SERUP");
         DED.PUT_STDSTRING("srcHomepageAlias", "Montenegro");

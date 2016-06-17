@@ -6,7 +6,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.StringJoiner;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -57,7 +56,8 @@ public class DOPsCommunicationWithMockTest {
         }
 
         Ctest t = new Ctest();
-        String uniqueId = "983998727DF048B2A796B44C89345494";
+        //String uniqueId = "983998727DF048B2A796B44C89345494";
+        String uniqueId = "ccAdmin"; // round trip for this test - sending to server should result in echoing back
         String username = "johndoe@email.com";
         String password = "12345";
 
@@ -71,7 +71,7 @@ public class DOPsCommunicationWithMockTest {
              */
             dopsCommunications.addActionHandler("ChatInfo", t::actionHandlercallbackfunction);
 
-            byte[] data = createChatInfo();
+            byte[] data = createChatInfo(uniqueId);
             DOPsCommunication.dedAnalyzed dana = DOPsCommunication.decodeIncomingDED(data);
             Assert.assertTrue(dana.type == "ChatInfo");
 
