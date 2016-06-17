@@ -144,16 +144,7 @@ public class MockServer {
                 }
                 else {
                     //TODO: refactor to be more general in its handling of DEDs
-                    System.out.println("- TODO: [MockServer] refactor to be more general in its handling of DEDs");
-                    DOPsCommunication.dedAnalyzed dana = DOPsCommunication.decodeIncomingDED(dedpacket);
-                    bDecoded = dana.bDecoded;
-                    if (!bDecoded) {
-                        System.out.println("- WARNING: Unknown DED type");
-                    }
-                    else
-                    {
-                        System.out.println("- received DED of type : " + dana.type);
-                    }
+                    bDecoded=false;
                 }
             }
             if(!bDecoded)
@@ -161,22 +152,46 @@ public class MockServer {
         }
 
         // 2. determine what to respond
-        if(bDecoded)
+        byte[] dedResponsePacket=null;
+        if(bDecoded) {
             strStatus="ACCEPTED";
-        else
-            strStatus="NOT ACCEPTED USER";
 
-        // 3. create response packet
-        DEDEncoder DED2 = new DEDEncoder();
-        DED2.PUT_STRUCT_START( "WSResponse" );
-            DED2.PUT_METHOD   ( "Method", strMethod );
-            DED2.PUT_USHORT   ( "TransID", uTrans_id);
-            DED2.PUT_STDSTRING( "protocolTypeID", "DED1.00.00");
-            DED2.PUT_STDSTRING( "functionName", strFunctionName );
-            DED2.PUT_STDSTRING( "status", strStatus );
-        DED2.PUT_STRUCT_END( "WSResponse" );
+            // 3. create response packet
+            DEDEncoder DED2 = new DEDEncoder();
+            DED2.PUT_STRUCT_START("WSResponse");
+            DED2.PUT_METHOD("Method", strMethod);
+            DED2.PUT_USHORT("TransID", uTrans_id);
+            DED2.PUT_STDSTRING("protocolTypeID", "DED1.00.00");
+            DED2.PUT_STDSTRING("functionName", strFunctionName);
+            DED2.PUT_STDSTRING("status", strStatus);
+            DED2.PUT_STRUCT_END("WSResponse");
 
-        byte[] dedResponsePacket = DED2.GET_ENCODED_BYTEARRAY_DATA();
+            dedResponsePacket = DED2.GET_ENCODED_BYTEARRAY_DATA();
+        }
+
+        if(!bDecoded) {
+            System.out.println("- TODO: [MockServer] refactor to be more general in its handling of DEDs");
+            DOPsCommunication.dedAnalyzed dana = DOPsCommunication.decodeIncomingDED(dedpacket);
+            bDecoded = dana.bDecoded;
+            if (!bDecoded) {
+                System.out.println("- WARNING: Unknown DED type");
+                strStatus = "NOT ACCEPTED USER";
+
+                // 3. create response packet
+                DEDEncoder DED2 = new DEDEncoder();
+                DED2.PUT_STRUCT_START("WSResponse");
+                DED2.PUT_METHOD("Method", strMethod);
+                DED2.PUT_USHORT("TransID", uTrans_id);
+                DED2.PUT_STDSTRING("protocolTypeID", "DED1.00.00");
+                DED2.PUT_STDSTRING("functionName", strFunctionName);
+                DED2.PUT_STDSTRING("status", strStatus);
+                DED2.PUT_STRUCT_END("WSResponse");
+
+                dedResponsePacket = DED2.GET_ENCODED_BYTEARRAY_DATA();
+            } else {
+                System.out.println("- received DED of type : " + dana.type);
+            }
+        }
 
         // 4. send response packet
         if(dedResponsePacket==null) {
