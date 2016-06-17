@@ -5,8 +5,9 @@ import dops.protocol.ded.DEDDecoder;
 import dops.protocol.ded.DEDEncoder;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
-import java.util.List;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
@@ -22,7 +23,7 @@ public class DOPsCommunication {
 
     private DOPSClientEndpoint clientEndpoint = null;
     private BiFunction<String, dedAnalyzed, String> customHandlerFunction;
-    private List<ActionHandlerObject> listOfActionHandlers;
+    private List<ActionHandlerObject> listOfActionHandlers = new ArrayList<>();
 
     private class ActionHandlerObject
     {
@@ -219,6 +220,18 @@ public class DOPsCommunication {
         public void setDED(byte[] ded) {
             originalDED = ded;
         }
+
+        public Object getElement(String name) {
+            Object objResult=null;
+            try {
+                Field field = elements.getClass().getDeclaredField(name);
+                field.setAccessible(true);
+                objResult = field.get(elements);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return objResult;
+        }
     }
 
     /**
@@ -266,7 +279,6 @@ public class DOPsCommunication {
      */
     private String handleCommunication(String type, dedAnalyzed dana)
     {
-        String strResult="Error in communication";
         System.out.println("- handleCommunication ; transfer to custom handlers ");
 
         listOfActionHandlers.stream()
@@ -274,7 +286,7 @@ public class DOPsCommunication {
                             .map(d -> d.function)
                             .forEach(d -> d.apply(type, dana));
 
-        return strResult;
+        return "";
     }
 }
 
