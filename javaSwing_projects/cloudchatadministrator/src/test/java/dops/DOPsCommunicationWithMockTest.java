@@ -1,6 +1,6 @@
 package dops;
 
-import JavaServicesApp.ProtocolHandlings.DOPsCommunication;
+import ProtocolHandlings.DOPsCommunication;
 import dops.mocks.setupMockServer;
 import org.junit.Assert;
 import org.junit.Before;

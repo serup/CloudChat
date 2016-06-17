@@ -1,7 +1,6 @@
 
 package dops.websocket;
 
-import JavaServicesApp.ClientEndpoint.JavaWebSocketClientEndpoint;
 import dops.mocks.setupMockServer;
 import WebSocketEchoTestEndpoints.EchoByteArrayEndpoint;
 import dops.protocol.ded.DEDDecoder;

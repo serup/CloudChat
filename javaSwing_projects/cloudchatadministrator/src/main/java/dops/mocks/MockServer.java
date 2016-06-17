@@ -1,6 +1,6 @@
 package dops.mocks;
 
-import JavaServicesApp.ProtocolHandlings.DOPsCommunication;
+import ProtocolHandlings.DOPsCommunication;
 import dops.protocol.ded.DEDDecoder;
 import dops.protocol.ded.DEDEncoder;
 

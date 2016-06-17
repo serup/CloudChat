@@ -1,4 +1,4 @@
-import JavaServicesApp.ProtocolHandlings.DOPsCommunication;
+import ProtocolHandlings.DOPsCommunication;
 import ViewControllers.HandleCustomerListBox;
 import ViewControllers.HandleManagerListBox;
 import dops.utils.utils;

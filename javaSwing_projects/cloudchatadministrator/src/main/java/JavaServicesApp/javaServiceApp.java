@@ -1,15 +1,9 @@
 package JavaServicesApp;
 
-import JavaServicesApp.ProtocolHandlings.DOPsCommunication;
+import ProtocolHandlings.DOPsCommunication;
 import dops.utils.utils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 

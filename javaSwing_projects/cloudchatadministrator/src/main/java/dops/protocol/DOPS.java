@@ -1,6 +1,6 @@
 package dops.protocol;
 
-import JavaServicesApp.ClientEndpoint.JavaWebSocketClientEndpoint;
+import ClientEndpoint.JavaWebSocketClientEndpoint;
 import dops.protocol.ded.DEDDecoder;
 import dops.protocol.ded.DEDEncoder;
 
