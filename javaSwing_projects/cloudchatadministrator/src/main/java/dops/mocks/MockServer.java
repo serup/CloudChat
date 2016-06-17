@@ -1,5 +1,6 @@
 package dops.mocks;
 
+import JavaServicesApp.ProtocolHandlings.DOPsCommunication;
 import dops.protocol.ded.DEDDecoder;
 import dops.protocol.ded.DEDEncoder;
 
@@ -141,11 +142,18 @@ public class MockServer {
                         bDecoded=true;
                     }
                 }
-                else
-                {
+                else {
                     //TODO: refactor to be more general in its handling of DEDs
-                    System.out.println("- WARNING: Unknown DED type");
                     System.out.println("- TODO: [MockServer] refactor to be more general in its handling of DEDs");
+                    DOPsCommunication.dedAnalyzed dana = DOPsCommunication.decodeIncomingDED(dedpacket);
+                    bDecoded = dana.bDecoded;
+                    if (!bDecoded) {
+                        System.out.println("- WARNING: Unknown DED type");
+                    }
+                    else
+                    {
+                        System.out.println("- received DED of type : " + dana.type);
+                    }
                 }
             }
             if(!bDecoded)

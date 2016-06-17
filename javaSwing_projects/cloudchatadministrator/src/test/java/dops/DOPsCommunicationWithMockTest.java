@@ -80,7 +80,7 @@ public class DOPsCommunicationWithMockTest {
             dopsCommunications.sendToServer(dana.getByteBuffer());
 
             // Wait for handling
-            assertTrue(t.signalEvent.await(100, TimeUnit.MILLISECONDS)); // wait for signal that valid ded has arrived in action handler function
+            assertTrue(t.signalEvent.await(10, TimeUnit.SECONDS)); // wait for signal that valid ded has arrived in action handler function
 
             // verify that DED was analyzed and tranfered as object to action handler function
             assertTrue(t.bCalledFunction);
