@@ -111,12 +111,12 @@ public class DOPsCommunication {
                                 (DED2.GET_STDSTRING("status")).length() > 0 &&
                                 DED2.GET_STRUCT_END("WSResponse") == 1) {
                     bDecoded = true;
-                    System.out.println("DED packet decoded - now validate");
+                    System.out.println("- DED packet decoded - now validate");
 
                     if (!strMethod.equals("JavaConnect")) bDecoded = false;
                 } else {
                     // unknown method
-                    System.out.println("DED packet could NOT be decoded - unknown Method: " + strMethod);
+                    System.out.println("- DED packet could NOT be decoded - unknown Method: " + strMethod);
                 }
             }
         } else {

@@ -222,7 +222,7 @@ public class MockDOPsServerTests {
                 DED2.GET_STRUCT_END( "WSResponse" )==1)
         {
             bDecoded=true;
-            System.out.println("DED packet decoded - now validate");
+            System.out.println("- DED packet decoded - now validate");
 
             if(!strMethod.equals("JavaConnect")) bDecoded=false;
             if(uTrans_id != trans_id) bDecoded=false;
