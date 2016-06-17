@@ -8,6 +8,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.nio.ByteBuffer;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import static dops.utils.utils.createChatInfo;
 import static junit.framework.TestCase.assertEquals;
@@ -32,18 +34,22 @@ public class DOPsCommunicationWithMockTest {
 
     @Test
     public void addActionHandler() throws Exception {
+
         DOPsCommunication dopsCommunications = new DOPsCommunication();
         assertEquals(true, setupMockServer.isOpen());
 
         class Ctest
         {
-            boolean bCalledFunction=false;
+            private boolean bCalledFunction=false;
+            private CountDownLatch signalEvent = new CountDownLatch(1);
 
-            String actionHandlercallbackfunction(String type, DOPsCommunication.dedAnalyzed dana)
+            private String actionHandlercallbackfunction(String type, DOPsCommunication.dedAnalyzed dana)
             {
                 String str="OK";
                 this.bCalledFunction=true;
                 System.out.println("- actionHandlercallbackfunction called ");
+                Assert.assertTrue(dana.type == type);
+                signalEvent.countDown(); // signal  a valid DED has arrived
                 return str;
             }
         }
@@ -52,6 +58,7 @@ public class DOPsCommunicationWithMockTest {
         String uniqueId = "983998727DF048B2A796B44C89345494";
         String username = "johndoe@email.com";
         String password = "12345";
+
 
         if(dopsCommunications.connectToDOPs(uniqueId, username, password)) {
             dopsCommunications.addActionHandler("ChatInfo", t::actionHandlercallbackfunction);
@@ -64,7 +71,7 @@ public class DOPsCommunicationWithMockTest {
             dopsCommunications.sendToServer(dana.getByteBuffer());
 
             // Wait for handling
-            Thread.sleep(100);
+            assertTrue(t.signalEvent.await(100, TimeUnit.SECONDS)); // wait for signal that valid ded has arrived in action handler function
 
             // verify that DED was analyzed and tranfered as object to action handler function
             assertTrue(t.bCalledFunction);

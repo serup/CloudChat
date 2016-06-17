@@ -1,18 +1,14 @@
 package JavaServicesApp.ClientMessageHandler;
 
-import JavaServicesApp.ProtocolHandlings.DOPsCommunication;
 import JavaServicesApp.ProtocolHandlings.DOPsCommunication.dedAnalyzed;
-import dops.protocol.DOPS;
 
 import javax.websocket.MessageHandler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 import static JavaServicesApp.ProtocolHandlings.DOPsCommunication.decodeIncomingDED;
 
@@ -26,7 +22,7 @@ public final class DEDMessageHandler implements MessageHandler.Whole<byte[]>
     public byte[] receivedData=null;
     private static Thread dedDistributerThread=null;
     private List<dedAnalyzed> danaList = new ArrayList<>();
-    private ReentrantLock lock = new ReentrantLock();
+    private ReentrantLock WaitForlock = new ReentrantLock();
     private BiFunction<String, dedAnalyzed, String> DEDHandlerFunction;
 
     public DEDMessageHandler() {}
@@ -71,9 +67,9 @@ public final class DEDMessageHandler implements MessageHandler.Whole<byte[]>
     }
 
     private void addDEDtoDistributer(dedAnalyzed dana) {
-        lock.lock();
+        WaitForlock.lock();
         danaList.add(dana);
-        lock.unlock();
+        WaitForlock.unlock();
     }
 
     private void runDEDdistributerThread() {
@@ -87,7 +83,7 @@ public final class DEDMessageHandler implements MessageHandler.Whole<byte[]>
                     {
                         if(dedLatch.await(100, TimeUnit.SECONDS)) // wait for signal that valid ded has arrived
                         {
-                            lock.lock();
+                            WaitForlock.lock();
                             for (dedAnalyzed dana : danaList) {
                                 switch (dana.type) {
                                     case "ChatInfo":
@@ -106,7 +102,7 @@ public final class DEDMessageHandler implements MessageHandler.Whole<byte[]>
 
                             }
                             danaList.clear(); // all on list have been processed
-                            lock.unlock();
+                            WaitForlock.unlock();
                         }
                         dedLatch = new CountDownLatch(1); // prepare for next signal
                     }
