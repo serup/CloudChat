@@ -19,6 +19,7 @@ public class setupMockServer {
     private Session session;
     private Object waitLock = new Object();
     private Server server;
+    private int ServerPort;
 
     private void  wait4TerminateSignal()
     {
@@ -62,6 +63,7 @@ public class setupMockServer {
             server.stop();
     }
 
+    // constructor
     public setupMockServer(int ServerPort, String ServerEndpoint)
     {
         /**
@@ -79,10 +81,28 @@ public class setupMockServer {
          */
         session = clientEndpoint.connectToServer("ws://localhost:" + ServerPort + "/websockets/" + ServerEndpoint);
 
-
-
         bIsRunning=true;
+    }
 
+    // constructor
+    public setupMockServer(int ServerPort)
+    {
+        this.ServerPort = ServerPort;
+
+        /**
+         * start the MOCK server
+         */
+        this.runMockServer(ServerPort);
+
+        /**
+         * setup client
+         */
+        clientEndpoint = new JavaWebSocketClientEndpoint();
+
+    }
+
+    public String getMockServerURI() {
+        return "ws://localhost:" + ServerPort + "/websockets/" + "MockServerEndpoint";
     }
 
     public boolean isOpen()

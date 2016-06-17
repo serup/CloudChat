@@ -28,8 +28,11 @@ public class DOPsCommunicationWithMockTest {
         /**
          * Start and connect to a MOCK server which can act as a Server and receive a DED packet and return a DED packet with result
          */
-        if(setupMockServer ==null)
-            setupMockServer = new setupMockServer(mockServerPort,"MockServerEndpoint");
+        if(setupMockServer ==null) {
+            //setupMockServer = new setupMockServer(mockServerPort,"MockServerEndpoint");
+            setupMockServer = new setupMockServer(mockServerPort);
+            mockServerURI = setupMockServer.getMockServerURI();
+        }
     }
 
     @Test
@@ -37,7 +40,6 @@ public class DOPsCommunicationWithMockTest {
 
         DOPsCommunication dopsCommunications = new DOPsCommunication();
         dopsCommunications.setServerURI(mockServerURI);
-        assertEquals(true, setupMockServer.isOpen());
 
         class Ctest
         {
