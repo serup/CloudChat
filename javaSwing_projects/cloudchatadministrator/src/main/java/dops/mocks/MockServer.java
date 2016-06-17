@@ -37,8 +37,8 @@ public class MockServer {
         DEDDecoder DED = new DEDDecoder();
         DED.PUT_DATA_IN_DECODER( dedpacket, dedpacket.length);
         if( DED.GET_STRUCT_START( "WSRequest" )==1 &&
-                (strMethod          = DED.GET_METHOD ( "name" )).length()>0 &&
-                (uTrans_id          = DED.GET_USHORT ( "trans_id")) !=-1 &&
+                (strMethod          = DED.GET_METHOD ( "Method" )).length()>0 &&
+                (uTrans_id          = DED.GET_USHORT ( "TransID")) !=-1 &&
                 (strProtocolTypeID  = DED.GET_STDSTRING ( "protocolTypeID")).length()>0 &&
                 (strFunctionName    = DED.GET_STDSTRING ( "functionName")).length()>0 &&
                 (strUsername        = DED.GET_STDSTRING ( "username")).length()>0 &&
@@ -159,8 +159,8 @@ public class MockServer {
         // 3. create response packet
         DEDEncoder DED2 = new DEDEncoder();
         DED2.PUT_STRUCT_START( "WSResponse" );
-            DED2.PUT_METHOD   ( "name", strMethod );
-            DED2.PUT_USHORT   ( "trans_id", uTrans_id);
+            DED2.PUT_METHOD   ( "Method", strMethod );
+            DED2.PUT_USHORT   ( "TransID", uTrans_id);
             DED2.PUT_STDSTRING( "protocolTypeID", "DED1.00.00");
             DED2.PUT_STDSTRING( "functionName", strFunctionName );
             DED2.PUT_STDSTRING( "status", strStatus );

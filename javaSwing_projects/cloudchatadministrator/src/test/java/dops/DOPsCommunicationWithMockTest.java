@@ -58,8 +58,7 @@ public class DOPsCommunicationWithMockTest {
         }
 
         Ctest t = new Ctest();
-        //String uniqueId = "983998727DF048B2A796B44C89345494";
-        String uniqueId = "ccAdmin"; // round trip for this test - sending to server should result in echoing back
+        String uniqueId = "985998707DF048B2A796B44C89345494";
         String username = "johndoe@email.com";
         String password = "12345";
 
@@ -81,7 +80,7 @@ public class DOPsCommunicationWithMockTest {
             dopsCommunications.sendToServer(dana.getByteBuffer());
 
             // Wait for handling
-            assertTrue(t.signalEvent.await(100, TimeUnit.SECONDS)); // wait for signal that valid ded has arrived in action handler function
+            assertTrue(t.signalEvent.await(100, TimeUnit.MILLISECONDS)); // wait for signal that valid ded has arrived in action handler function
 
             // verify that DED was analyzed and tranfered as object to action handler function
             assertTrue(t.bCalledFunction);
