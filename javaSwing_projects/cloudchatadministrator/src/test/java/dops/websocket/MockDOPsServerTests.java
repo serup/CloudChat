@@ -177,7 +177,7 @@ public class MockDOPsServerTests {
          */
         DEDEncoder DED = new DEDEncoder();
         DED.PUT_STRUCT_START ( "WSRequest" );
-        DED.PUT_METHOD   ( "name",  "JavaConnect" );
+        DED.PUT_METHOD   ( "Method",  "JavaConnect" );
         DED.PUT_USHORT   ( "TransID",  trans_id);
         DED.PUT_STDSTRING( "protocolTypeID", "DED1.00.00");
         DED.PUT_STDSTRING( "functionName", uniqueId );
@@ -213,7 +213,7 @@ public class MockDOPsServerTests {
         DEDDecoder DED2 = new DEDDecoder();
         DED2.PUT_DATA_IN_DECODER( receivedData, receivedData.length);
         if( DED2.GET_STRUCT_START( "WSResponse" )==1 &&
-                (strMethod   = DED2.GET_METHOD ( "name" )).length()>0 &&
+                (strMethod   = DED2.GET_METHOD ( "Method" )).length()>0 &&
                 (uTrans_id     = DED2.GET_USHORT ( "TransID")) !=-1 &&
                 (strProtocolTypeID  = DED2.GET_STDSTRING ( "protocolTypeID")).length()>0 &&
                 (strFunctionName    = DED2.GET_STDSTRING ( "functionName")).length()>0 &&
