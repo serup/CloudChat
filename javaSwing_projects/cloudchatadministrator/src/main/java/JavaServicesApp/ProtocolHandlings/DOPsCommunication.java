@@ -50,6 +50,11 @@ public class DOPsCommunication {
         return bResult;
     }
 
+    public boolean sendToServer(ByteBuffer data)
+    {
+        return (clientEndpoint.sendToServer(data) != -1);
+    }
+
     public boolean disconnectFromDOPs() throws IOException {
         boolean bResult = false;
         if (clientEndpoint != null) {
@@ -208,13 +213,17 @@ public class DOPsCommunication {
 
         public String type;
         public boolean bDecoded;
-        public Object elements; // will contain an object of following below type:
+        private Object elements; // will contain an object of following below type:
         private byte[] originalDED = null;
 
         public byte[] getDED() throws Exception {
             if (originalDED == null)
                 throw new Exception("ERROR: dedAnalyzed did NOT contain the original ded - FATAL");
             return originalDED;
+        }
+
+        public ByteBuffer getByteBuffer() throws Exception {
+            return ByteBuffer.wrap(this.getDED());
         }
 
         public void setDED(byte[] ded) {
@@ -272,21 +281,22 @@ public class DOPsCommunication {
      * Main handler function for incoming data traffic from server
      * traffic should be DED datapackages
      *
-     * This function is added as a handlerfunction for internal client connection
+     * This function is added as a 'handler' function for internal client connection
+     * distributing incoming data objects to assigned handler functions
      *
      * @param type  -- denotes the type of the analysed DED package - fx. 'ChatInfo'
      * @param dana  -- this is the decoded DED package
      */
     private String handleCommunication(String type, dedAnalyzed dana)
     {
-        System.out.println("- handleCommunication ; transfer to custom handlers ");
+        System.out.println("- handleCommunication ; transfer received object to custom action handlers based on type ");
 
         listOfActionHandlers.stream()
                             .filter(d -> d.type == type)
                             .map(d -> d.function)
                             .forEach(d -> d.apply(type, dana));
 
-        return "";
+        return "OK";
     }
 }
 

@@ -16,7 +16,7 @@ import static org.junit.Assert.assertNotNull;
  */
 public class utils {
 
-    public static boolean isEnvironmentOK() {
+    public boolean isEnvironmentOK() {
         boolean bResult=true;
         try {
             System.out.println("Check if backend is running...");

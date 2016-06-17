@@ -29,7 +29,8 @@ import static org.junit.Assert.assertTrue;
  * Created by serup on 05-01-16.
  */
 public class DOPsCommunicationTest {
-   IntegrationEnvironmentSetup env = new IntegrationEnvironmentSetup();
+
+    IntegrationEnvironmentSetup env = new IntegrationEnvironmentSetup();
 
     @Before
     public void setup() throws Exception {
@@ -235,4 +236,6 @@ public class DOPsCommunicationTest {
         else
             throw new Exception("Connection with REAL DOPS server - FAILED");
     }
+
+
 }

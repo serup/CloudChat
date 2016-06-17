@@ -74,8 +74,8 @@ public class CloudChatAdministratorApp extends JDialog {
             utils util = new utils();
             dopsCommunications = new DOPsCommunication();
 
-            dopsCommunications.addActionHandler("ChatInfo", this::updateCustomerListBox);
-            dopsCommunications.addActionHandler("ChaForwardInfoRequest", this::updateManagerListBox);
+            dopsCommunications.addActionHandler("ChatInfo", this::actionHandlerUpdateCustomerListBox);
+            dopsCommunications.addActionHandler("ChatForwardInfoRequest", this::actionHandlerUpdateManagerListBox);
 
             if(util.isEnvironmentOK()) {
                 //String uniqueId = "CloudChatAdminApp";
@@ -84,8 +84,6 @@ public class CloudChatAdministratorApp extends JDialog {
                 String password = "12345";
 
                 if(dopsCommunications.connectToDOPs(uniqueId, username, password)) {
-                    handleManagerListBox.addElementToListBox("Jane Doe");
-                    handleManagerListBox.addElementToListBox("John Smith");
                    // Set icon as connected
                     buttonConnect.setIcon(buttonConnect.getPressedIcon());
                     bConnected = true;
@@ -103,32 +101,38 @@ public class CloudChatAdministratorApp extends JDialog {
     }
 
     private void onOK() {
-// add your code here
+    // add your code here
         dispose();
     }
 
     private void onCancel() {
-// add your code here if necessary
+    // add your code here if necessary
         dispose();
     }
 
-    private String updateManagerListBox(String type, DOPsCommunication.dedAnalyzed dana) {
-        String strResult = "hep";
+    // Action handlers
+    private String actionHandlerUpdateManagerListBox(String type, DOPsCommunication.dedAnalyzed dana) {
+        String strResult = "OK";
         System.out.println("- updateMangerListBox called ");
         String srcAlias = dana.getElement("srcAlias").toString();
         handleManagerListBox.addElementToListBox(srcAlias);
         return strResult;
     }
 
-    private String updateCustomerListBox(String type, DOPsCommunication.dedAnalyzed dana)
+    private String actionHandlerUpdateCustomerListBox(String type, DOPsCommunication.dedAnalyzed dana)
     {
-        String strResult = "hep";
-        System.out.println("- updateCustomerListBox called ");
+        String strResult = "OK";
+        System.out.println("- actionHandlerUpdateCustomerListBox called ");
         String srcAlias = dana.getElement("srcAlias").toString();
         handleCustomerListBox.addElementToListBox(srcAlias);
         return strResult;
     }
 
+    /**
+     * Main CloudChatAdministrator Application
+     *
+     * @param args -- not used
+     */
     public static void main(String[] args) {
         CloudChatAdministratorApp dialog = new CloudChatAdministratorApp();
         dialog.setTitle("CloudChatAdministrator");
