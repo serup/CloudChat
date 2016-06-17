@@ -24,6 +24,7 @@ public class DOPsCommunication {
     private DOPSClientEndpoint clientEndpoint = null;
     private BiFunction<String, dedAnalyzed, String> customHandlerFunction;
     private List<ActionHandlerObject> listOfActionHandlers = new ArrayList<>();
+    private String serverURI = "ws://backend.scanva.com:7777";
 
     private class ActionHandlerObject
     {
@@ -36,13 +37,18 @@ public class DOPsCommunication {
         customHandlerFunction  = this::handleCommunication;
     }
 
+    public void setServerURI(String serverURI)
+    {
+        this.serverURI = serverURI;
+    }
+
     public boolean connectToDOPs(String uniqueId, String username, String password) {
         boolean bResult=false;
 
         try {
             clientEndpoint = new DOPSClientEndpoint();
             clientEndpoint.addHandlerFunction(customHandlerFunction);
-            clientEndpoint.connectToServer("ws://backend.scanva.com:7777");
+            clientEndpoint.connectToServer(serverURI);
             clientEndpoint.sendToServer(prepareConnectDEDToSend(uniqueId, username, password));
             bResult = decodeLoginResponse(clientEndpoint.receiveMessageFromServer()).contains("dops.connected.status.ok");
         } catch (Exception e) { e.printStackTrace(); }

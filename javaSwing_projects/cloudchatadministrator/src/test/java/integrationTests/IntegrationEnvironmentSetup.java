@@ -76,7 +76,7 @@ public class IntegrationEnvironmentSetup {
             try {
                 System.out.println("Check if backend is running...");
                 String path = new File(".").getCanonicalPath();
-                path = trimOffLastFileSeperator(path, 3);
+                path = trimOffLastFileSeperator(path, 2);
                 String cmd = "ping backend.scanva.com -c 1";
                 String result = executeCommand(cmd, path);
                 if(!result.contains("1 received")) {
@@ -89,15 +89,12 @@ public class IntegrationEnvironmentSetup {
                     assertEquals(true, result.contains("Vagrant"));
 
                     cmd = "vagrant up backend";
-                    try {
-                        result = executeCommand(cmd, path);
-                        assertEquals(true, containsAny(result, new String[]{"VM is already running", "Machine booted and ready"}));
-                    }catch (Exception e)
-                    {
+                    result = executeCommand(cmd, path);
+                    if(result=="") {
                         cmd = "vagrant resume backend";
                         result = executeCommand(cmd, path);
-                        assertEquals(true, containsAny(result, new String[]{"VM is already running", "Machine booted and ready"}));
                     }
+                    assertEquals(true, containsAny(result, new String[]{"VM is already running", "Machine booted and ready"}));
                     System.out.println("VM is started - Integration Environment ready");
                 }
             }catch(Exception e){

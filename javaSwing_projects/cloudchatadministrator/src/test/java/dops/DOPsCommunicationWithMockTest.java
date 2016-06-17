@@ -2,12 +2,11 @@ package dops;
 
 import JavaServicesApp.ProtocolHandlings.DOPsCommunication;
 import dops.mocks.setupMockServer;
-import dops.protocol.ded.DEDEncoder;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.nio.ByteBuffer;
+import java.util.StringJoiner;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -21,6 +20,8 @@ import static junit.framework.TestCase.assertTrue;
 public class DOPsCommunicationWithMockTest {
 
     private static dops.mocks.setupMockServer setupMockServer =null;
+    private static int mockServerPort = 8047;
+    private static String mockServerURI = "ws://localhost:"+ mockServerPort;
 
     @Before
     public void setupMockServer()
@@ -29,13 +30,14 @@ public class DOPsCommunicationWithMockTest {
          * Start and connect to a MOCK server which can act as a Server and receive a DED packet and return a DED packet with result
          */
         if(setupMockServer ==null)
-            setupMockServer = new setupMockServer(8047,"MockServerEndpoint");
+            setupMockServer = new setupMockServer(mockServerPort,"MockServerEndpoint");
     }
 
     @Test
     public void addActionHandler() throws Exception {
 
         DOPsCommunication dopsCommunications = new DOPsCommunication();
+        dopsCommunications.setServerURI(mockServerURI);
         assertEquals(true, setupMockServer.isOpen());
 
         class Ctest
@@ -61,13 +63,19 @@ public class DOPsCommunicationWithMockTest {
 
 
         if(dopsCommunications.connectToDOPs(uniqueId, username, password)) {
+
+            /**
+             * Function to be tested
+             * adding an action handler, forces all incoming data traffic to be
+             * transfer to the action handler function if the type is the same
+             */
             dopsCommunications.addActionHandler("ChatInfo", t::actionHandlercallbackfunction);
 
             byte[] data = createChatInfo();
             DOPsCommunication.dedAnalyzed dana = DOPsCommunication.decodeIncomingDED(data);
             Assert.assertTrue(dana.type == "ChatInfo");
 
-            // send a test DED
+            // send a DED package of type ChatInfo
             dopsCommunications.sendToServer(dana.getByteBuffer());
 
             // Wait for handling
@@ -77,7 +85,7 @@ public class DOPsCommunicationWithMockTest {
             assertTrue(t.bCalledFunction);
         }
         else
-            throw new Exception("Connection with MOCK DOPS server - FAILED");
+            throw new Exception("Connection with MOCK DOPS server - FAILED -- NB pt. mock server does NOT make correct handshake");
    }
 
 

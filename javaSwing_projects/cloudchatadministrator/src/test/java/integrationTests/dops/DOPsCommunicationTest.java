@@ -7,10 +7,13 @@ import dops.protocol.ded.DEDDecoder;
 import dops.protocol.ded.DEDEncoder;
 import integrationTests.IntegrationEnvironmentSetup;
 import junit.framework.TestCase;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.nio.ByteBuffer;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import static dops.utils.utils.createChatInfo;
 import static dops.utils.utils.createForwardInfoRequest;
@@ -237,5 +240,57 @@ public class DOPsCommunicationTest {
             throw new Exception("Connection with REAL DOPS server - FAILED");
     }
 
+    @Test
+    public void addActionHandler() throws Exception {
+
+        DOPsCommunication dopsCommunications = new DOPsCommunication();
+
+        class Ctest
+        {
+            private boolean bCalledFunction=false;
+            private CountDownLatch signalEvent = new CountDownLatch(1);
+
+            private String actionHandlercallbackfunction(String type, DOPsCommunication.dedAnalyzed dana)
+            {
+                String str="OK";
+                this.bCalledFunction=true;
+                System.out.println("- actionHandlercallbackfunction called ");
+                Assert.assertTrue(dana.type == type);
+                signalEvent.countDown(); // signal  a valid DED has arrived
+                return str;
+            }
+        }
+
+        Ctest t = new Ctest();
+        String uniqueId = "983998727DF048B2A796B44C89345494";
+        String username = "johndoe@email.com";
+        String password = "12345";
+
+
+        if(dopsCommunications.connectToDOPs(uniqueId, username, password)) {
+
+            /**
+             * Function to be tested
+             * adding an action handler, forces all incoming data traffic to be
+             * transfer to the action handler function if the type is the same
+             */
+            dopsCommunications.addActionHandler("ChatInfo", t::actionHandlercallbackfunction);
+
+            byte[] data = createChatInfo();
+            DOPsCommunication.dedAnalyzed dana = DOPsCommunication.decodeIncomingDED(data);
+            Assert.assertTrue(dana.type == "ChatInfo");
+
+            // send a DED package of type ChatInfo
+            dopsCommunications.sendToServer(dana.getByteBuffer());
+
+            // Wait for handling
+            TestCase.assertTrue(t.signalEvent.await(100, TimeUnit.SECONDS)); // wait for signal that valid ded has arrived in action handler function
+
+            // verify that DED was analyzed and tranfered as object to action handler function
+            TestCase.assertTrue(t.bCalledFunction);
+        }
+        else
+            throw new Exception("Connection with REAL DOPS server - FAILED");
+    }
 
 }
