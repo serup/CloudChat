@@ -33,10 +33,10 @@ public class utils {
                 result = executeCommand(cmd, path);
                 assertEquals(true, result.contains("Vagrant"));
 
-                cmd = "vagrant up backend";
+                cmd = "vagrant up backend cloudchatclient cloudchatmanager";
                 result = executeCommand(cmd, path);
                 if (result == "") {
-                    cmd = "vagrant resume backend";
+                    cmd = "vagrant resume backend cloudchatclient cloudchatmanager";
                     result = executeCommand(cmd, path);
                 }
                 assertEquals(true, containsAny(result, new String[]{"VM is already running", "Machine booted and ready"}));
