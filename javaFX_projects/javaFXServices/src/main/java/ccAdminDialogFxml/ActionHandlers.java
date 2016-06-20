@@ -5,7 +5,8 @@ import javafx.beans.InvalidationListener;
 
 public class ActionHandlers {
 
-	public static InvalidationListener greetHandler(PresentationState ps) {
-		return observable -> ps.greeting.setValue("Hello " + ps.name.getValue());
+	public static InvalidationListener connectHandler(PresentationState ps) {
+
+		return observable -> System.out.println("- Connect button pressed!");
 	}
 }

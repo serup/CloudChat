@@ -24,5 +24,6 @@ public class GUIBinder {
 	}
 
 	private void initActionHandlers() {
+		JavaFxWidgetBindings.bindButton(controller.connectButton, ActionHandlers.connectHandler(presentationState));
 	}
 }

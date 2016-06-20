@@ -7,5 +7,7 @@ import javafx.scene.control.TextField;
 
 public class ccAdminDialogController {
 
+	@FXML
+	Button connectButton;
 
 }
