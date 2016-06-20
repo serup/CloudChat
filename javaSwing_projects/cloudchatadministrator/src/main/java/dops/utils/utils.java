@@ -21,19 +21,27 @@ public class utils {
         try {
             System.out.println("Check if backend is running...");
             String path = new File(".").getCanonicalPath();
-            path = trimOffLastFileSeperator(path, 3);
-            if (!executeCommand("ping backend.scanva.com -c 1", path).contains("1 received")) {
-                System.out.println("Waiting for VM to start ...");
-                assertEquals(true, executeCommand("vagrant --version", path).contains("Vagrant"));
-                assertEquals(true, containsAny(executeCommand("vagrant up backend", path), new String[]{"VM is already running", "Machine booted and ready"}));
-                if (!executeCommand("ping backend.scanva.com -c 1", path).contains("1 received"))
-                    throw new Exception("backend.scanva.com - NOT responding to ping");
-                else
-                    System.out.println("VM is started - Integration Environment ready");
-            }
-            else
-                System.out.println("backend.scanva.com is running - Integration Environment ready");
+            path = trimOffLastFileSeperator(path, 2);
+            String cmd = "ping backend.scanva.com -c 1";
+            String result = executeCommand(cmd, path);
+            if(!result.contains("1 received")) {
 
+                // Make sure VM is running
+                System.out.println("Waiting for VM to start ...");
+
+                cmd = "vagrant --version";
+                result = executeCommand(cmd, path);
+                assertEquals(true, result.contains("Vagrant"));
+
+                cmd = "vagrant up backend";
+                result = executeCommand(cmd, path);
+                if (result == "") {
+                    cmd = "vagrant resume backend";
+                    result = executeCommand(cmd, path);
+                }
+                assertEquals(true, containsAny(result, new String[]{"VM is already running", "Machine booted and ready"}));
+                System.out.println("VM is started - Integration Environment ready");
+            }
         } catch (Exception e) {
             bResult=false;
             e.printStackTrace();

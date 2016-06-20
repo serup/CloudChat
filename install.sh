@@ -169,6 +169,7 @@ if [ "" == "$PKG_OK" ]; then
    #sudo dpkg -i javafx_scenebuilder-2_0-linux-x64.deb && \
    # find it using this command: dpkg-query  -S scene*
    # then add in intellij under settings/language.../JavaFX/path to scenebuilder
+   #   it could be here : /opt/JavaFXSceneBuilder2.0/JavaFXSceneBuilder2.0
    sudo apt-fast install -yq  scenebuilder
    #sudo apt-get update 
   echo " - done."
