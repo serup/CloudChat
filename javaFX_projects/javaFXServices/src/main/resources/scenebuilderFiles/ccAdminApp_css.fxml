@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import java.lang.*?>
 <?import java.net.*?>
 <?import java.util.*?>
@@ -8,7 +9,7 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ccAdminDialogFxml.ccAdminDialogController">
+<VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ccAdminDialogFxml.ccAdminDialogController">
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
@@ -49,20 +50,40 @@
         </Menu>
       </menus>
     </MenuBar>
-    <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+    <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="250" prefWidth="480" VBox.vgrow="ALWAYS">
          <children>
-            <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="371.0" prefWidth="640.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <SplitPane dividerPositions="0.5" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <items>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="103.0" prefWidth="298.0">
+                <AnchorPane minHeight="0.0" minWidth="0.0" >
                      <children>
-                        <ToolBar prefHeight="40.0" prefWidth="638.0">
+                        <ToolBar AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <items>
                             <Button fx:id="connectButton" mnemonicParsing="false" text="Connect" />
                           </items>
                         </ToolBar>
                      </children>
                   </AnchorPane>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="111.0" prefWidth="399.0" />
+                <AnchorPane minHeight="0.0" minWidth="0.0" >
+                     <children>
+                        <TabPane tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" >
+                          <tabs>
+                            <Tab text="Managers">
+                              <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" >
+                                       <children>
+                                          <ListView  AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                       </children>
+                                    </AnchorPane>
+                              </content>
+                            </Tab>
+                            <Tab text="Customers">
+                              <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0"  />
+                              </content>
+                            </Tab>
+                          </tabs>
+                        </TabPane>
+                     </children></AnchorPane>
               </items>
             </SplitPane>
          </children>
