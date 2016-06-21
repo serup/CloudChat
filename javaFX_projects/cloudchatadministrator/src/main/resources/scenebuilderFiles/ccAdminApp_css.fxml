@@ -54,7 +54,7 @@
          <children>
             <SplitPane dividerPositions="0.5" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <items>
-                <AnchorPane minHeight="0.0" minWidth="0.0" >
+                <AnchorPane minHeight="0.0" minWidth="0.0">
                      <children>
                         <ToolBar AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <items>
@@ -63,22 +63,25 @@
                         </ToolBar>
                      </children>
                   </AnchorPane>
-                <AnchorPane minHeight="0.0" minWidth="0.0" >
+                <AnchorPane minHeight="0.0" minWidth="0.0">
                      <children>
-                        <TabPane tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" >
+                        <TabPane tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <tabs>
                             <Tab text="Managers">
                               <content>
-                                <AnchorPane minHeight="0.0" minWidth="0.0" >
+                                <AnchorPane minHeight="0.0" minWidth="0.0">
                                        <children>
-                                          <ListView  AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <ListView fx:id="managersList" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                        </children>
                                     </AnchorPane>
                               </content>
                             </Tab>
                             <Tab text="Customers">
                               <content>
-                                <AnchorPane minHeight="0.0" minWidth="0.0"  />
+                                <AnchorPane minHeight="0.0" minWidth="0.0">
+                                       <children>
+                                          <ListView fx:id="customersList" layoutX="39.0" layoutY="-56.0" prefHeight="87.0" prefWidth="478.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                       </children></AnchorPane>
                               </content>
                             </Tab>
                           </tabs>

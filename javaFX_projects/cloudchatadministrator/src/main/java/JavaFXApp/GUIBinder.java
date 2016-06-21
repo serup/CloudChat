@@ -1,17 +1,20 @@
 package JavaFXApp;
 
 
+import javafx.fxml.FXMLLoader;
 import template.javafx.infrastructure.JavaFxWidgetBindings;
 
 import java.io.IOException;
 
 public class GUIBinder {
 
+	private final FXMLLoader loader;
 	private final ccAdminDialogController controller;
 	private final PresentationState presentationState;
 
-	public GUIBinder(ccAdminDialogController controller, PresentationState presentationState) {
-		this.controller = controller;
+	public GUIBinder(FXMLLoader loader , PresentationState presentationState) {
+		this.loader = loader;
+		this.controller = loader.getController();;
 		this.presentationState = presentationState;
 	}
 
@@ -19,7 +22,7 @@ public class GUIBinder {
 		presentationState.initBinding();
 		initWidgetBinding();
 		initActionHandlers();
-		presentationState.initData();
+		presentationState.initData(loader, controller);
 	}
 
 	private void initWidgetBinding() {

@@ -44,9 +44,11 @@ public class ActionHandlers {
 			}
 
 			if(ps.bConnected) {
+				ps.controller.connectButton.setText(ps.loader.getResources().getString("connected"));
 				System.out.println("- Connection with DOPs established");
 			}
 			else {
+				ps.controller.connectButton.setText(ps.loader.getResources().getString("disconnected"));
 				System.out.println("- Disconnected from DOPs");
 			}
 		};

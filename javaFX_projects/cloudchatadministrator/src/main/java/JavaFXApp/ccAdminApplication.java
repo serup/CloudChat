@@ -34,7 +34,7 @@ public class ccAdminApplication extends Application {
         try {
             FXMLLoader loader = new FXMLLoader(JavaFxApplications.fxmlUrl(FXML_URL), JavaFxApplications.resources(RESOURCE_BUNDLE_NAME));
             loader.load();
-            new GUIBinder(loader.getController(), new PresentationState()).bindAndInitialize();
+            new GUIBinder(loader, new PresentationState()).bindAndInitialize();
 
             Scene scene = new Scene(loader.getRoot());
             scene.getStylesheets().add(getClass().getResource(CSS_URL).toExternalForm());
