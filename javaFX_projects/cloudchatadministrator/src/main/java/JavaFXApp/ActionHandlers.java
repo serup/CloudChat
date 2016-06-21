@@ -22,11 +22,9 @@ public class ActionHandlers {
 				//dopsCommunications.addActionHandler("ChatForwardInfoRequest", this::actionHandlerUpdateManagerListBox);
 
 				if(util.isEnvironmentOK()) {
-					//String uniqueId = "CloudChatAdminApp";
-					String uniqueId = "754d148d0522659d0ceb2e6035fad6a8";
-					String username = "johndoe@email.com";
-					String password = "12345";
-
+					String uniqueId = ps.loader.getResources().getString("uniqueId");
+					String username = ps.loader.getResources().getString("username");
+					String password = ps.loader.getResources().getString("password");
 					if(ps.dopsCommunications.connectToDOPs(uniqueId, username, password)) {
 						ps.bConnected = true;
 					}

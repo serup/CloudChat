@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.image.*?>
 <?import javafx.geometry.*?>
 <?import java.lang.*?>
 <?import java.net.*?>
@@ -58,7 +59,10 @@
                      <children>
                         <ToolBar AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <items>
-                            <Button fx:id="connectButton" mnemonicParsing="false" text="Connect" />
+                            <Button fx:id="connectButton" mnemonicParsing="false" text="Connect">
+                                 <graphic>
+                                    <ImageView fitHeight="24.0" fitWidth="31.0" pickOnBounds="true" preserveRatio="true" />
+                                 </graphic></Button>
                           </items>
                         </ToolBar>
                      </children>
