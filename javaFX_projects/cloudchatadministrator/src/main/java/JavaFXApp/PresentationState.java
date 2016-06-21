@@ -1,4 +1,4 @@
-package ccAdminDialogFxml;
+package JavaFXApp;
 
 public class PresentationState {
 

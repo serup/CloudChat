@@ -1,4 +1,4 @@
-package ccAdminDialogFxml;
+package JavaFXApp;
 
 
 import template.javafx.infrastructure.JavaFxWidgetBindings;

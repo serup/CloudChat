@@ -1,4 +1,4 @@
-package ccAdminDialogFxml;
+package JavaFXApp;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -8,17 +8,17 @@ import javafx.stage.Stage;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static ccAdminDialogFxml.ApplicationConfig.*;
+import static JavaFXApp.ApplicationConfig.*;
 
 /**
  * Created by serup on 6/20/16.
  */
 public class ccAdminApplication extends Application {
 
-    private final Logger logger = Logger.getLogger(ccAdminDialogFxml.ccAdminApplication.class.getName());
+    private final Logger logger = Logger.getLogger(JavaFXApp.ccAdminApplication.class.getName());
 
     public static void main(String[] args) {
-        Application.launch(ccAdminDialogFxml.ccAdminApplication.class, args);
+        Application.launch(JavaFXApp.ccAdminApplication.class, args);
     }
 
     @Override

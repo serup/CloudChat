@@ -1,4 +1,4 @@
-package ccAdminDialogFxml;
+package JavaFXApp;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;

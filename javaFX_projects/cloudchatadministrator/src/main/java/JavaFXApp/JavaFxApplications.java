@@ -1,4 +1,4 @@
-package ccAdminDialogFxml;
+package JavaFXApp;
 
 import java.net.URL;
 import java.util.Locale;
