@@ -63,6 +63,7 @@ public class DOPsCommunication {
     public boolean disconnectFromDOPs() throws IOException {
         boolean bResult = false;
         if (clientEndpoint != null) {
+            clientEndpoint.stopMessageHandler(); // make sure internal thread handling incoming data, is stopped
             clientEndpoint.clientSession.close();
             bResult = true;
         }

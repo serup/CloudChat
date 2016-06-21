@@ -37,6 +37,11 @@ public class DOPSClientEndpoint extends JavaWebSocketClientEndpoint
         }
     }
 
+    public void stopMessageHandler()
+    {
+        msgHandler.stopDEDdistributerThread();
+    }
+
     public Session connectToServer(String strURI)
     {
         Session session=null;

@@ -24,6 +24,7 @@ public final class DEDMessageHandler implements MessageHandler.Whole<byte[]>
     private List<dedAnalyzed> danaList = new ArrayList<>();
     private ReentrantLock WaitForlock = new ReentrantLock();
     private BiFunction<String, dedAnalyzed, String> DEDHandlerFunction;
+    boolean bContinueDistributer = true;
 
     public DEDMessageHandler() {}
 
@@ -72,16 +73,20 @@ public final class DEDMessageHandler implements MessageHandler.Whole<byte[]>
         WaitForlock.unlock();
     }
 
+    public void stopDEDdistributerThread()
+    {
+        bContinueDistributer = false; // thread should timeout an exit
+    }
+
     private void runDEDdistributerThread() {
         dedDistributerThread = new Thread() {
-            boolean bContinue = true;
 
             public void run() {
                 try {
                     // distribute DED objects to individual handlers
                     do
                     {
-                        if(dedLatch.await(100, TimeUnit.SECONDS)) // wait for signal that valid ded has arrived
+                        if(dedLatch.await(10, TimeUnit.SECONDS)) // wait for signal that valid ded has arrived
                         {
                             WaitForlock.lock();
                             for (dedAnalyzed dana : danaList) {
@@ -106,14 +111,12 @@ public final class DEDMessageHandler implements MessageHandler.Whole<byte[]>
                         }
                         dedLatch = new CountDownLatch(1); // prepare for next signal
                     }
-                    while(bContinue);
+                    while(bContinueDistributer);
                 } catch (Exception e) {
                     e.printStackTrace();
                     System.out.println("ERROR: There will be NO distribution of DED packages due to Exception !!! ");
                 }
             }
-
-            public void stopDistribution() { bContinue = false;  }
         };
         dedDistributerThread.start();
     }
