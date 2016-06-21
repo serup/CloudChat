@@ -69,15 +69,7 @@ public class ActionHandlers {
 		String strResult = "OK";
 		System.out.println("- actionHandlerUpdateCustomerListBox called ");
 		String srcAlias = dana.getElement("srcAlias").toString();
-		//handleCustomerListBox.addElementToListBox(srcAlias);
-
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				//if you change the UI, do it here !
-				ps.controller.customersList.getItems().add(ps.controller.customersList.getItems().size(), srcAlias);
-			}
-		});
+		ps.controller.addElementToCustomerListBox(srcAlias);
 
 		return strResult;
 	}
