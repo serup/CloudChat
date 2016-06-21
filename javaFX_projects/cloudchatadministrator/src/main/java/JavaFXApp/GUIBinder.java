@@ -3,6 +3,8 @@ package JavaFXApp;
 
 import template.javafx.infrastructure.JavaFxWidgetBindings;
 
+import java.io.IOException;
+
 public class GUIBinder {
 
 	private final ccAdminDialogController controller;
@@ -24,6 +26,10 @@ public class GUIBinder {
 	}
 
 	private void initActionHandlers() {
-		JavaFxWidgetBindings.bindButton(controller.connectButton, ActionHandlers.connectHandler(presentationState));
+		try {
+			JavaFxWidgetBindings.bindButton(controller.connectButton, ActionHandlers.connectHandler(presentationState));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
