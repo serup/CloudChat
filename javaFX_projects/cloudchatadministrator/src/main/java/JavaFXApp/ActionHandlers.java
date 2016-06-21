@@ -21,8 +21,10 @@ public class ActionHandlers {
 				utils util = new utils();
 				ps.dopsCommunications = new DOPsCommunication();
 				ps.dopsCommunications.addActionHandler("ChatInfo", ps.actionHandlers::actionHandlerUpdateCustomerListBox);
-				//buttonConnect.setIcon(buttonConnect.getPressedIcon());
 				//dopsCommunications.addActionHandler("ChatForwardInfoRequest", this::actionHandlerUpdateManagerListBox);
+
+				ps.controller.connectButton.setText(ps.loader.getResources().getString("wait"));  //TODO: find a way to animate connect button in waiting - this does NOT work
+				//buttonConnect.setIcon(buttonConnect.getPressedIcon());
 
 				if(util.isEnvironmentOK()) {
 					String uniqueId = ps.loader.getResources().getString("uniqueId");

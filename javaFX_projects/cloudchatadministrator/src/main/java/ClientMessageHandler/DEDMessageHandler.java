@@ -94,11 +94,10 @@ public final class DEDMessageHandler implements MessageHandler.Whole<byte[]>
                             for (dedAnalyzed dana : danaList) {
                                 switch (dana.type) {
                                     case "ChatInfo":
-
-                                        try { DEDHandlerFunction.apply(dana.type, dana);
+                                        try {
+                                            DEDHandlerFunction.apply(dana.type, dana);
                                         }catch(Exception e) {
                                             System.out.println("- ERROR: DED handler function was a NULL pointer");
-                                            //DEDHandlerFunction = (k, v) -> v == null ? "ERROR ded is null" : defaultHandler(dana.type,dana);
                                             DEDHandlerFunction = (k, v) -> defaultHandler(dana.type,dana);
                                         }
                                         break;
