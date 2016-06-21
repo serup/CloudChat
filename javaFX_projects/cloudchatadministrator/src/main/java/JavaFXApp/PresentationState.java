@@ -9,6 +9,7 @@ public class PresentationState {
 	DOPsCommunication dopsCommunications=null;
     FXMLLoader loader=null;
 	ccAdminDialogController controller=null;
+	ActionHandlers actionHandlers=null;
 
 	public void initBinding() {
 	}
@@ -17,12 +18,7 @@ public class PresentationState {
 
 		this.loader = loader;
 		this.controller = controller;
-
-		//TODO: where to put this
-			//controller.connectButton.setText(loader.getResources().getString("connected"));
-			//TODO: change icon on button
-			//controller.connectButton.setGraphic());
-			//TODO: write connected in status bar
+		this.actionHandlers = new ActionHandlers(); // needed to access additional handlers for incoming data
 
 	}
 }

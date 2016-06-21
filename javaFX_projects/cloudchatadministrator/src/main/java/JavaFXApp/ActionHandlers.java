@@ -16,8 +16,7 @@ public class ActionHandlers {
 			if(!ps.bConnected) {
 				utils util = new utils();
 				ps.dopsCommunications = new DOPsCommunication();
-
-				//dopsCommunications.addActionHandler("ChatInfo", this::actionHandlerUpdateCustomerListBox);
+				ps.dopsCommunications.addActionHandler("ChatInfo", ps.actionHandlers::actionHandlerUpdateCustomerListBox);
 				//buttonConnect.setIcon(buttonConnect.getPressedIcon());
 				//dopsCommunications.addActionHandler("ChatForwardInfoRequest", this::actionHandlerUpdateManagerListBox);
 
@@ -51,4 +50,23 @@ public class ActionHandlers {
 			}
 		};
 	}
+
+	// Action handlers for listviews
+	private String actionHandlerUpdateManagerListBox(String type, DOPsCommunication.dedAnalyzed dana) {
+		String strResult = "OK";
+		System.out.println("- updateMangerListBox called ");
+		String srcAlias = dana.getElement("srcAlias").toString();
+		//handleManagerListBox.addElementToListBox(srcAlias);
+		return strResult;
+	}
+
+	private String actionHandlerUpdateCustomerListBox(String type, DOPsCommunication.dedAnalyzed dana)
+	{
+		String strResult = "OK";
+		System.out.println("- actionHandlerUpdateCustomerListBox called ");
+		String srcAlias = dana.getElement("srcAlias").toString();
+		//handleCustomerListBox.addElementToListBox(srcAlias);
+		return strResult;
+	}
+
 }

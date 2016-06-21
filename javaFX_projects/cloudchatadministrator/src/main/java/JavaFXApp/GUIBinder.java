@@ -6,13 +6,13 @@ import template.javafx.infrastructure.JavaFxWidgetBindings;
 
 import java.io.IOException;
 
-public class GUIBinder {
+class GUIBinder {
 
 	private final FXMLLoader loader;
 	private final ccAdminDialogController controller;
 	private final PresentationState presentationState;
 
-	public GUIBinder(FXMLLoader loader , PresentationState presentationState) {
+	GUIBinder(FXMLLoader loader , PresentationState presentationState) {
 		this.loader = loader;
 		this.controller = loader.getController();;
 		this.presentationState = presentationState;
