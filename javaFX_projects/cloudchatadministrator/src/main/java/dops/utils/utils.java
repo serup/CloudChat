@@ -1,9 +1,11 @@
 package dops.utils;
 
 import dops.protocol.ded.DEDEncoder;
+import javafx.application.Platform;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
@@ -27,20 +29,39 @@ public class utils {
             if(!result.contains("1 received")) {
 
                 // Make sure VM is running
-                System.out.println("Waiting for VM to start ...");
+                System.out.println("Waiting for VM to start ... - PLEASE WAIT - it takes VERY long time");
 
                 cmd = "vagrant --version";
                 result = executeCommand(cmd, path);
                 assertEquals(true, result.contains("Vagrant"));
 
-                cmd = "vagrant up backend cloudchatclient cloudchatmanager";
+                cmd = "vagrant up backend";
                 result = executeCommand(cmd, path);
                 if (result == "") {
-                    cmd = "vagrant resume backend cloudchatclient cloudchatmanager";
+                    cmd = "vagrant resume backend";
                     result = executeCommand(cmd, path);
                 }
+                System.out.println(cmd);
                 assertEquals(true, containsAny(result, new String[]{"VM is already running", "Machine booted and ready"}));
-                System.out.println("VM is started - Integration Environment ready");
+
+                cmd = "vagrant up cloudchatclient";
+                result = executeCommand(cmd, path);
+                if (result == "") {
+                    cmd = "vagrant resume cloudchatclient";
+                    result = executeCommand(cmd, path);
+                }
+                System.out.println(cmd);
+                assertEquals(true, containsAny(result, new String[]{"VM is already running", "Machine booted and ready"}));
+                cmd = "vagrant up cloudchatmanager";
+                result = executeCommand(cmd, path);
+                if (result == "") {
+                    cmd = "vagrant resume cloudchatmanager";
+                    result = executeCommand(cmd, path);
+                }
+                System.out.println(cmd);
+                assertEquals(true, containsAny(result, new String[]{"VM is already running", "Machine booted and ready"}));
+
+               System.out.println("VM is started - Integration Environment ready");
             }
         } catch (Exception e) {
             bResult=false;
