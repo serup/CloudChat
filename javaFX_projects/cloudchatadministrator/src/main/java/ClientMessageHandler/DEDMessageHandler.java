@@ -1,6 +1,7 @@
 package ClientMessageHandler;
 
 import ProtocolHandlings.DOPsCommunication.dedAnalyzed;
+import javafx.application.Platform;
 
 import javax.websocket.MessageHandler;
 import java.util.ArrayList;
@@ -81,6 +82,7 @@ public final class DEDMessageHandler implements MessageHandler.Whole<byte[]>
     private void runDEDdistributerThread() {
         dedDistributerThread = new Thread() {
 
+            @Override
             public void run() {
                 try {
                     // distribute DED objects to individual handlers

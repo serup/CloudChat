@@ -35,14 +35,8 @@ public class ccAdminApplication extends Application {
             FXMLLoader loader = new FXMLLoader(JavaFxApplications.fxmlUrl(FXML_URL), JavaFxApplications.resources(RESOURCE_BUNDLE_NAME));
             loader.load();
             new GUIBinder(loader, new PresentationState()).bindAndInitialize();
-
             Scene scene = new Scene(loader.getRoot());
             scene.getStylesheets().add(getClass().getResource(CSS_URL).toExternalForm());
-            //TODO: add listviews here -- example look here:
-            // http://docs.oracle.com/javafx/2/ui_controls/list-view.htm
-
-
-            //
             primaryStage.setScene(scene);
             primaryStage.setTitle(loader.getResources().getString("title"));
             primaryStage.show();
