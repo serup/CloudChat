@@ -7,7 +7,10 @@ import javafx.beans.InvalidationListener;
 import java.io.IOException;
 
 public class ActionHandlers {
+	private PresentationState ps=null;
 
+	ActionHandlers(){ }
+	ActionHandlers(PresentationState ps){ this.ps = ps; }
 
 	public static InvalidationListener connectHandler(PresentationState ps) throws IOException {
 
@@ -66,6 +69,8 @@ public class ActionHandlers {
 		System.out.println("- actionHandlerUpdateCustomerListBox called ");
 		String srcAlias = dana.getElement("srcAlias").toString();
 		//handleCustomerListBox.addElementToListBox(srcAlias);
+		ps.controller.customersList.getItems().add(ps.controller.customersList.getItems().size(), srcAlias);
+
 		return strResult;
 	}
 

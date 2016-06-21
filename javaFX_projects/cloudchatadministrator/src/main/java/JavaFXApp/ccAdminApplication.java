@@ -38,6 +38,11 @@ public class ccAdminApplication extends Application {
 
             Scene scene = new Scene(loader.getRoot());
             scene.getStylesheets().add(getClass().getResource(CSS_URL).toExternalForm());
+            //TODO: add listviews here -- example look here:
+            // http://docs.oracle.com/javafx/2/ui_controls/list-view.htm
+
+
+            //
             primaryStage.setScene(scene);
             primaryStage.setTitle(loader.getResources().getString("title"));
             primaryStage.show();
