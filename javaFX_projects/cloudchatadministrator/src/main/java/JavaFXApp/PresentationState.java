@@ -19,5 +19,6 @@ public class PresentationState {
 		this.loader = loader;
 		this.controller = controller;
 		this.actionHandlers = new ActionHandlers(this); // needed to access additional handlers for incoming data
+		this.controller.initCustomerListView();
 	}
 }
