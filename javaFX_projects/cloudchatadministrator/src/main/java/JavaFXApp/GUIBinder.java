@@ -19,13 +19,8 @@ class GUIBinder {
 	}
 
 	void bindAndInitialize() {
-		presentationState.initBinding();
-		initWidgetBinding();
 		initActionHandlers();
 		presentationState.initData(loader, controller);
-	}
-
-	private void initWidgetBinding() {
 	}
 
 	private void initActionHandlers() {

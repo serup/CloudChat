@@ -2,16 +2,14 @@ package JavaFXApp;
 
 import javafx.application.Platform;
 import javafx.beans.Observable;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.util.Callback;
+import org.apache.commons.net.ntp.TimeStamp;
 
 public class ccAdminDialogController {
 
@@ -26,9 +24,9 @@ public class ccAdminDialogController {
 	private static class viewModelObjectForCustomersListView {
 		StringProperty name = new SimpleStringProperty();
 		IntegerProperty id = new SimpleIntegerProperty();
-
-		public static Callback<viewModelObjectForCustomersListView, Observable[]> extractor() {
-			return param -> new Observable[]{param.id, param.name};
+		ObjectProperty<org.apache.commons.net.ntp.TimeStamp> timestamp = new SimpleObjectProperty<>(TimeStamp.getCurrentTime());
+		static Callback<viewModelObjectForCustomersListView, Observable[]> extractor() {
+			return param -> new Observable[]{param.id, param.name, param.timestamp};
 		}
 
 		/**
@@ -38,7 +36,7 @@ public class ccAdminDialogController {
          */
 		@Override
 		public String toString() {
-			return String.format("%s: %s", name.get(), id.get());
+			return String.format("%s: %s %s", name.get(), id.get(), timestamp.getValue().getDate());
 		}
 	}
 	void addElementToCustomerListBox(String Item){
