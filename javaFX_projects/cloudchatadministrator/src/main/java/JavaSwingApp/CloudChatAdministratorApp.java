@@ -1,8 +1,8 @@
 package JavaSwingApp;
 
 import ProtocolHandlings.DOPsCommunication;
-import ViewControllers.HandleCustomerListBox;
-import ViewControllers.HandleManagerListBox;
+import JavaSwingApp.ViewControllers.HandleCustomerListBox;
+import JavaSwingApp.ViewControllers.HandleManagerListBox;
 import dops.utils.utils;
 
 import javax.swing.*;

@@ -1,4 +1,4 @@
-package ViewControllers;
+package JavaSwingApp.ViewControllers;
 
 import javax.swing.*;
 
