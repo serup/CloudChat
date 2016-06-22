@@ -23,17 +23,12 @@ public class ccAdminDialogController {
 
 	private ObservableList<viewModelObjectForCustomersListView> customersListViewItems;
 
-	static class viewModelObjectForCustomersListView {
+	private static class viewModelObjectForCustomersListView {
 		StringProperty name = new SimpleStringProperty();
 		IntegerProperty id = new SimpleIntegerProperty();
 
 		public static Callback<viewModelObjectForCustomersListView, Observable[]> extractor() {
-			return new Callback<viewModelObjectForCustomersListView, Observable[]>() {
-				@Override
-				public Observable[] call(viewModelObjectForCustomersListView param) {
-					return new Observable[]{param.id, param.name};
-				}
-			};
+			return param -> new Observable[]{param.id, param.name};
 		}
 
 		/**
@@ -47,24 +42,16 @@ public class ccAdminDialogController {
 		}
 	}
 	void addElementToCustomerListBox(String Item){
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				//if you change the UI, do it here !
-				updateItemInCustomersListView(Item);
-			}
-		});
+		Platform.runLater(() -> {
+            //if you change the UI, do it here !
+            updateItemInCustomersListView(Item);
+        });
 	}
 
-	public void initCustomerListView()
+	void initCustomerListView()
 	{
-		//...init the ListView appropriately
 		customersListViewItems = FXCollections.observableArrayList(viewModelObjectForCustomersListView.extractor());
 		customersList.setItems(customersListViewItems);
-		//viewModelObjectForCustomersListView item = new viewModelObjectForCustomersListView();
-		//customersListViewItems.add(item);
-		//item.name.set("Mickey Mouse");
-		// ^ Should update your ListView!!!
 	}
 
 	private void updateItemInCustomersListView(String Item)
