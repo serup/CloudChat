@@ -211,9 +211,7 @@ struct _RealClientWebSocket : public ClientWebSocket
                 if(errno == 11)
                 {
                     /// No data available yet - lets wait a bit
-                    //boost::posix_time::seconds workTime(1);
-                    //boost::this_thread::sleep(workTime); // wait !!!
-                    sleep(1);
+                    usleep(100); // wait milliseconds
                 }
                 else {
                     fprintf (stderr, "Error no is : %d\n", errno);
