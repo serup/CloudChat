@@ -170,24 +170,55 @@ struct _RealClientWebSocket : public ClientWebSocket
 //            }
             return;
         }
+
+            long timeout = 10000;
 //        if (timeout > 0) {
-//            fd_set rfds;
-//            fd_set wfds;
-//            timeval tv = { timeout/1000, (timeout%1000) * 1000 };
-//            FD_ZERO(&rfds);
-//            FD_ZERO(&wfds);
-//            FD_SET(sockfd, &rfds);
-//            if (txbuf.size()) { FD_SET(sockfd, &wfds); }
+            fd_set rfds;
+            fd_set wfds;
+            timeval tv = { timeout/1000, (timeout%1000) * 1000 };
+            FD_ZERO(&rfds);
+            FD_ZERO(&wfds);
+            //FD_SET(sockfd, &rfds);
+//            if (rxbuf.size()) { FD_SET(sockfd, &rfds); }
 //            select(sockfd + 1, &rfds, &wfds, NULL, &tv);
 //        }
+
+//        unsigned long SOCKET_READ_TIMEOUT_SEC = 10;
+//        struct timeval timeout;
+//        timeout.tv_sec = SOCKET_READ_TIMEOUT_SEC;
+//        timeout.tv_usec = 0;
+//        setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
+        //setsockopt(sockfd, SOL_SOCKET, SO_RCVLOWAT, &timeout, sizeof(timeout));
+
+        while (txbuf.size()) {
+            int ret;
+            ret = ::send(sockfd, &txbuf[0], txbuf.size(), 0);
+            if (ret > 0) { txbuf.erase(txbuf.begin(), txbuf.begin() + ret); }
+            else { break; }
+        }
+        if (!txbuf.size() && readyState == CLOSING) {
+            ::close(sockfd);
+            readyState = CLOSED;
+        }
         while (true) {
             // FD_ISSET(0, &rfds) will be true
             int N = rxbuf.size();
             ssize_t ret;
             rxbuf.resize(N + 1500);
-            ret = recv(sockfd, &rxbuf[0] + N, 1500, 0);
+            ret = ::recv(sockfd, &rxbuf[0] + N, 1500, 0);
             if (false) { }
             else if (ret < 0) {
+                if(errno == 11)
+                {
+                    /// No data available yet - lets wait a bit
+                    //boost::posix_time::seconds workTime(1);
+                    //boost::this_thread::sleep(workTime); // wait !!!
+                    sleep(1);
+                }
+                else {
+                    fprintf (stderr, "Error no is : %d\n", errno);
+                    fprintf(stderr, "Error description is : %s\n",strerror(errno));
+                }
                 rxbuf.resize(N);
                 break;
             }
@@ -201,17 +232,10 @@ struct _RealClientWebSocket : public ClientWebSocket
             else {
                 rxbuf.resize(N + ret);
             }
+
+
         }
-        while (txbuf.size()) {
-            int ret;
-            ret = ::send(sockfd, &txbuf[0], txbuf.size(), 0);
-            if (ret > 0) { txbuf.erase(txbuf.begin(), txbuf.begin() + ret); }
-            else { break; }
-        }
-        if (!txbuf.size() && readyState == CLOSING) {
-            ::close(sockfd);
-            readyState = CLOSED;
-        }
+
     }
 
 
@@ -416,7 +440,7 @@ ClientWebSocket::pointer ClientWebSocket::from_url(std::string url,void* pParent
     }
     int flag = 1;
     setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, (char*) &flag, sizeof(flag)); // Disable Nagle's algorithm
-    fcntl(sockfd, F_SETFL, O_NONBLOCK);
+    fcntl(sockfd, F_SETFL, O_NONBLOCK); // SOCKET is set as NON-BLOCKING !!!!
     fprintf(stderr, "Connected to: %s\n", url.c_str());
 //    return pointer(new _RealClientWebSocket(sockfd));
     ClientWebSocket::pointer pointer(new _RealClientWebSocket(sockfd));
