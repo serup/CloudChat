@@ -4,6 +4,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import org.apache.commons.net.ntp.TimeStamp;
 
 /**
  * Created by serup on 6/24/16.
@@ -20,6 +21,7 @@ public class CustomerTableEntry {
     public SimpleStringProperty uptm = new SimpleStringProperty();
 
     public SimpleStringProperty srcHomepageAlias = new SimpleStringProperty();
+    ObjectProperty<org.apache.commons.net.ntp.TimeStamp> timestamp = new SimpleObjectProperty<>(TimeStamp.getCurrentTime());
 
     public Integer getUserId() {
         return userId.get();
