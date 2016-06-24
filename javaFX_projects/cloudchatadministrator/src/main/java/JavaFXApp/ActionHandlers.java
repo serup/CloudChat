@@ -19,7 +19,7 @@ public class ActionHandlers {
 			if(!ps.bConnected) {
 				utils util = new utils();
 				ps.dopsCommunications = new DOPsCommunication();
-				ps.dopsCommunications.addActionHandler("ChatInfo", ps.actionHandlers::actionHandlerUpdateCustomerListView);
+				ps.dopsCommunications.addActionHandler("ChatInfo", ps.actionHandlers::actionHandlerUpdateCustomerView);
 				//dopsCommunications.addActionHandler("ChatForwardInfoRequest", this::actionHandlerUpdateManagerListBox);
 
 				ps.controller.connectButton.setText(ps.loader.getResources().getString("wait"));  //TODO: find a way to animate connect button in waiting - this does NOT work
@@ -65,17 +65,26 @@ public class ActionHandlers {
 		return strResult;
 	}
 
-	private String actionHandlerUpdateCustomerListView(String type, DOPsCommunication.dedAnalyzed dana)
+	private String actionHandlerUpdateCustomerView(String type, DOPsCommunication.dedAnalyzed dana)
 	{
 		String strResult = "OK";
-		System.out.println("- actionHandlerUpdateCustomerListView called ");
+		System.out.println("- actionHandlerUpdateCustomerView called ");
 		ccAdminDialogController.CellElementsInCustomerListView newCellRow = ps.controller.createNewCellRowForCustomerListView();
         newCellRow.srcAlias = dana.getElement("srcAlias").toString();
         newCellRow.srcHomepageAlias = dana.getElement("srcHomepageAlias").toString();
 
         // TODO: add cell elements
 
-		ps.controller.addCellRowElementsToCustomerListView(newCellRow);
+        ps.controller.addCellRowElementsToCustomerView(newCellRow);
+
+        CustomerTableEntry newCellRowInTable = ps.controller.createCellRowForCustomerTableView();
+        newCellRowInTable.userName.set(dana.getElement("srcAlias").toString());
+        newCellRowInTable.srcHomepageAlias.set(dana.getElement("srcHomepageAlias").toString());
+
+        // TODO: add cell elements
+
+        ps.controller.addCellRowElementsToCustomerView(newCellRowInTable);
+
 		return strResult;
 	}
 

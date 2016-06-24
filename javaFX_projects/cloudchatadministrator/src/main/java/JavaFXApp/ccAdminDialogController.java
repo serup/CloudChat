@@ -26,6 +26,7 @@ public class ccAdminDialogController {
 	TableView customersTable;
 
 	private ObservableList<viewModelObjectForCustomersListView> customersListViewItems;
+	private ObservableList<CustomerTableEntry> customersTableViewItems = FXCollections.observableArrayList();
 
 	private static class viewModelObjectForCustomersListView {
 		StringProperty name = new SimpleStringProperty();
@@ -64,10 +65,22 @@ public class ccAdminDialogController {
 		return new CellElementsInCustomerListView();
 	}
 
-	void addCellRowElementsToCustomerListView(CellElementsInCustomerListView CellRowElements){
+	CustomerTableEntry createCellRowForCustomerTableView()
+	{
+		return new CustomerTableEntry();
+	}
+
+	void addCellRowElementsToCustomerView(CellElementsInCustomerListView CellRowElements){
 		Platform.runLater(() -> {
             //if you change the UI, do it here !
             updateCustomersCellRowElement(CellRowElements);
+        });
+	}
+
+	void addCellRowElementsToCustomerView( CustomerTableEntry entry){
+		Platform.runLater(() -> {
+            //if you change the UI, do it here !
+            updateCustomersCellRowElement(entry);
         });
 	}
 
@@ -94,6 +107,29 @@ public class ccAdminDialogController {
 
 		if(!bUpdated) {
 			appendItemToCustomersListView(Item);
+		}
+	}
+
+	private void updateCustomersCellRowElement(CustomerTableEntry Item)
+	{
+		boolean bUpdated=false;
+
+		if(customersTable.getItems().size() == 0) {
+			initCustomerTableView();
+		}
+
+		int pos=0;
+		for(CustomerTableEntry item: customersTableViewItems) {
+			if(item.userName.getValue().contains(Item.getUserName())) {
+				item.userName.set(Item.getUserName());
+				item.userId.set(pos);
+				item.srcHomepageAlias.set(Item.getSrcHomepageAlias());
+				bUpdated=true;
+			}
+			pos++;
+		}
+
+		if(!bUpdated) {
 			appendItemToCustomersTableView(Item);
 		}
 	}
@@ -129,15 +165,14 @@ public class ccAdminDialogController {
 		colHomepage.setCellValueFactory( new PropertyValueFactory<CustomerTableEntry,String>("srcHomepageAlias"));
 	}
 
-	private void appendItemToCustomersTableView(CellElementsInCustomerListView Item)
+	private void appendItemToCustomersTableView(CustomerTableEntry Item)
 	{
-		ObservableList<CustomerTableEntry> data = FXCollections.observableArrayList();
 		CustomerTableEntry entry = new CustomerTableEntry();
-		entry.userName.set(Item.srcAlias);
-		entry.srcHomepageAlias.set(Item.srcHomepageAlias);
+		entry.userName.set(Item.getUserName());
+		entry.srcHomepageAlias.set(Item.getSrcHomepageAlias());
 		//TODO: add more entries
-		data.add(entry);
-		customersTable.setItems(data);
+		customersTableViewItems.add(entry);
+		customersTable.setItems(customersTableViewItems);
 	}
 }
 
