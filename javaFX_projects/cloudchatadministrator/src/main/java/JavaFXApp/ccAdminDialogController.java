@@ -170,6 +170,8 @@ public class ccAdminDialogController {
 		CustomerTableEntry entry = new CustomerTableEntry();
 		entry.userName.set(Item.getUserName());
 		entry.srcHomepageAlias.set(Item.getSrcHomepageAlias());
+		entry.userId.set(customersTableViewItems.size()-1);
+
 		//TODO: add more entries
 		customersTableViewItems.add(entry);
 		customersTable.setItems(customersTableViewItems);
