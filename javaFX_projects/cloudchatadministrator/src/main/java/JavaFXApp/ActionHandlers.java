@@ -71,6 +71,8 @@ public class ActionHandlers {
 		System.out.println("- actionHandlerUpdateCustomerListView called ");
 		ccAdminDialogController.CellElementsInCustomerListView newCellRow = ps.controller.createNewCellRowForCustomerListView();
         newCellRow.srcAlias = dana.getElement("srcAlias").toString();
+        newCellRow.srcHomepageAlias = dana.getElement("srcHomepageAlias").toString();
+
         // TODO: add cell elements
 
 		ps.controller.addCellRowElementsToCustomerListView(newCellRow);
