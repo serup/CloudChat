@@ -43,6 +43,8 @@ public class ccAdminDialogController {
 
 	/**
 	 * The transfer object class for Customer ListView
+	 * this class should be aligned with the viewModelObjectForCustomersListView Observable class,
+	 * meaning it should have minimum same amount of elements with same names, relevant to the list
 	 */
 	class CellElementsInCustomerListView
 	{
@@ -51,13 +53,12 @@ public class ccAdminDialogController {
 		String lastEntryTime;
 	}
 
-	CellElementsInCustomerListView newRowForCustomerListView()
+	CellElementsInCustomerListView createNewCellRowForCustomerListView()
 	{
-		CellElementsInCustomerListView newCell=new CellElementsInCustomerListView();
-		return newCell;
+		return new CellElementsInCustomerListView();
 	}
 
-	void addElementToCustomerListBox(CellElementsInCustomerListView Item){
+	void addCellRowElementsToCustomerListView(CellElementsInCustomerListView Item){
 		Platform.runLater(() -> {
             //if you change the UI, do it here !
             updateItemInCustomersListView(Item);

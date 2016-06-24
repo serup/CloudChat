@@ -19,7 +19,7 @@ public class ActionHandlers {
 			if(!ps.bConnected) {
 				utils util = new utils();
 				ps.dopsCommunications = new DOPsCommunication();
-				ps.dopsCommunications.addActionHandler("ChatInfo", ps.actionHandlers::actionHandlerUpdateCustomerListBox);
+				ps.dopsCommunications.addActionHandler("ChatInfo", ps.actionHandlers::actionHandlerUpdateCustomerListView);
 				//dopsCommunications.addActionHandler("ChatForwardInfoRequest", this::actionHandlerUpdateManagerListBox);
 
 				ps.controller.connectButton.setText(ps.loader.getResources().getString("wait"));  //TODO: find a way to animate connect button in waiting - this does NOT work
@@ -57,7 +57,7 @@ public class ActionHandlers {
 	}
 
 	// Action handlers for listviews
-	private String actionHandlerUpdateManagerListBox(String type, DOPsCommunication.dedAnalyzed dana) {
+	private String actionHandlerUpdateManagerListView(String type, DOPsCommunication.dedAnalyzed dana) {
 		String strResult = "OK";
 		System.out.println("- updateMangerListBox called ");
 		String srcAlias = dana.getElement("srcAlias").toString();
@@ -65,15 +65,15 @@ public class ActionHandlers {
 		return strResult;
 	}
 
-	private String actionHandlerUpdateCustomerListBox(String type, DOPsCommunication.dedAnalyzed dana)
+	private String actionHandlerUpdateCustomerListView(String type, DOPsCommunication.dedAnalyzed dana)
 	{
 		String strResult = "OK";
-		System.out.println("- actionHandlerUpdateCustomerListBox called ");
-		ccAdminDialogController.CellElementsInCustomerListView newCellRow = ps.controller.newRowForCustomerListView();
+		System.out.println("- actionHandlerUpdateCustomerListView called ");
+		ccAdminDialogController.CellElementsInCustomerListView newCellRow = ps.controller.createNewCellRowForCustomerListView();
         newCellRow.srcAlias = dana.getElement("srcAlias").toString();
         // TODO: add cell elements
 
-		ps.controller.addElementToCustomerListBox(newCellRow);
+		ps.controller.addCellRowElementsToCustomerListView(newCellRow);
 		return strResult;
 	}
 
