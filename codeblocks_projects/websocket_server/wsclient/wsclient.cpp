@@ -133,6 +133,7 @@ struct _RealClientWebSocket : public ClientWebSocket
     {
         m_Thread.join();
     }
+
     void processQueue()
     {
         while(readyState != CLOSED) {
@@ -157,38 +158,15 @@ struct _RealClientWebSocket : public ClientWebSocket
         pOwner = pParent;
     }
 
-    /** \brief Poll will read incomming dataframes on socket and put in buffer, also send dataframes in outbuffer to socket - should run in its own thread
+    /** \brief Poll will read incoming dataframes on socket and put in buffer, also send dataframes in outbuffer to socket - should run in its own thread
      *
      * \return void
      *
      */
-    void poll() { // timeout in milliseconds
+    void poll() {
         if (readyState == CLOSED) {
-//            if (timeout > 0) {
-//                timeval tv = { timeout/1000, (timeout%1000) * 1000 };
-//                select(0, NULL, NULL, NULL, &tv);
-//            }
             return;
         }
-
-            long timeout = 10000;
-//        if (timeout > 0) {
-            fd_set rfds;
-            fd_set wfds;
-            timeval tv = { timeout/1000, (timeout%1000) * 1000 };
-            FD_ZERO(&rfds);
-            FD_ZERO(&wfds);
-            //FD_SET(sockfd, &rfds);
-//            if (rxbuf.size()) { FD_SET(sockfd, &rfds); }
-//            select(sockfd + 1, &rfds, &wfds, NULL, &tv);
-//        }
-
-//        unsigned long SOCKET_READ_TIMEOUT_SEC = 10;
-//        struct timeval timeout;
-//        timeout.tv_sec = SOCKET_READ_TIMEOUT_SEC;
-//        timeout.tv_usec = 0;
-//        setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout));
-        //setsockopt(sockfd, SOL_SOCKET, SO_RCVLOWAT, &timeout, sizeof(timeout));
 
         while (txbuf.size()) {
             int ret;
@@ -201,7 +179,6 @@ struct _RealClientWebSocket : public ClientWebSocket
             readyState = CLOSED;
         }
         while (true) {
-            // FD_ISSET(0, &rfds) will be true
             int N = rxbuf.size();
             ssize_t ret;
             rxbuf.resize(N + 1500);
@@ -230,10 +207,7 @@ struct _RealClientWebSocket : public ClientWebSocket
             else {
                 rxbuf.resize(N + ret);
             }
-
-
         }
-
     }
 
 
@@ -248,7 +222,6 @@ struct _RealClientWebSocket : public ClientWebSocket
             ws.opcode = (wsheader_type::opcode_type) (data[0] & 0x0f);
             ws.mask = (data[1] & 0x80) == 0x80;
             ws.N0 = (data[1] & 0x7f);
-//            ws.header_size = 2 + (ws.N0 == 126? 2 : 0) + (ws.N0 == 127? 6 : 0) + (ws.mask? 4 : 0);
             ws.header_size = 2 + (ws.N0 == 126? 2 : 0) + (ws.N0 == 127? 8 : 0) + (ws.mask? 4 : 0); /// http://tools.ietf.org/html/rfc6455#section-5.2
             if (rxbuf.size() < (unsigned int)ws.header_size) { return bResult; /* Need: ws.header_size - rxbuf.size() */ }
             int i;
@@ -287,39 +260,10 @@ struct _RealClientWebSocket : public ClientWebSocket
                 ws.masking_key[3] = 0;
             }
             if (rxbuf.size() < ws.header_size+ws.N) { return bResult; /* Need: ws.header_size+ws.N - rxbuf.size() */ }
-//            if (ws.fin == false) {
-//                    return bResult;
-//            }
 
             // We got a whole message, now do something with it:
             if (false) { }
-//            else if (ws.opcode == wsheader_type::TEXT_FRAME && ws.fin) {
-//                if (ws.mask) { for (size_t i = 0; i != ws.N; ++i) { rxbuf[i+ws.header_size] ^= ws.masking_key[i&0x3]; } }
-//                std::vector<uint8_t> data;
-//                std::copy(rxbuf.begin()+ws.header_size, rxbuf.begin()+ws.header_size+ws.N, std::back_inserter(data));
-//                data.push_back(0);
-//                callable(&data[0]); // direct pointer to txt
-//                bResult=true;
-//            }
             else if (ws.opcode == wsheader_type::TEXT_FRAME ) { }
-//            else if (ws.opcode == wsheader_type::BINARY_FRAME && ws.fin) {
-//                if (ws.mask) { for (size_t i = 0; i != ws.N; ++i) { rxbuf[i+ws.header_size] ^= ws.masking_key[i&0x3]; } }
-//                std::vector<uint8_t> data;
-//                data.resize(ws.N);
-//                data.clear();// remove potential garbage
-//                std::copy(rxbuf.begin()+ws.header_size, rxbuf.begin()+ws.header_size+ws.N, std::back_inserter(data));
-//                data.push_back(0);
-//
-//                CDED ded;
-//                ded.pDEDarray = &data[0];
-//                ded.sizeofDED = data.size()-1;
-////                ded.pOwner = this;
-//                ded.pOwner = this->pOwner;
-//                callable(&ded); // direct pointer to DED class with DED object in pDEDarray -- callable function must beable to parse the object!!
-//
-//                //rxbuf.clear(); // ready for next receiving next dataframe
-//                bResult=true;
-//            }
             else if (ws.opcode == wsheader_type::BINARY_FRAME || ws.opcode == wsheader_type::CONTINUATION) {
                 if (ws.mask) { for (size_t i = 0; i != ws.N; ++i) { rxbuf[i+ws.header_size] ^= ws.masking_key[i&0x3]; } }
                 receivedData.insert(receivedData.end(), rxbuf.begin()+ws.header_size, rxbuf.begin()+ws.header_size+(size_t)ws.N);// just feed
@@ -340,13 +284,6 @@ struct _RealClientWebSocket : public ClientWebSocket
             else if (ws.opcode == wsheader_type::PONG) { }
             else if (ws.opcode == wsheader_type::CLOSE) { close(); }
             else { fprintf(stderr, "ERROR: Got unexpected WebSocket message.\n"); close(); }
-//            else
-//            {
-//                fprintf(stderr, "[websocket_server wsclient.cpp] ERROR: Got unexpected WebSocket message. Will try to clean rxbuf\n");
-//                //rxbuf.erase(rxbuf.begin(), rxbuf.end());
-//                rxbuf.clear();
-//            }
-
             rxbuf.erase(rxbuf.begin(), rxbuf.begin() + ws.header_size+(size_t)ws.N);
         }
         return bResult;
@@ -374,10 +311,6 @@ struct _RealClientWebSocket : public ClientWebSocket
     }
 
 };
-
-
-
-
 
 
 ClientWebSocket::pointer ClientWebSocket::create_dummy() {
