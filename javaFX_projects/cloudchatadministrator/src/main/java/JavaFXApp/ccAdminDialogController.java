@@ -7,6 +7,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Cell;
 import javafx.scene.control.ListView;
 import javafx.util.Callback;
 import org.apache.commons.net.ntp.TimeStamp;
@@ -39,7 +40,24 @@ public class ccAdminDialogController {
 			return String.format("%s: %s %s", name.get(), id.get(), timestamp.getValue().getDate());
 		}
 	}
-	void addElementToCustomerListBox(String Item){
+
+	/**
+	 * The transfer object class for Customer ListView
+	 */
+	class CellElementsInCustomerListView
+	{
+		String srcAlias;
+		String srcHomepageAlias;
+		String lastEntryTime;
+	}
+
+	CellElementsInCustomerListView newRowForCustomerListView()
+	{
+		CellElementsInCustomerListView newCell=new CellElementsInCustomerListView();
+		return newCell;
+	}
+
+	void addElementToCustomerListBox(CellElementsInCustomerListView Item){
 		Platform.runLater(() -> {
             //if you change the UI, do it here !
             updateItemInCustomersListView(Item);
@@ -52,7 +70,8 @@ public class ccAdminDialogController {
 		customersList.setItems(customersListViewItems);
 	}
 
-	private void updateItemInCustomersListView(String Item)
+
+	private void updateItemInCustomersListView(CellElementsInCustomerListView Item)
 	{
 		boolean bUpdated=false;
 
@@ -61,8 +80,8 @@ public class ccAdminDialogController {
 
 		int pos=0;
  		for(viewModelObjectForCustomersListView item: customersListViewItems) {
-			if(item.name.getValue().contains(Item)) {
-				item.name.set(Item);
+			if(item.name.getValue().contains(Item.srcAlias)) {
+				item.name.set(Item.srcAlias);
 				item.id.set(pos);
 				bUpdated=true;
 			}
@@ -73,12 +92,12 @@ public class ccAdminDialogController {
 			appendItemToCustomersListView(Item);
 	}
 
-	private void appendItemToCustomersListView(String Item)
+	private void appendItemToCustomersListView(CellElementsInCustomerListView Item)
 	{
-		viewModelObjectForCustomersListView item = new viewModelObjectForCustomersListView();
-		customersListViewItems.add(item);
-		item.name.set(Item);
-		item.id.set(customersListViewItems.size()-1);
+		viewModelObjectForCustomersListView viewModelEntry = new viewModelObjectForCustomersListView();
+		customersListViewItems.add(viewModelEntry);
+		viewModelEntry.name.set(Item.srcAlias);
+		viewModelEntry.id.set(customersListViewItems.size()-1);
 	}
 }
 

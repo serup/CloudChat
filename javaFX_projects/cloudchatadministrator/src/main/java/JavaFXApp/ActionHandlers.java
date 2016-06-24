@@ -2,7 +2,6 @@ package JavaFXApp;
 
 import ProtocolHandlings.DOPsCommunication;
 import dops.utils.utils;
-import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 
 import java.io.IOException;
@@ -70,9 +69,11 @@ public class ActionHandlers {
 	{
 		String strResult = "OK";
 		System.out.println("- actionHandlerUpdateCustomerListBox called ");
-		String srcAlias = dana.getElement("srcAlias").toString();
-		ps.controller.addElementToCustomerListBox(srcAlias);
+		ccAdminDialogController.CellElementsInCustomerListView newCellRow = ps.controller.newRowForCustomerListView();
+        newCellRow.srcAlias = dana.getElement("srcAlias").toString();
+        // TODO: add cell elements
 
+		ps.controller.addElementToCustomerListBox(newCellRow);
 		return strResult;
 	}
 
