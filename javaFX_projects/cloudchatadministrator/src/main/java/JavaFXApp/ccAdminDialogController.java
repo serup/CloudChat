@@ -1,6 +1,8 @@
 package JavaFXApp;
 
 import javafx.application.Platform;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -8,6 +10,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import org.apache.commons.net.ntp.TimeStamp;
 
 public class ccAdminDialogController {
 
@@ -28,6 +31,7 @@ public class ccAdminDialogController {
 		Platform.runLater(() -> {
             //if you change the UI, do it here !
             updateCustomersCellRowElement(entry);
+			removeOutdatedRowsElements();
         });
 	}
 
@@ -63,6 +67,7 @@ public class ccAdminDialogController {
 			Item.userName.set(Item.getUserName());
 			Item.userId.set(pos);
 			Item.srcHomepageAlias.set(Item.getSrcHomepageAlias());
+			Item.timestamp = new SimpleObjectProperty<>(TimeStamp.getCurrentTime());
 			//TODO: add update of more members here...
 
 		}catch (Exception e){
@@ -81,6 +86,21 @@ public class ccAdminDialogController {
 
 		customersTableViewItems.add(entry);
 		customersTable.setItems(customersTableViewItems);
+	}
+
+	private void removeOutdatedRowsElements()
+	{
+		ObjectProperty<TimeStamp> Totimestamp = new SimpleObjectProperty<>(TimeStamp.getCurrentTime());
+
+		for(CustomerTableEntry item: customersTableViewItems) {
+			long diff = Totimestamp.getValue().getTime() - item.timestamp.getValue().getTime();
+			long diffSeconds = diff / 1000 % 60;
+			if(diffSeconds > 10) {
+				// Element has been idle for too long, meaning no communication, hence remove it
+				System.out.println("- Idle element - will be removed");
+			}
+		}
+
 	}
 
 	void initCustomerTableView()
