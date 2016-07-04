@@ -37,12 +37,12 @@ public class ccAdminDialogController {
 			initCustomerTableView();
 		}
 
-		if(!updateElement(Item)) {
-			appendItemToCustomersTableView(Item);
+		if(!updateRowElement(Item)) {
+			appendRowElementToCustomersTableView(Item);
 		}
 	}
 
-	private boolean updateElement(CustomerTableEntry Item)
+	private boolean updateRowElement(CustomerTableEntry Item)
 	{
 		boolean bResult=false;
 		int pos=0;
@@ -71,6 +71,18 @@ public class ccAdminDialogController {
 		return bResult;
 	}
 
+	private void appendRowElementToCustomersTableView(CustomerTableEntry Item)
+	{
+		CustomerTableEntry entry = new CustomerTableEntry();
+		entry.userName.set(Item.getUserName());
+		entry.srcHomepageAlias.set(Item.getSrcHomepageAlias());
+		entry.userId.set(customersTableViewItems.size()-1);
+		//TODO: add more entries
+
+		customersTableViewItems.add(entry);
+		customersTable.setItems(customersTableViewItems);
+	}
+
 	void initCustomerTableView()
 	{
 		assert customersTable != null : "fx:id=\"customersTable\" was not injected: check your FXML file ";
@@ -85,16 +97,6 @@ public class ccAdminDialogController {
 		//TODO: add more entries
 	}
 
-	private void appendItemToCustomersTableView(CustomerTableEntry Item)
-	{
-		CustomerTableEntry entry = new CustomerTableEntry();
-		entry.userName.set(Item.getUserName());
-		entry.srcHomepageAlias.set(Item.getSrcHomepageAlias());
-		entry.userId.set(customersTableViewItems.size()-1);
-		//TODO: add more entries
 
-		customersTableViewItems.add(entry);
-		customersTable.setItems(customersTableViewItems);
-	}
 }
 
