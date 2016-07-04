@@ -6,13 +6,13 @@ import javafx.beans.InvalidationListener;
 
 import java.io.IOException;
 
-public class ActionHandlers {
+class ActionHandlers {
 	private PresentationState ps=null;
 
 	ActionHandlers(){ }
 	ActionHandlers(PresentationState ps){ this.ps = ps; }
 
-	public static InvalidationListener connectHandler(PresentationState ps) throws IOException {
+	static InvalidationListener connectHandler(PresentationState ps) throws IOException {
 
 		return observable -> {
 
@@ -20,10 +20,7 @@ public class ActionHandlers {
 				utils util = new utils();
 				ps.dopsCommunications = new DOPsCommunication();
 				ps.dopsCommunications.addActionHandler("ChatInfo", ps.actionHandlers::actionHandlerUpdateCustomerView);
-				//dopsCommunications.addActionHandler("ChatForwardInfoRequest", this::actionHandlerUpdateManagerListBox);
-
-				ps.controller.connectButton.setText(ps.loader.getResources().getString("wait"));  //TODO: find a way to animate connect button in waiting - this does NOT work
-				//buttonConnect.setIcon(buttonConnect.getPressedIcon());
+				//dopsCommunications.addActionHandler("ChatForwardInfoRequest", this::actionHandlerUpdateManagerView);
 
 				if(util.isEnvironmentOK()) {
 					String uniqueId = ps.loader.getResources().getString("uniqueId");
@@ -56,36 +53,22 @@ public class ActionHandlers {
 		};
 	}
 
-	// Action handlers for listviews
-	private String actionHandlerUpdateManagerListView(String type, DOPsCommunication.dedAnalyzed dana) {
-		String strResult = "OK";
-		System.out.println("- updateMangerListBox called ");
-		String srcAlias = dana.getElement("srcAlias").toString();
-		//handleManagerListBox.addElementToListBox(srcAlias);
-		return strResult;
-	}
-
 	private String actionHandlerUpdateCustomerView(String type, DOPsCommunication.dedAnalyzed dana)
 	{
 		String strResult = "OK";
 		System.out.println("- actionHandlerUpdateCustomerView called ");
-		ccAdminDialogController.CellElementsInCustomerListView newCellRow = ps.controller.createNewCellRowForCustomerListView();
-        newCellRow.srcAlias = dana.getElement("srcAlias").toString();
-        newCellRow.srcHomepageAlias = dana.getElement("srcHomepageAlias").toString();
 
-        // TODO: add cell elements
-
-        ps.controller.addCellRowElementsToCustomerView(newCellRow);
-
-        CustomerTableEntry newCellRowInTable = ps.controller.createCellRowForCustomerTableView();
-        newCellRowInTable.userName.set(dana.getElement("srcAlias").toString());
-        newCellRowInTable.srcHomepageAlias.set(dana.getElement("srcHomepageAlias").toString());
-
-        // TODO: add cell elements
-
+		CustomerTableEntry newCellRowInTable = createTableRow(dana);
         ps.controller.addCellRowElementsToCustomerView(newCellRowInTable);
 
 		return strResult;
 	}
 
+	private CustomerTableEntry createTableRow(DOPsCommunication.dedAnalyzed dana)
+	{
+        CustomerTableEntry newCellRowInTable = ps.controller.createCellRowForCustomerTableView();
+        newCellRowInTable.userName.set(dana.getElement("srcAlias").toString());
+        newCellRowInTable.srcHomepageAlias.set(dana.getElement("srcHomepageAlias").toString());
+		return newCellRowInTable;
+	}
 }
