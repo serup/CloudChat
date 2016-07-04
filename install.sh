@@ -325,7 +325,7 @@ fi
 #  echo "- python-hdfs already installed"
 #fi
 
-PIPPKG_OK=$(pip list | grep webhdfs*)
+PIPPKG_OK=$(pip list | grep -i WebHDFS*)
 if [ "" == "$PIPPKG_OK" ]; then
   echo -n "- install python webhdfs on ubuntu "
   sudo easy_install webhdfs 
