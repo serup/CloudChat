@@ -24,7 +24,7 @@ public class DOPsCommunication {
     private DOPSClientEndpoint clientEndpoint = null;
     private BiFunction<String, dedAnalyzed, String> customHandlerFunction;
     private List<ActionHandlerObject> listOfActionHandlers = new ArrayList<>();
-    private ReentrantLock WaitForlock = new ReentrantLock();
+    private ReentrantLock WaitForLock = new ReentrantLock();
     private String serverURI = "ws://backend.scanva.com:7777";
 
     private class ActionHandlerObject
@@ -298,13 +298,13 @@ public class DOPsCommunication {
     private String handleCommunication(String type, dedAnalyzed dana)
     {
         System.out.println("- handleCommunication ; transfer received object to custom action handlers based on type ");
-        WaitForlock.lock();
+        WaitForLock.lock();
         listOfActionHandlers.stream()
                             .filter(d -> d.type == type)
                             .map(d -> d.function)
                             .forEach(d -> d.apply(type, dana));
 
-        WaitForlock.unlock();
+        WaitForLock.unlock();
         return "OK";
     }
 }

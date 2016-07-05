@@ -2,9 +2,11 @@ package JavaFXApp;
 
 import ProtocolHandlings.DOPsCommunication;
 import dops.utils.utils;
+import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 
 import java.io.IOException;
+import java.util.concurrent.locks.ReentrantLock;
 
 class ActionHandlers {
 	private PresentationState ps=null;
@@ -75,11 +77,13 @@ class ActionHandlers {
 		String strResult = "OK";
 		System.out.println("- actionHandlerUpdateCustomerViewAndForwardToManagers called ");
 
+		Platform.runLater(() -> {
+
         ps.controller.addCellRowElementsToCustomerView(createTableRow(dana));
-		ps.controller.removeOutdatedRowsElementsFromCustomerView();
+		ps.controller.removeIdleCellRowElementsInCustomerView();
 
 		//TODO: find all managers and forward "ChatInfo" to these online managers
-
+		});
 		return strResult;
 	}
 

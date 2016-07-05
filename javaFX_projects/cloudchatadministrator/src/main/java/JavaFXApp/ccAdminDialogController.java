@@ -13,7 +13,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import org.apache.commons.net.ntp.TimeStamp;
 
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.stream.Collectors;
 
 public class ccAdminDialogController {
 
@@ -24,7 +23,7 @@ public class ccAdminDialogController {
 	TableView<CustomerTableEntry> customersTable;
 
 	private ObservableList<CustomerTableEntry> customersTableViewItems = FXCollections.observableArrayList();
-	private ReentrantLock WaitForlock = new ReentrantLock();
+    private ReentrantLock WaitForlock = new ReentrantLock();
 
 	CustomerTableEntry createCellRowForCustomerTableView()
 	{
@@ -32,11 +31,18 @@ public class ccAdminDialogController {
 	}
 
 	void addCellRowElementsToCustomerView( CustomerTableEntry entry){
-		WaitForlock.lock();
-		Platform.runLater(() -> {
+		//Platform.runLater(() -> {
             //if you change the UI, do it here !
+		WaitForlock.lock();
             updateCustomersCellRowElement(entry);
-        });
+		WaitForlock.unlock();
+        //});
+	}
+
+	void removeIdleCellRowElementsInCustomerView()
+	{
+		WaitForlock.lock();
+	 	removeOutdatedRowsElementsFromCustomerView();
 		WaitForlock.unlock();
 	}
 
@@ -93,17 +99,19 @@ public class ccAdminDialogController {
 		customersTable.setItems(customersTableViewItems);
 	}
 
-	void removeOutdatedRowsElementsFromCustomerView()
+	private void removeOutdatedRowsElementsFromCustomerView()
 	{
-		ObjectProperty<TimeStamp> Totimestamp = new SimpleObjectProperty<>(TimeStamp.getCurrentTime());
-
+		ObjectProperty<TimeStamp> currentTimestamp = new SimpleObjectProperty<>(TimeStamp.getCurrentTime());
+		long diff;
+		long diffSeconds;
 		for(CustomerTableEntry item: customersTableViewItems) {
-			long diff = Totimestamp.getValue().getTime() - item.timestamp.getValue().getTime();
-			long diffSeconds = diff / 1000 % 60;
+			diff = currentTimestamp.getValue().getTime() - item.timestamp.getValue().getTime();
+			diffSeconds = diff / 1000 % 60;
 			if(diffSeconds > 10) {
 				// Element has been idle for too long, meaning no communication, hence remove it
 				System.out.printf("- Idle element [%s] - will be removed\n", item.getUserName());
-				removeElement(item);
+				//removeElement(item);
+				customersTableViewItems.remove(item);
 			}
 		}
 	}
