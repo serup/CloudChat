@@ -21,7 +21,7 @@ class ActionHandlers {
 				utils util = new utils();
 				ps.dopsCommunications = new DOPsCommunication();
 				ps.dopsCommunications.addActionHandler("ChatInfo", ps.actionHandlers::actionHandlerUpdateCustomerViewAndForwardToManagers);
-				//dopsCommunications.addActionHandler("ChatForwardInfoRequest", ps.actionHandlers::actionHandlerUpdateManagerView);
+				ps.dopsCommunications.addActionHandler("ChatForwardInfoRequest", ps.actionHandlers::actionHandlerUpdateManagerView);
 
 				if(util.isEnvironmentOK()) {
 					String uniqueId = ps.loader.getResources().getString("uniqueId");
@@ -77,8 +77,8 @@ class ActionHandlers {
 		System.out.println("- actionHandlerUpdateCustomerViewAndForwardToManagers called ");
 		Platform.runLater(() -> {
 
-			ps.controller.addCellRowElementsToCustomerView(createTableRow(dana));
-			ps.controller.removeIdleCellRowElementsInCustomerView();
+			ps.controller.handleCustomerTableView.addCellRowElementsToCustomerView(createTableRow(dana));
+			ps.controller.handleCustomerTableView.removeIdleCellRowElementsInCustomerView();
 
 			//TODO: find all managers and forward "ChatInfo" to these online managers
 		});
@@ -87,9 +87,23 @@ class ActionHandlers {
 
 	private CustomerTableEntry createTableRow(DOPsCommunication.dedAnalyzed dana)
 	{
-        CustomerTableEntry newCellRowInTable = ps.controller.createCellRowForCustomerTableView();
+        CustomerTableEntry newCellRowInTable = ps.controller.handleCustomerTableView.createCellRowForCustomerTableView();
         newCellRowInTable.userName.set(dana.getElement("srcAlias").toString());
         newCellRowInTable.srcHomepageAlias.set(dana.getElement("srcHomepageAlias").toString());
 		return newCellRowInTable;
+	}
+
+	private String actionHandlerUpdateManagerView(String type, DOPsCommunication.dedAnalyzed dana)
+	{
+		String strResult = "OK";
+		System.out.println("- actionHandlerUpdateManagerView called ");
+		Platform.runLater(() -> {
+
+		//	ps.controller.addCellRowElementsToManagersView(createTableRow(dana));
+		//	ps.controller.removeIdleCellRowElementsInManagersView();
+
+			//TODO: find all managers and forward "ChatInfo" to these online managers
+		});
+		return strResult;
 	}
 }
