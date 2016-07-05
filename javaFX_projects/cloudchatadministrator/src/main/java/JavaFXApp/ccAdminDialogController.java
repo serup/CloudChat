@@ -12,9 +12,20 @@ public class ccAdminDialogController {
 	@FXML
 	TableView<CustomerTableEntry> customersTable;
 
+	@FXML
+	TableView<ManagerTableEntry> managersTable;
+
+
+	HandleManagersTableView handleManagersTableView;
 	HandleCustomerTableView handleCustomerTableView;
 
-	@SuppressWarnings("unchecked")
+	void initManagersTableView()
+	{
+		assert managersTable != null : "fx:id=\"managersTable\" was not injected: check your FXML file ";
+		handleManagersTableView = new HandleManagersTableView(managersTable);
+		handleManagersTableView.initManagersTableView();
+	}
+
 	void initCustomerTableView()
 	{
 		assert customersTable != null : "fx:id=\"customersTable\" was not injected: check your FXML file ";
