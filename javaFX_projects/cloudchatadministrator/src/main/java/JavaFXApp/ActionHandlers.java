@@ -53,13 +53,30 @@ class ActionHandlers {
 		};
 	}
 
+	/**
+	 * action handler for customer view table
+	 * this action handler will be called every time a DED packet of type "ChatInfo" is received
+	 * It will update the customer table view with the new incoming information
+	 *
+	 * The incoming "ChatInfo" is an automated transfer of a DED from a JavaScript homepage client
+	 * example:
+	 * http://cloudchatclient.com/CloudChatClient/ChatWidget.html?ypos=200&managerid=754d148d0522659d0ceb2e6035fad6a8&category=Montenegro
+	 *
+	 * above link starts a client and it will, when connected send a DED packet of type "ChatInfo" towards managerid, so
+	 * if this instance is connected with that id, then it will receive the DED and its analyzed version will be
+	 * transfered to this aciton handler
+	 *
+	 * @param type  - "ChatInfo"
+	 * @param dana  - Analyzed DED - decompressed and analyzed
+     * @return - String "OK"; not really used
+     */
 	private String actionHandlerUpdateCustomerView(String type, DOPsCommunication.dedAnalyzed dana)
 	{
 		String strResult = "OK";
 		System.out.println("- actionHandlerUpdateCustomerView called ");
 
-		CustomerTableEntry newCellRowInTable = createTableRow(dana);
-        ps.controller.addCellRowElementsToCustomerView(newCellRowInTable);
+        ps.controller.addCellRowElementsToCustomerView(createTableRow(dana));
+		ps.controller.removeOutdatedRowsElements();
 
 		return strResult;
 	}

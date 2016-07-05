@@ -12,6 +12,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import org.apache.commons.net.ntp.TimeStamp;
 
+import java.util.stream.Collectors;
+
 public class ccAdminDialogController {
 
 	@FXML
@@ -31,7 +33,6 @@ public class ccAdminDialogController {
 		Platform.runLater(() -> {
             //if you change the UI, do it here !
             updateCustomersCellRowElement(entry);
-			removeOutdatedRowsElements();
         });
 	}
 
@@ -88,7 +89,7 @@ public class ccAdminDialogController {
 		customersTable.setItems(customersTableViewItems);
 	}
 
-	private void removeOutdatedRowsElements()
+	void removeOutdatedRowsElements()
 	{
 		ObjectProperty<TimeStamp> Totimestamp = new SimpleObjectProperty<>(TimeStamp.getCurrentTime());
 
@@ -97,12 +98,32 @@ public class ccAdminDialogController {
 			long diffSeconds = diff / 1000 % 60;
 			if(diffSeconds > 10) {
 				// Element has been idle for too long, meaning no communication, hence remove it
-				System.out.println("- Idle element - will be removed");
+				System.out.printf("- Idle element [%s] - will be removed\n", item.getUserName());
+				removeElement(item);
 			}
 		}
 
 	}
 
+	private boolean removeElement(CustomerTableEntry Item)
+	{
+		boolean bResult=false;
+
+		// stream way [NOT WORKING - WHY?] - returns true, however element is still in customersTableViewItems
+		//bResult = customersTableViewItems.stream().collect(Collectors.toSet()).removeIf(i -> i.userName.getValue().contains(Item.getUserName()));
+
+		// for loop way - works, it removes the element from customersTableViewItems
+		for(CustomerTableEntry item: customersTableViewItems) {
+			if(item.userName.getValue().contains(Item.getUserName())) {
+				// Element found - now remove it
+				customersTableViewItems.remove(item);
+				bResult=true;
+			}
+		}
+		return bResult;
+	}
+
+	@SuppressWarnings("unchecked")
 	void initCustomerTableView()
 	{
 		assert customersTable != null : "fx:id=\"customersTable\" was not injected: check your FXML file ";
