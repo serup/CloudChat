@@ -76,8 +76,7 @@ class ActionHandlers {
 		System.out.println("- actionHandlerUpdateCustomerView called ");
 
         ps.controller.addCellRowElementsToCustomerView(createTableRow(dana));
-		ps.controller.removeOutdatedRowsElements();
-
+		ps.controller.removeOutdatedRowsElementsFromCustomerView();
 		return strResult;
 	}
 

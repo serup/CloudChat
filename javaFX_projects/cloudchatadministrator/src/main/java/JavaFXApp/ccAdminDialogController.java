@@ -89,7 +89,7 @@ public class ccAdminDialogController {
 		customersTable.setItems(customersTableViewItems);
 	}
 
-	void removeOutdatedRowsElements()
+	void removeOutdatedRowsElementsFromCustomerView()
 	{
 		ObjectProperty<TimeStamp> Totimestamp = new SimpleObjectProperty<>(TimeStamp.getCurrentTime());
 

@@ -98,6 +98,7 @@ public final class DEDMessageHandler implements MessageHandler.Whole<byte[]>
                                             DEDHandlerFunction.apply(dana.type, dana);
                                         }catch(Exception e) {
                                             System.out.println("- ERROR: DED handler function was a NULL pointer");
+                                            System.out.printf("- possible cause : %s\n", e);
                                             DEDHandlerFunction = (k, v) -> defaultHandler(dana.type,dana);
                                         }
                                         break;
