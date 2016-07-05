@@ -12,6 +12,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import org.apache.commons.net.ntp.TimeStamp;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class ccAdminDialogController {
@@ -104,6 +106,7 @@ public class ccAdminDialogController {
 		ObjectProperty<TimeStamp> currentTimestamp = new SimpleObjectProperty<>(TimeStamp.getCurrentTime());
 		long diff;
 		long diffSeconds;
+		List<Object> objectsToRemove = new ArrayList<>();
 		for(CustomerTableEntry item: customersTableViewItems) {
 			diff = currentTimestamp.getValue().getTime() - item.timestamp.getValue().getTime();
 			diffSeconds = diff / 1000 % 60;
@@ -111,9 +114,11 @@ public class ccAdminDialogController {
 				// Element has been idle for too long, meaning no communication, hence remove it
 				System.out.printf("- Idle element [%s] - will be removed\n", item.getUserName());
 				//removeElement(item);
-				customersTableViewItems.remove(item);
+				//customersTableViewItems.remove(item);
+				objectsToRemove.add(item);
 			}
 		}
+		objectsToRemove.stream().forEach(o -> customersTableViewItems.remove(o));
 	}
 
 	private boolean removeElement(CustomerTableEntry Item)
