@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiFunction;
 
 /**
@@ -23,6 +24,7 @@ public class DOPsCommunication {
     private DOPSClientEndpoint clientEndpoint = null;
     private BiFunction<String, dedAnalyzed, String> customHandlerFunction;
     private List<ActionHandlerObject> listOfActionHandlers = new ArrayList<>();
+    private ReentrantLock WaitForlock = new ReentrantLock();
     private String serverURI = "ws://backend.scanva.com:7777";
 
     private class ActionHandlerObject
@@ -296,12 +298,13 @@ public class DOPsCommunication {
     private String handleCommunication(String type, dedAnalyzed dana)
     {
         System.out.println("- handleCommunication ; transfer received object to custom action handlers based on type ");
-
+        WaitForlock.lock();
         listOfActionHandlers.stream()
                             .filter(d -> d.type == type)
                             .map(d -> d.function)
                             .forEach(d -> d.apply(type, dana));
 
+        WaitForlock.unlock();
         return "OK";
     }
 }

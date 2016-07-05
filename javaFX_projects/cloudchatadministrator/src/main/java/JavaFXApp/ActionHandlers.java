@@ -19,8 +19,8 @@ class ActionHandlers {
 			if(!ps.bConnected) {
 				utils util = new utils();
 				ps.dopsCommunications = new DOPsCommunication();
-				ps.dopsCommunications.addActionHandler("ChatInfo", ps.actionHandlers::actionHandlerUpdateCustomerView);
-				//dopsCommunications.addActionHandler("ChatForwardInfoRequest", this::actionHandlerUpdateManagerView);
+				ps.dopsCommunications.addActionHandler("ChatInfo", ps.actionHandlers::actionHandlerUpdateCustomerViewAndForwardToManagers);
+				//dopsCommunications.addActionHandler("ChatForwardInfoRequest", ps.actionHandlers::actionHandlerUpdateManagerView);
 
 				if(util.isEnvironmentOK()) {
 					String uniqueId = ps.loader.getResources().getString("uniqueId");
@@ -70,13 +70,16 @@ class ActionHandlers {
 	 * @param dana  - Analyzed DED - decompressed and analyzed
      * @return - String "OK"; not really used
      */
-	private String actionHandlerUpdateCustomerView(String type, DOPsCommunication.dedAnalyzed dana)
+	private String actionHandlerUpdateCustomerViewAndForwardToManagers(String type, DOPsCommunication.dedAnalyzed dana)
 	{
 		String strResult = "OK";
-		System.out.println("- actionHandlerUpdateCustomerView called ");
+		System.out.println("- actionHandlerUpdateCustomerViewAndForwardToManagers called ");
 
         ps.controller.addCellRowElementsToCustomerView(createTableRow(dana));
 		ps.controller.removeOutdatedRowsElementsFromCustomerView();
+
+		//TODO: find all managers and forward "ChatInfo" to these online managers
+
 		return strResult;
 	}
 

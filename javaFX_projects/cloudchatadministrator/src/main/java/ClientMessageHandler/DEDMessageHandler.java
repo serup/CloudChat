@@ -1,7 +1,6 @@
 package ClientMessageHandler;
 
 import ProtocolHandlings.DOPsCommunication.dedAnalyzed;
-import javafx.application.Platform;
 
 import javax.websocket.MessageHandler;
 import java.util.ArrayList;
@@ -99,6 +98,7 @@ public final class DEDMessageHandler implements MessageHandler.Whole<byte[]>
                                         }catch(Exception e) {
                                             System.out.println("- ERROR: DED handler function was a NULL pointer");
                                             System.out.printf("- possible cause : %s\n", e);
+                                            e.printStackTrace();
                                             DEDHandlerFunction = (k, v) -> defaultHandler(dana.type,dana);
                                         }
                                         break;

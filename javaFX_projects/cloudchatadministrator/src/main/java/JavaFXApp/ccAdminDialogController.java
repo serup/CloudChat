@@ -12,6 +12,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import org.apache.commons.net.ntp.TimeStamp;
 
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 public class ccAdminDialogController {
@@ -23,6 +24,7 @@ public class ccAdminDialogController {
 	TableView<CustomerTableEntry> customersTable;
 
 	private ObservableList<CustomerTableEntry> customersTableViewItems = FXCollections.observableArrayList();
+	private ReentrantLock WaitForlock = new ReentrantLock();
 
 	CustomerTableEntry createCellRowForCustomerTableView()
 	{
@@ -30,10 +32,12 @@ public class ccAdminDialogController {
 	}
 
 	void addCellRowElementsToCustomerView( CustomerTableEntry entry){
+		WaitForlock.lock();
 		Platform.runLater(() -> {
             //if you change the UI, do it here !
             updateCustomersCellRowElement(entry);
         });
+		WaitForlock.unlock();
 	}
 
 	private void updateCustomersCellRowElement(CustomerTableEntry Item)
@@ -102,23 +106,26 @@ public class ccAdminDialogController {
 				removeElement(item);
 			}
 		}
-
 	}
 
 	private boolean removeElement(CustomerTableEntry Item)
 	{
 		boolean bResult=false;
+		try {
+			// stream way [NOT WORKING - WHY?] - returns true, however element is still in customersTableViewItems
+			//bResult = customersTableViewItems.stream().collect(Collectors.toSet()).removeIf(i -> i.userName.getValue().contains(Item.getUserName()));
 
-		// stream way [NOT WORKING - WHY?] - returns true, however element is still in customersTableViewItems
-		//bResult = customersTableViewItems.stream().collect(Collectors.toSet()).removeIf(i -> i.userName.getValue().contains(Item.getUserName()));
-
-		// for loop way - works, it removes the element from customersTableViewItems
-		for(CustomerTableEntry item: customersTableViewItems) {
-			if(item.userName.getValue().contains(Item.getUserName())) {
-				// Element found - now remove it
-				customersTableViewItems.remove(item);
-				bResult=true;
+			// for loop way - works, it removes the element from customersTableViewItems
+			for (CustomerTableEntry item : customersTableViewItems) {
+				if (item.userName.getValue().contains(Item.getUserName())) {
+					// Element found - now remove it
+					customersTableViewItems.remove(item);
+					bResult = true;
+				}
 			}
+		} catch (Exception e)
+		{
+			e.printStackTrace();
 		}
 		return bResult;
 	}
