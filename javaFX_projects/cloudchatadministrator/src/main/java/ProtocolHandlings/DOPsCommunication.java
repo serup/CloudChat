@@ -243,8 +243,8 @@ public class DOPsCommunication {
                 field.setAccessible(true);
                 objResult = field.get(elements);
             } catch (Exception e) {
-                //e.printStackTrace();
                 System.out.printf("- [getElement] ERROR : java.lang.NoSuchFieldException : %s\n", name );
+                e.printStackTrace();
                 objResult = "<errorInElement>";
             }
             return objResult;
