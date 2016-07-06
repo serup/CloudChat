@@ -95,6 +95,8 @@ class ActionHandlers {
 			ps.controller.handleCustomerTableView.removeIdleCellRowElementsInCustomerView();
 
 			//TODO: find all managers and forward "ChatInfo" to these online managers
+			ps.controller.handleManagersTableView.forwardToManagers(dana);
+
 		});
 		return strResult;
 	}

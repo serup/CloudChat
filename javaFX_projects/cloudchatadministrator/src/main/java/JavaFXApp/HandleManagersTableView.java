@@ -1,5 +1,6 @@
 package JavaFXApp;
 
+import ProtocolHandlings.DOPsCommunication;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -108,6 +109,13 @@ public class HandleManagersTableView {
             }
         }
         objectsToRemove.stream().forEach(o -> managersTableViewItems.remove(o));
+    }
+
+    void forwardToManagers(DOPsCommunication.dedAnalyzed dana)
+    {
+        managersTableViewItems.stream().forEach(d -> System.out.printf("-- Will forward received DED of type : %s to manager : %s\n",dana.type, d.getUserName()));
+        //TODO: implement forward DED to online managers"
+        System.out.println("- TODO: implement forward DED to online managers");
     }
 
     @SuppressWarnings("unchecked")

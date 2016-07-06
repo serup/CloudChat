@@ -36,6 +36,7 @@ public final class DEDMessageHandler implements MessageHandler.Whole<byte[]>
 
     @Override
     public void onMessage(byte[] message) {
+        System.out.println("--------------------------");
         System.out.println("Received message of length : "+message.length);
         System.out.println("- determine if message is of type DED protocol");
         try {
