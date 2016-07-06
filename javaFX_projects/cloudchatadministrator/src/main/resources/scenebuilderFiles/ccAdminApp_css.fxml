@@ -77,8 +77,8 @@
                                        <children>
                                           <TableView fx:id="managersTable" prefHeight="87.0" prefWidth="478.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                             <columns>
-                                              <TableColumn prefWidth="75.0" text="C1" />
-                                              <TableColumn prefWidth="75.0" text="C2" />
+                                              <TableColumn prefWidth="75.0" text="Status" />
+                                              <TableColumn prefWidth="75.0" text="Name" />
                                             </columns>
                                           </TableView>
                                        </children>
@@ -91,8 +91,8 @@
                                        <children>
                                           <TableView fx:id="customersTable" prefHeight="87.0" prefWidth="478.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                             <columns>
-                                              <TableColumn prefWidth="75.0" text="C1" />
-                                              <TableColumn prefWidth="75.0" text="C2" />
+                                              <TableColumn prefWidth="75.0" text="User" />
+                                              <TableColumn prefWidth="75.0" text="Visit on homepage" />
                                             </columns>
                                           </TableView>
                                        </children>

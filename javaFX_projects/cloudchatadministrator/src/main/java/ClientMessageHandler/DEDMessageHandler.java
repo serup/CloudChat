@@ -93,20 +93,15 @@ public final class DEDMessageHandler implements MessageHandler.Whole<byte[]>
                             for (dedAnalyzed dana : danaList) {
                                 switch (dana.type) {
                                     case "ChatInfo":
-                                        try {
-                                            DEDHandlerFunction.apply(dana.type, dana);
-                                        }catch(Exception e) {
-                                            System.out.println("- ERROR: DED handler function was a NULL pointer");
-                                            System.out.printf("- possible cause : %s\n", e);
-                                            e.printStackTrace();
-                                            DEDHandlerFunction = (k, v) -> defaultHandler(dana.type,dana);
-                                        }
+                                        transferToHandler(dana);
+                                        break;
+                                    case "ChatForwardInfoRequest":
+                                        transferToHandler(dana);
                                         break;
                                     default:
-                                        System.out.println("- Currently NO handler for this type");
+                                        System.out.println("- TODO: Currently NO handler for this type, so please add one if needed");
                                         break;
                                 }
-
                             }
                             danaList.clear(); // all on list have been processed
                             WaitForlock.unlock();
@@ -123,7 +118,21 @@ public final class DEDMessageHandler implements MessageHandler.Whole<byte[]>
         dedDistributerThread.start();
     }
 
-    public String defaultHandler(String type, dedAnalyzed dana)
+    private void transferToHandler(dedAnalyzed dana)
+    {
+        try { DEDHandlerFunction.apply(dana.type, dana);
+        }catch (Exception e) { setupDefaultHandler(e, dana, DEDHandlerFunction); }
+    }
+
+    private void setupDefaultHandler(Exception e, dedAnalyzed dana, BiFunction<String, dedAnalyzed, String> DEDHandlerFunction)
+    {
+        System.out.println("- ERROR: DED handler function was a NULL pointer");
+        System.out.printf("- possible cause : %s\n", e);
+        e.printStackTrace();
+        this.DEDHandlerFunction = (k, v) -> defaultHandler(dana.type,dana);
+    }
+
+    private String defaultHandler(String type, dedAnalyzed dana)
     {
         String strResult = "dummy default handler";
         System.out.println("- WARNING: DED default handler function was called");

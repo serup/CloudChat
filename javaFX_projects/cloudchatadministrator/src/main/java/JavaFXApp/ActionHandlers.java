@@ -19,16 +19,14 @@ class ActionHandlers {
 
 			if(!ps.bConnected) {
 				utils util = new utils();
-				ps.dopsCommunications = new DOPsCommunication();
-				ps.dopsCommunications.addActionHandler("ChatInfo", ps.actionHandlers::actionHandlerUpdateCustomerViewAndForwardToManagers);
-				ps.dopsCommunications.addActionHandler("ChatForwardInfoRequest", ps.actionHandlers::actionHandlerUpdateManagerView);
-
-				if(util.isEnvironmentOK()) {
-					String uniqueId = ps.loader.getResources().getString("uniqueId");
-					String username = ps.loader.getResources().getString("username");
-					String password = ps.loader.getResources().getString("password");
-					if(ps.dopsCommunications.connectToDOPs(uniqueId, username, password)) {
-						ps.bConnected = true;
+				if(addActionHandlers(ps)) {
+					if (util.isEnvironmentOK()) {
+						String uniqueId = ps.loader.getResources().getString("uniqueId");
+						String username = ps.loader.getResources().getString("username");
+						String password = ps.loader.getResources().getString("password");
+						if (ps.dopsCommunications.connectToDOPs(uniqueId, username, password)) {
+							ps.bConnected = true;
+						}
 					}
 				}
 			}
@@ -54,6 +52,22 @@ class ActionHandlers {
 		};
 	}
 
+	private static boolean addActionHandlers(PresentationState ps)
+	{
+		boolean bResult=true;
+		try {
+			ps.dopsCommunications = new DOPsCommunication();
+			ps.dopsCommunications.addActionHandler("ChatInfo", ps.actionHandlers::actionHandlerUpdateCustomerViewAndForwardToManagers);
+			ps.dopsCommunications.addActionHandler("ChatForwardInfoRequest", ps.actionHandlers::actionHandlerUpdateManagerView);
+			//... add more action handlers here!
+		}catch (Exception e)
+		{
+			System.out.printf("- DOPsCommunication object could NOT be created, thus NO communication; detailed cause : \n %s \n", e.getMessage());
+			bResult=false;
+		}
+		return bResult;
+	}
+
 	/**
 	 * action handler for customer view table
 	 * this action handler will be called every time a DED packet of type "ChatInfo" is received
@@ -77,7 +91,7 @@ class ActionHandlers {
 		System.out.println("- actionHandlerUpdateCustomerViewAndForwardToManagers called ");
 		Platform.runLater(() -> {
 
-			ps.controller.handleCustomerTableView.addCellRowElementsToCustomerView(createTableRow(dana));
+			ps.controller.handleCustomerTableView.addCellRowElementsToCustomerView(createCustomersTableRow(dana));
 			ps.controller.handleCustomerTableView.removeIdleCellRowElementsInCustomerView();
 
 			//TODO: find all managers and forward "ChatInfo" to these online managers
@@ -85,7 +99,7 @@ class ActionHandlers {
 		return strResult;
 	}
 
-	private CustomerTableEntry createTableRow(DOPsCommunication.dedAnalyzed dana)
+	private CustomerTableEntry createCustomersTableRow(DOPsCommunication.dedAnalyzed dana)
 	{
         CustomerTableEntry newCellRowInTable = ps.controller.handleCustomerTableView.createCellRowForCustomerTableView();
         newCellRowInTable.userName.set(dana.getElement("srcAlias").toString());
@@ -93,17 +107,38 @@ class ActionHandlers {
 		return newCellRowInTable;
 	}
 
+	/**
+	 * action handler for Manager view table
+	 * this action handler will be called every time a DED packet of type "ChatForwardInfoRequest" is received
+	 * It will update the manager table view with the new incoming information
+	 *
+	 * The incoming "ChatForwardInfoRequest" is an automated transfer of a DED from a JavaScript homepage
+	 * example:
+	 * http://cloudchatmanager.com/CloudChatManager/CloudChatManager.htm
+	 *
+	 * @param type - "ChatForwardInfoRequest"
+	 * @param dana - Analyzed DED - decompressed and analyzed
+     * @return - String "OK"; not really used
+     */
 	private String actionHandlerUpdateManagerView(String type, DOPsCommunication.dedAnalyzed dana)
 	{
 		String strResult = "OK";
 		System.out.println("- actionHandlerUpdateManagerView called ");
 		Platform.runLater(() -> {
 
-		//	ps.controller.addCellRowElementsToManagersView(createTableRow(dana));
-		//	ps.controller.removeIdleCellRowElementsInManagersView();
+			ps.controller.handleManagersTableView.addCellRowElementsToManagersView(createManagersTableRow(dana));
+			ps.controller.handleManagersTableView.removeIdleCellRowElementsInManagersView();
 
-			//TODO: find all managers and forward "ChatInfo" to these online managers
 		});
 		return strResult;
 	}
+
+	private ManagerTableEntry createManagersTableRow(DOPsCommunication.dedAnalyzed dana)
+	{
+		ManagerTableEntry newCellRowInTable = ps.controller.handleManagersTableView.createCellRowForManagersTableView();
+		newCellRowInTable.status.set(dana.getElement("status").toString()); // TODO: add this element to DED
+		newCellRowInTable.userName.set(dana.getElement("srcAlias").toString());
+		return newCellRowInTable;
+	}
+
 }

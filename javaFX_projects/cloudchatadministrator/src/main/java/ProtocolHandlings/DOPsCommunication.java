@@ -174,7 +174,7 @@ public class DOPsCommunication {
                                     (fio.srcAlias = DED2.GET_STDSTRING("srcAlias")).length() > 0 &&
                                     (DED2.GET_STRUCT_END("CloudManagerRequest")) == 1) {
                                 dana.bDecoded = true;
-                                dana.type = "ForwardInfoRequest";
+                                dana.type = "ChatForwardInfoRequest";
                                 dana.setDED(DED);
                                 dana.elements = fio;
                             }
@@ -237,13 +237,15 @@ public class DOPsCommunication {
         }
 
         public Object getElement(String name) {
-            Object objResult=null;
+            Object objResult;
             try {
                 Field field = elements.getClass().getDeclaredField(name);
                 field.setAccessible(true);
                 objResult = field.get(elements);
             } catch (Exception e) {
-                e.printStackTrace();
+                //e.printStackTrace();
+                System.out.printf("- [getElement] ERROR : java.lang.NoSuchFieldException : %s\n", name );
+                objResult = "<errorInElement>";
             }
             return objResult;
         }
@@ -295,12 +297,20 @@ public class DOPsCommunication {
      */
     private String handleCommunication(String type, dedAnalyzed dana)
     {
-        System.out.println("- handleCommunication ; transfer received object to custom action handlers based on type ");
-        listOfActionHandlers.stream()
-                            .filter(d -> d.type == type)
-                            .map(d -> d.function)
-                            .forEach(d -> d.apply(type, dana));
+        System.out.println("- [handleCommunication] transfer received object to custom action handlers based on type ");
 
+        if(listOfActionHandlers.stream().filter(d -> d.type.contains(type)).count() > 0) {
+            listOfActionHandlers.stream()
+                    .filter(d -> d.type.contains(type))
+                    .map(d -> d.function)
+                    .forEach(d -> d.apply(type, dana));
+        }
+        else
+        {
+            System.out.printf("- [handleCommunication] WARNING NO handlers for this type : %s  - please check type where code is adding handlers, it could be a spelling mistake\n", dana.type);
+            System.out.printf("- [handleCommunication] Here are the following registered handlers : \n");
+            listOfActionHandlers.stream().forEach(d -> System.out.printf("- [handleCommunication] * %s\n",d.type));
+        }
         return "OK";
     }
 }
