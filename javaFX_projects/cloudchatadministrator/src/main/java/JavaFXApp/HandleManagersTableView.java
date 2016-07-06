@@ -111,11 +111,15 @@ public class HandleManagersTableView {
         objectsToRemove.stream().forEach(o -> managersTableViewItems.remove(o));
     }
 
-    void forwardToManagers(DOPsCommunication.dedAnalyzed dana)
+    void forwardToManagers(PresentationState ps, DOPsCommunication.dedAnalyzed dana) throws Exception
     {
         managersTableViewItems.stream().forEach(d -> System.out.printf("-- Will forward received DED of type : %s to manager : %s\n",dana.type, d.getUserName()));
-        //TODO: implement forward DED to online managers"
         System.out.println("- TODO: implement forward DED to online managers");
+        //TODO: implement forward DED to online managers"
+
+        // Set destination to manager
+
+        //ps.dopsCommunications.sendToServer(dana.getByteBuffer());
     }
 
     @SuppressWarnings("unchecked")

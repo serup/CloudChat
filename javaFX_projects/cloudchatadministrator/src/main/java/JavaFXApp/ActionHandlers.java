@@ -90,13 +90,17 @@ class ActionHandlers {
 		String strResult = "OK";
 		System.out.println("- actionHandlerUpdateCustomerViewAndForwardToManagers called ");
 		Platform.runLater(() -> {
+			try {
 
-			ps.controller.handleCustomerTableView.addCellRowElementsToCustomerView(createCustomersTableRow(dana));
-			ps.controller.handleCustomerTableView.removeIdleCellRowElementsInCustomerView();
+				ps.controller.handleCustomerTableView.addCellRowElementsToCustomerView(createCustomersTableRow(dana));
+				ps.controller.handleCustomerTableView.removeIdleCellRowElementsInCustomerView();
 
-			//TODO: find all managers and forward "ChatInfo" to these online managers
-			ps.controller.handleManagersTableView.forwardToManagers(dana);
+				//TODO: find all managers and forward "ChatInfo" to these online managers
+				ps.controller.handleManagersTableView.forwardToManagers(ps, dana);
 
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		});
 		return strResult;
 	}

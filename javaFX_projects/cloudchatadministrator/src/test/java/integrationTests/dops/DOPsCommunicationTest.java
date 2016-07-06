@@ -77,11 +77,11 @@ public class DOPsCommunicationTest {
     public void decodeIncomingDED() throws Exception {
         byte[] data = createChatInfo("dummy");
         DOPsCommunication.dedAnalyzed dana = DOPsCommunication.decodeIncomingDED(data);
-        assertTrue(dana.type == "ChatInfo");
+        assertTrue(dana.type.contains("ChatInfo"));
 
         data = createForwardInfoRequest();
         dana = DOPsCommunication.decodeIncomingDED(data);
-        assertTrue(dana.type == "ForwardInfoRequest");
+        assertTrue(dana.type.contains("ChatForwardInfoRequest"));
     }
 
 
