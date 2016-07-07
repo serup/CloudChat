@@ -249,6 +249,15 @@ public class DOPsCommunication {
             }
             return objResult;
         }
+
+        /**
+         * Will change value of element and update original DED accordingly
+         *
+         * @param name - name of DED element to change value on
+         */
+        public void modifyElement(String name) {
+
+        }
     }
 
     /**

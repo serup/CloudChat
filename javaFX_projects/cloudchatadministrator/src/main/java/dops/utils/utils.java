@@ -91,14 +91,14 @@ public class utils {
         StringBuffer output = new StringBuffer();
         File dir = new File(path);
 
-        // create a process and execute cmd and currect environment
+        // create a process and execute cmd and correct environment
         try {
             Process process = Runtime.getRuntime().exec(command, null, dir);
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             process.waitFor();
 
-            String line = "";
+            String line;
             while ((line = reader.readLine())!= null) {
                 output.append(line + "\n");
             }
@@ -117,10 +117,14 @@ public class utils {
         //String[] words = {"word1", "word2", "word3", "word4", "word5"};
 
         List<String> list = Arrays.asList(words);
-        for (String word: list ) {
-            boolean bFound = str.contains(word);
-            if (bFound) {bResult=bFound; break;}
-        }
+        //for (String word: list ) {
+        //    boolean bFound = str.contains(word);
+        //    if (bFound) {bResult=bFound; break;}
+        //}
+
+        if(list.stream().filter(d -> d.contains(str)).count() > 0)
+            bResult=true;
+
         return bResult;
     }
 
@@ -128,14 +132,14 @@ public class utils {
 
         DEDEncoder DED = new DEDEncoder();
         DED.PUT_STRUCT_START ("ClientChatRequest");
-        DED.PUT_METHOD ("Method", "JSCChatInfo");
-        DED.PUT_USHORT ("TransID", (short)23);
-        DED.PUT_STDSTRING("protocolTypeID", "DED1.00.00");
-        DED.PUT_STDSTRING("dest", dest);
-        DED.PUT_STDSTRING("src", "4086d4ab369e14ca1b6be7364d88cf85"); //  uniqueID
-        DED.PUT_STDSTRING("srcAlias", "SERUP");
-        DED.PUT_STDSTRING("srcHomepageAlias", "Montenegro");
-        DED.PUT_STDSTRING("lastEntryTime", "20160101");
+           DED.PUT_METHOD ("Method", "JSCChatInfo");
+           DED.PUT_USHORT ("TransID", (short)23);
+           DED.PUT_STDSTRING("protocolTypeID", "DED1.00.00");
+           DED.PUT_STDSTRING("dest", dest);
+           DED.PUT_STDSTRING("src", "4086d4ab369e14ca1b6be7364d88cf85"); //  uniqueID
+           DED.PUT_STDSTRING("srcAlias", "SERUP");
+           DED.PUT_STDSTRING("srcHomepageAlias", "Montenegro");
+           DED.PUT_STDSTRING("lastEntryTime", "20160101");
         DED.PUT_STRUCT_END("ClientChatRequest");
         byte[] byteArray = DED.GET_ENCODED_BYTEARRAY_DATA ();
         assertNotNull(byteArray);
@@ -146,12 +150,12 @@ public class utils {
 
         DEDEncoder DED = new DEDEncoder();
         DED.PUT_STRUCT_START ("CloudManagerRequest");
-        DED.PUT_METHOD ("Method", "JSCForwardInfo");
-        DED.PUT_USHORT ("TransID", (short)23);
-        DED.PUT_STDSTRING("protocolTypeID", "DED1.00.00");
-        DED.PUT_STDSTRING("dest", "ccAdmin");  // This Admins uniqueID, since this is a test it really does not matter
-        DED.PUT_STDSTRING("src", "4086d4ab369e14ca1b6be7364d88cf85"); // CloudChatManager uniqueID
-        DED.PUT_STDSTRING("srcAlias", "SERUP");
+           DED.PUT_METHOD ("Method", "JSCForwardInfo");
+           DED.PUT_USHORT ("TransID", (short)23);
+           DED.PUT_STDSTRING("protocolTypeID", "DED1.00.00");
+           DED.PUT_STDSTRING("dest", "ccAdmin");  // This Admins uniqueID, since this is a test it really does not matter
+           DED.PUT_STDSTRING("src", "4086d4ab369e14ca1b6be7364d88cf85"); // CloudChatManager uniqueID
+           DED.PUT_STDSTRING("srcAlias", "SERUP");
         DED.PUT_STRUCT_END("CloudManagerRequest");
         byte[] byteArray = DED.GET_ENCODED_BYTEARRAY_DATA ();
         assertNotNull(byteArray);
