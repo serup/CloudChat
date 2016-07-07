@@ -21,13 +21,10 @@ public class HadoopFileSystemTest {
     private boolean bSetupOK=true;
     DOPsHDFSHandler fshandlerDriver;
 
-    /*
-    */
     IntegrationEnvironmentSetup env = new IntegrationEnvironmentSetup();
 
     @Before
     public void setUp() throws Exception {
-        //Assert.assertEquals(true,env.setupHadoopIntegrationEnvironment());
         bSetupOK = env.setupHadoopIntegrationEnvironment();
         try{
             fshandlerDriver = new DOPsHDFSHandler();

@@ -14,12 +14,12 @@ import static org.junit.Assert.assertEquals;
  */
 public class IntegrationEnvironmentSetup {
 
-    static boolean bIntegrationEnvironmentAlreadySetup=false;
-    static boolean bHadoopIntegrationEnvironmentAlreadySetup=false;
-    static boolean bEnvironmentOK=true;
-    static boolean bHadoopEnvironmentOK=true;
+    private static boolean bIntegrationEnvironmentAlreadySetup=false;
+    private static boolean bHadoopIntegrationEnvironmentAlreadySetup=false;
+    private static boolean bEnvironmentOK=true;
+    private static boolean bHadoopEnvironmentOK=true;
 
-    public static boolean containsAny(String str, String[] words)
+    private static boolean containsAny(String str, String[] words)
     {
         boolean bResult=false; // if any of the words are found, this will be set true
         //String[] words = {"word1", "word2", "word3", "word4", "word5"};
@@ -115,8 +115,10 @@ public class IntegrationEnvironmentSetup {
         else {
             if(bEnvironmentOK)
                 System.out.println("- Integration Environment already setup - SUCCESS");
-            else
+            else {
                 System.out.println("- Integration Environment already setup - However ERROR occurred !!");
+                return false;
+            }
         }
         return bResult;
     }
@@ -132,7 +134,7 @@ public class IntegrationEnvironmentSetup {
                 System.out.println("* sudo -su hdfs ");
                 System.out.println("* hadoop  fsck /");
                 System.out.println("* hadoop  dfsadmin -safemode leave");
-                System.out.println("* hadoop  -rmr -skipTrash /tmp/input");
+                System.out.println("* hadoop  fs -rmr -skipTrash /tmp/input");
                 System.out.println("* hadoop  fsck -files delete /");
                 System.out.println("* hadoop  fsck /");
                 System.out.println("*  - status should be HEALTHY now - then manually restart everything in Ambari one.cluster:8080 admin admin");

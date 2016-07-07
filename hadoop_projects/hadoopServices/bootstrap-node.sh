@@ -1,3 +1,5 @@
+#!/usr/bin bash -l
+
 echo "checking if agent is running..."
 RED='\033[0;31m'
 YELLOW='\033[1;33m'
