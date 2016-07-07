@@ -1,4 +1,4 @@
-package dops;
+package dops.websocket;
 
 import ProtocolHandlings.DOPsCommunication;
 import dops.mocks.setupMockServer;
