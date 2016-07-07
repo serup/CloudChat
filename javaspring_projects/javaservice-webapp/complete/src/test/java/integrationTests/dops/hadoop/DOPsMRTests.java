@@ -28,25 +28,30 @@ public class DOPsMRTests {
     private final IntegrationEnvironmentSetup env = new IntegrationEnvironmentSetup();
     private boolean bSetupOK=true;
 
+
     @SuppressWarnings("unused")
     @Before
     public void setUp() {
         assertEquals(true,env.setupHadoopIntegrationEnvironment());
         try {
-        fshandlerDriver = new DOPsHDFSHandler();
+            fshandlerDriver = new DOPsHDFSHandler();
 
-        File directory = new File("/tmp/output/findprofile");
-        //make sure directory exists
-        if (!directory.exists()) {
-            // Directory does not exist
-            if(!directory.mkdirs())
+            File directory = new File("/tmp/output/findprofile");
+            //make sure directory exists
+            if (!directory.exists()) {
+                // Directory does not exist
+                if(!directory.mkdirs())
                     throw new IOException("Could NOT create folder: /tmp/output/findprofile");
-        }
-        else {
+            }
+            else {
                 env.delete(directory); // clean out old
                 if(!directory.mkdirs())
                     throw new IOException("Could NOT create folder: /tmp/output/findprofile"); // create for this test
-        }
+            }
+            directory = new File("/tmp/input/findprofile");
+            if (directory.exists()) { // if this does not work, then manually try this on one node: hadoop fs -rmr /tmp/input/findprofile
+                env.delete(directory); // clean out, since this must have been from a previous faulty run of the tests
+            }
         } catch (Exception e) {
             bSetupOK=false;
             e.printStackTrace();
