@@ -2,9 +2,10 @@ package dops.websocket;
 
 import ProtocolHandlings.DOPsCommunication;
 import dops.mocks.setupMockServer;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import junit.framework.TestCase;
+import org.junit.*;
+import org.junit.runner.Result;
+import org.junit.runner.notification.RunListener;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -16,15 +17,20 @@ import static junit.framework.TestCase.assertTrue;
 /**
  * Created by serup on 6/17/16.
  */
-public class DOPsCommunicationWithMockTest {
+public class DOPsCommunicationWithMockTest extends RunListener {
 
     private static dops.mocks.setupMockServer setupMockServer =null;
-    private static int mockServerPort = 8049;
+    private static int mockServerPort = 8045;
     private static String mockServerURI = "ws://localhost:"+ mockServerPort;
-    DOPsCommunication dopsCommunications;
+    private static DOPsCommunication dopsCommunications;
 
-    @Before
-    public void setupMockServer()
+    @Override
+    public void testRunFinished(Result result) throws Exception {
+        // Called when all tests have finished
+    }
+
+    @BeforeClass
+    public static void doOneTimeSetupMockServer()
     {
         /**
          * Start and connect to a MOCK server which can act as a Server and receive a DED packet and return a DED packet with result
@@ -38,6 +44,7 @@ public class DOPsCommunicationWithMockTest {
         }
         assertEquals(true, setupMockServer.isOpen());
     }
+
 
     @Test
     public void addActionHandler() throws Exception {

@@ -7,9 +7,7 @@ import WebSocketEchoTestEndpoints.EchoByteArrayEndpoint;
 import dops.protocol.ded.DEDDecoder;
 import dops.protocol.ded.DEDEncoder;
 import org.glassfish.tyrus.server.Server;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.*;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -46,9 +44,8 @@ public class MockDOPsServerTests {
         serverThread.start();
     }
 
-
-    @Before
-    public void setupMockServer()
+    @BeforeClass
+    public static void doOneTimeSetupMockServer()
     {
         /**
          * Start and connect to a MOCK server which can act as a Server and receive a DED packet and return a DED packet with result
@@ -57,6 +54,7 @@ public class MockDOPsServerTests {
             setupMockServer = new setupMockServer(mockServerPort);
             setupMockServer.connectToMockServer();
         }
+        assertEquals(true, setupMockServer.isOpen());
     }
 
 

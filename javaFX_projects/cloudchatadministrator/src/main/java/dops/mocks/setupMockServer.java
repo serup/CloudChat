@@ -37,17 +37,12 @@ public class setupMockServer {
             public void run() {
                 server = new Server("localhost", port, "/websockets", null, MockServer.class);
                 if(server!=null) {
-
-
                     try {
                         server.start();
                         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-                        System.out.println("Mock Test server ready to read incoming packets");
                         while (reader.read() != -1) ;
                     } catch (Exception e) {
-                        e.printStackTrace();
                     } finally {
-                        System.out.print("Mock Test Server will stop !!!");
                         stopServer();
                     }
                     bIsRunning=false;
@@ -59,8 +54,14 @@ public class setupMockServer {
 
     public void stopServer()
     {
-        if(MockserverThread.isAlive() && server != null)
+        if(MockserverThread.isAlive() && server != null) {
             server.stop();
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public Session connectToMockServer()
@@ -87,11 +88,7 @@ public class setupMockServer {
          */
         clientEndpoint = new JavaWebSocketClientEndpoint();
 
-        try {
-            Thread.sleep(100); // Hack to prevent clashing of multiple threads of this class thread
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+
     }
 
     public String getMockServerURI() {
