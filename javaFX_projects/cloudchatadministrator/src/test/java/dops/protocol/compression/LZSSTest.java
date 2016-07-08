@@ -46,25 +46,22 @@ public class LZSSTest {
 
     @Test
     public void testCompression() throws Exception{
-        byte[] originalTxtfileInBytes;
+        byte[] originalTextFile;
         Compressor compressor;
-        Compressor uncompressor;
-        ByteArrayOutputStream bosCompressed;
-        ByteArrayOutputStream bosUncompressed;
-        byte[] backToTxtfileInBytes;
+        Compressor unCompressor;
+        byte[] compressedData;
+        byte[] uncompressedData;
 
         // Fetch file data from resource bundle
-        originalTxtfileInBytes = getBytes(new FileSystemResource("src/test/resources/dummyFiles/helloworld.txt").getInputStream());
+        originalTextFile = getBytes(new FileSystemResource("src/test/resources/dummyFiles/helloworld.txt").getInputStream());
         // Compress
-        compressor = new LZSS(new ByteArrayInputStream(originalTxtfileInBytes));
-        bosCompressed = compressor.compress();
+        compressor = new LZSS(new ByteArrayInputStream(originalTextFile));
+        compressedData = compressor.compress().toByteArray();
         // Uncompress
-        uncompressor = new LZSS(new ByteArrayInputStream(bosCompressed.toByteArray()));
-        bosUncompressed = uncompressor.uncompress();
-        // Convert back to binary format
-        backToTxtfileInBytes = bosUncompressed.toByteArray();
+        unCompressor = new LZSS(new ByteArrayInputStream(compressedData));
+        uncompressedData = unCompressor.uncompress().toByteArray();
         // Verify
-        assertArrayEquals(originalTxtfileInBytes,backToTxtfileInBytes);
+        assertArrayEquals(originalTextFile,uncompressedData);
     }
 
     @Test
