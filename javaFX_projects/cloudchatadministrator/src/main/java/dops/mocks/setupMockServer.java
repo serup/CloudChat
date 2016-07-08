@@ -63,27 +63,6 @@ public class setupMockServer {
             server.stop();
     }
 
-    // constructor
-    public setupMockServer(int ServerPort, String ServerEndpoint)
-    {
-        /**
-         * start the MOCK server
-         */
-        this.runMockServer(ServerPort);
-
-        /**
-         * setup client
-         */
-        clientEndpoint = new JavaWebSocketClientEndpoint();
-
-        /**
-         * connect client to MockServer
-         */
-        session = clientEndpoint.connectToServer("ws://localhost:" + ServerPort + "/websockets/" + ServerEndpoint);
-
-        bIsRunning=true;
-    }
-
     public Session connectToMockServer()
     {
         /**
@@ -109,7 +88,7 @@ public class setupMockServer {
         clientEndpoint = new JavaWebSocketClientEndpoint();
 
         try {
-            Thread.sleep(1000); // Hack to prevent clashing of multiple threads of this class thread
+            Thread.sleep(100); // Hack to prevent clashing of multiple threads of this class thread
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
