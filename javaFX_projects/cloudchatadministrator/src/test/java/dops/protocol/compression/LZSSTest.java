@@ -20,10 +20,10 @@ import static org.junit.Assert.fail;
  */
 public class LZSSTest {
 
-    DEDEncoder dedEncoder = new DEDEncoder();
-    DEDDecoder dedDecoder = new DEDDecoder();
+    private DEDEncoder dedEncoder = new DEDEncoder();
+    private DEDDecoder dedDecoder = new DEDDecoder();
 
-    public static byte[] getBytes(InputStream is) throws IOException {
+    private static byte[] getBytes(InputStream is) throws IOException {
 
         int len;
         int size = 1024;
@@ -32,7 +32,7 @@ public class LZSSTest {
         if (is instanceof ByteArrayInputStream) {
             size = is.available();
             buf = new byte[size];
-            len = is.read(buf, 0, size);
+            is.read(buf, 0, size);
         } else {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             buf = new byte[size];
@@ -45,54 +45,24 @@ public class LZSSTest {
 
 
     @Test
-    public void testCompression() {
-        InputStream txtfile = null;
-        byte[] originalTxtfileInBytes=null;
-        try {
-            Resource resource = null;
-            resource = new FileSystemResource("src/test/resources/dummyFiles/helloworld.txt");
-            InputStream file = (InputStream) resource.getInputStream();
-            originalTxtfileInBytes = getBytes(file);
-        } catch (MissingResourceException e) {
-            fail();
-        } catch (Exception e) {
-            fail();
-        }
-
-
-        //String originaltxt = "ATATAAAFFFF";
-        //txtfile = new ByteArrayInputStream(originaltxt.getBytes());
-
+    public void testCompression() throws Exception{
+        InputStream txtfile;
+        byte[] originalTxtfileInBytes;
+        Resource resource = new FileSystemResource("src/test/resources/dummyFiles/helloworld.txt");
+        // Fetch file data
+        InputStream file = resource.getInputStream();
+        originalTxtfileInBytes = getBytes(file);
+        // Convert binary data to txt
         txtfile = new ByteArrayInputStream(originalTxtfileInBytes);
-
+        // Compress
         Compressor compressor = new LZSS(txtfile);
-        ByteArrayOutputStream bosCompressed = null;
-        try {
-            bosCompressed = compressor.compress();
-        } catch (IOException e) {
-            fail();
-            return;
-        }
+        ByteArrayOutputStream bosCompressed = compressor.compress();
+        // Uncompress
         Compressor uncompressor = new LZSS(new ByteArrayInputStream(bosCompressed.toByteArray()));
-        ByteArrayOutputStream bosUncompressed = null;
-        try {
-            bosUncompressed = uncompressor.uncompress();
-        } catch (IOException e) {
-            fail();
-            return;
-        };
-        String result;
-        try {
-            byte[] back = bosUncompressed.toByteArray();
-         //   result = new String(back, "UTF-8");
-         //   assertEquals(originaltxt,result);
-
-            assertArrayEquals(originalTxtfileInBytes,back);
-        } catch (Exception e) {
-            fail();
-            return;
-        }
-
+        ByteArrayOutputStream bosUncompressed = uncompressor.uncompress();
+        byte[] back = bosUncompressed.toByteArray();
+        // Verify
+        assertArrayEquals(originalTxtfileInBytes,back);
     }
 
     @Test
@@ -103,7 +73,6 @@ public class LZSSTest {
 
         // now make room for case where compression yields lager size - when trying to compress an image for example.
         byte[] tmpCompressedData;
-
 
         // now compress
         tmpCompressedData = dedEncoder.compress_lzss(uncmpdata, uncmpdata.length);

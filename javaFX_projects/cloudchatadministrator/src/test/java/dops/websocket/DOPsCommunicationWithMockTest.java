@@ -24,11 +24,6 @@ public class DOPsCommunicationWithMockTest extends RunListener {
     private static String mockServerURI = "ws://localhost:"+ mockServerPort;
     private static DOPsCommunication dopsCommunications;
 
-    @Override
-    public void testRunFinished(Result result) throws Exception {
-        // Called when all tests have finished
-    }
-
     @BeforeClass
     public static void doOneTimeSetupMockServer()
     {
