@@ -111,11 +111,28 @@ public class HandleManagersTableView {
         objectsToRemove.stream().forEach(o -> managersTableViewItems.remove(o));
     }
 
-    void forwardToManagers(PresentationState ps, DOPsCommunication.dedAnalyzed dana) throws Exception
+    void updateOnlineManagersWithIncommingChatInfo(PresentationState ps, DOPsCommunication.dedAnalyzed dana) throws Exception
     {
         managersTableViewItems.stream().forEach(d -> System.out.printf("-- Will forward received DED of type : %s to manager : %s\n",dana.type, d.getUserName()));
         System.out.println("- TODO: implement forward DED to online managers");
         //TODO: implement forward DED to online managers"
+
+//C# version - working - try to do similar
+//        if(dana.elements.GetType() == typeof(ChatInfoObj)) {
+//            foreach(Manager manager in managersList) {
+//                ((ChatInfoObj)dana.elements).dest = manager.src; // Set dest to managers src
+//                dops.sendToDOPsServer(ccph.createDEDpackage(dana));
+//            }
+//        }
+
+        for(ManagerTableEntry manager: managersTableViewItems)
+        {
+            Object obj = dana.getElement("src");
+            if (obj instanceof DOPsCommunication.ChatInfoObj) {
+                DOPsCommunication.ChatInfoObj ci = (DOPsCommunication.ChatInfoObj)obj;
+
+            }
+        }
 
         // Set destination to manager
 

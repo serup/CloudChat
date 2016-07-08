@@ -250,12 +250,17 @@ public class DOPsCommunication {
             return objResult;
         }
 
+        public Object getElements()
+        {
+            return elements;
+        }
+
         /**
          * Will change value of element and update original DED accordingly
          *
          * @param name - name of DED element to change value on
          */
-        public void modifyElement(String name) {
+        public void setElement(String name, Class<?> value) {
 
         }
     }
@@ -272,7 +277,7 @@ public class DOPsCommunication {
         String src;
         String srcAlias;
     }
-    private static class ChatInfoObj {
+    public static class ChatInfoObj {
         short transactionsID;
         String protocolTypeID;
         String dest;
