@@ -1,6 +1,7 @@
 
 package dops.websocket;
 
+import ProtocolHandlings.DOPsCommunication;
 import dops.mocks.setupMockServer;
 import WebSocketEchoTestEndpoints.EchoByteArrayEndpoint;
 import dops.protocol.ded.DEDDecoder;
@@ -22,9 +23,11 @@ import static junit.framework.TestCase.assertEquals;
 public class MockDOPsServerTests {
 
     private static setupMockServer setupMockServer =null;
-    private static Thread serverThread;
+    private static int mockServerPort = 8045;
+    private static String mockServerURI = "ws://localhost:"+ mockServerPort;
 
     private void runByteArrayServer() {
+        Thread serverThread;
         serverThread = new Thread() {
             public void run() {
                 Server server = new Server("localhost", 8033, "/websockets", null, EchoByteArrayEndpoint.class);
@@ -50,8 +53,10 @@ public class MockDOPsServerTests {
         /**
          * Start and connect to a MOCK server which can act as a Server and receive a DED packet and return a DED packet with result
          */
-        if(setupMockServer ==null)
-            setupMockServer = new setupMockServer(8046,"MockServerEndpoint");
+        if(setupMockServer == null) {
+            setupMockServer = new setupMockServer(mockServerPort);
+            setupMockServer.connectToMockServer();
+        }
     }
 
 

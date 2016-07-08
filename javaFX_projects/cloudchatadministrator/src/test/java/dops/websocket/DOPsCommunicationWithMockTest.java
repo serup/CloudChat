@@ -19,8 +19,9 @@ import static junit.framework.TestCase.assertTrue;
 public class DOPsCommunicationWithMockTest {
 
     private static dops.mocks.setupMockServer setupMockServer =null;
-    private static int mockServerPort = 8047;
+    private static int mockServerPort = 8049;
     private static String mockServerURI = "ws://localhost:"+ mockServerPort;
+    DOPsCommunication dopsCommunications;
 
     @Before
     public void setupMockServer()
@@ -28,18 +29,18 @@ public class DOPsCommunicationWithMockTest {
         /**
          * Start and connect to a MOCK server which can act as a Server and receive a DED packet and return a DED packet with result
          */
-        if(setupMockServer ==null) {
-            //setupMockServer = new setupMockServer(mockServerPort,"MockServerEndpoint");
+        if(setupMockServer == null) {
             setupMockServer = new setupMockServer(mockServerPort);
             mockServerURI = setupMockServer.getMockServerURI();
+            setupMockServer.connectToMockServer();
+            dopsCommunications = new DOPsCommunication();
+            dopsCommunications.setServerURI(mockServerURI);
         }
+        assertEquals(true, setupMockServer.isOpen());
     }
 
     @Test
     public void addActionHandler() throws Exception {
-
-        DOPsCommunication dopsCommunications = new DOPsCommunication();
-        dopsCommunications.setServerURI(mockServerURI);
 
         class Ctest
         {
@@ -61,7 +62,6 @@ public class DOPsCommunicationWithMockTest {
         String uniqueId = "985998707DF048B2A796B44C89345494";
         String username = "johndoe@email.com";
         String password = "12345";
-
 
         if(dopsCommunications.connectToDOPs(uniqueId, username, password)) {
 

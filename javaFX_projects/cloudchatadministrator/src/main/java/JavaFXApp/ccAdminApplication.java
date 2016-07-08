@@ -16,6 +16,10 @@ import static JavaFXApp.ApplicationConfig.*;
 public class ccAdminApplication extends Application {
 
     private final Logger logger = Logger.getLogger(JavaFXApp.ccAdminApplication.class.getName());
+    private GUIBinder guiBinder;
+    private PresentationState presentationState;
+    private FXMLLoader loader;
+    private Scene scene;
 
     public static void main(String[] args) {
         Application.launch(JavaFXApp.ccAdminApplication.class, args);
@@ -23,6 +27,12 @@ public class ccAdminApplication extends Application {
 
     @Override
     public void init() throws Exception {
+        loader = new FXMLLoader(JavaFxApplications.fxmlUrl(FXML_URL), JavaFxApplications.resources(RESOURCE_BUNDLE_NAME));
+        loader.load();
+        presentationState = new PresentationState();
+        guiBinder = new GUIBinder(loader, presentationState);
+        guiBinder.bindAndInitialize();
+        scene = new Scene(loader.getRoot());
     }
 
     @Override
@@ -32,10 +42,6 @@ public class ccAdminApplication extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         try {
-            FXMLLoader loader = new FXMLLoader(JavaFxApplications.fxmlUrl(FXML_URL), JavaFxApplications.resources(RESOURCE_BUNDLE_NAME));
-            loader.load();
-            new GUIBinder(loader, new PresentationState()).bindAndInitialize();
-            Scene scene = new Scene(loader.getRoot());
             scene.getStylesheets().add(getClass().getResource(CSS_URL).toExternalForm());
             primaryStage.setScene(scene);
             primaryStage.setTitle(loader.getResources().getString("title"));
@@ -43,6 +49,10 @@ public class ccAdminApplication extends Application {
         } catch (Exception ex) {
             logger.log(Level.SEVERE, null, ex);
         }
+    }
+
+    public PresentationState getPresentationState() {
+        return presentationState;
     }
 
 }

@@ -43,7 +43,7 @@ public class DOPsCommunicationTest {
     @Test
     public void connectToDOPs() throws Exception {
         DOPsCommunication dopsCommunications = new DOPsCommunication();
-        String uniqueId = "HadoopJavaServiceApp";
+        String uniqueId = "ccAdminApp";
         //String uniqueId = "985998707DF048B2A796B44C89345494";
         String username = "johndoe@email.com";
         String password = "12345";

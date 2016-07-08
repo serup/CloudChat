@@ -84,6 +84,15 @@ public class setupMockServer {
         bIsRunning=true;
     }
 
+    public Session connectToMockServer()
+    {
+        /**
+         * connect client to MockServer
+         */
+        session = clientEndpoint.connectToServer(getMockServerURI());
+        return session;
+    }
+
     // constructor
     public setupMockServer(int ServerPort)
     {
@@ -99,6 +108,11 @@ public class setupMockServer {
          */
         clientEndpoint = new JavaWebSocketClientEndpoint();
 
+        try {
+            Thread.sleep(1000); // Hack to prevent clashing of multiple threads of this class thread
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public String getMockServerURI() {
