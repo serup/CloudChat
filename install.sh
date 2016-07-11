@@ -1,4 +1,4 @@
-#!/usr/bin/env bash -l
+#!/usr/bin/env bash
 cat DOPS_outline.txt
 echo "********************************************************"
 echo "** Installing vagrant, puppetlabs, virtualbox, docker **"
