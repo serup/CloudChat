@@ -219,7 +219,7 @@ public class DOPsCommunication {
 
         public String type;
         public boolean bDecoded;
-        private Object elements; // will contain an object of following below type:
+        public Object elements; // will contain an object of following below type:
         private byte[] originalDED = null;
 
         public byte[] getDED() throws Exception {
@@ -278,13 +278,13 @@ public class DOPsCommunication {
         String srcAlias;
     }
     public static class ChatInfoObj {
-        short transactionsID;
-        String protocolTypeID;
-        String dest;
-        String src;
-        String srcAlias;
-        String srcHomepageAlias;
-        String lastEntryTime;
+        public short transactionsID;
+        public String protocolTypeID;
+        public String dest;
+        public String src;
+        public String srcAlias;
+        public String srcHomepageAlias;
+        public String lastEntryTime;
     }
 
     /**

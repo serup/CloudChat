@@ -4,16 +4,13 @@ import dops.protocol.ded.DEDDecoder;
 import dops.protocol.ded.DEDEncoder;
 import org.junit.Test;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.MissingResourceException;
 
 import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.fail;
 
 /**
  * Created by serup on 28-12-15.

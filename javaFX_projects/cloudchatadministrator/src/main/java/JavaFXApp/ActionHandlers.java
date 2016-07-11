@@ -6,6 +6,7 @@ import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 
 import java.io.IOException;
+import java.util.List;
 
 class ActionHandlers {
 	private PresentationState ps=null;
@@ -95,7 +96,18 @@ class ActionHandlers {
 				ps.controller.handleCustomerTableView.addCellRowElementsToCustomerView(createCustomersTableRow(dana));
 				ps.controller.handleCustomerTableView.removeIdleCellRowElementsInCustomerView();
 
-				ps.controller.handleManagersTableView.updateOnlineManagersWithIncommingChatInfo(ps, dana);
+				List<Object> objectList = ps.controller.handleManagersTableView.updateOnlineManagersWithIncomingChatInfo(dana);
+
+				//TODO: forward chatinfo to online managers
+//C# version - working - try to do similar
+//        if(dana.elements.GetType() == typeof(ChatInfoObj)) {
+//            foreach(Manager manager in managersList) {
+//                ((ChatInfoObj)dana.elements).dest = manager.src; // Set dest to managers src
+//                dops.sendToDOPsServer(ccph.createDEDpackage(dana));
+//            }
+//        }
+
+				//objectList.stream().forEach(d -> ps.dopsCommunications.sendToServer(((DOPsCommunication.ChatInfoObj)d).);
 
 			} catch (Exception e) {
 				e.printStackTrace();

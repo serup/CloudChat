@@ -10,6 +10,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import org.apache.commons.net.ntp.TimeStamp;
 
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,17 +22,17 @@ public class HandleManagersTableView {
     private TableView<ManagerTableEntry> managersTable;
     private ObservableList<ManagerTableEntry> managersTableViewItems = FXCollections.observableArrayList();
 
-    HandleManagersTableView(TableView<ManagerTableEntry> managersTable)
+    public HandleManagersTableView(TableView<ManagerTableEntry> managersTable)
     {
         this.managersTable = managersTable;
     }
 
-    ManagerTableEntry createCellRowForManagersTableView()
+    public ManagerTableEntry createCellRowForManagersTableView()
 	{
 		return new ManagerTableEntry();
 	}
 
-    void addCellRowElementsToManagersView( ManagerTableEntry entry){
+    public void addCellRowElementsToManagersView( ManagerTableEntry entry){
         updateManagersCellRowElement(entry);
     }
 
@@ -111,36 +112,32 @@ public class HandleManagersTableView {
         objectsToRemove.stream().forEach(o -> managersTableViewItems.remove(o));
     }
 
-    void updateOnlineManagersWithIncommingChatInfo(PresentationState ps, DOPsCommunication.dedAnalyzed dana) throws Exception
+    public List<Object> updateOnlineManagersWithIncomingChatInfo(DOPsCommunication.dedAnalyzed dana) throws Exception
     {
-        managersTableViewItems.stream().forEach(d -> System.out.printf("-- Will forward received DED of type : %s to manager : %s\n",dana.type, d.getUserName()));
-        System.out.println("- TODO: implement forward DED to online managers");
-        //TODO: implement forward DED to online managers"
+        managersTableViewItems.stream().forEach(d -> System.out.printf("-- Will add to forward list;  received DED of type : %s to manager : %s\n",dana.type, d.getUserName()));
 
-//C# version - working - try to do similar
-//        if(dana.elements.GetType() == typeof(ChatInfoObj)) {
-//            foreach(Manager manager in managersList) {
-//                ((ChatInfoObj)dana.elements).dest = manager.src; // Set dest to managers src
-//                dops.sendToDOPsServer(ccph.createDEDpackage(dana));
-//            }
-//        }
 
+        List<Object> objectsToForward = new ArrayList<>();
+        Object obj = dana.getElements();
         for(ManagerTableEntry manager: managersTableViewItems)
         {
-            Object obj = dana.getElement("src");
             if (obj instanceof DOPsCommunication.ChatInfoObj) {
-                DOPsCommunication.ChatInfoObj ci = (DOPsCommunication.ChatInfoObj)obj;
+                DOPsCommunication.ChatInfoObj ci = new DOPsCommunication.ChatInfoObj();
+                ci.src = ((DOPsCommunication.ChatInfoObj) obj).src;
+                ci.srcAlias = ((DOPsCommunication.ChatInfoObj) obj).srcAlias;
 
+                // Set destination to manager
+                ci.dest = manager.getUserName();
+                // Add to forward list to send to managers
+                objectsToForward.add(ci);
             }
         }
 
-        // Set destination to manager
-
-        //ps.dopsCommunications.sendToServer(dana.getByteBuffer());
+        return objectsToForward;
     }
 
     @SuppressWarnings("unchecked")
-    void initManagersTableView()
+    public void initManagersTableView()
     {
         assert managersTable != null : "fx:id=\"managersTable\" was not injected: check your FXML file ";
         TableColumn<ManagerTableEntry,String> colStatus = new TableColumn<>("Status");

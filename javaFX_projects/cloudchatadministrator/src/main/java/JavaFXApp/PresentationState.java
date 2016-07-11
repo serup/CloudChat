@@ -3,7 +3,7 @@ package JavaFXApp;
 import ProtocolHandlings.DOPsCommunication;
 import javafx.fxml.FXMLLoader;
 
-class PresentationState {
+public class PresentationState {
 
 	boolean bConnected=false;
 	DOPsCommunication dopsCommunications=null;

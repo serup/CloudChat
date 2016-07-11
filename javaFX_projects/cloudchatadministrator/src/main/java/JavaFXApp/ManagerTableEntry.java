@@ -13,10 +13,14 @@ public class ManagerTableEntry {
 
     ObjectProperty<org.apache.commons.net.ntp.TimeStamp> timestamp = new SimpleObjectProperty<>(TimeStamp.getCurrentTime());
     SimpleIntegerProperty userId = new SimpleIntegerProperty();
-    SimpleStringProperty status = new SimpleStringProperty();
-    SimpleStringProperty userName = new SimpleStringProperty();
+    public SimpleStringProperty status = new SimpleStringProperty();
+    public SimpleStringProperty userName = new SimpleStringProperty();
     ObjectProperty userPhoto = new SimpleObjectProperty();
 
+    /**
+     * used as a unique identifier for this list
+     * @return
+     */
     public Integer getUserId() {
         return userId.get();
     }
