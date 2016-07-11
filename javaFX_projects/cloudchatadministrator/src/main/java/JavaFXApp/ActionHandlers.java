@@ -93,27 +93,32 @@ class ActionHandlers {
 		Platform.runLater(() -> {
 			try {
 
-				ps.controller.handleCustomerTableView.addCellRowElementsToCustomerView(createCustomersTableRow(dana));
-				ps.controller.handleCustomerTableView.removeIdleCellRowElementsInCustomerView();
-
-				List<Object> objectList = ps.controller.handleManagersTableView.updateOnlineManagersWithIncomingChatInfo(dana);
-
-				//TODO: forward chatinfo to online managers
-//C# version - working - try to do similar
-//        if(dana.elements.GetType() == typeof(ChatInfoObj)) {
-//            foreach(Manager manager in managersList) {
-//                ((ChatInfoObj)dana.elements).dest = manager.src; // Set dest to managers src
-//                dops.sendToDOPsServer(ccph.createDEDpackage(dana));
-//            }
-//        }
-
-				//objectList.stream().forEach(d -> ps.dopsCommunications.sendToServer(((DOPsCommunication.ChatInfoObj)d).);
+				addToCustomerView(dana);
+				removeIdleElementsFromCustomerView();
+				forwardToOnlineManagers(dana);
 
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		});
 		return strResult;
+	}
+
+	private void addToCustomerView(DOPsCommunication.dedAnalyzed dana)
+	{
+		ps.controller.handleCustomerTableView.addCellRowElementsToCustomerView(createCustomersTableRow(dana));
+	}
+
+	private void removeIdleElementsFromCustomerView()
+	{
+		ps.controller.handleCustomerTableView.removeIdleCellRowElementsInCustomerView();
+	}
+
+	private void forwardToOnlineManagers(DOPsCommunication.dedAnalyzed dana) throws Exception
+	{
+		List<Object> objectList = ps.controller.handleManagersTableView.updateOnlineManagersWithIncomingChatInfo(dana);
+		objectList.stream().forEach(d -> System.out.printf("- transfer DED analyzed [ChatInfo] to online manager : %s\n",  ((DOPsCommunication.ChatInfoObj)((DOPsCommunication.dedAnalyzed)d).getElements()).dest));
+		objectList.stream().forEach(d -> ps.dopsCommunications.sendToServer(ps.dopsCommunications.createDEDpackage((DOPsCommunication.dedAnalyzed)d)));
 	}
 
 	private CustomerTableEntry createCustomersTableRow(DOPsCommunication.dedAnalyzed dana)
@@ -155,6 +160,7 @@ class ActionHandlers {
 		ManagerTableEntry newCellRowInTable = ps.controller.handleManagersTableView.createCellRowForManagersTableView();
 		newCellRowInTable.status.set(dana.getElement("status").toString()); // TODO: add this element to DED
 		newCellRowInTable.userName.set(dana.getElement("srcAlias").toString());
+		newCellRowInTable.userId.set(dana.getElement("src").toString()); // Important unique id of sender
 		return newCellRowInTable;
 	}
 

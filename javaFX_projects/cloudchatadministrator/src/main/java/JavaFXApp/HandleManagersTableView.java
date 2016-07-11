@@ -10,7 +10,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import org.apache.commons.net.ntp.TimeStamp;
 
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,10 +69,11 @@ public class HandleManagersTableView {
     {
         boolean bResult=true;
         try {
-            Item.userId.set(pos);
+            Item._tableId.set(pos);
             Item.status.set(Item.getStatus());
             Item.userName.set(Item.getUserName());
             Item.timestamp = new SimpleObjectProperty<>(TimeStamp.getCurrentTime());
+            Item.userId.set(Item.getUserId());
             //TODO: add update of more members here...
 
         }catch (Exception e){
@@ -85,9 +85,10 @@ public class HandleManagersTableView {
     private void appendRowElementToManagersTableView(ManagerTableEntry Item)
     {
         ManagerTableEntry entry = new ManagerTableEntry();
-        entry.userId.set(managersTableViewItems.size()-1);
+        entry._tableId.set(managersTableViewItems.size()-1);
         entry.status.set(Item.getStatus());
         entry.userName.set(Item.getUserName());
+        entry.userId.set(Item.getUserId());
         //TODO: add more entries
 
         managersTableViewItems.add(entry);
@@ -123,13 +124,19 @@ public class HandleManagersTableView {
         {
             if (obj instanceof DOPsCommunication.ChatInfoObj) {
                 DOPsCommunication.ChatInfoObj ci = new DOPsCommunication.ChatInfoObj();
+                ci.transactionsID = ((DOPsCommunication.ChatInfoObj) obj).transactionsID;
+                ci.protocolTypeID = ((DOPsCommunication.ChatInfoObj) obj).protocolTypeID;
+                ci.dest = manager.getUserId();
                 ci.src = ((DOPsCommunication.ChatInfoObj) obj).src;
                 ci.srcAlias = ((DOPsCommunication.ChatInfoObj) obj).srcAlias;
+                ci.srcHomepageAlias = ((DOPsCommunication.ChatInfoObj) obj).srcHomepageAlias;
+                ci.lastEntryTime = ((DOPsCommunication.ChatInfoObj)obj).lastEntryTime;
 
-                // Set destination to manager
-                ci.dest = manager.getUserName();
+                DOPsCommunication.dedAnalyzed _dana = new DOPsCommunication.dedAnalyzed();
+                _dana.elements = ci;
+
                 // Add to forward list to send to managers
-                objectsToForward.add(ci);
+                objectsToForward.add(_dana);
             }
         }
 

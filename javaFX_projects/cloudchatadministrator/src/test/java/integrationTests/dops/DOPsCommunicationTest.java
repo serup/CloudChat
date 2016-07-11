@@ -2,7 +2,6 @@ package integrationTests.dops;
 
 import ClientEndpoint.JavaWebSocketClientEndpoint;
 import ProtocolHandlings.DOPsCommunication;
-import dops.protocol.DOPS;
 import dops.protocol.ded.DEDDecoder;
 import dops.protocol.ded.DEDEncoder;
 import integrationTests.IntegrationEnvironmentSetup;
@@ -88,7 +87,7 @@ public class DOPsCommunicationTest {
     @Test
     public void testLoginToServer() throws Exception {
 
-        DOPS dops = new DOPS();
+        DOPsCommunication dops = new DOPsCommunication();
         String url = "backend.scanva.com";
         String port = "7777";
         String uniqueId = "985998707DF048B2A796B44C89345494";

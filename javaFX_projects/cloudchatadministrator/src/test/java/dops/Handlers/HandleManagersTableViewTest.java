@@ -63,12 +63,13 @@ public class HandleManagersTableViewTest {
         ManagerTableEntry newCellRowInTable = handleManagersTableView.createCellRowForManagersTableView();
         newCellRowInTable.status.set("ready");
         newCellRowInTable.userName.set("SERUP");
+        newCellRowInTable.userId.set("e25abeb5422903015ebfaff94618b8fc");
 
         handleManagersTableView.addCellRowElementsToManagersView(newCellRowInTable);
         List<Object> objectsToForwardToManagers = handleManagersTableView.updateOnlineManagersWithIncomingChatInfo(dana);
 
         assertEquals(true, (objectsToForwardToManagers.size() == 1));
-        objectsToForwardToManagers.stream().forEach(d -> assertEquals(true,((DOPsCommunication.ChatInfoObj)d).srcAlias.contains("JohnnyTest")));
+        objectsToForwardToManagers.stream().forEach(d -> assertEquals(true,((DOPsCommunication.ChatInfoObj)((DOPsCommunication.dedAnalyzed)d).getElements()).srcAlias.contains("JohnnyTest")));
 
         System.out.println("- Success - chatinfo object added to list of online managers");
     }

@@ -12,17 +12,18 @@ import org.apache.commons.net.ntp.TimeStamp;
 public class ManagerTableEntry {
 
     ObjectProperty<org.apache.commons.net.ntp.TimeStamp> timestamp = new SimpleObjectProperty<>(TimeStamp.getCurrentTime());
-    SimpleIntegerProperty userId = new SimpleIntegerProperty();
+    SimpleIntegerProperty _tableId = new SimpleIntegerProperty();
     public SimpleStringProperty status = new SimpleStringProperty();
     public SimpleStringProperty userName = new SimpleStringProperty();
+    public SimpleStringProperty userId = new SimpleStringProperty();
     ObjectProperty userPhoto = new SimpleObjectProperty();
 
     /**
-     * used as a unique identifier for this list
+     * used as a unique identifier for entry on this list
      * @return
      */
-    public Integer getUserId() {
-        return userId.get();
+    public Integer get_tableId() {
+        return _tableId.get();
     }
 
     public Object getUserPhoto() {
@@ -35,6 +36,10 @@ public class ManagerTableEntry {
 
     public String getUserName() {
         return userName.get();
+    }
+
+    public String getUserId() {
+        return userId.get();
     }
 
 }
