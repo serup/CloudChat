@@ -90,16 +90,7 @@ dfdfunc5:
 msgend:
 	@ echo "Build ended --"
 	@ echo "------------------------"
-	@ cat output1.txt > output.txt
-	@ cat output2.txt >> output.txt
-	@ cat output3.txt >> output.txt
-	@ cat output4.txt >> output.txt
-	@ cat output5.txt >> output.txt
-	@ cat output6.txt >> output.txt
-	@ cat output7.txt >> output.txt
-	@ cat output8.txt >> output.txt
-	@ cat output9.txt >> output.txt
-	@ cat output10.txt >> output.txt
+	@ cat output*.txt > output.txt
 	@ (cat output.txt | grep 'Failed\|Passed\|---\|Test of\|OK\|FAIL' > result.txt; cat result.txt; (cat result.txt|grep -c 'OK';printf "")>pass.txt; (cat result.txt|grep -c 'FAIL';printf "")>fail.txt; echo Total; printf "Passed: ";cat pass.txt; printf "Failed: "; cat fail.txt ; echo ---------)>_total_result.txt; rm result.txt; rm fail.txt; rm pass.txt ; rm output.txt
 	@ cat _total_result.txt | sed '$$!N; /^\(.*\)\n\1$$/!P; D' > total_result.txt
 	@ rm _total_result.txt

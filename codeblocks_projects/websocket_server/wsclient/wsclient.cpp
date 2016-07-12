@@ -183,19 +183,24 @@ struct _RealClientWebSocket : public ClientWebSocket
             ssize_t ret;
             rxbuf.resize(N + 1500);
             ret = ::recv(sockfd, &rxbuf[0] + N, 1500, 0);
-            if (false) { }
-            else if (ret < 0) {
-                if(errno == 11)
-                {
-                    /// No data available yet - lets wait a bit
-                    usleep(100); // wait milliseconds
-                }
-                else {
-                    fprintf (stderr, "Error no is : %d\n", errno);
-                    fprintf(stderr, "Error description is : %s\n",strerror(errno));
-                }
-                rxbuf.resize(N);
-                break;
+	    if (false) { }
+	    else if (ret < 0) {
+		    if(errno == 11)
+		    {
+			    /// No data available yet - lets wait a bit
+			    usleep(100); // wait milliseconds
+		    }
+		   /* else {
+			    fprintf (stderr, "Error no is : %d\n", errno);
+			    fprintf(stderr, "Error description is : %s\n",strerror(errno));
+			    if(errno == 9)
+			    {
+				    fprintf(stderr, "This error can indicate that:\nA file descriptor does not refer to an open file.\nA write request is made to a read-only file.\nA read request is made to a write-only file.\n");
+
+			    }
+		    }*/
+		    rxbuf.resize(N);
+		    break;
             }
             else if (ret == 0) {
                 rxbuf.resize(N);
@@ -339,7 +344,7 @@ ClientWebSocket::pointer ClientWebSocket::from_url(std::string url,void* pParent
         fprintf(stderr, "ERROR: Could not parse WebSocket url: %s\n", url.c_str());
         return NULL;
     }
-    fprintf(stderr, "wsclient: connecting: host=%s port=%d path=/%s\n", host, port, path);
+    //fprintf(stderr, "wsclient: connecting: host=%s port=%d path=/%s\n", host, port, path);
     int sockfd = server_client_connect(host, port);
     if (sockfd == -1) {
         fprintf(stderr, "Unable to connect to %s:%d\n", host, port);
@@ -372,7 +377,7 @@ ClientWebSocket::pointer ClientWebSocket::from_url(std::string url,void* pParent
     int flag = 1;
     setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, (char*) &flag, sizeof(flag)); // Disable Nagle's algorithm
     fcntl(sockfd, F_SETFL, O_NONBLOCK); // SOCKET is set as NON-BLOCKING !!!!
-    fprintf(stderr, "Connected to: %s\n", url.c_str());
+    fprintf(stdout, "Connected to: %s\n", url.c_str());
 //    return pointer(new _RealClientWebSocket(sockfd));
     ClientWebSocket::pointer pointer(new _RealClientWebSocket(sockfd));
     pointer->setOwner(pParent);

@@ -64,7 +64,7 @@ else
       sudo echo "root" >> /etc/cron.allow
       sudo echo "vagrant" >> /etc/incron.allow
       sudo echo "vagrant" >> /etc/cron.allow
-      sudo mkdir /var/www/img
+      sudo mkdir -p /var/www/img
       echo "*******************************" 
       echo "Clone from GitHub" 
       echo "*******************************" 
