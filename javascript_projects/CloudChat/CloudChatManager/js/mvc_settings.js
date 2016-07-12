@@ -268,6 +268,9 @@ var imgUrl;
                                 + '  <tr>'
                                 + '    <td><h3 style="color:darkgray;"><i class="glyphicon glyphicon-time"></i></h3></td><td><b>Subscription Expires : </b><span id="userCreationDate"></span></td>'
                                 + '  </tr>'
+                                + '  <tr>'
+                                + '    <td><h3 style="color:darkgray;"><i class="glyphicon glyphicon-barcode"></i></h3></td><td><b>ID : </b>'+ strsupervisor.small() +'<span id="supervisor"></span></td>'
+                                + '  </tr>'
                                 + '</table>'
                                 + '</div>'));
                                 
@@ -502,13 +505,14 @@ var imgUrl;
         },
         fetchSettingsElement: function (name) {
             var value;
-            //TODO: find element in settings and return value
+            value = settings_model_this.objSettings.getItem(name,"string");
             return value;
         },
         
         fetchSupervisorID: function () {
-            var id; // TODO: add real fetch of supervisor id
-            id = "754d148d0522659d0ceb2e6035fad6a8"; // TEST
+            var id; 
+            //id = "754d148d0522659d0ceb2e6035fad6a8"; // TEST
+            id = fetchSettingsElement("supervisor");
             return id;
         },
         
