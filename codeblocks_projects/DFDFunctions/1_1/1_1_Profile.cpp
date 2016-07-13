@@ -983,6 +983,12 @@ bool C1_1_Profile::extractUpdateImageUrl(FetchProfileInfo datastream, std::vecto
 
         boost::system_time const systime=boost::get_system_time();
         std::stringstream sstream;
+
+        // Use a facet to display time in a custom format
+        boost::posix_time::time_facet* facet = new boost::posix_time::time_facet();
+        facet->format("%Y-%m-%d_%H:%M:%S.%f");
+        sstream.imbue(std::locale(std::locale::classic(), facet));
+
         sstream << systime;
 
         std::string filenamepath = "/var/www/img/" + datastream.strProfileID + "_" + sstream.str(); // TODO: add a guid filename to newly created image -- NB! filepath should be inside /var/www/img/   -- to make sure client can access it
