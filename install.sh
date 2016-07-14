@@ -5,6 +5,21 @@ echo "** Installing vagrant, puppetlabs, virtualbox, docker **"
 echo "********************************************************"
 echo "MUST run as '. ./install.sh' or as 'sudo bash ./install.sh' otherwise it will fail !!!"
 
+echo "setting up alias"
+alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+alias egrep='egrep --color=auto'
+alias ff='find . -type f -name '
+alias fgrep='fgrep --color=auto'
+alias findfile='find . -type f -name '
+alias gitlog='git log --pretty=format:"%C(yellow)%h %Cred%ad %Cblue%an%Cgreen%d %Creset%s" --date=short'
+alias gitshow='function _blah(){ git show "$(git annotate $1 | grep $2 | head -1| cut -f1)"; };_blah'
+alias grep='grep --color=auto'
+alias gvm='sdk'
+alias l='ls -CF'
+alias la='ls -A'
+alias ll='ls -alF'
+alias ls='ls --color=auto'
+
 function set-title() {
   if [[ -z "$ORIG" ]]; then
     ORIG=$PS1
