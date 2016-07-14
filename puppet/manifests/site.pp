@@ -509,45 +509,46 @@ node /^backend.*/ {
 
   include git
 
-  exec { "prereq1":
-     command => "/usr/bin/apt-get install -yq imagemagick",
-     require  => Exec['apt-update'],
-  }
-
-  exec { "prereq2":
-     command => "/usr/bin/apt-get install -yq lcov",
-     require  => Exec['prereq1'],
-  }
-
-  exec { "prereq3":
-     command => "/usr/bin/apt-get install -yq nodejs-legacy",
-     require  => Exec['prereq2'],
-  }
-
-  exec { "prereq4":
-     command => "/usr/bin/apt-get install -yq libboost-all-dev",
-     require  => Exec['prereq3'],
-  }
-
-  exec { "prereq5":
-     command => "/usr/bin/apt-get install -yq xsltproc",
-     require  => Exec['prereq4'],
-  }
-
-  exec { "prereq6":
-     command => "/usr/bin/apt-get install -yq g++",
-     require  => Exec['prereq5'],
-  }
-
-  exec { "prereq7":
-     command => "/usr/bin/apt-get install -yq sshpass",
-     require  => Exec['prereq6'],
-  }
-
-  exec { "prereq8":
-     command => "/usr/bin/apt-get install -yq incron",
-     require  => Exec['prereq7'],
-  }
+# - DID NOT WORK - moved back to bootstrap-node-backend.sh
+#  exec { "prereq1":
+#     command => "/usr/bin/apt-get install -yq imagemagick",
+#     require  => Exec['apt-update'],
+#  }
+#
+#  exec { "prereq2":
+#     command => "/usr/bin/apt-get install -yq lcov",
+#     require  => Exec['prereq1'],
+#  }
+#
+#  exec { "prereq3":
+#     command => "/usr/bin/apt-get install -yq nodejs-legacy",
+#     require  => Exec['prereq2'],
+#  }
+#
+#  exec { "prereq4":
+#     command => "/usr/bin/apt-get install -yq libboost-all-dev",
+#     require  => Exec['prereq3'],
+#  }
+#
+#  exec { "prereq5":
+#     command => "/usr/bin/apt-get install -yq xsltproc",
+#     require  => Exec['prereq4'],
+#  }
+#
+#  exec { "prereq6":
+#     command => "/usr/bin/apt-get install -yq g++",
+#     require  => Exec['prereq5'],
+#  }
+#
+#  exec { "prereq7":
+#     command => "/usr/bin/apt-get install -yq sshpass",
+#     require  => Exec['prereq6'],
+#  }
+#
+#  exec { "prereq8":
+#     command => "/usr/bin/apt-get install -yq incron",
+#     require  => Exec['prereq7'],
+#  }
 }
 
 

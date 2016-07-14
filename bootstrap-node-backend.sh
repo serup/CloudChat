@@ -52,11 +52,28 @@ else
       echo "****************"
       echo "     INIT       "
       echo "****************"
+      sudo -s
+      echo "install LCOV for code coverage"
+      apt-get install -yq lcov
+      echo "fetch nodejs"
+      apt-get install -yq nodejs-legacy
+      echo "fetch boost"
+      apt-get install -yq  libboost-all-dev
+      echo "fetch xsltproc"
+      apt-get install -yq xsltproc
+      echo "fetch g++ since somehow gcc default install does not get it"
+      apt-get install -yq g++
+      echo "install sshpass to allow automatic transfer of images script to run - consider using ssh keys instead in future"
+      apt-get install -yq sshpass
+      echo "install incron to monitor event/changes in transfer folder - new images added, should then start transfer"
+      apt-get install -yq incron
       echo "root" >> /etc/incron.allow
       echo "root" >> /etc/cron.allow
       echo "vagrant" >> /etc/incron.allow
       echo "vagrant" >> /etc/cron.allow
       mkdir /var/www/img
+      echo "install imagemagick to use mogrify to resize images"
+      apt-get install -yq imagemagick
       echo "****************"
       echo "Clone from GitHub" 
       echo "****************"
