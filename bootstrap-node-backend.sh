@@ -74,6 +74,7 @@ else
       mkdir /var/www/img
       echo "install imagemagick to use mogrify to resize images"
       apt-get install -yq imagemagick
+      apt install -yq graphicsmagick
       echo "****************"
       echo "Clone from GitHub" 
       echo "****************"
