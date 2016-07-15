@@ -19,6 +19,8 @@ alias l='ls -CF'
 alias la='ls -A'
 alias ll='ls -alF'
 alias ls='ls --color=auto'
+# nb! use '\'' for each '  inside an alias
+alias ks='function _blabla(){ kill "$(ps -aux|grep $1|head -1|awk '\''{print $2}'\'')"; }; _blabla'
 
 function set-title() {
   if [[ -z "$ORIG" ]]; then
