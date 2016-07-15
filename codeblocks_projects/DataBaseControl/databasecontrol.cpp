@@ -912,7 +912,7 @@ bool CDatabaseControl::AppendElementToToastXmlFile(std::string EntityName, bool 
         }
 
         if(chunkdata.size()<=0){
-            std::cout << "[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added " << "\n";
+            std::cout << "[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : " << entity_chunk_id  << "\n";
             std::string strtmp="<empty>";
             std::copy(strtmp.begin(), strtmp.end(), std::back_inserter(chunkdata));
             //return false;
