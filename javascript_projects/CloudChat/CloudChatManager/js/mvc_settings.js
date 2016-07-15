@@ -512,7 +512,8 @@ var imgUrl;
         fetchSupervisorID: function () {
             var id; 
             //id = "754d148d0522659d0ceb2e6035fad6a8"; // TEST
-            id = fetchSettingsElement("supervisor");
+            //id = fetchSettingsElement("supervisor");
+	    id = settings_model_this.objSettings.getItem("supervisor","string"); 
             return id;
         },
         
