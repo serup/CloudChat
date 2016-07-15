@@ -518,8 +518,8 @@ var imgUrl;
         },
         
         fetchAlias: function () {
-            var alias; // TODO: fetch real alias from settings - could be username
-            alias = "SERUP"; // TEST
+            var alias; 
+            alias = settings_model_this.objSettings.getItem("username","string");
             return alias;
         }
     };
