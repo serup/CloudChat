@@ -224,7 +224,7 @@ var imgUrl;
             else {
                 _htmlfoto = '<output style="padding-top:0px" id="placeholderProfileFoto"><span><img id="profileimg" onerror="refreshImage()" style="position: absolute;margin-top: 0px; height: 100%; width: 100%" onclick="settings_view_this.ProfileImageClicked.notify('+ "'USER'" +');" src="'+ strfoto +'" title="Avatar"></span></output>'
                 + '<span id="droppedimage_icon" class="glyphicon glyphicon-plus-sign" style="font-size: 20px; opacity: 0.8; color:whitesmoke ; position: absolute; left:20px; top: 20px;z-index: 0;" onclick="settings_view_this.ProfileImageClicked.notify('+ "'USER'" +');"></span>';
-                
+               refreshImage(); 
             }
 
             ulsettings.append($('<div id="ProfilePage" >'
@@ -294,9 +294,6 @@ var imgUrl;
                    //alert(new_source); //you may want to alert that during developement to see if you're getting what you wanted
                    //set the new src attribute
                    $('#profileimg').removeAttr("src").attr("src", new_source);
-		   if(maxcount>3)
-            		clearInterval(timeout_url_foto); // stop refresh
-		   maxcount++;
                 }
 	    };
                 
