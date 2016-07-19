@@ -222,7 +222,7 @@ var imgUrl;
                   + '<span id="droppedimage_icon" class="glyphicon glyphicon-plus-sign" style="font-size: 20px; opacity: 0.8; color:whitesmoke ; position: absolute; left:20px; top: 20px;z-index: 0;" onclick="settings_view_this.ProfileImageClicked.notify('+ "'USER'" +');"></span>';
             }
             else {
-                _htmlfoto = '<output style="padding-top:0px" id="placeholderProfileFoto"><span><img id="profileimg" style="position: absolute;margin-top: 0px; height: 100%; width: 100%" onclick="settings_view_this.ProfileImageClicked.notify('+ "'USER'" +');" src="'+ strfoto +'" title="Avatar"></span></output>'
+                _htmlfoto = '<output style="padding-top:0px" id="placeholderProfileFoto"><span><img id="profileimg" onerror="refreshImage()" style="position: absolute;margin-top: 0px; height: 100%; width: 100%" onclick="settings_view_this.ProfileImageClicked.notify('+ "'USER'" +');" src="'+ strfoto +'" title="Avatar"></span></output>'
                 + '<span id="droppedimage_icon" class="glyphicon glyphicon-plus-sign" style="font-size: 20px; opacity: 0.8; color:whitesmoke ; position: absolute; left:20px; top: 20px;z-index: 0;" onclick="settings_view_this.ProfileImageClicked.notify('+ "'USER'" +');"></span>';
                 
             }
@@ -271,11 +271,10 @@ var imgUrl;
                                 + '</table>'
                                 + '</div>'));
                                 
-                
+
             // Refresh image 
-            clearInterval(timeout_url_foto);
-            var maxcount=0;
-            timeout_url_foto=setInterval(function(){
+            refreshImage()
+	    {
                 if(/loaded|complete/.test(document.readyState)){
                    // refresh the profileimg foto - hack - adding time to ignore cash
                    //get the src attribute
@@ -299,7 +298,35 @@ var imgUrl;
             		clearInterval(timeout_url_foto); // stop refresh
 		   maxcount++;
                 }
-            }, 1000);
+	    };
+                
+//            clearInterval(timeout_url_foto);
+//            var maxcount=0;
+//            timeout_url_foto=setInterval(function(){
+//                if(/loaded|complete/.test(document.readyState)){
+//                   // refresh the profileimg foto - hack - adding time to ignore cash
+//                   //get the src attribute
+//                   var source = ulsettings.context.getElementById('profileimg').src;
+//                   //remove previously added timestamps
+//                   var new_source = "";
+//                   source = source.split("?", 1);//turns "image.jpg?timestamp=1234" into "image.jpg" avoiding infinitely adding new timestamps
+//                   if (/data:image/i.test(source))
+//                   {
+//                       // since image was NOT extracted and is still an embedded image, then due to the issue around adding timestamp to embedded images, then do NOT add timestamp
+//                       new_source = source;
+//                   }
+//                   else {
+//                       //prep new src attribute by adding a timestamp
+//                       new_source = source + "?timestamp="  + new Date().getTime();
+//                   } 
+//                   //alert(new_source); //you may want to alert that during developement to see if you're getting what you wanted
+//                   //set the new src attribute
+//                   $('#profileimg').removeAttr("src").attr("src", new_source);
+//		   if(maxcount>3)
+//            		clearInterval(timeout_url_foto); // stop refresh
+//		   maxcount++;
+//                }
+//            }, 1000);
 
            
        },
