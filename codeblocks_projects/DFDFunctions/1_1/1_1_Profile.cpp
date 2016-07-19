@@ -1002,7 +1002,7 @@ bool C1_1_Profile::extractUpdateImageUrl(FetchProfileInfo datastream, std::vecto
             // Wait a moment, so background automatic replication can transfer image
             // INFO: fx. scp the foto to cloudchatmanager machine - it should reside in relative img/<profileid>.jpg - NB! This is necessary since no extracted data is allowed on backend.scanva.com server
             // sudo scp -r img/ vagrant@cloudchatmanager.com:/home/vagrant/.
-            sleep(1); // wait seconds
+            //sleep(1); // wait seconds - does not work, somehow image transfer is too slow, some handshake communication might be necessary
             bResult = true;
         }
         else
