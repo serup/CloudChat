@@ -371,7 +371,23 @@ var imgUrl;
 
             //TODO: should be moved to "attach listeners to HTML controls", since these are actually view events, thus should be in view part of MVC and controller should attach to these events -
             document.getElementById("snap").addEventListener("click", function() {
-                context.drawImage(video, 0, 0, 180, 220);
+                //context.drawImage(video, 0, 0, 180, 220);
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                /// step 1 - create off-screen canvas
+                var oc   = document.createElement('canvas'),
+                octx = oc.getContext('2d');
+                oc.width  = video.width  * 0.5;
+                oc.height = video.height * 0.5;
+                octx.drawImage(video, 0, 0, oc.width, oc.height); 
+
+                /// step 2
+                octx.drawImage(oc, 0, 0, oc.width * 0.9, oc.height * 0.9);
+
+                /// step 3
+                context.drawImage(oc, 0, 0, oc.width * 0.9, oc.height * 0.9, 0, 0, canvas.width,   canvas.height);
+
+
                 document.getElementById("camflow_snap").style.display = "none";
                 document.getElementById("camflow_validate").style.display = "inline";
                 document.getElementById("camflow_validate_upload").addEventListener("click", function() {
