@@ -1,6 +1,6 @@
 #!/bin/bash 
 #mkdir -p /var/www/.thumbs
-#cd /var/www/img
+cd /var/www/img
 # ignore mogrify - somehow in combination with transfer it is too slow
 # resize to a maximum of 200x200 pixels in .thumbs subdir
 #gm mogrify -output-directory /var/www/.thumbs -resize 150x170 "*"
