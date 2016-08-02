@@ -338,6 +338,18 @@ public class DOPsCommunication {
     public static ByteBuffer createDEDpackage(dedAnalyzed dana)
     {
         ByteBuffer blob = null;
+        if(dana.elements instanceof ForwardInfoRequestObj) {
+            DEDEncoder DED = new DEDEncoder();
+            DED.PUT_STRUCT_START ("CloudManagerRequest");
+                DED.PUT_METHOD ("Method", "JSCForwardInfo");
+                DED.PUT_USHORT ("TransID", (short)dana.getElement("transactionsID"));
+                DED.PUT_STDSTRING("protocolTypeID", dana.getElement("protocolTypeID").toString());
+                DED.PUT_STDSTRING("dest", dana.getElement("dest").toString());  // This Admins uniqueID, since this is a test it really does not matter
+                DED.PUT_STDSTRING("src", dana.getElement("src").toString()); // uniqueID
+                DED.PUT_STDSTRING("srcAlias", dana.getElement("srcAlias").toString());
+            DED.PUT_STRUCT_END("CloudManagerRequest");
+            blob = DED.GET_ENCODED_BYTEBUFFER_DATA();
+        }
         if(dana.elements instanceof ChatInfoObj) {
             DEDEncoder DED = new DEDEncoder();
             DED.PUT_STRUCT_START ("ClientChatRequest");

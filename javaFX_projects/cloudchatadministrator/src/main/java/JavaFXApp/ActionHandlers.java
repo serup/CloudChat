@@ -178,7 +178,7 @@ class ActionHandlers {
 	private void forwardMangerInfoToOnlineManagers(DOPsCommunication.dedAnalyzed dana) throws Exception
 	{
 		List<Object> objectList = ps.controller.handleManagersTableView.updateOnlineManagersWithOnlineManagersInfo(dana);
-		objectList.stream().forEach(d -> System.out.printf("- transfer DED analyzed [Manager Info] to all online managers : %s\n",  ((DOPsCommunication.ChatInfoObj)((DOPsCommunication.dedAnalyzed)d).getElements()).dest));
+		objectList.stream().forEach(d -> System.out.printf("- transfer DED analyzed [Manager Info] to all online managers : %s\n",  ((DOPsCommunication.ForwardInfoRequestObj)((DOPsCommunication.dedAnalyzed)d).getElements()).dest));
 		objectList.stream().forEach(d -> ps.dopsCommunications.sendToServer(ps.dopsCommunications.createDEDpackage((DOPsCommunication.dedAnalyzed)d)));
 	}
 
