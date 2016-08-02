@@ -237,7 +237,7 @@ var imgUrl;
                                 + '  <tr>'
                                 + '     <td ><h3 style="margin-top: 10px; margin-right: 5px; color:darkgray;"><i class="glyphicon glyphicon-lock"></i></h3></td><td><b>Password : </b><span id="_username" onclick="settings_view_this.SettingsElementClicked.notify('+ "'_username'" +');">'+strpassword+'</span></td>'
                                 + '  </tr>'
-				+ '  <tr>'
+				                + '  <tr>'
                                 + '     <td><h3 style="color:darkgray;"><i style="font-size: 35px;" class="fa fa-male"></i></h3></td><td><b>Name : </b><span id="fullName_">'+ strfirstname + " " + strlastname +'</span></td>'
                                 + '  </tr>'
                                 + '  <tr>'
@@ -271,34 +271,34 @@ var imgUrl;
                                 + '</div>'));
                                 
 
- // Refresh image 
-            clearInterval(timeout_url_foto);
-            var maxcount=0;
-            timeout_url_foto=setInterval(function(){
-                if(/loaded|complete/.test(document.readyState)){
-                   // refresh the profileimg foto - hack - adding time to ignore cash
-                   //get the src attribute
-                   var source = ulsettings.context.getElementById('profileimg').src;
-                   //remove previously added timestamps
-                   var new_source = "";
-                   source = source.split("?", 1);//turns "image.jpg?timestamp=1234" into "image.jpg" avoiding infinitely adding new timestamps
-                   if (/data:image/i.test(source))
-                   {
-                       // since image was NOT extracted and is still an embedded image, then due to the issue around adding timestamp to embedded images, then do NOT add timestamp
-                       new_source = source;
-                   }
-                   else {
-                       //prep new src attribute by adding a timestamp
-                       new_source = source + "?timestamp="  + new Date().getTime();
-                   } 
-                   //alert(new_source); //you may want to alert that during developement to see if you're getting what you wanted
-                   //set the new src attribute
-                   $('#profileimg').removeAttr("src").attr("src", new_source);
-		   if(maxcount>8)
-            		clearInterval(timeout_url_foto); // stop refresh
-		   maxcount++;
-                }
-            }, 3000);
+                    // Refresh image 
+                    clearInterval(timeout_url_foto);
+                    var maxcount=0;
+                    timeout_url_foto=setInterval(function(){
+                        if(/loaded|complete/.test(document.readyState)){
+                            // refresh the profileimg foto - hack - adding time to ignore cash
+                            //get the src attribute
+                            var source = ulsettings.context.getElementById('profileimg').src;
+                            //remove previously added timestamps
+                            var new_source = "";
+                            source = source.split("?", 1);//turns "image.jpg?timestamp=1234" into "image.jpg" avoiding infinitely adding new timestamps
+                            if (/data:image/i.test(source))
+                            {
+                                // since image was NOT extracted and is still an embedded image, then due to the issue around adding timestamp to embedded images, then do NOT add timestamp
+                                new_source = source;
+                            }
+                            else {
+                                //prep new src attribute by adding a timestamp
+                                new_source = source + "?timestamp="  + new Date().getTime();
+                            } 
+                            //alert(new_source); //you may want to alert that during developement to see if you're getting what you wanted
+                            //set the new src attribute
+                            $('#profileimg').removeAttr("src").attr("src", new_source);
+                            if(maxcount>3)
+                                clearInterval(timeout_url_foto); // stop refresh
+                            maxcount++;
+                        }
+                    }, 3000);
 
            
        },
