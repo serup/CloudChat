@@ -344,7 +344,7 @@ public class DOPsCommunication {
                 DED.PUT_METHOD ("Method", "JSCForwardInfo");
                 DED.PUT_USHORT ("TransID", (short)dana.getElement("transactionsID"));
                 DED.PUT_STDSTRING("protocolTypeID", dana.getElement("protocolTypeID").toString());
-                DED.PUT_STDSTRING("dest", dana.getElement("dest").toString());  // This Admins uniqueID, since this is a test it really does not matter
+                DED.PUT_STDSTRING("dest", dana.getElement("dest").toString());
                 DED.PUT_STDSTRING("src", dana.getElement("src").toString()); // uniqueID
                 DED.PUT_STDSTRING("srcAlias", dana.getElement("srcAlias").toString());
             DED.PUT_STRUCT_END("CloudManagerRequest");
@@ -356,7 +356,7 @@ public class DOPsCommunication {
                 DED.PUT_METHOD ("Method", "JSCChatInfo");
                 DED.PUT_USHORT ("TransID", (short)dana.getElement("transactionsID"));
                 DED.PUT_STDSTRING("protocolTypeID", dana.getElement("protocolTypeID").toString());
-                DED.PUT_STDSTRING("dest", dana.getElement("dest").toString());  // This Admins uniqueID, since this is a test it really does not matter
+                DED.PUT_STDSTRING("dest", dana.getElement("dest").toString());
                 DED.PUT_STDSTRING("src", dana.getElement("src").toString()); // uniqueID
                 DED.PUT_STDSTRING("srcAlias", dana.getElement("srcAlias").toString());
                 DED.PUT_STDSTRING("srcHomepageAlias", dana.getElement("srcHomepageAlias").toString());

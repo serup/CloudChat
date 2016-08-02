@@ -104,7 +104,7 @@ public class HandleManagersTableView {
         for(ManagerTableEntry item: managersTableViewItems) {
             diff = currentTimestamp.getValue().getTime() - item.timestamp.getValue().getTime();
             diffSeconds = diff / 1000 % 60;
-            if(diffSeconds > 10) {
+            if(diffSeconds > 15) {
                 // Element has been idle for too long, meaning no communication, hence remove it
                 System.out.printf("- Idle element [%s] - will be removed\n", item.getUserName());
                 objectsToRemove.add(item);
@@ -145,7 +145,7 @@ public class HandleManagersTableView {
 
     public List<Object> updateOnlineManagersWithOnlineManagersInfo(DOPsCommunication.dedAnalyzed dana) throws Exception
     {
-        managersTableViewItems.stream().forEach(d -> System.out.printf("-- Will add to forward list;  received DED of type : %s to manager : %s\n",dana.type, d.getUserName()));
+        managersTableViewItems.stream().forEach(d -> System.out.printf("-- Will add to forward list;  received DED of type : %s to manager : %s %s\n",dana.type, d.getUserName(), d.getUserId()));
 
         List<Object> objectsToForward = new ArrayList<>();
         Object obj = dana.getElements();
