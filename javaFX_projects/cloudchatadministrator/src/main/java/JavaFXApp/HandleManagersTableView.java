@@ -115,36 +115,15 @@ public class HandleManagersTableView {
 
     public List<Object> updateOnlineManagersWithIncomingChatInfo(DOPsCommunication.dedAnalyzed dana) throws Exception
     {
-        managersTableViewItems.stream().forEach(d -> System.out.printf("-- Will add to forward list;  received DED of type : %s to manager : %s\n",dana.type, d.getUserName()));
-
-
-        List<Object> objectsToForward = new ArrayList<>();
-        Object obj = dana.getElements();
-        for(ManagerTableEntry manager: managersTableViewItems)
-        {
-            if (obj instanceof DOPsCommunication.ChatInfoObj) {
-                DOPsCommunication.ChatInfoObj ci = new DOPsCommunication.ChatInfoObj();
-                ci.transactionsID = ((DOPsCommunication.ChatInfoObj) obj).transactionsID;
-                ci.protocolTypeID = ((DOPsCommunication.ChatInfoObj) obj).protocolTypeID;
-                ci.dest = manager.getUserId();
-                ci.src = ((DOPsCommunication.ChatInfoObj) obj).src;
-                ci.srcAlias = ((DOPsCommunication.ChatInfoObj) obj).srcAlias;
-                ci.srcHomepageAlias = ((DOPsCommunication.ChatInfoObj) obj).srcHomepageAlias;
-                ci.lastEntryTime = ((DOPsCommunication.ChatInfoObj)obj).lastEntryTime;
-
-                DOPsCommunication.dedAnalyzed _dana = new DOPsCommunication.dedAnalyzed();
-                _dana.elements = ci;
-
-                // Add to forward list to send to managers
-                objectsToForward.add(_dana);
-            }
-        }
-
-        return objectsToForward;
+        return updateOnlineManagers(dana);
     }
 
     public List<Object> updateOnlineManagersWithOnlineManagersInfo(DOPsCommunication.dedAnalyzed dana) throws Exception
     {
+        return updateOnlineManagers(dana);
+    }
+
+    private List<Object> updateOnlineManagers(DOPsCommunication.dedAnalyzed dana) throws Exception {
         managersTableViewItems.stream().forEach(d -> System.out.printf("-- Will add to forward list;  received DED of type : %s to manager : %s %s\n",dana.type, d.getUserName(), d.getUserId()));
 
         List<Object> objectsToForward = new ArrayList<>();
@@ -165,7 +144,27 @@ public class HandleManagersTableView {
                 // Add to forward list to send to managers
                 objectsToForward.add(_dana);
             }
-        }
+            else if (obj instanceof DOPsCommunication.ChatInfoObj) {
+                DOPsCommunication.ChatInfoObj ci = new DOPsCommunication.ChatInfoObj();
+                ci.transactionsID = ((DOPsCommunication.ChatInfoObj) obj).transactionsID;
+                ci.protocolTypeID = ((DOPsCommunication.ChatInfoObj) obj).protocolTypeID;
+                ci.dest = manager.getUserId();
+                ci.src = ((DOPsCommunication.ChatInfoObj) obj).src;
+                ci.srcAlias = ((DOPsCommunication.ChatInfoObj) obj).srcAlias;
+                ci.srcHomepageAlias = ((DOPsCommunication.ChatInfoObj) obj).srcHomepageAlias;
+                ci.lastEntryTime = ((DOPsCommunication.ChatInfoObj)obj).lastEntryTime;
+
+                DOPsCommunication.dedAnalyzed _dana = new DOPsCommunication.dedAnalyzed();
+                _dana.elements = ci;
+
+                // Add to forward list to send to managers
+                objectsToForward.add(_dana);
+            }
+            else
+            {
+                System.out.printf("- ERROR : unknown DED type [%s] - will NOT be transferred to manager\n", dana.type );
+            }
+         }
 
         return objectsToForward;
     }
