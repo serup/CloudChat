@@ -73,4 +73,45 @@ public class HandleManagersTableViewTest {
 
         System.out.println("- Success - chatinfo object added to list of online managers");
     }
+
+    @Test
+    public void updateOnlineManagersWithIncomingManagerInfo() throws Exception {
+
+        TableView<ManagerTableEntry> managersTable = new TableView<>();
+        HandleManagersTableView handleManagersTableView = new HandleManagersTableView(managersTable);
+        handleManagersTableView.initManagersTableView();
+
+        // simulate manager info ded received
+        DOPsCommunication.ForwardInfoRequestObj fio = new DOPsCommunication.ForwardInfoRequestObj();
+        fio.transactionsID = 99;
+        fio.protocolTypeID = "";
+        fio.dest = "";
+        fio.src = "";
+        fio.srcAlias = "JohnnyTest";
+        DOPsCommunication.dedAnalyzed dana = new DOPsCommunication.dedAnalyzed();
+        dana.bDecoded = true;
+        dana.type = "ChatForwardInfoRequest"; // manager is sending a request for chat to other managers
+        dana.setDED(null); // not needed in this test
+        dana.elements = fio;
+
+        // Add two managers- simulate two online managers
+        ManagerTableEntry newCellRowInTable = handleManagersTableView.createCellRowForManagersTableView();
+        newCellRowInTable.status.set("ready");
+        newCellRowInTable.userName.set("SERUP");
+        newCellRowInTable.userId.set("e25abeb5422903015ebfaff94618b8fc");
+        handleManagersTableView.addCellRowElementsToManagersView(newCellRowInTable);
+        ManagerTableEntry newCellRowInTable2 = handleManagersTableView.createCellRowForManagersTableView();
+        newCellRowInTable2.status.set("ready");
+        newCellRowInTable2.userName.set("NIELSEN");
+        newCellRowInTable2.userId.set("e88abeb5422903015ebfaff94618b9fd");
+        handleManagersTableView.addCellRowElementsToManagersView(newCellRowInTable2);
+
+        List<Object> objectsToForwardToManagers = handleManagersTableView.updateOnlineManagersWithOnlineManagersInfo(dana);
+
+        // Verify that object will be forwarded to all online managers
+        assertEquals(true, (objectsToForwardToManagers.size() == 2));
+        objectsToForwardToManagers.stream().forEach(d -> assertEquals(true,((DOPsCommunication.ForwardInfoRequestObj)((DOPsCommunication.dedAnalyzed)d).getElements()).srcAlias.contains("JohnnyTest")));
+
+        System.out.println("- Success - manager info object added to list of online managers - simulating; manager is sending a request for chat to other managers");
+    }
 }

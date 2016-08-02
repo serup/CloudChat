@@ -143,6 +143,33 @@ public class HandleManagersTableView {
         return objectsToForward;
     }
 
+    public List<Object> updateOnlineManagersWithOnlineManagersInfo(DOPsCommunication.dedAnalyzed dana) throws Exception
+    {
+        managersTableViewItems.stream().forEach(d -> System.out.printf("-- Will add to forward list;  received DED of type : %s to manager : %s\n",dana.type, d.getUserName()));
+
+        List<Object> objectsToForward = new ArrayList<>();
+        Object obj = dana.getElements();
+        for(ManagerTableEntry manager: managersTableViewItems)
+        {
+            if (obj instanceof DOPsCommunication.ForwardInfoRequestObj) {
+                DOPsCommunication.ForwardInfoRequestObj fi = new DOPsCommunication.ForwardInfoRequestObj();
+                fi.transactionsID = ((DOPsCommunication.ForwardInfoRequestObj) obj).transactionsID;
+                fi.protocolTypeID = ((DOPsCommunication.ForwardInfoRequestObj) obj).protocolTypeID;
+                fi.dest = manager.getUserId();
+                fi.src = ((DOPsCommunication.ForwardInfoRequestObj) obj).src;
+                fi.srcAlias = ((DOPsCommunication.ForwardInfoRequestObj) obj).srcAlias;
+
+                DOPsCommunication.dedAnalyzed _dana = new DOPsCommunication.dedAnalyzed();
+                _dana.elements = fi;
+
+                // Add to forward list to send to managers
+                objectsToForward.add(_dana);
+            }
+        }
+
+        return objectsToForward;
+    }
+
     @SuppressWarnings("unchecked")
     public void initManagersTableView()
     {

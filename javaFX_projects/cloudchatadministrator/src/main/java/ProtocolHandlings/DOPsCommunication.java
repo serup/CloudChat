@@ -409,12 +409,12 @@ public class DOPsCommunication {
      * here is a few
      *
      */
-    private static class ForwardInfoRequestObj {
-        short transactionsID;
-        String protocolTypeID;
-        String dest;
-        String src;
-        String srcAlias;
+    public static class ForwardInfoRequestObj {
+        public short transactionsID;
+        public String protocolTypeID;
+        public String dest;
+        public String src;
+        public String srcAlias;
     }
     public static class ChatInfoObj {
         public short transactionsID;

@@ -59,7 +59,7 @@ class ActionHandlers {
 		try {
 			ps.dopsCommunications = new DOPsCommunication();
 			ps.dopsCommunications.addActionHandler("ChatInfo", ps.actionHandlers::actionHandlerUpdateCustomerViewAndForwardToManagers);
-			ps.dopsCommunications.addActionHandler("ChatForwardInfoRequest", ps.actionHandlers::actionHandlerUpdateManagerView);
+			ps.dopsCommunications.addActionHandler("ChatForwardInfoRequest", ps.actionHandlers::actionHandlerUpdateManagerViewAndForwardToOnlineMangers);
 			//... add more action handlers here!
 		}catch (Exception e)
 		{
@@ -95,7 +95,7 @@ class ActionHandlers {
 
 				addToCustomerView(dana);
 				removeIdleElementsFromCustomerView();
-				forwardToOnlineManagers(dana);
+				forwardChatInfoToOnlineManagers(dana);
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -114,7 +114,7 @@ class ActionHandlers {
 		ps.controller.handleCustomerTableView.removeIdleCellRowElementsInCustomerView();
 	}
 
-	private void forwardToOnlineManagers(DOPsCommunication.dedAnalyzed dana) throws Exception
+	private void forwardChatInfoToOnlineManagers(DOPsCommunication.dedAnalyzed dana) throws Exception
 	{
 		List<Object> objectList = ps.controller.handleManagersTableView.updateOnlineManagersWithIncomingChatInfo(dana);
 		objectList.stream().forEach(d -> System.out.printf("- transfer DED analyzed [ChatInfo] to online manager : %s\n",  ((DOPsCommunication.ChatInfoObj)((DOPsCommunication.dedAnalyzed)d).getElements()).dest));
@@ -140,19 +140,46 @@ class ActionHandlers {
 	 *
 	 * @param type - "ChatForwardInfoRequest"
 	 * @param dana - Analyzed DED - decompressed and analyzed
-     * @return - String "OK"; not really used
+     * @return - String "OK" or String "WrongType"
      */
-	private String actionHandlerUpdateManagerView(String type, DOPsCommunication.dedAnalyzed dana)
+	private String actionHandlerUpdateManagerViewAndForwardToOnlineMangers(String type, DOPsCommunication.dedAnalyzed dana)
 	{
 		String strResult = "OK";
-		System.out.println("- actionHandlerUpdateManagerView called ");
-		Platform.runLater(() -> {
+		System.out.println("- actionHandlerUpdateManagerViewAndForwardToOnlineMangers called ");
+		if(type.contains("ChatForwardInfoRequest")) {
+			Platform.runLater(() -> {
+				try {
+					addToManagerView(dana);
+					removeIdleElementsFromManagerView();
+					forwardMangerInfoToOnlineManagers(dana);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			});
+		}
+		else {
+			System.out.printf("- ERROR : actionHandlerUpdateManagerViewAndForwardToOnlineMangers retrieved object of wrong type: %s\n ", type);
+			strResult="WrongType";
+		}
 
-			ps.controller.handleManagersTableView.addCellRowElementsToManagersView(createManagersTableRow(dana));
-			ps.controller.handleManagersTableView.removeIdleCellRowElementsInManagersView();
-
-		});
 		return strResult;
+	}
+
+	private void addToManagerView(DOPsCommunication.dedAnalyzed dana)
+	{
+		ps.controller.handleManagersTableView.addCellRowElementsToManagersView(createManagersTableRow(dana));
+	}
+
+	private void removeIdleElementsFromManagerView()
+	{
+		ps.controller.handleManagersTableView.removeIdleCellRowElementsInManagersView();
+	}
+
+	private void forwardMangerInfoToOnlineManagers(DOPsCommunication.dedAnalyzed dana) throws Exception
+	{
+		List<Object> objectList = ps.controller.handleManagersTableView.updateOnlineManagersWithOnlineManagersInfo(dana);
+		objectList.stream().forEach(d -> System.out.printf("- transfer DED analyzed [Manager Info] to all online managers : %s\n",  ((DOPsCommunication.ChatInfoObj)((DOPsCommunication.dedAnalyzed)d).getElements()).dest));
+		objectList.stream().forEach(d -> ps.dopsCommunications.sendToServer(ps.dopsCommunications.createDEDpackage((DOPsCommunication.dedAnalyzed)d)));
 	}
 
 	private ManagerTableEntry createManagersTableRow(DOPsCommunication.dedAnalyzed dana)
