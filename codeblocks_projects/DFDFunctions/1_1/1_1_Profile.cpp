@@ -24,12 +24,12 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/thread.hpp>
-
 #include "md5.h"
 #include "base64.h"
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
-
+//#include <Magick++.h>  // TODO: find a way to setup path for installed magick++ -- build on script linux-install-imagemagick-source.sh
+//using namespace Magick;
 #define BOOST_FILESYSTEM_NO_DEPRECATED
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
@@ -1002,7 +1002,10 @@ bool C1_1_Profile::extractUpdateImageUrl(FetchProfileInfo datastream, std::vecto
             // Wait a moment, so background automatic replication can transfer image
             // INFO: fx. scp the foto to cloudchatmanager machine - it should reside in relative img/<profileid>.jpg - NB! This is necessary since no extracted data is allowed on backend.scanva.com server
             // sudo scp -r img/ vagrant@cloudchatmanager.com:/home/vagrant/.
-            //sleep(1); // wait seconds - does not work, somehow image transfer is too slow, some handshake communication might be necessary
+            sleep(1); // wait seconds - does not work, somehow image transfer is too slow, some handshake communication might be necessary
+                      // TODO: perhaps use API - http://www.imagemagick.org/script/api.php
+                      // http://www.imagemagick.org/Magick++/
+                      // http://www.imagemagick.org/discourse-server/viewtopic.php?t=11662
             bResult = true;
         }
         else
