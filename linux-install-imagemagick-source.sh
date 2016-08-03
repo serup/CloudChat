@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 mkdir -p  ~/GitHub
 cd ~/GitHub
 git clone http://git.imagemagick.org/repos/ImageMagick.git
