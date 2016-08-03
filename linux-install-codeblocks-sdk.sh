@@ -1,4 +1,4 @@
-#!/usr/bin/env bash -l
+#!/usr/bin/env bash 
 # Specify version here.  -- NB! MUST RUN as administrator -- sudo bash ./linux-install-codeblocks-sdk.sh
 CODEBLOCKS_PACKAGE=codeblocks_16.01.tar.gz 
 echo "NB! MUST RUN as administrator -- e.g: sudo bash ./linux-install-codeblocks-sdk.sh "
