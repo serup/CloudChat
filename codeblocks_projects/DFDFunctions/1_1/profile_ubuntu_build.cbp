@@ -84,6 +84,8 @@
 		<Unit filename="base64.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="md5.h" />
+		<Unit filename="resample.hpp" />
+		<Unit filename="sampler.hpp" />
 		<Extensions>
 			<code_completion />
 			<debugger />
