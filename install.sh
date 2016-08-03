@@ -487,10 +487,18 @@ PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 libboost-all* |grep "inst
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install libboost "
   sudo apt-fast install -yq libboost-all-dev 
+  echo "- install missing hpp file"
+  sudo mkdir -p /usr/include/boost/gil/extension/numeric; sudo cp pixel_numeric_operations.hpp /usr/include/boost/gil/extension/numeric/.
+  sudo cp channel_numeric_operations.hpp /usr/include/boost/gil/extension/numeric/.
+  sudo cp affine.hpp /usr/include/boost/gil/extension/numeric/.
   echo " - done."
 else
   echo "- libbost already installed"
-fi
+  echo "- install missing hpp file"
+  sudo mkdir -p /usr/include/boost/gil/extension/numeric; sudo cp pixel_numeric_operations.hpp /usr/include/boost/gil/extension/numeric/.
+  sudo cp channel_numeric_operations.hpp /usr/include/boost/gil/extension/numeric/.
+  sudo cp affine.hpp /usr/include/boost/gil/extension/numeric/.
+ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 virtualbox |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install Virtualbox -- PARAMOUNT DO NOT HAVE SECURE BOOT ENABLED otherwise install of virtualbox will fail"

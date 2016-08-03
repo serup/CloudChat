@@ -30,11 +30,21 @@
 #include <boost/property_tree/ptree.hpp>
 //#include <Magick++.h>  // TODO: find a way to setup path for installed magick++ -- build on script linux-install-imagemagick-source.sh
 //using namespace Magick;
+
+#include <boost/gil/image.hpp>
+#include <boost/gil/typedefs.hpp>
+#include <boost/gil/extension/io/jpeg_io.hpp>
+//#include <boost/gil/extension/numeric/sampler.hpp>  // http://www.boost.org/doc/libs/develop/boost/gil/extension/numeric/sampler.hpp
+//#include <boost/gil/extension/numeric/resample.hpp>  // http://www.boost.org/doc/libs/develop/boost/gil/extension/numeric/resample.hpp
+#include "sampler.hpp"  // http://www.boost.org/doc/libs/develop/boost/gil/extension/numeric/sampler.hpp
+#include "resample.hpp" // http://www.boost.org/doc/libs/develop/boost/gil/extension/numeric/resample.hpp
+
 #define BOOST_FILESYSTEM_NO_DEPRECATED
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 using namespace std;
 using namespace boost;
+using namespace boost::gil;
 
 //////////////////////////////////////////
 // howto compile :
@@ -1006,6 +1016,8 @@ bool C1_1_Profile::extractUpdateImageUrl(FetchProfileInfo datastream, std::vecto
                       // TODO: perhaps use API - http://www.imagemagick.org/script/api.php
                       // http://www.imagemagick.org/Magick++/
                       // http://www.imagemagick.org/discourse-server/viewtopic.php?t=11662
+                      // consider using boost instead :
+                      // http://www.boost.org/doc/libs/1_59_0/libs/gil/example/resize.cpp
             bResult = true;
         }
         else
