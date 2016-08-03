@@ -1018,6 +1018,26 @@ bool C1_1_Profile::extractUpdateImageUrl(FetchProfileInfo datastream, std::vecto
                       // http://www.imagemagick.org/discourse-server/viewtopic.php?t=11662
                       // consider using boost instead :
                       // http://www.boost.org/doc/libs/1_59_0/libs/gil/example/resize.cpp
+
+//+tst - http://www.boost.org/doc/libs/1_59_0/libs/gil/example/resize.cpp
+// hmm did not work causing undefined reference errors during compile
+/*
+    rgb8_image_t img;
+    jpeg_read_image(imageURI,img);
+
+    // test resize_view
+    // Scale the image to 100x100 pixels using bilinear resampling
+    rgb8_image_t square100x100(100,100);
+    resize_view(const_view(img), view(square100x100), bilinear_sampler());
+    jpeg_write_view("out-resize.jpg",const_view(square100x100));
+
+boost::gil::rgba8_image_t image;
+boost::gil::rgba8_image_t newSize(100, 100);
+boost::gil::jpeg_read_and_convert_image(imageURI,image);
+boost::gil::resize_view(const_view(image), view(newSize), boost::gil::bilinear_sampler());
+boost::gil::jpeg_write_view("output.jpg", const_view(newSize), 90);
+*/
+//-tst
             bResult = true;
         }
         else
