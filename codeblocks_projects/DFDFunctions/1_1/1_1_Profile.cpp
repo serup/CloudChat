@@ -989,6 +989,11 @@ bool C1_1_Profile::extractUpdateImageUrl(FetchProfileInfo datastream, std::vecto
     CDatabaseControl CDbCtrl;
     bool bFound = CDbCtrl.fetch_element(record_value,(std::string)"foto", fotoelement);
     if(bFound==true) {
+        //TODO: find a way to squeeze image to less than 15Kb and do it inside this application - current version using outside mogrify and deamon scp transfer is not working well enough,
+        // thus this is disabled until a viable solution can be found -- embedded image will be transfered to client
+        bResult = true;
+
+        /*
         std::string _strfoto(fotoelement.ElementData.begin(),fotoelement.ElementData.end());
 
         boost::system_time const systime=boost::get_system_time();
@@ -1005,6 +1010,7 @@ bool C1_1_Profile::extractUpdateImageUrl(FetchProfileInfo datastream, std::vecto
         std::string filetype = extractBase64ToImageFile(filenamepath, _strfoto);
         if(filetype != "unknown")
         {
+
             std::vector<unsigned char> ElementData;
             std::string imageURI = "img/" + datastream.strProfileID + "_" + sstream.str() + filetype;
             std::copy( imageURI.begin(), imageURI.end(), std::back_inserter(ElementData));
@@ -1019,24 +1025,25 @@ bool C1_1_Profile::extractUpdateImageUrl(FetchProfileInfo datastream, std::vecto
                       // consider using boost instead :
                       // http://www.boost.org/doc/libs/1_59_0/libs/gil/example/resize.cpp
 
-//+tst - http://www.boost.org/doc/libs/1_59_0/libs/gil/example/resize.cpp
-// hmm did not work causing undefined reference errors during compile
-/*
-    rgb8_image_t img;
-    jpeg_read_image(imageURI,img);
+            //+tst - http://www.boost.org/doc/libs/1_59_0/libs/gil/example/resize.cpp
+            // hmm did not work causing undefined reference errors during compile
 
-    // test resize_view
-    // Scale the image to 100x100 pixels using bilinear resampling
-    rgb8_image_t square100x100(100,100);
-    resize_view(const_view(img), view(square100x100), bilinear_sampler());
-    jpeg_write_view("out-resize.jpg",const_view(square100x100));
+                rgb8_image_t img;
+                jpeg_read_image(imageURI,img);
 
-boost::gil::rgba8_image_t image;
-boost::gil::rgba8_image_t newSize(100, 100);
-boost::gil::jpeg_read_and_convert_image(imageURI,image);
-boost::gil::resize_view(const_view(image), view(newSize), boost::gil::bilinear_sampler());
-boost::gil::jpeg_write_view("output.jpg", const_view(newSize), 90);
-*/
+                // test resize_view
+                // Scale the image to 100x100 pixels using bilinear resampling
+                rgb8_image_t square100x100(100,100);
+                resize_view(const_view(img), view(square100x100), bilinear_sampler());
+                jpeg_write_view("out-resize.jpg",const_view(square100x100));
+
+            boost::gil::rgba8_image_t image;
+            boost::gil::rgba8_image_t newSize(100, 100);
+            boost::gil::jpeg_read_and_convert_image(imageURI,image);
+            boost::gil::resize_view(const_view(image), view(newSize), boost::gil::bilinear_sampler());
+            boost::gil::jpeg_write_view("output.jpg", const_view(newSize), 90);
+            //-tst
+
 //-tst
             bResult = true;
         }
@@ -1044,6 +1051,7 @@ boost::gil::jpeg_write_view("output.jpg", const_view(newSize), 90);
         {
             std::cout << "[C1_1_Profile::extractUpdateImageUrl] ERROR: it was not possible to change embedded image to png file url " << "\n";
         }
+        */
     }
     //-
     return bResult;
