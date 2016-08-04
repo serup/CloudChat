@@ -31,6 +31,8 @@
 //#include <Magick++.h>  // TODO: find a way to setup path for installed magick++ -- build on script linux-install-imagemagick-source.sh
 //using namespace Magick;
 
+///TODO: setup jpeglib.h  library dependencies before using gil
+/*
 #include <boost/gil/image.hpp>
 #include <boost/gil/typedefs.hpp>
 #include <boost/gil/extension/io/jpeg_io.hpp>
@@ -38,13 +40,13 @@
 //#include <boost/gil/extension/numeric/resample.hpp>  // http://www.boost.org/doc/libs/develop/boost/gil/extension/numeric/resample.hpp
 #include "sampler.hpp"  // http://www.boost.org/doc/libs/develop/boost/gil/extension/numeric/sampler.hpp
 #include "resample.hpp" // http://www.boost.org/doc/libs/develop/boost/gil/extension/numeric/resample.hpp
-
+using namespace boost::gil;
+*/
 #define BOOST_FILESYSTEM_NO_DEPRECATED
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 using namespace std;
 using namespace boost;
-using namespace boost::gil;
 
 //////////////////////////////////////////
 // howto compile :
