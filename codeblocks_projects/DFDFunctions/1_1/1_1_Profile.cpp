@@ -957,6 +957,13 @@ std::string C1_1_Profile::requestProfileFromHadoop(std::string elementOfInterest
 {
     std::string result="<not_found>";
 
+    ///TODO: investigate if Apache Cassandra [https://en.wikipedia.org/wiki/Apache_Cassandra] C++ [https://github.com/datastax/cpp-driver] driver can be used to access Hadoop cluster, or if it should be a Java application !?
+    ///TODO: investigate if DOPs flatfile blocks datamodel can be utilized in a tunable consistency data model in Cassandra, thus making it possible to faster access elements of DOPs realm file records
+    /// Cassandra info:
+    ///  Cassandra is essentially a hybrid between a key-value and a column-oriented (or tabular) database management system. Its data model is a partitioned row store with tunable consistency.
+    ///  Rows are organized into tables; the first component of a table's primary key is the partition key; within a partition, rows are clustered by the remaining columns of the key.
+    ///  Other columns may be indexed separately from the primary key.
+    ///  Tables may be created, dropped, and altered at run-time without blocking updates and queries.
     if(isHadoopJavaServiceAppOnline())
     {
 
@@ -1546,112 +1553,6 @@ bool C1_1_Profile::fn1164_WriteResponseInLogFile(WriteLogRequest datastream, Wri
 
     return bResult;
 }
-
-//DEPRECATED -- make it use databasecontrol class
-/** \brief Read Profile DFD 1.1.8.1
- *
- * \param
- * \param
- * \return
- *
- */
-//bool C1_1_Profile::fn1181_ReadProfileFile(FetchProfileInfo &datastream)
-//{
-//    bool bResult=false;
-//
-//    return bResult;
-//
-//    /*
-//       std::string strFilepath = "../../../../DataDictionary/Database/" + datastream.strProfileID + "_" + datastream.strProfileName + ".xml";
-//       if ( !boost::filesystem::exists( strFilepath ) )
-//       {
-//           //std::cout << "Can't find my file!" << std::endl;
-//           bResult=false;
-//       }
-//       else
-//       {
-//           /// Read data from file
-//            std::vector<Elements> DEDElements;
-//           ProfileRecord ProfileRecordResult;
-//           {
-//               CDatabaseControl CDbCtrl;
-//               std::ifstream is (strFilepath);
-//               //bResult = CDbCtrl.ReadXmlFile(is,ProfileRecordResult,"Profile");
-//               bResult = CDbCtrl.ReadEntityFile((std::string)"Profile",(std::string)datastream.strProfileName,DEDElements);
-//
-//               //assert(bResult == true);
-//           }
-//           if(bResult==false)
-//           {
-//               std::cout << "[fn1181_ReadProfileFile] ERROR : File can not be read : " << strFilepath << std::endl;    /// no need to go further, something is wrong with the file
-//               return bResult;
-//           }
-//
-//           bResult=false;
-//           BOOST_FOREACH( ProfileRecordEntry f, ProfileRecordResult )
-//           {
-//               if(f.DataSize > (unsigned int) 0)
-//               {
-//                   // take the hex converted data and unhex it before DED will decode it
-//                   unsigned int sizeofCompressedDataInHex = (unsigned int)f.DataSize;
-//                   unsigned char* data_in_unhexed_buf = (unsigned char*) malloc (4*sizeofCompressedDataInHex + 1);
-//                   ZeroMemory(data_in_unhexed_buf,4*sizeofCompressedDataInHex+1); // make sure no garbage is inside the newly allocated space
-//                   const std::vector<unsigned char> iterator_data_in_unhexed_buf(&f.Data[0],&f.Data[sizeofCompressedDataInHex]);
-//                   boost::algorithm::unhex(iterator_data_in_unhexed_buf.begin(),iterator_data_in_unhexed_buf.end(), data_in_unhexed_buf);// convert the hex array to an array containing byte values
-//
-//                   // fetch the data area and unpack it with DED to check it
-//                   DED_PUT_DATA_IN_DECODER(decoder_ptr,data_in_unhexed_buf,sizeofCompressedDataInHex);
-//                   assert(decoder_ptr != 0);
-//
-//                   bool bDecoded=false;
-//
-//                   // decode data ...
-//                   if( DED_GET_STRUCT_START( decoder_ptr, "record" ) &&
-//                           DED_GET_STDSTRING	( decoder_ptr, "ProfileID", datastream.strProfileID ) &&
-//                           DED_GET_STDSTRING	( decoder_ptr, "ProfileName", datastream.strProfileName ) &&
-//                           DED_GET_STDSTRING	( decoder_ptr, "protocolTypeID", datastream.strProtocolTypeID) &&
-//                           DED_GET_STDSTRING	( decoder_ptr, "sizeofProfileData", datastream.strSizeofProfileData ) &&
-//                           DED_GET_STDSTRING	( decoder_ptr, "Profile_chunk_id", datastream.strProfile_chunk_id ) &&
-//                           DED_GET_STDSTRING	( decoder_ptr, "organizationID", datastream.strOrganizationID ) &&
-//                           DED_GET_STRUCT_END( decoder_ptr, "record" ))
-//                   {
-//                       bDecoded=true;
-//                       //TODO: read the toast data and put it on datastream -- use ReadTOASTXmlFile
-//                       //TODO: ProfileToastData structure is focused wrong -- CHANGE it, it should not know about elements - it should be neutral!!!
-//                       ProfileToastData ProfileTOASTDataResult;
-//                       {
-//                           //    std::ifstream is ("../../../../DataDictionary/Database/TOASTs/22980574.xml");
-//                           std::string strTOASTFilepath = "../../../../DataDictionary/Database/TOASTs/" + datastream.strProfile_chunk_id + ".xml";
-//                           if ( boost::filesystem::exists( strTOASTFilepath ) )
-//                           {
-//                               std::ifstream istoast (strTOASTFilepath);
-//                               bDecoded = ReadTOASTXmlFile(istoast,ProfileTOASTDataResult);
-//                               Elements element;
-//                               BOOST_FOREACH( Elements f, ProfileTOASTDataResult.vecElements )
-//                               {
-//                                   element.strElementID = f.strElementID;
-//                                   element.ElementData = f.ElementData;
-//                                   datastream.vecElements.push_back(element);
-//                               }
-//                           }
-//                           else
-//                               std::cout << "[DFD1.1.1: fn1181_ReadProfileFile ] Can't find TOAST file!" << std::endl;
-//                       }
-//                   }
-//                   else
-//                   {
-//                       bDecoded=false;
-//                   }
-//                   bResult = bDecoded;
-//    //                delete[] data_in_unhexed_buf;
-//                   free(data_in_unhexed_buf);
-//               }
-//           }
-//       }
-//
-//       return bResult;
-//    */
-//}
 
 
 //bool C1_1_Profile::fn111x2_CheckForConflicts(CreateNewProfileInfo datastream)
