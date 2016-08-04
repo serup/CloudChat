@@ -172,6 +172,16 @@ else
   echo "- eclipse dependencies already installed"
 fi
 
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 libjpeg* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install jpeg dependencies on ubuntu "
+  sudo apt-fast install -yq libjpeg-dev 
+  echo " - done."
+else
+  echo "- libjpeg-dev dependencies already installed"
+fi
+
+
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 scene* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install javaFX Scene builder "
