@@ -14,46 +14,18 @@
         <link rel="stylesheet" href="css/bootstrap.min.css" >
 	<link href="resource://gre/res/TopLevelImageDocument.css" rel="stylesheet">
         
-        <!-- scanva version 14-10-2014 -->
-        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-        <!-- <script src="http://code.jquery.com/jquery.js"></script> -->
+        <!-- scanva version 5-08-2016  -->
+        <!-- TODO: refactor for performance - see following examples https://www.smashingmagazine.com/2013/04/build-fast-loading-mobile-website/ -->
+
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>  <!-- needed otherwise ReferenceError: $ is not defined -->
-        <!--	<script src="js/jquery.js"></script> --> <!-- IMPORTANT it must be version jQuery v1.7.2 jquery.com -->
         <script src="js/jquery-ui-1.10.4.js"></script>
-        <!--	<script src="js/move.min.js"></script> -->
         <script src="js/jquery-ui-1.10.4.min.js"></script>
-        <!-- <script type="text/javascript" src="../../liquid/liquid082.js"></script> -->  <!-- security reason ask for http ; http://odiseo.net/front-end/simple-solution-for-local-cross-origin-requests -->
-        <!-- <script type="text/javascript" src="../../liquid/mod/data.js"></script> --> <!-- THIS LINE IS ONLY FOR DEBUG jsl.require("Data") -- should be used in RELEASE version for security reasons -->
-        <!-- <script type="text/javascript" src="../../liquid/lib/lang.js"></script> --> <!-- THIS LINE IS ONLY FOR DEBUG jsl.require("Data") -- should be used in RELEASE version for security reasons -->
         <script src="../../DataEncoderDecoder/compression-lib/compression.js"></script>
         <script src="../../DataEncoderDecoder/dataencoderdecoder.js"></script>
         <script src="../../socketserverAPI/socketserverAPI.js"></script>
         <script src="js/mvc_login.js"></script> <!-- Model View Control concept used to handle client UI interaction with data -->
         <script src="js/mvc_chat.js"></script> <!-- Model View Control concept used to handle client UI interaction with data -->
 
-        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-        <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-        <![endif]-->
-
-        <!-- disabled[uid:1234321] due to poor performance, however it did make it possible for avoiding the scrolling bounce on iphone -- TODO: find a better way - suggestion, perhaps detect boundary area and only then preventDefault 
-        <script>
-            var xStart, yStart = 0;
-            document.addEventListener('touchstart',function(e) {
-                xStart = e.touches[0].screenX;
-                yStart = e.touches[0].screenY;
-            });
-            document.addEventListener('touchmove',function(e) {
-                var xMovement = Math.abs(e.touches[0].screenX - xStart);
-                var yMovement = Math.abs(e.touches[0].screenY - yStart);
-                if((yMovement * 3) > xMovement) {
-                    e.preventDefault();
-                }
-            });
-        </script>
-        -->
     </head>
 
     <body onload="init();" >
@@ -158,7 +130,6 @@
             </div>
             <div class="container" id="page_4" style=" display:none;"><DIV class="page_4 box" style="min-height:500px"><!-- min-height for touch event area - NB! find a better way to set touch area to fullscreen -->
                     <a id="update_context"  style=" z-index:100;text-align:center; width: 100%;position: fixed; margin-top: 200px; text-align:center; clear:both; color:Orange; font-family:Lucida Sans Unicode; font-size: 44px;"><i id="update_animate_context" class="glyphicon glyphicon-refresh"></i></a>
-                    <!-- <p style="text-align:center;" >Page 4 - Category</p> --->
                     <div class="container"><h1 id="homepagestitle" style="position: fixed;  z-index:100;color:Orange; text-align:left; font-family:Lucida Sans Unicode">Homepages</h1></div>
                     <div class="col-md-6" style="margin-top: 70px;clear:both;width:100%">    
                         <div class="panel-group" id="accordion" style="margin-top: 38px; ">
@@ -194,9 +165,8 @@
                  <a id="update"  style="text-align:center; width: 100%;position: fixed; margin-top: 200px; text-align:center; clear:both; color:Orange; font-family:Lucida Sans Unicode; font-size: 44px;"><i id="update_animate_chat" class="glyphicon glyphicon-refresh"></i></a>
                     <div class="container"><h1 id="sessiontitle" style="position: fixed;  z-index:100;clear:both;color:Orange; text-align:left; font-family:Lucida Sans Unicode">Chat</h1><h4 id="homepageandusertitle" style="position: fixed; margin-top: 50px; clear:both;color:black; text-align:left; font-family:Lucida Sans Unicode;z-index:100"></h4></div>
                     <div class="container" id="chatlist" style="margin-top: 0px;margin-bottom: 0px;">
-                       <div id="chatarea" style="clear:both; position: fixed; top: 40px; max-height:500px;left:0px; width: 100%; display: inline-block; overflow:auto"> <!-- TODO: when resize then change max-height to window height - 80px -- width is working automatic, its the vertical part that is the problem -->
-                <!--         <div id="chatarea" style="left:0px; width: 100%; display: inline-block; overflow:auto">   --><!-- TODO: when resize then change max-height to window height - 80px -- width is working automatic, its the vertical part that is the problem -->
-                            <ul class="chat" id="topoflist" style="height:68px;"></ul> 
+                       <div id="chatarea" style="clear:both; position: fixed; top: 40px; max-height:500px;left:0px; width: 100%; display: inline-block; overflow:auto"> <!-- TODO: when resize then change max-height to window height - 80px  width is working automatic, its the vertical part that is the problem -->
+                           <ul class="chat" id="topoflist" style="height:68px;"></ul> 
                             <ul class="chat" id="ullist" style="text-align:left; clear:both; margin-left: 4px; margin-right: 4px;"></ul> 
                             <ul class="chat" id="endoflist" style="height:250px;"></ul> 
                         </div>
@@ -215,7 +185,6 @@
         </DIV> <!-- main_body -->
         <div class="clear"></div>
         <div id="navigationbar" style="position: fixed; bottom: 0; margin-bottom: 0px; background: lightgray; width: 100%; height: 64px; z-index:2;">
-            <!-- <h1 style="margin-left:2%; margin-right:2%; margin-bottom:50%; color:black; transition:width 2s; "> -->
             <h1 style="margin-left:2%; margin-right:2%; color:black; transition:width 2s; ">
                 <table style="width: 100%">
                     <tr>
@@ -277,7 +246,6 @@
                                         <button id="btnJoinNow" data-dismiss="modal" type="submit" class="btn-lg btn-primary" >Join Now</button>
                                     </center>
 			        </form>
-				<!-- <center ><h1 style="color:Orange; font-family:Lucida Sans Unicode">SCAN<b style="color:black">VA</b></h1></center> -->
                                 <div id="footer" style="clear:both;text-align:center;">
 					Copyright SCAN<b >VA</b> ApS 2014</div>
                             </div>
@@ -318,7 +286,6 @@
                                         </label>
                                     </div>
                                 </div>
-<!--                                <button type="submit" class="btn-lg btn-primary" onclick="javascript:createprofile(1);">Sign Up!</button> -->
                                 <button id="btnSignUp" type="submit" class="btn-lg btn-primary" >Sign Up!</button>
                                 <button data-dismiss="modal" type="submit" class="btn-lg btn-default" data-toggle="modal" data-target="#loginModal" >No Thanks</button>
                                 <div id="footer" style="clear:both;text-align:center;">
@@ -411,14 +378,14 @@
                                     <div>
                                         <br>
                                         <ul id="profilephotofetch"></ul>
-<script>
-if( isMobile.any() ){
-    $('#profilephotofetch').html('<button class="btn btn-primary btn-lg" onclick="settings_controller_this.addPhoto(\'upload\')"> Fetch image <span class="glyphicon glyphicon-camera"></span></button>');
-}
-else {
-    $('#profilephotofetch').html('<button class="btn btn-primary btn-lg" onclick="settings_controller_this.addPhoto(\'upload\')"> Upload File <span class="glyphicon glyphicon-folder-open"></span></button><br><b>Or</b><br><button class="btn btn-primary btn-lg" onclick="settings_controller_this.addPhoto(\'capture\')">Create Snapshot <span class="glyphicon glyphicon-camera"></span></button>');
-}
-</script>
+					<script>
+						if( isMobile.any() ){
+    							$('#profilephotofetch').html('<button class="btn btn-primary btn-lg" onclick="settings_controller_this.addPhoto(\'upload\')"> Fetch image <span class="glyphicon glyphicon-camera"></span></button>');
+						}
+						else {
+    							$('#profilephotofetch').html('<button class="btn btn-primary btn-lg" onclick="settings_controller_this.addPhoto(\'upload\')"> Upload File <span class="glyphicon glyphicon-folder-open"></span></button><br><b>Or</b><br><button class="btn btn-primary btn-lg" onclick="settings_controller_this.addPhoto(\'capture\')">Create Snapshot <span class="glyphicon glyphicon-camera"></span></button>');
+						}
+					</script>
 
                                     </div>
                                 </div>
@@ -436,8 +403,7 @@ else {
                                 <div id="capturePhoto" style="display: none;">
                                     <h3 style="text-align: left;">Smile!</h3>
 
-				    <div id="camflow"> <!-- BUG camera NOT working on desktop  fix it look at : http://www.html5rocks.com/en/tutorials/getusermedia/intro/ -->
-                                        <!-- Camera snapshot foto booth -->
+				    <div id="camflow">  <!-- Camera snapshot foto booth -->
                                         <div id="camflow_snap" style="display:inline">
                                             <video class="img-thumbnail" id="video" width="180" height="220" autoplay=""></video>
                                             <br>
@@ -445,7 +411,6 @@ else {
                                                 Snap Photo <span class="glyphicon glyphicon glyphicon-flag"></span>
                                             </button>
 
-                                            <!--    <p><button id="capture-button">Capture video</button> <button id="stop-button">Stop</button></p> -->
                                         </div>
                                         <div id="camflow_validate" style="display:inline">
                                             <canvas class="img-thumbnail" id="canvas" width="180" height="220"></canvas>
@@ -453,7 +418,6 @@ else {
                                             <!-- image upload -->
                                             <br>
 
-                                            <!-- <button class="btn btn-success btn-lg" onclick="uploadEx()"> -->
                                             <button id="camflow_validate_upload" class="btn btn-success btn-lg" >
                                                 Upload <span class="glyphicon glyphicon glyphicon-ok"></span>
                                             </button>
