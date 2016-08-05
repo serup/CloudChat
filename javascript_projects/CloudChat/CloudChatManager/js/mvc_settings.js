@@ -222,50 +222,52 @@ var imgUrl;
                   + '<span id="droppedimage_icon" class="glyphicon glyphicon-plus-sign" style="font-size: 20px; opacity: 0.8; color:whitesmoke ; position: absolute; left:20px; top: 20px;z-index: 0;" onclick="settings_view_this.ProfileImageClicked.notify('+ "'USER'" +');"></span>';
             }
             else {
-                _htmlfoto = '<output style="padding-top:0px" id="placeholderProfileFoto"><span><img id="profileimg" style="position: absolute;margin-top: 0px; height: 100%; width: 100%" onclick="settings_view_this.ProfileImageClicked.notify('+ "'USER'" +');" src="'+ strfoto +'" title="Avatar"></span></output>'
+                _htmlfoto = '<output style="padding-top:0px" id="placeholderProfileFoto"><span><img id="profileimg" style="position: absolute;margin-bottom: 0px; margin-top: 0px; height: 100%; width: 100%" onclick="settings_view_this.ProfileImageClicked.notify('+ "'USER'" +');" src="'+ strfoto +'" title="Avatar"></span></output>'
                 + '<span id="droppedimage_icon" class="glyphicon glyphicon-plus-sign" style="font-size: 20px; opacity: 0.8; color:whitesmoke ; position: absolute; left:20px; top: 20px;z-index: 0;" onclick="settings_view_this.ProfileImageClicked.notify('+ "'USER'" +');"></span>';
             }
 
             ulsettings.append($('<div id="ProfilePage" >'
                                 + '<div id="Photo" class="imageWrapper" style="position: relative; width: 180px; height: 225px;margin-top:0px;border: 2px solid;">'
-                                + _htmlfoto
                                 + '</div>'
-                                + '<table style="width: 100%;  margin-bottom: 80px;">'
-                                + '  <tr>'
-                                + '     <td ><h3 style="margin-top: 0px; margin-right: 0px; color:darkgray;"><i class="glyphicon glyphicon-user" style="font-size: 18px"></i></h3></td><td><b>UserName : </b><span id="_username" onclick="settings_view_this.SettingsElementClicked.notify('+ "'_username'" +');">'+strusername+'</span></td>'
+                                + '<table class="table table-striped table-bordered" style="width: 100%;  margin-bottom: 80px;">'
+                                + '  <tr>' 
+                                + _htmlfoto
                                 + '  </tr>'
                                 + '  <tr>'
-                                + '     <td ><h3 style="margin-top: 0px; margin-right: 0px; color:darkgray;"><i class="glyphicon glyphicon-lock" style="font-size: 18px"></i></h3></td><td><b>Password : </b><span id="_username" onclick="settings_view_this.SettingsElementClicked.notify('+ "'_username'" +');">'+strpassword+'</span></td>'
+                                + '     <td ><h3 style="margin-bottom: 0px; margin-top: 0px; margin-right: 0px; color:darkgray;"><i class="glyphicon glyphicon-user" style="font-size: 18px"></i></h3></td><td><b>UserName : </b><span id="_username" onclick="settings_view_this.SettingsElementClicked.notify('+ "'_username'" +');">'+strusername+'</span></td>'
+                                + '  </tr>'
+                                + '  <tr>'
+                                + '     <td ><h3 style="margin-bottom: 0px; margin-top: 0px; margin-right: 0px; color:darkgray;"><i class="glyphicon glyphicon-lock" style="font-size: 18px"></i></h3></td><td><b>Password : </b><span id="_username" onclick="settings_view_this.SettingsElementClicked.notify('+ "'_username'" +');">'+strpassword+'</span></td>'
                                 + '  </tr>'
 				+ '  <tr>'
-                                + '     <td><h3 style="margin-top: 0px; margin-right: 0px; color:darkgray;"><i style="margin-top: 0px; font-size: 31px;" class="fa fa-male"></i></h3></td><td><b>Name : </b><span id="fullName_">'+ strfirstname + " " + strlastname +'</span></td>'
+                                + '     <td><h3 style="margin-bottom: 0px; margin-top: 0px; margin-right: 0px; color:darkgray;"><i style="margin-bottom: 0px; margin-top: 0px; font-size: 31px;" class="fa fa-male"></i></h3></td><td><b>Name : </b><span id="fullName_">'+ strfirstname + " " + strlastname +'</span></td>'
                                 + '  </tr>'
                                 + '  <tr>'
-                                + '     <td><h3 style="margin-top: 0px; margin-right: 0px; color:darkgray;"><i class="glyphicon glyphicon-home" style="font-size: 18px"></i></h3></td><td><b>Address : </b><span id="userAddress">'+ strstreetname  + " " +  strstreetno + " , " + strpostalcode  + " " +  strcity +'</span></td>'
+                                + '     <td><h3 style="margin-bottom: 0px; margin-top: 0px; margin-right: 0px; color:darkgray;"><i class="glyphicon glyphicon-home" style="font-size: 18px"></i></h3></td><td><b>Address : </b><span id="userAddress">'+ strstreetname  + " " +  strstreetno + " , " + strpostalcode  + " " +  strcity +'</span></td>'
                                 + '  </tr>'
                                 + '  <tr>'
-                                + '     <td><h3 style="margin-top: 0px; margin-right: 0px; color:darkgray;"><i class="glyphicon glyphicon-flag" style="font-size: 18px"></i></h3></td><td><b>Nationality : </b><span id="userNationality">'+ strcountry  + " (" + strstate + ")" +'</span></td>'
+                                + '     <td><h3 style="margin-bottom: 0px; margin-top: 0px; margin-right: 0px; color:darkgray;"><i class="glyphicon glyphicon-flag" style="font-size: 18px"></i></h3></td><td><b>Nationality : </b><span id="userNationality">'+ strcountry  + " (" + strstate + ")" +'</span></td>'
                                 + '  </tr>'
                                 + '  <tr>'
-                                + '     <td><h3 style="margin-top: 0px; margin-right: 0px; color:darkgray;"><i class="glyphicon glyphicon-earphone" style="font-size: 18px"></i></h3></td><td><b>Phone : </b><span id="userPrimaryPhone">'+ strmobilephone +'</span></td>'
+                                + '     <td><h3 style="margin-bottom: 0px; margin-top: 0px; margin-right: 0px; color:darkgray;"><i class="glyphicon glyphicon-earphone" style="font-size: 18px"></i></h3></td><td><b>Phone : </b><span id="userPrimaryPhone">'+ strmobilephone +'</span></td>'
                                 + '  </tr>'
                                 + '  <tr>'
-                                + '     <td><h3 style="margin-top: 0px; margin-right: 0px; color:darkgray;"><i class="glyphicon glyphicon-comment" style="font-size: 18px"></i></h3></td><td><b>Note: </b><span id="userAbout">'+ strabout +'</span></td>'
+                                + '     <td><h3 style="margin-bottom: 0px; margin-top: 0px; margin-right: 0px; color:darkgray;"><i class="glyphicon glyphicon-comment" style="font-size: 18px"></i></h3></td><td><b>Note: </b><span id="userAbout">'+ strabout +'</span></td>'
                                 + '  </tr>'
                                 + '  <tr>'
-                                + '     <td><h3 style="margin-top: 0px; margin-right: 0px; color:darkgray;"><i>@</i></h3></td><td><b>Email : </b><span id="userEmail">'+ stremail +'</span></td>'
+                                + '     <td><h3 style="margin-bottom: 0px; margin-top: 0px; margin-right: 0px; color:darkgray;"><i>@</i></h3></td><td><b>Email : </b><span id="userEmail">'+ stremail +'</span></td>'
                                 + '  </tr>'
                                 + '  <tr>'
-                                + '    <td><h3 style="margin-top: 0px; margin-right: 0px; color:darkgray;"><i class="glyphicon glyphicon-info-sign" style="font-size: 18px"></i></h3></td><td><b>About : </b><span id="userInfo"></span></td>'
+                                + '    <td><h3 style="margin-bottom: 0px; margin-top: 0px; margin-right: 0px; color:darkgray;"><i class="glyphicon glyphicon-info-sign" style="font-size: 18px"></i></h3></td><td><b>About : </b><span id="userInfo"></span></td>'
                                 + '  </tr>'
                                 + '  <tr>'
-                                + '    <td><h3 style="margin-top: 0px; margin-right: 0px; color:darkgray;"><i class="glyphicon glyphicon-barcode" style="font-size: 18px"></i></h3></td><td><b>ID : </b>'+ UniqueIdFromSettings.small() +'<span id="userID"></span></td>'
+                                + '    <td><h3 style="margin-bottom: 0px; margin-top: 0px; margin-right: 0px; color:darkgray;"><i class="glyphicon glyphicon-barcode" style="font-size: 18px"></i></h3></td><td><b>ID : </b>'+ UniqueIdFromSettings.small() +'<span id="userID"></span></td>'
                                 + '  </tr>'
                                 + '  <tr>'
-                                + '    <td><h3 style="margin-top: 0px; margin-right: 0px; color:darkgray;"><i class="glyphicon glyphicon-time" style="font-size: 18px"></i></h3></td><td><b>Subscription Expires : </b><span id="userCreationDate"></span></td>'
+                                + '    <td><h3 style="margin-bottom: 0px; margin-top: 0px; margin-right: 0px; color:darkgray;"><i class="glyphicon glyphicon-time" style="font-size: 18px"></i></h3></td><td><b>Subscription Expires : </b><span id="userCreationDate"></span></td>'
                                 + '  </tr>'
                                 + '  <tr>'
-                                + '    <td><h3 style="margin-top: 0px; margin-right: 0px; color:darkgray;"><i class="glyphicon glyphicon-barcode" style="font-size: 18px"></i></h3></td><td><b>Supervisor ID : </b>'+ strsupervisor.small() +'<span id="supervisor"></span></td>'
+                                + '    <td><h3 style="margin-bottom: 0px; margin-top: 0px; margin-right: 0px; color:darkgray;"><i class="glyphicon glyphicon-barcode" style="font-size: 18px"></i></h3></td><td><b>Supervisor ID : </b>'+ strsupervisor.small() +'<span id="supervisor"></span></td>'
                                 + '  </tr>'
                                 + '</table>'
                                 + '</div>'));
@@ -394,7 +396,7 @@ var imgUrl;
                     imgUrl = canvas.toDataURL();
                     // Render thumbnail.
                     var span2 = document.createElement('span');
-                    span2.innerHTML = ['<img id="profileimg" style="position: absolute;margin-top: 0px; height: 100%; width: 100%" onclick="settings_view_this.ProfileImageClicked.notify(' + "'USER'" + ');" src="', imgUrl,
+                    span2.innerHTML = ['<img id="profileimg" style="position: absolute;margin-bottom: 0px; margin-top: 0px; height: 100%; width: 100%" onclick="settings_view_this.ProfileImageClicked.notify(' + "'USER'" + ');" src="', imgUrl,
                     '" title="profile foto"/>'].join('');
                     document.getElementById('placeholderProfileFoto').innerHTML = "";
                     document.getElementById('placeholderProfileFoto').insertBefore(span2, null);
@@ -482,7 +484,7 @@ var imgUrl;
 
         				    // Render thumbnail.
 	        			    var span2 = document.createElement('span');
-		        		    span2.innerHTML = ['<img id="profileimg" style="position: absolute;margin-top: 0px; height: 100%; width: 100%" onclick="settings_view_this.ProfileImageClicked.notify(' + "'USER'" + ');" src="', e.target.result,
+		        		    span2.innerHTML = ['<img id="profileimg" style="position: absolute;margin-bottom: 0px; margin-top: 0px; height: 100%; width: 100%" onclick="settings_view_this.ProfileImageClicked.notify(' + "'USER'" + ');" src="', e.target.result,
 				            '" title="', escape(theFile.name), '"/>'].join('');
 				            document.getElementById('placeholderProfileFoto').innerHTML = "";
 				            document.getElementById('placeholderProfileFoto').insertBefore(span2, null);
