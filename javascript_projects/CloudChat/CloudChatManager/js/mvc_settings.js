@@ -265,7 +265,7 @@ var imgUrl;
                                 + '    <td><h3 style="margin-top: 0px; margin-right: 0px; color:darkgray;"><i class="glyphicon glyphicon-time" style="font-size: 18px"></i></h3></td><td><b>Subscription Expires : </b><span id="userCreationDate"></span></td>'
                                 + '  </tr>'
                                 + '  <tr>'
-                                + '    <td><h3 style="margin-top: 0px; margin-right: 0px; color:darkgray;"><i class="glyphicon glyphicon-barcode" style="font-size: 18px"></i></h3></td><td><b>ID : </b>'+ strsupervisor.small() +'<span id="supervisor"></span></td>'
+                                + '    <td><h3 style="margin-top: 0px; margin-right: 0px; color:darkgray;"><i class="glyphicon glyphicon-barcode" style="font-size: 18px"></i></h3></td><td><b>Supervisor ID : </b>'+ strsupervisor.small() +'<span id="supervisor"></span></td>'
                                 + '  </tr>'
                                 + '</table>'
                                 + '</div>'));
