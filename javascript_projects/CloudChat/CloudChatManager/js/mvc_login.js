@@ -90,6 +90,7 @@ var loggedInAndReady=false; // used when reconnect with profile uniqueId
                 _this.bServerLogIn = true;
                 state.loggedin = true;
                 _this.serverLogedIn.notify();
+                _this.serverLogedInAndReady.notify();
                 if(loggedInAndReady === true) {
                     _this.serverLogedInAndReady.notify();
                     loggedInAndReady = false; // reset to prepare for another connect
