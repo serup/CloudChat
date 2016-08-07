@@ -228,7 +228,7 @@ var imgUrl;
 
             ulsettings.append($('<div id="ProfilePage" >'
                                 + '</div>'
-                                + '<table class="table table-striped table-bordered" style="width: 100%;  margin-bottom: 80px;">'
+                                + '<table class="table table-striped table-bordered table-condensed" style="width: 100%;  margin-bottom: 80px; font-size: 12px; margin-top: 3px">'
                                 + '  <tr>' 
                                 + '<div id="Photo" class="imageWrapper" style="position: relative; width: 180px; height: 225px;margin-top:0px;border: 2px solid;">'
                                 + _htmlfoto
