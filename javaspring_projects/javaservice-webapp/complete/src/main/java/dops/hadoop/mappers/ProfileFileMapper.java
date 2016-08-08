@@ -193,13 +193,7 @@ public class ProfileFileMapper extends Mapper<LongWritable, Text, Text, Text>{
                                         Node nNode2 = nList2.item(temp2);
                                         if (nNode2.getNodeType() == Node.ELEMENT_NODE) {
                                             Element eElement = (Element) nNode2;
-                                            DataBaseControl.DatabaseEntityRecordEntry record = dbctrl.createEntityRecordEntry();
-                                            record.setTransGUID(eElement.getElementsByTagName("TransGUID").item(0).getTextContent());
-                                            record.setProtocol(eElement.getElementsByTagName("Protocol").item(0).getTextContent());
-                                            record.setProtocolVersion(eElement.getElementsByTagName("ProtocolVersion").item(0).getTextContent());
-                                            record.setDataSize(Integer.parseInt(eElement.getElementsByTagName("DataSize").item(0).getTextContent()));
-                                            record.setData(eElement.getElementsByTagName("Data").item(0).getTextContent());
-                                            record.setDataMD5(eElement.getElementsByTagName("DataMD5").item(0).getTextContent());
+                                            DataBaseControl.DatabaseEntityRecordEntry record = createRecordEntry(eElement);
 
                                             String md5 = dbctrl.CalculateMD5CheckSum(record.getData().getBytes());
                                             if (!md5.equalsIgnoreCase(record.getDataMD5()))
@@ -280,6 +274,18 @@ public class ProfileFileMapper extends Mapper<LongWritable, Text, Text, Text>{
             e.printStackTrace();
         }
 
+    }
+
+    private DataBaseControl.DatabaseEntityRecordEntry createRecordEntry(Element eElement)
+    {
+        DataBaseControl.DatabaseEntityRecordEntry record = dbctrl.createEntityRecordEntry();
+        record.setTransGUID(eElement.getElementsByTagName("TransGUID").item(0).getTextContent());
+        record.setProtocol(eElement.getElementsByTagName("Protocol").item(0).getTextContent());
+        record.setProtocolVersion(eElement.getElementsByTagName("ProtocolVersion").item(0).getTextContent());
+        record.setDataSize(Integer.parseInt(eElement.getElementsByTagName("DataSize").item(0).getTextContent()));
+        record.setData(eElement.getElementsByTagName("Data").item(0).getTextContent());
+        record.setDataMD5(eElement.getElementsByTagName("DataMD5").item(0).getTextContent());
+        return record;
     }
 
     public static String constructEntityXml(Text id, Text data) {
