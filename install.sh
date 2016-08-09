@@ -22,6 +22,9 @@ alias ls='ls --color=auto'
 # nb! use '\'' for each '  inside an alias
 alias ks='function _blabla(){ kill "$(ps -aux|grep $1|head -1|awk '\''{print $2}'\'')"; }; _blabla'
 
+echo "Setup ULIMIT -- IMPORTANT - this is needed to avoid too many handles or processes, which will freeze system"
+bash setupUlimit.sh
+
 function set-title() {
   if [[ -z "$ORIG" ]]; then
     ORIG=$PS1
@@ -497,17 +500,17 @@ PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 libboost-all* |grep "inst
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install libboost "
   sudo apt-fast install -yq libboost-all-dev 
-  echo "- install missing hpp file"
-  sudo mkdir -p /usr/include/boost/gil/extension/numeric; sudo cp pixel_numeric_operations.hpp /usr/include/boost/gil/extension/numeric/.
-  sudo cp channel_numeric_operations.hpp /usr/include/boost/gil/extension/numeric/.
-  sudo cp affine.hpp /usr/include/boost/gil/extension/numeric/.
-  echo " - done."
+  echo "- install missing hpp file -- ignored until decided weather or not to use gil extension in backend"
+  #sudo mkdir -p /usr/include/boost/gil/extension/numeric; sudo cp pixel_numeric_operations.hpp /usr/include/boost/gil/extension/numeric/.
+  #sudo cp channel_numeric_operations.hpp /usr/include/boost/gil/extension/numeric/.
+  #sudo cp affine.hpp /usr/include/boost/gil/extension/numeric/.
+  #echo " - done."
 else
   echo "- libbost already installed"
   echo "- install missing hpp file"
-  sudo mkdir -p /usr/include/boost/gil/extension/numeric; sudo cp pixel_numeric_operations.hpp /usr/include/boost/gil/extension/numeric/.
-  sudo cp channel_numeric_operations.hpp /usr/include/boost/gil/extension/numeric/.
-  sudo cp affine.hpp /usr/include/boost/gil/extension/numeric/.
+  #sudo mkdir -p /usr/include/boost/gil/extension/numeric; sudo cp pixel_numeric_operations.hpp /usr/include/boost/gil/extension/numeric/.
+  #sudo cp channel_numeric_operations.hpp /usr/include/boost/gil/extension/numeric/.
+  #sudo cp affine.hpp /usr/include/boost/gil/extension/numeric/.
  fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 virtualbox |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then

@@ -13,7 +13,7 @@ if [ "" == "$PKG_OK" ]; then
         sudo apt-get install oracle-java7-installer oracle-java8-installer
 fi
 
-wget -O "/tmp/$IDEA_PACKAGE" http://download-cf.jetbrains.com/idea/$IDEA_PACKAGE
+sudo wget -O "/tmp/$IDEA_PACKAGE" http://download-cf.jetbrains.com/idea/$IDEA_PACKAGE
 cd /tmp
 
 if [ -f "/tmp/$IDEA_PACKAGE" ]; then
