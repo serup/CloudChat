@@ -64,16 +64,8 @@ public class ProfileFileMapper extends Mapper<LongWritable, Text, Text, Text>{
                 Node nNode = nList.item(temp);
                 if (nNode.getNodeType() == Node.ELEMENT_NODE) {
                     Element eElement = (Element) nNode;
-                    System.out.println(eElement.getTagName());
-                    System.out.println(eElement.getElementsByTagName("TransGUID").item(0).getTextContent());
-                    System.out.println(eElement.getElementsByTagName("Protocol").item(0).getTextContent());
-                    System.out.println(eElement.getElementsByTagName("ProtocolVersion").item(0).getTextContent());
-                    System.out.println(eElement.getElementsByTagName("DataSize").item(0).getTextContent());
-                    System.out.println(eElement.getElementsByTagName("Data").item(0).getTextContent());
-                    System.out.println(eElement.getElementsByTagName("DataMD5").item(0).getTextContent());
-
                     _key = filename;
-                    _value = eElement.getElementsByTagName("Data").item(0).getTextContent();
+                    _value = getElementValue(eElement);
                     String md5 = dbctrl.CalculateMD5CheckSum(_value.getBytes());
                     if (!md5.equalsIgnoreCase(eElement.getElementsByTagName("DataMD5").item(0).getTextContent()))
                     {
@@ -274,6 +266,18 @@ public class ProfileFileMapper extends Mapper<LongWritable, Text, Text, Text>{
             e.printStackTrace();
         }
 
+    }
+
+    private String getElementValue(Element eElement)
+    {
+       /* System.out.println(eElement.getTagName());
+        System.out.println(eElement.getElementsByTagName("TransGUID").item(0).getTextContent());
+        System.out.println(eElement.getElementsByTagName("Protocol").item(0).getTextContent());
+        System.out.println(eElement.getElementsByTagName("ProtocolVersion").item(0).getTextContent());
+        System.out.println(eElement.getElementsByTagName("DataSize").item(0).getTextContent());
+        System.out.println(eElement.getElementsByTagName("Data").item(0).getTextContent());
+        System.out.println(eElement.getElementsByTagName("DataMD5").item(0).getTextContent()); */
+        return eElement.getElementsByTagName("Data").item(0).getTextContent();
     }
 
     private DataBaseControl.DatabaseEntityRecordEntry createRecordEntry(Element eElement)
