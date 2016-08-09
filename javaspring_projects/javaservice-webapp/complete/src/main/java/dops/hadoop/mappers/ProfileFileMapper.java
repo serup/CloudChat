@@ -114,20 +114,8 @@ public class ProfileFileMapper extends Mapper<LongWritable, Text, Text, Text>{
 
                             /// now fetch ALL elements with their attribute values  -- all incl. TOAST attributes
                             /// this means that now we should fetch all attributes from the TOAST entity file
-                            String ChunkID = (EntityName + "_chunk_id").toLowerCase();
-                            String ChunkIdValue = "";
-                            // finding the element
-                            List<DataBaseControl.Elements> resultElement = dedElements.stream()
-                                    .filter((p)-> p.getStrElementID().equals((ChunkID)))
-                                    .collect(Collectors.toList());
-                            if(resultElement.size()>0) {
-                                byte[] bytes = resultElement.get(0).getElementData();
-                                try {
-                                    ChunkIdValue = new String(bytes, "UTF-8"); // for UTF-8 encoding
-                                } catch (UnsupportedEncodingException e) {
-                                    e.printStackTrace();
-                                }
-
+                            String idOfTOASTfile = findToastFileName(dedElements, EntityName);
+                            if(!idOfTOASTfile.isEmpty()) {
                                 DocumentBuilderFactory dbFactory2 = DocumentBuilderFactory.newInstance();
                                 DocumentBuilder dBuilder2;
                                 Document toastdoc = null;
@@ -136,7 +124,7 @@ public class ProfileFileMapper extends Mapper<LongWritable, Text, Text, Text>{
                                 boolean bFoundFile=false;
                                 String TOASTFilePath;
                                 if(context.getConfiguration().get("dops.toast.database.dir") == null) {
-                                    TOASTFilePath = dbctrl.getRelativeENTITIES_DATABASE_TOAST_PLACE() + ChunkIdValue + ".xml";
+                                    TOASTFilePath = dbctrl.getRelativeENTITIES_DATABASE_TOAST_PLACE() + value + ".xml";
                                     // now open its toast file and put all attributes and values on record_value
                                     File ToastFile = new File(TOASTFilePath);
                                     if (ToastFile.exists()) {
@@ -152,7 +140,7 @@ public class ProfileFileMapper extends Mapper<LongWritable, Text, Text, Text>{
                                 }
                                 else {
                                     // handle file from hdfs
-                                    TOASTFilePath = context.getConfiguration().get("dops.toast.database.dir") + ChunkIdValue + ".xml";
+                                    TOASTFilePath = context.getConfiguration().get("dops.toast.database.dir") + idOfTOASTfile + ".xml";
                                     Configuration configuration = new Configuration();
                                     FileSystem fs = FileSystem.get(new URI(context.getConfiguration().get("fs.defaultFS")),configuration);
                                     Path filePath = new Path(TOASTFilePath);
@@ -184,6 +172,34 @@ public class ProfileFileMapper extends Mapper<LongWritable, Text, Text, Text>{
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * It will find a specific TOAST element in the dedElements list
+     * and this elements value will be the name of the TOAST file
+     *
+     * @param dedElements -- list of elements stored as data encoder decoder objects
+     * @param EntityName -- fx. Profile
+     * @return -- value of the found Toast element
+     */
+    private String findToastFileName(DataBaseControl.DEDElements dedElements, String EntityName)
+    {
+        // each element has pattern <name>_chunk_id ; fx profile_chunk_id
+        String chunkID = (EntityName + "_chunk_id").toLowerCase();
+        String chunkIdValue = "";
+        // finding the element
+        List<DataBaseControl.Elements> resultElement = dedElements.stream()
+                .filter((p)-> p.getStrElementID().equals((chunkID)))
+                .collect(Collectors.toList());
+        if(resultElement.size()>0) {
+            byte[] bytes = resultElement.get(0).getElementData();
+            try {
+                chunkIdValue = new String(bytes, "UTF-8"); // for UTF-8 encoding
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
+        return chunkIdValue;
     }
 
     private void assembleToastChunksAndSetupKeyPair(Document toastdoc,Mapper.Context context, String _key, String expectedChildEntity, String ChildRecord) throws Exception {
