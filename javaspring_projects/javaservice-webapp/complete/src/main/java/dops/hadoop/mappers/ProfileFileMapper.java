@@ -198,19 +198,8 @@ public class ProfileFileMapper extends Mapper<LongWritable, Text, Text, Text>{
 
                                             // According to what the protocol prescribes for DED entries in TOAST, then a loop of decode, according to specs, of entries is needed
                                             // fetch the data area and unpack it with DED to check it
-                                            DataBaseControl.EntityChunkDataInfo chunk = dbctrl.createEntityChunkDataInfo();
-                                            DEDDecoder DED2 = new DEDDecoder();
-                                            DED2.PUT_DATA_IN_DECODER(DataInUnHexedBuffer,DataInUnHexedBuffer.length);
-                                            String EntityChunkId    = (Child + "_chunk_id").toLowerCase(); // eg. profile_chunk_id
-                                            String EntityChunkSeq   = (Child + "_chunk_seq").toLowerCase(); // eg. profile_chunk_seq
-                                            String EntityChunkData  = (Child + "_chunk_data").toLowerCase(); // eg. profile_chunk_data
-                                            // decode data ...
-                                            DED2.GET_STRUCT_START( "record" );
-                                            chunk.entity_chunk_id   = DED2.GET_STDSTRING	( EntityChunkId ); // key of particular item
-                                            chunk.aiid              = DED2.GET_ULONG   	( "aiid" ); // this number is continuously increasing all throughout the entries in this table
-                                            chunk.entity_chunk_seq  = DED2.GET_ULONG   	( EntityChunkSeq ); // sequence number of particular item
-                                            chunk.entity_chunk_data = DED2.GET_STDVECTOR	( EntityChunkData ); //
-                                            DED2.GET_STRUCT_END( "record" );
+                                            DataBaseControl.EntityChunkDataInfo chunk = getToastRecord(DataInUnHexedBuffer, Child);
+
 
                                             if(PrevChunkId.contentEquals("nothing") || !PrevChunkId.contentEquals(chunk.entity_chunk_id))
                                             {
@@ -266,6 +255,24 @@ public class ProfileFileMapper extends Mapper<LongWritable, Text, Text, Text>{
             e.printStackTrace();
         }
 
+    }
+
+    private DataBaseControl.EntityChunkDataInfo getToastRecord(byte[] DataInUnHexedBuffer, String child)
+    {
+        DataBaseControl.EntityChunkDataInfo chunk = dbctrl.createEntityChunkDataInfo();
+        DEDDecoder DED2 = new DEDDecoder();
+        DED2.PUT_DATA_IN_DECODER(DataInUnHexedBuffer,DataInUnHexedBuffer.length);
+        String EntityChunkId    = (child + "_chunk_id").toLowerCase(); // eg. profile_chunk_id
+        String EntityChunkSeq   = (child + "_chunk_seq").toLowerCase(); // eg. profile_chunk_seq
+        String EntityChunkData  = (child + "_chunk_data").toLowerCase(); // eg. profile_chunk_data
+        // decode data ...
+        DED2.GET_STRUCT_START( "record" );
+        chunk.entity_chunk_id   = DED2.GET_STDSTRING	( EntityChunkId ); // key of particular item
+        chunk.aiid              = DED2.GET_ULONG   	( "aiid" ); // this number is continuously increasing all throughout the entries in this table
+        chunk.entity_chunk_seq  = DED2.GET_ULONG   	( EntityChunkSeq ); // sequence number of particular item
+        chunk.entity_chunk_data = DED2.GET_STDVECTOR	( EntityChunkData ); //
+        DED2.GET_STRUCT_END( "record" );
+        return chunk;
     }
 
     private String getElementValue(Element eElement)
