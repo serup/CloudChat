@@ -124,7 +124,7 @@ public class ProfileFileMapper extends Mapper<LongWritable, Text, Text, Text>{
                                 boolean bFoundFile=false;
                                 String TOASTFilePath;
                                 if(context.getConfiguration().get("dops.toast.database.dir") == null) {
-                                    TOASTFilePath = dbctrl.getRelativeENTITIES_DATABASE_TOAST_PLACE() + value + ".xml";
+                                    TOASTFilePath = dbctrl.getRelativeENTITIES_DATABASE_TOAST_PLACE() + idOfTOASTfile + ".xml";
                                     // now open its toast file and put all attributes and values on record_value
                                     File ToastFile = new File(TOASTFilePath);
                                     if (ToastFile.exists()) {
