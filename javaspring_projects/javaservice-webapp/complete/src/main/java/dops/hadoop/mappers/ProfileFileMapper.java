@@ -130,7 +130,7 @@ public class ProfileFileMapper extends Mapper<LongWritable, Text, Text, Text>{
 
                                 DocumentBuilderFactory dbFactory2 = DocumentBuilderFactory.newInstance();
                                 DocumentBuilder dBuilder2;
-                                Document doc2 = null;
+                                Document toastdoc = null;
                                 String Child = EntityName;
                                 String ChildRecord = EntityName + "Record";
                                 boolean bFoundFile=false;
@@ -143,7 +143,7 @@ public class ProfileFileMapper extends Mapper<LongWritable, Text, Text, Text>{
                                         File fXmlFile = ToastFile;
                                         try {
                                             dBuilder2 = dbFactory2.newDocumentBuilder();
-                                            doc2 = dBuilder2.parse(fXmlFile);
+                                            toastdoc = dBuilder2.parse(fXmlFile);
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
@@ -159,90 +159,20 @@ public class ProfileFileMapper extends Mapper<LongWritable, Text, Text, Text>{
                                     FSDataInputStream fsDataInputStream = fs.open(filePath);
                                     try {
                                         dBuilder2 = dbFactory2.newDocumentBuilder();
-                                        doc2 = dBuilder2.parse(fsDataInputStream);
+                                        toastdoc = dBuilder2.parse(fsDataInputStream);
+                                        System.out.println("hdfs file parsed : TransGUID: " + toastdoc.getElementsByTagName("TransGUID").item(0).getTextContent());
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     }
                                     bFoundFile=true;
-
-                                    System.out.println("hdfs file parsed : TransGUID: " + doc2.getElementsByTagName("TransGUID").item(0).getTextContent());
                                 }
-
                                 if(bFoundFile) {
-
-                                    doc2.getDocumentElement().normalize();
-                                    String nodeName = doc2.getDocumentElement().getNodeName();
-                                    String expectedEntity = Child;
-                                    if (!expectedEntity.contentEquals(nodeName))
-                                        return; // Error This is NOT the correct file
-
-                                    String PrevChunkId = "nothing";
-                                    boolean isPushed=false;
-
-                                    DataBaseControl.Elements Element = dbctrl.createElements();
-                                    NodeList nList2 = doc2.getElementsByTagName(ChildRecord);
-                                    for (int temp2 = 0; temp2 < nList2.getLength(); temp2++) {
-                                        Node nNode2 = nList2.item(temp2);
-                                        if (nNode2.getNodeType() == Node.ELEMENT_NODE) {
-                                            Element eElement = (Element) nNode2;
-                                            DataBaseControl.DatabaseEntityRecordEntry record = createRecordEntry(eElement);
-
-                                            String md5 = dbctrl.CalculateMD5CheckSum(record.getData().getBytes());
-                                            if (!md5.equalsIgnoreCase(record.getDataMD5()))
-                                            {
-                                                System.out.println("ERROR: data area in file have changed without having the MD5 checksum changed -- Warning data could be compromised ; " + Child );
-                                                return;  // data area in file have changed without having the MD5 checksum changed -- Warning data could be compromised
-                                            }
-
-                                            byte[] DataInUnHexedBuffer = DatatypeConverter.parseHexBinary(record.getData());
-
-                                            // According to what the protocol prescribes for DED entries in TOAST, then a loop of decode, according to specs, of entries is needed
-                                            // fetch the data area and unpack it with DED to check it
-                                            DataBaseControl.EntityChunkDataInfo chunk = getToastRecord(DataInUnHexedBuffer, Child);
-
-
-                                            if(PrevChunkId.contentEquals("nothing") || !PrevChunkId.contentEquals(chunk.entity_chunk_id))
-                                            {
-                                                if(!PrevChunkId.contentEquals("nothing") && !PrevChunkId.contentEquals(chunk.entity_chunk_id))
-                                                {
-                                                    // SETUP KEY/PAIR
-                                                    String tmp = new String(Element.ElementData, "UTF-8");
-                                                    if(tmp.contentEquals("<empty>"))
-                                                        tmp="null";
-                                                    String resultValue = constructEntityXml(new Text(Element.getStrElementID().toString()), new Text(tmp));
-                                                    // FORWARD RESULT KEY/PAIR
-                                                    context.write(new Text(_key), new Text(resultValue));
-
-                                                    Element = dbctrl.createElements();
-                                                    isPushed=true;
-                                                }
-
-                                                // new Element
-                                                Element.strElementID = chunk.entity_chunk_id;
-                                                Element.ElementData = new byte[0];
-                                                PrevChunkId = chunk.entity_chunk_id;
-                                                isPushed=false;
-                                            }
-                                            // this will, chunk by chunk, assemble the element data - fx. a foto element consists of many chunks in the file
-                                            Element.setElementData(dbctrl.back_inserter(chunk.entity_chunk_data, Element.ElementData));
-                                        }
-                                    }
-                                    // should only add last element if chunks have been assembled
-                                    if(isPushed==false){
-                                        // SETUP KEY/PAIR
-                                        String tmp = new String(Element.ElementData, "UTF-8");
-                                        if(tmp.contentEquals("<empty>"))
-                                            tmp="null";
-                                        String resultValue = constructEntityXml(new Text(Element.getStrElementID().toString()), new Text(tmp));
-                                        // FORWARD RESULT KEY/PAIR
-                                        context.write(new Text(_key), new Text(resultValue));
-
-                                    }
-                                    // now all elements from Entity should have been read, including the ones in TOAST (they have also been merged, so no chunks exists)
+                                    assembleToastChunksAndSetupKeyPair(toastdoc, context, _key, Child, ChildRecord);
+                                    // now all elements from Entity should have been read, including the ones in TOAST
+                                    // (they have also been merged, so no chunks exists)
                                 } else {
                                     // warning there could not be found a TOAST file, this is not necessary an error, however strange
                                     System.out.println("[FetchTOASTEntities] WARNING: there could not be found a TOAST file, this is not necessary an error, however strange : " + TOASTFilePath);
-                                    bResult = true;
                                 }
                             }
                         }
@@ -254,7 +184,73 @@ public class ProfileFileMapper extends Mapper<LongWritable, Text, Text, Text>{
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
+    private void assembleToastChunksAndSetupKeyPair(Document toastdoc,Mapper.Context context, String _key, String expectedChildEntity, String ChildRecord) throws Exception {
+        String PrevChunkId = "nothing";
+        boolean isPushed=true;
+
+        assert toastdoc != null;
+        toastdoc.getDocumentElement().normalize();
+        String nodeName = toastdoc.getDocumentElement().getNodeName();
+        if (!expectedChildEntity.contentEquals(nodeName))
+            return;  // Error This is NOT the correct file
+
+
+        DataBaseControl.Elements Element = dbctrl.createElements();
+        NodeList listOfElementsInToastDoc = toastdoc.getElementsByTagName(ChildRecord);
+        for (int index = 0; index < listOfElementsInToastDoc.getLength(); index++) {
+            Node nodeelement = listOfElementsInToastDoc.item(index);
+            if (nodeelement.getNodeType() == Node.ELEMENT_NODE) {
+                Element eElement = (Element) nodeelement;
+                DataBaseControl.DatabaseEntityRecordEntry record = createRecordEntry(eElement);
+                String md5 = dbctrl.CalculateMD5CheckSum(record.getData().getBytes());
+                if (!md5.equalsIgnoreCase(record.getDataMD5()))
+                {
+                    System.out.println("ERROR: data area in file have changed without having the MD5 checksum changed -- Warning data could be compromised ; " + expectedChildEntity );
+                    return;  // data area in file have changed without having the MD5 checksum changed -- Warning data could be compromised
+                }
+
+                // According to what the protocol prescribes for DED entries in TOAST, then a loop of decode, according to specs, of entries is needed
+                // fetch the data area and unpack it with DED to check it
+                byte[] DataInUnHexedBuffer = DatatypeConverter.parseHexBinary(record.getData());
+                DataBaseControl.EntityChunkDataInfo chunk = getToastRecord(DataInUnHexedBuffer, expectedChildEntity);
+
+                if(PrevChunkId.contentEquals("nothing") || !PrevChunkId.contentEquals(chunk.entity_chunk_id))
+                {
+                    if(!PrevChunkId.contentEquals("nothing") && !PrevChunkId.contentEquals(chunk.entity_chunk_id))
+                    {
+                        // SETUP KEY/PAIR
+                        String tmp = new String(Element.ElementData, "UTF-8");
+                        if(tmp.contentEquals("<empty>"))
+                            tmp="null";
+                        String resultValue = constructEntityXml(new Text(Element.getStrElementID()), new Text(tmp));
+                        // FORWARD RESULT KEY/PAIR
+                        context.write(new Text(_key), new Text(resultValue));
+                        Element = dbctrl.createElements();
+                    }
+
+                    // new Element
+                    Element.strElementID = chunk.entity_chunk_id;
+                    Element.ElementData = new byte[0];
+                    PrevChunkId = chunk.entity_chunk_id;
+                    isPushed=false;
+                }
+                // this will, chunk by chunk, assemble the element data - fx. a foto element consists of many chunks in the file
+                Element.setElementData(dbctrl.back_inserter(chunk.entity_chunk_data, Element.ElementData));
+            }
+        }
+
+        // should only add last element if chunks have been assembled
+        if(!isPushed){
+            // SETUP KEY/PAIR
+            String tmp = new String(Element.ElementData, "UTF-8");
+            if(tmp.contentEquals("<empty>"))
+                tmp="null";
+            String resultValue = constructEntityXml(new Text(Element.getStrElementID()), new Text(tmp));
+            // FORWARD RESULT KEY/PAIR
+            context.write(new Text(_key), new Text(resultValue));
+        }
     }
 
     private DataBaseControl.EntityChunkDataInfo getToastRecord(byte[] DataInUnHexedBuffer, String child)
