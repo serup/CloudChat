@@ -669,8 +669,14 @@ public class DEDDecoder {
 								if (ElementType == DED_ELEMENT_TYPE_METHOD || ElementType == DED_ELEMENT_TYPE_STRING || ElementType == DED_ELEMENT_TYPE_STDSTRING)
 								{
 									String str="";
-									for(int i=0;i<param.Length;i++)
-										str = str + (char)param.data[i];
+									for(int i=0;i<param.Length;i++) {
+										try {
+											str = str + (char) param.data[i];
+											Thread.sleep(0,100);
+										} catch (InterruptedException e) {
+											e.printStackTrace();
+										}
+									}
 									DEDobject.value = str.getBytes();
 								}
 								else

@@ -38,4 +38,8 @@ test:
 	@ rm test_txt_result.txt
 
 clean:
-	rm *.o
+	rm -f *.o
+	rm -f *.txt
+	rm -f *.html	
+	rm -f *.gcda
+	rm -f *.gcno

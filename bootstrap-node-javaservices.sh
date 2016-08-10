@@ -43,15 +43,6 @@ else
     echo "echo \"\" " >> .bashrc
 
     # IntelliJ - is installed as class idea in puppet/manifests/site
-    # however the X11 forwarding is pt. not working
-    #mkdir -p /usr/local/idea
-    #cd /usr/local/idea
-    #wget -O /tmp/intellij.tar.gz http://download.jetbrains.com/idea/ideaIC-12.0.4.tar.gz 2> /dev/null 
-    #tar xfz /tmp/intellij.tar.gz 
-    ## TODO: setup idea to work with port forward if possible - or set gui true 
-    ##cd idea-IC-123.169/bin 
-    ##./idea.sh < /dev/null 
-    #cd -
 
     echo "fetch nodejs"
     sudo apt-get install -yq nodejs-legacy
@@ -83,7 +74,7 @@ else
       echo "use intellij idea editor - NB! inorder for x11 forward to work, then start like this: vagrant -XY ssh javaservices"
       echo " start idea when loged in: /usr/bin/idea"
       echo "********************************************************************************************************************"
-      sudo ln -s /opt/idea-15.0.1/idea-IC-143.382.35/bin/idea.sh /usr/bin/idea
+      sudo ln -s /opt/idea-2016.2/idea-IC-162.1121.32/bin/idea.sh /usr/bin/idea
     fi
 
 fi

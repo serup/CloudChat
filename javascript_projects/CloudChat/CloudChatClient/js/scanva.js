@@ -172,7 +172,7 @@ function openWindow() {
         newWindow.document.write("</option>");
     }
     newWindow.document.write("</select>");
-    newWindow.document.write("<div id="chatwidget-zone"><script src="js/scanva.js"></script><script>ChatWidget();</script></div>");
+    newWindow.document.write("<div id='chatwidget-zone'><script src='js/scanva.js'></script><script>ChatWidget();</script></div>");
 }
 
 function setValue(value) {

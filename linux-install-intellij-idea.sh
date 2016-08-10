@@ -1,7 +1,8 @@
 # Specify IDEA version here.  -- NB! MUST RUN as administrator
 #IDEA_PACKAGE=ideaIU-2016.1.tar.gz
 #IDEA_PACKAGE=ideaIC-15.0.2.tar.gz
-IDEA_PACKAGE=ideaIC-2016.1.tar.gz
+#IDEA_PACKAGE=ideaIC-2016.1.tar.gz
+IDEA_PACKAGE=ideaIC-2016.2.tar.gz
 
 # Assuming we already did this during the previous steps:
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 oracle-java8-installer |grep "install ok installed")
@@ -12,7 +13,7 @@ if [ "" == "$PKG_OK" ]; then
         sudo apt-get install oracle-java7-installer oracle-java8-installer
 fi
 
-wget -O "/tmp/$IDEA_PACKAGE" http://download-cf.jetbrains.com/idea/$IDEA_PACKAGE
+sudo wget -O "/tmp/$IDEA_PACKAGE" http://download-cf.jetbrains.com/idea/$IDEA_PACKAGE
 cd /tmp
 
 if [ -f "/tmp/$IDEA_PACKAGE" ]; then

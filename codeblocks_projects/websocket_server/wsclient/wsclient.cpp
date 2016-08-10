@@ -133,6 +133,7 @@ struct _RealClientWebSocket : public ClientWebSocket
     {
         m_Thread.join();
     }
+
     void processQueue()
     {
         while(readyState != CLOSED) {
@@ -157,39 +158,49 @@ struct _RealClientWebSocket : public ClientWebSocket
         pOwner = pParent;
     }
 
-    /** \brief Poll will read incomming dataframes on socket and put in buffer, also send dataframes in outbuffer to socket - should run in its own thread
+    /** \brief Poll will read incoming dataframes on socket and put in buffer, also send dataframes in outbuffer to socket - should run in its own thread
      *
      * \return void
      *
      */
-    void poll() { // timeout in milliseconds
+    void poll() {
         if (readyState == CLOSED) {
-//            if (timeout > 0) {
-//                timeval tv = { timeout/1000, (timeout%1000) * 1000 };
-//                select(0, NULL, NULL, NULL, &tv);
-//            }
             return;
         }
-//        if (timeout > 0) {
-//            fd_set rfds;
-//            fd_set wfds;
-//            timeval tv = { timeout/1000, (timeout%1000) * 1000 };
-//            FD_ZERO(&rfds);
-//            FD_ZERO(&wfds);
-//            FD_SET(sockfd, &rfds);
-//            if (txbuf.size()) { FD_SET(sockfd, &wfds); }
-//            select(sockfd + 1, &rfds, &wfds, NULL, &tv);
-//        }
+
+        while (txbuf.size()) {
+            int ret;
+            ret = ::send(sockfd, &txbuf[0], txbuf.size(), 0);
+            if (ret > 0) { txbuf.erase(txbuf.begin(), txbuf.begin() + ret); }
+            else { break; }
+        }
+        if (!txbuf.size() && readyState == CLOSING) {
+            ::close(sockfd);
+            readyState = CLOSED;
+        }
         while (true) {
-            // FD_ISSET(0, &rfds) will be true
             int N = rxbuf.size();
             ssize_t ret;
             rxbuf.resize(N + 1500);
-            ret = recv(sockfd, &rxbuf[0] + N, 1500, 0);
-            if (false) { }
-            else if (ret < 0) {
-                rxbuf.resize(N);
-                break;
+            ret = ::recv(sockfd, &rxbuf[0] + N, 1500, 0);
+	    if (false) { }
+	    else if (ret < 0) {
+		    if(errno == 11)
+		    {
+			    /// No data available yet - lets wait a bit
+			    usleep(100); // wait milliseconds
+		    }
+		   /* else {
+			    fprintf (stderr, "Error no is : %d\n", errno);
+			    fprintf(stderr, "Error description is : %s\n",strerror(errno));
+			    if(errno == 9)
+			    {
+				    fprintf(stderr, "This error can indicate that:\nA file descriptor does not refer to an open file.\nA write request is made to a read-only file.\nA read request is made to a write-only file.\n");
+
+			    }
+		    }*/
+		    rxbuf.resize(N);
+		    break;
             }
             else if (ret == 0) {
                 rxbuf.resize(N);
@@ -201,16 +212,6 @@ struct _RealClientWebSocket : public ClientWebSocket
             else {
                 rxbuf.resize(N + ret);
             }
-        }
-        while (txbuf.size()) {
-            int ret;
-            ret = ::send(sockfd, &txbuf[0], txbuf.size(), 0);
-            if (ret > 0) { txbuf.erase(txbuf.begin(), txbuf.begin() + ret); }
-            else { break; }
-        }
-        if (!txbuf.size() && readyState == CLOSING) {
-            ::close(sockfd);
-            readyState = CLOSED;
         }
     }
 
@@ -226,7 +227,6 @@ struct _RealClientWebSocket : public ClientWebSocket
             ws.opcode = (wsheader_type::opcode_type) (data[0] & 0x0f);
             ws.mask = (data[1] & 0x80) == 0x80;
             ws.N0 = (data[1] & 0x7f);
-//            ws.header_size = 2 + (ws.N0 == 126? 2 : 0) + (ws.N0 == 127? 6 : 0) + (ws.mask? 4 : 0);
             ws.header_size = 2 + (ws.N0 == 126? 2 : 0) + (ws.N0 == 127? 8 : 0) + (ws.mask? 4 : 0); /// http://tools.ietf.org/html/rfc6455#section-5.2
             if (rxbuf.size() < (unsigned int)ws.header_size) { return bResult; /* Need: ws.header_size - rxbuf.size() */ }
             int i;
@@ -265,39 +265,10 @@ struct _RealClientWebSocket : public ClientWebSocket
                 ws.masking_key[3] = 0;
             }
             if (rxbuf.size() < ws.header_size+ws.N) { return bResult; /* Need: ws.header_size+ws.N - rxbuf.size() */ }
-//            if (ws.fin == false) {
-//                    return bResult;
-//            }
 
             // We got a whole message, now do something with it:
             if (false) { }
-//            else if (ws.opcode == wsheader_type::TEXT_FRAME && ws.fin) {
-//                if (ws.mask) { for (size_t i = 0; i != ws.N; ++i) { rxbuf[i+ws.header_size] ^= ws.masking_key[i&0x3]; } }
-//                std::vector<uint8_t> data;
-//                std::copy(rxbuf.begin()+ws.header_size, rxbuf.begin()+ws.header_size+ws.N, std::back_inserter(data));
-//                data.push_back(0);
-//                callable(&data[0]); // direct pointer to txt
-//                bResult=true;
-//            }
             else if (ws.opcode == wsheader_type::TEXT_FRAME ) { }
-//            else if (ws.opcode == wsheader_type::BINARY_FRAME && ws.fin) {
-//                if (ws.mask) { for (size_t i = 0; i != ws.N; ++i) { rxbuf[i+ws.header_size] ^= ws.masking_key[i&0x3]; } }
-//                std::vector<uint8_t> data;
-//                data.resize(ws.N);
-//                data.clear();// remove potential garbage
-//                std::copy(rxbuf.begin()+ws.header_size, rxbuf.begin()+ws.header_size+ws.N, std::back_inserter(data));
-//                data.push_back(0);
-//
-//                CDED ded;
-//                ded.pDEDarray = &data[0];
-//                ded.sizeofDED = data.size()-1;
-////                ded.pOwner = this;
-//                ded.pOwner = this->pOwner;
-//                callable(&ded); // direct pointer to DED class with DED object in pDEDarray -- callable function must beable to parse the object!!
-//
-//                //rxbuf.clear(); // ready for next receiving next dataframe
-//                bResult=true;
-//            }
             else if (ws.opcode == wsheader_type::BINARY_FRAME || ws.opcode == wsheader_type::CONTINUATION) {
                 if (ws.mask) { for (size_t i = 0; i != ws.N; ++i) { rxbuf[i+ws.header_size] ^= ws.masking_key[i&0x3]; } }
                 receivedData.insert(receivedData.end(), rxbuf.begin()+ws.header_size, rxbuf.begin()+ws.header_size+(size_t)ws.N);// just feed
@@ -318,13 +289,6 @@ struct _RealClientWebSocket : public ClientWebSocket
             else if (ws.opcode == wsheader_type::PONG) { }
             else if (ws.opcode == wsheader_type::CLOSE) { close(); }
             else { fprintf(stderr, "ERROR: Got unexpected WebSocket message.\n"); close(); }
-//            else
-//            {
-//                fprintf(stderr, "[websocket_server wsclient.cpp] ERROR: Got unexpected WebSocket message. Will try to clean rxbuf\n");
-//                //rxbuf.erase(rxbuf.begin(), rxbuf.end());
-//                rxbuf.clear();
-//            }
-
             rxbuf.erase(rxbuf.begin(), rxbuf.begin() + ws.header_size+(size_t)ws.N);
         }
         return bResult;
@@ -354,10 +318,6 @@ struct _RealClientWebSocket : public ClientWebSocket
 };
 
 
-
-
-
-
 ClientWebSocket::pointer ClientWebSocket::create_dummy() {
     static pointer dummy = pointer(new _DummyClientWebSocket);
     return dummy;
@@ -384,7 +344,7 @@ ClientWebSocket::pointer ClientWebSocket::from_url(std::string url,void* pParent
         fprintf(stderr, "ERROR: Could not parse WebSocket url: %s\n", url.c_str());
         return NULL;
     }
-    fprintf(stderr, "wsclient: connecting: host=%s port=%d path=/%s\n", host, port, path);
+    //fprintf(stderr, "wsclient: connecting: host=%s port=%d path=/%s\n", host, port, path);
     int sockfd = server_client_connect(host, port);
     if (sockfd == -1) {
         fprintf(stderr, "Unable to connect to %s:%d\n", host, port);
@@ -416,8 +376,8 @@ ClientWebSocket::pointer ClientWebSocket::from_url(std::string url,void* pParent
     }
     int flag = 1;
     setsockopt(sockfd, IPPROTO_TCP, TCP_NODELAY, (char*) &flag, sizeof(flag)); // Disable Nagle's algorithm
-    fcntl(sockfd, F_SETFL, O_NONBLOCK);
-    fprintf(stderr, "Connected to: %s\n", url.c_str());
+    fcntl(sockfd, F_SETFL, O_NONBLOCK); // SOCKET is set as NON-BLOCKING !!!!
+    fprintf(stdout, "Connected to: %s\n", url.c_str());
 //    return pointer(new _RealClientWebSocket(sockfd));
     ClientWebSocket::pointer pointer(new _RealClientWebSocket(sockfd));
     pointer->setOwner(pParent);

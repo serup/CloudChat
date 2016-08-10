@@ -52,6 +52,7 @@ else
       echo "****************"
       echo "     INIT       "
       echo "****************"
+      sudo -s
       echo "install LCOV for code coverage"
       apt-get install -yq lcov
       echo "fetch nodejs"
@@ -71,6 +72,9 @@ else
       echo "vagrant" >> /etc/incron.allow
       echo "vagrant" >> /etc/cron.allow
       mkdir /var/www/img
+      echo "install imagemagick to use mogrify to resize images"
+      apt-get install -yq imagemagick
+      apt install -yq graphicsmagick
       echo "****************"
       echo "Clone from GitHub" 
       echo "****************"
@@ -104,7 +108,7 @@ else
       echo "****************"
       echo "First time build"
       echo "****************"
-      #alias make="/usr/bin/make -j 8"
+      #alias make="/usr/bin/make -j 8"  --- NB! do NOT use -j switch !! -  it somehow create bad build - Perhaps makefiles are not up to running parallel
       echo "Building CloudChat project takes a long time - results are in file build.log - PLEASE WAIT!"
       ./run.sh > build.log 2> tmp3
       echo "done build - see detailed info in file build.log"
@@ -114,16 +118,16 @@ else
       echo "************************************"
       lcov --capture --directory . --output-file coverage.info
       echo "generate html code coverage info in /www/lcov"
-      genhtml coverage.info --output-directory /var/www/lcov > /dev/null
+      genhtml coverage.info --output-directory /var/www/lcov 2> /dev/null
       echo "****************"
       echo "setup incron job"
       echo "****************"
       echo "copy cron replication job to /usr/local/bin - the job is started by incron, and it copies from backend to cloudchatmanager"
       cp ./replication.sh /usr/local/bin/.
-      chown vagrant:vagrant /usr/local/bin/replication.sh
+      chown root:root /usr/local/bin/replication.sh
       chmod +x /usr/local/bin/replication.sh
       cp ./cronStartServer.sh /usr/local/bin/.
-      chown vagrant:vagrant /usr/local/bin/cronStartServer.sh
+      chown root:root /usr/local/bin/cronStartServer.sh
       chmod +x /usr/local/bin/cronStartServer.sh
       echo "replication deamon - should copy files using sshpass scp - its setup as a cron job"
       incrontab -l | { cat; echo '/var/www/img IN_CREATE /usr/local/bin/replication.sh >> /var/log/replication.log 2>&1 $@/$#'; } | incrontab -

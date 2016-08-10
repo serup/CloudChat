@@ -1,16 +1,39 @@
-#!/usr/bin/env bash -l
+#!/usr/bin/env bash
 cat DOPS_outline.txt
 echo "********************************************************"
 echo "** Installing vagrant, puppetlabs, virtualbox, docker **"
 echo "********************************************************"
 echo "MUST run as '. ./install.sh' or as 'sudo bash ./install.sh' otherwise it will fail !!!"
 
+echo "setting up alias"
+alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+alias egrep='egrep --color=auto'
+alias ff='find . -type f -name '
+alias fgrep='fgrep --color=auto'
+alias findfile='find . -type f -name '
+alias gitlog='git log --pretty=format:"%C(yellow)%h %Cred%ad %Cblue%an%Cgreen%d %Creset%s" --date=short'
+alias gitshow='function _blah(){ git show "$(git annotate $1 | grep $2 | head -1| cut -f1)"; };_blah'
+alias grep='grep --color=auto'
+alias gvm='sdk'
+alias l='ls -CF'
+alias la='ls -A'
+alias ll='ls -alF'
+alias ls='ls --color=auto'
+# nb! use '\'' for each '  inside an alias
+alias ks='function _blabla(){ kill "$(ps -aux|grep $1|head -1|awk '\''{print $2}'\'')"; }; _blabla'
+
+echo "Setup ULIMIT -- IMPORTANT - this is needed to avoid too many handles or processes, which will freeze system"
+bash setupUlimit.sh
+
 function set-title() {
   if [[ -z "$ORIG" ]]; then
     ORIG=$PS1
   fi
   TITLE="\[\e]2;$@\a\]"
-  PS1=${ORIG}${TITLE}
+  #PS1=${ORIG}${TITLE}
+  #export PS1='\e[0;34m\w> '
+  echo "put PS1 statement in ~/.bashrc : "
+  export PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
 }
 
 set-title environment for DOPS ok
@@ -77,7 +100,7 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- oracle-java already installed"
 fi
-PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 lib32stdc* |grep "install ok installed")
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 *stdc* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install lib32stdc on ubuntu, to use for mksdcard SDK tool in android-studio "
   sudo apt-fast install -yq lib32stdc++6 
@@ -152,6 +175,16 @@ else
   echo "- eclipse dependencies already installed"
 fi
 
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 libjpeg* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install jpeg dependencies on ubuntu "
+  sudo apt-fast install -yq libjpeg-dev 
+  echo " - done."
+else
+  echo "- libjpeg-dev dependencies already installed"
+fi
+
+
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 scene* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install javaFX Scene builder "
@@ -166,6 +199,7 @@ if [ "" == "$PKG_OK" ]; then
    #sudo dpkg -i javafx_scenebuilder-2_0-linux-x64.deb && \
    # find it using this command: dpkg-query  -S scene*
    # then add in intellij under settings/language.../JavaFX/path to scenebuilder
+   #   it could be here : /opt/JavaFXSceneBuilder2.0/JavaFXSceneBuilder2.0
    sudo apt-fast install -yq  scenebuilder
    #sudo apt-get update 
   echo " - done."
@@ -240,7 +274,8 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 mono-complete* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
-  echo "deb http://download.mono-project.com/repo/debian wheezy main" | sudo tee /etc/apt/sources.list.d/mono-xamarin.list
+  #echo "deb http://download.mono-project.com/repo/debian wheezy main" | sudo tee /etc/apt/sources.list.d/mono-xamarin.list
+  echo "deb http://download.mono-project.com/repo/debian nightly main" | sudo tee /etc/apt/sources.list.d/mono-nightly.list
   sudo apt-get update
   echo -n "- install mono-complete for C# on ubuntu "
   sudo apt-fast install -yq mono-complete 
@@ -320,7 +355,7 @@ fi
 #  echo "- python-hdfs already installed"
 #fi
 
-PIPPKG_OK=$(pip list | grep webhdfs*)
+PIPPKG_OK=$(pip list | grep -i WebHDFS*)
 if [ "" == "$PIPPKG_OK" ]; then
   echo -n "- install python webhdfs on ubuntu "
   sudo easy_install webhdfs 
@@ -434,6 +469,15 @@ else
   echo "- g++ already installed"
 fi
 
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 npm* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install npm "
+  sudo apt-fast install -yq npm 
+  echo " - done."
+else
+  echo "- npm already installed"
+fi
+
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 lcov* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo "install LCOV for code coverage"
@@ -456,10 +500,18 @@ PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 libboost-all* |grep "inst
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install libboost "
   sudo apt-fast install -yq libboost-all-dev 
-  echo " - done."
+  echo "- install missing hpp file -- ignored until decided weather or not to use gil extension in backend"
+  #sudo mkdir -p /usr/include/boost/gil/extension/numeric; sudo cp pixel_numeric_operations.hpp /usr/include/boost/gil/extension/numeric/.
+  #sudo cp channel_numeric_operations.hpp /usr/include/boost/gil/extension/numeric/.
+  #sudo cp affine.hpp /usr/include/boost/gil/extension/numeric/.
+  #echo " - done."
 else
   echo "- libbost already installed"
-fi
+  echo "- install missing hpp file"
+  #sudo mkdir -p /usr/include/boost/gil/extension/numeric; sudo cp pixel_numeric_operations.hpp /usr/include/boost/gil/extension/numeric/.
+  #sudo cp channel_numeric_operations.hpp /usr/include/boost/gil/extension/numeric/.
+  #sudo cp affine.hpp /usr/include/boost/gil/extension/numeric/.
+ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 virtualbox |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install Virtualbox -- PARAMOUNT DO NOT HAVE SECURE BOOT ENABLED otherwise install of virtualbox will fail"
@@ -529,6 +581,15 @@ if [ "" == "$MODULE_OK" ]; then
   echo " - done."
 else
   echo "- maestrodev-bamboo puppet module installed"
+fi
+
+MODULE_OK=$(puppet module list --modulepath ./hadoop_projects/hadoopServices/modules | grep vzach-ambari*)
+if [ "" == "$MODULE_OK" ]; then
+  echo -n "- install vzach-ambari puppet module"
+  puppet module install vzach-ambari --modulepath ./hadoop_projects/hadoopServices/modules
+  echo " - done."
+else
+  echo "- vzach-ambari puppet module installed"
 fi
 
 #MODULE_OK=$(puppet module list --modulepath ./hadoop_projects/hadoopServices/modules | grep bcarpio-hadoop*)

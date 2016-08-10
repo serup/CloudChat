@@ -8,16 +8,15 @@ include ntp
 
 # Ensure that servers can find themselves even in absence of dns
 class { 'etchosts':
-  ownhostname => 'one.cluster'
+  ownhostname => 'two.cluster'
 }
 
 
-#class { 'ambari_agent':
-#  serverhostname => "one.cluster",
-#  ownhostname    => "two.cluster"
-#}
+class { 'ambari_agent':
+  serverhostname => "one.cluster",
+  ownhostname    => "two.cluster"
+}
 
 # Establish ordering
-#Class['interfering_services'] -> Class['ntp'] -> Class['etchosts'] -> Class['ambari_agent']
-Class['interfering_services'] -> Class['ntp'] -> Class['etchosts']
+Class['interfering_services'] -> Class['ntp'] -> Class['etchosts'] -> Class['ambari_agent']
 

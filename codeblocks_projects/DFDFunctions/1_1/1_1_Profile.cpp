@@ -24,12 +24,24 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/thread.hpp>
-
 #include "md5.h"
 #include "base64.h"
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
+//#include <Magick++.h>  // TODO: find a way to setup path for installed magick++ -- build on script linux-install-imagemagick-source.sh
+//using namespace Magick;
 
+///TODO: setup jpeglib.h  library dependencies before using gil
+/*
+#include <boost/gil/image.hpp>
+#include <boost/gil/typedefs.hpp>
+#include <boost/gil/extension/io/jpeg_io.hpp>
+//#include <boost/gil/extension/numeric/sampler.hpp>  // http://www.boost.org/doc/libs/develop/boost/gil/extension/numeric/sampler.hpp
+//#include <boost/gil/extension/numeric/resample.hpp>  // http://www.boost.org/doc/libs/develop/boost/gil/extension/numeric/resample.hpp
+#include "sampler.hpp"  // http://www.boost.org/doc/libs/develop/boost/gil/extension/numeric/sampler.hpp
+#include "resample.hpp" // http://www.boost.org/doc/libs/develop/boost/gil/extension/numeric/resample.hpp
+using namespace boost::gil;
+*/
 #define BOOST_FILESYSTEM_NO_DEPRECATED
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
@@ -947,6 +959,13 @@ std::string C1_1_Profile::requestProfileFromHadoop(std::string elementOfInterest
 {
     std::string result="<not_found>";
 
+    ///TODO: investigate if Apache Cassandra [https://en.wikipedia.org/wiki/Apache_Cassandra] C++ [https://github.com/datastax/cpp-driver] driver can be used to access Hadoop cluster, or if it should be a Java application !?
+    ///TODO: investigate if DOPs flatfile blocks datamodel can be utilized in a tunable consistency data model in Cassandra, thus making it possible to faster access elements of DOPs realm file records
+    /// Cassandra info:
+    ///  Cassandra is essentially a hybrid between a key-value and a column-oriented (or tabular) database management system. Its data model is a partitioned row store with tunable consistency.
+    ///  Rows are organized into tables; the first component of a table's primary key is the partition key; within a partition, rows are clustered by the remaining columns of the key.
+    ///  Other columns may be indexed separately from the primary key.
+    ///  Tables may be created, dropped, and altered at run-time without blocking updates and queries.
     if(isHadoopJavaServiceAppOnline())
     {
 
@@ -971,7 +990,7 @@ bool C1_1_Profile::isHadoopJavaServiceAppOnline()
 *  \param std::vector<Elements> record_value
 *  \return true/false
 */
-bool C1_1_Profile::extractUpdateImageUrl(FetchProfileInfo datastream, std::vector<Elements> record_value)
+bool C1_1_Profile::extractUpdateImageUrl(FetchProfileInfo datastream, std::vector<Elements> &record_value)
 {
     bool bResult=false;
     //+ Due to performance issues, the embedded foto is extracted and a new URI is given to client
@@ -979,26 +998,69 @@ bool C1_1_Profile::extractUpdateImageUrl(FetchProfileInfo datastream, std::vecto
     CDatabaseControl CDbCtrl;
     bool bFound = CDbCtrl.fetch_element(record_value,(std::string)"foto", fotoelement);
     if(bFound==true) {
+        //TODO: find a way to squeeze image to less than 15Kb and do it inside this application - current version using outside mogrify and deamon scp transfer is not working well enough,
+        // thus this is disabled until a viable solution can be found -- embedded image will be transfered to client
+        bResult = true;
+
+        /*
         std::string _strfoto(fotoelement.ElementData.begin(),fotoelement.ElementData.end());
 
         boost::system_time const systime=boost::get_system_time();
         std::stringstream sstream;
+
+        // Use a facet to display time in a custom format
+        boost::posix_time::time_facet* facet = new boost::posix_time::time_facet();
+        facet->format("%Y-%m-%d_%H:%M:%S.%f");
+        sstream.imbue(std::locale(std::locale::classic(), facet));
+
         sstream << systime;
 
-        std::string filenamepath = "/var/www/img/" + datastream.strProfileID + "_" + sstream.str() + ".jpg"; // TODO: add a guid filename to newly created image -- NB! filepath should be inside /var/www/img/   -- to make sure client can access it
-        bool bExtracted = extractBase64TojpgImagefile(filenamepath,_strfoto);
-        if(bExtracted == true)
+        std::string filenamepath = "/var/www/img/" + datastream.strProfileID + "_" + sstream.str(); // TODO: add a guid filename to newly created image -- NB! filepath should be inside /var/www/img/   -- to make sure client can access it
+        std::string filetype = extractBase64ToImageFile(filenamepath, _strfoto);
+        if(filetype != "unknown")
         {
+
             std::vector<unsigned char> ElementData;
-            std::string imageURI = "img/" + datastream.strProfileID + "_" + sstream.str() + ".jpg";
+            std::string imageURI = "img/" + datastream.strProfileID + "_" + sstream.str() + filetype;
             std::copy( imageURI.begin(), imageURI.end(), std::back_inserter(ElementData));
             CDbCtrl.update_element_value(record_value,"foto",ElementData);
             // Wait a moment, so background automatic replication can transfer image
             // INFO: fx. scp the foto to cloudchatmanager machine - it should reside in relative img/<profileid>.jpg - NB! This is necessary since no extracted data is allowed on backend.scanva.com server
             // sudo scp -r img/ vagrant@cloudchatmanager.com:/home/vagrant/.
-            sleep(1); // wait seconds
-            bResult = bExtracted;
+            sleep(1); // wait seconds - does not work, somehow image transfer is too slow, some handshake communication might be necessary
+                      // TODO: perhaps use API - http://www.imagemagick.org/script/api.php
+                      // http://www.imagemagick.org/Magick++/
+                      // http://www.imagemagick.org/discourse-server/viewtopic.php?t=11662
+                      // consider using boost instead :
+                      // http://www.boost.org/doc/libs/1_59_0/libs/gil/example/resize.cpp
+
+            //+tst - http://www.boost.org/doc/libs/1_59_0/libs/gil/example/resize.cpp
+            // hmm did not work causing undefined reference errors during compile
+
+                rgb8_image_t img;
+                jpeg_read_image(imageURI,img);
+
+                // test resize_view
+                // Scale the image to 100x100 pixels using bilinear resampling
+                rgb8_image_t square100x100(100,100);
+                resize_view(const_view(img), view(square100x100), bilinear_sampler());
+                jpeg_write_view("out-resize.jpg",const_view(square100x100));
+
+            boost::gil::rgba8_image_t image;
+            boost::gil::rgba8_image_t newSize(100, 100);
+            boost::gil::jpeg_read_and_convert_image(imageURI,image);
+            boost::gil::resize_view(const_view(image), view(newSize), boost::gil::bilinear_sampler());
+            boost::gil::jpeg_write_view("output.jpg", const_view(newSize), 90);
+            //-tst
+
+//-tst
+            bResult = true;
         }
+        else
+        {
+            std::cout << "[C1_1_Profile::extractUpdateImageUrl] ERROR: it was not possible to change embedded image to png file url " << "\n";
+        }
+        */
     }
     //-
     return bResult;
@@ -1493,112 +1555,6 @@ bool C1_1_Profile::fn1164_WriteResponseInLogFile(WriteLogRequest datastream, Wri
 
     return bResult;
 }
-
-//DEPRECATED -- make it use databasecontrol class
-/** \brief Read Profile DFD 1.1.8.1
- *
- * \param
- * \param
- * \return
- *
- */
-//bool C1_1_Profile::fn1181_ReadProfileFile(FetchProfileInfo &datastream)
-//{
-//    bool bResult=false;
-//
-//    return bResult;
-//
-//    /*
-//       std::string strFilepath = "../../../../DataDictionary/Database/" + datastream.strProfileID + "_" + datastream.strProfileName + ".xml";
-//       if ( !boost::filesystem::exists( strFilepath ) )
-//       {
-//           //std::cout << "Can't find my file!" << std::endl;
-//           bResult=false;
-//       }
-//       else
-//       {
-//           /// Read data from file
-//            std::vector<Elements> DEDElements;
-//           ProfileRecord ProfileRecordResult;
-//           {
-//               CDatabaseControl CDbCtrl;
-//               std::ifstream is (strFilepath);
-//               //bResult = CDbCtrl.ReadXmlFile(is,ProfileRecordResult,"Profile");
-//               bResult = CDbCtrl.ReadEntityFile((std::string)"Profile",(std::string)datastream.strProfileName,DEDElements);
-//
-//               //assert(bResult == true);
-//           }
-//           if(bResult==false)
-//           {
-//               std::cout << "[fn1181_ReadProfileFile] ERROR : File can not be read : " << strFilepath << std::endl;    /// no need to go further, something is wrong with the file
-//               return bResult;
-//           }
-//
-//           bResult=false;
-//           BOOST_FOREACH( ProfileRecordEntry f, ProfileRecordResult )
-//           {
-//               if(f.DataSize > (unsigned int) 0)
-//               {
-//                   // take the hex converted data and unhex it before DED will decode it
-//                   unsigned int sizeofCompressedDataInHex = (unsigned int)f.DataSize;
-//                   unsigned char* data_in_unhexed_buf = (unsigned char*) malloc (4*sizeofCompressedDataInHex + 1);
-//                   ZeroMemory(data_in_unhexed_buf,4*sizeofCompressedDataInHex+1); // make sure no garbage is inside the newly allocated space
-//                   const std::vector<unsigned char> iterator_data_in_unhexed_buf(&f.Data[0],&f.Data[sizeofCompressedDataInHex]);
-//                   boost::algorithm::unhex(iterator_data_in_unhexed_buf.begin(),iterator_data_in_unhexed_buf.end(), data_in_unhexed_buf);// convert the hex array to an array containing byte values
-//
-//                   // fetch the data area and unpack it with DED to check it
-//                   DED_PUT_DATA_IN_DECODER(decoder_ptr,data_in_unhexed_buf,sizeofCompressedDataInHex);
-//                   assert(decoder_ptr != 0);
-//
-//                   bool bDecoded=false;
-//
-//                   // decode data ...
-//                   if( DED_GET_STRUCT_START( decoder_ptr, "record" ) &&
-//                           DED_GET_STDSTRING	( decoder_ptr, "ProfileID", datastream.strProfileID ) &&
-//                           DED_GET_STDSTRING	( decoder_ptr, "ProfileName", datastream.strProfileName ) &&
-//                           DED_GET_STDSTRING	( decoder_ptr, "protocolTypeID", datastream.strProtocolTypeID) &&
-//                           DED_GET_STDSTRING	( decoder_ptr, "sizeofProfileData", datastream.strSizeofProfileData ) &&
-//                           DED_GET_STDSTRING	( decoder_ptr, "Profile_chunk_id", datastream.strProfile_chunk_id ) &&
-//                           DED_GET_STDSTRING	( decoder_ptr, "organizationID", datastream.strOrganizationID ) &&
-//                           DED_GET_STRUCT_END( decoder_ptr, "record" ))
-//                   {
-//                       bDecoded=true;
-//                       //TODO: read the toast data and put it on datastream -- use ReadTOASTXmlFile
-//                       //TODO: ProfileToastData structure is focused wrong -- CHANGE it, it should not know about elements - it should be neutral!!!
-//                       ProfileToastData ProfileTOASTDataResult;
-//                       {
-//                           //    std::ifstream is ("../../../../DataDictionary/Database/TOASTs/22980574.xml");
-//                           std::string strTOASTFilepath = "../../../../DataDictionary/Database/TOASTs/" + datastream.strProfile_chunk_id + ".xml";
-//                           if ( boost::filesystem::exists( strTOASTFilepath ) )
-//                           {
-//                               std::ifstream istoast (strTOASTFilepath);
-//                               bDecoded = ReadTOASTXmlFile(istoast,ProfileTOASTDataResult);
-//                               Elements element;
-//                               BOOST_FOREACH( Elements f, ProfileTOASTDataResult.vecElements )
-//                               {
-//                                   element.strElementID = f.strElementID;
-//                                   element.ElementData = f.ElementData;
-//                                   datastream.vecElements.push_back(element);
-//                               }
-//                           }
-//                           else
-//                               std::cout << "[DFD1.1.1: fn1181_ReadProfileFile ] Can't find TOAST file!" << std::endl;
-//                       }
-//                   }
-//                   else
-//                   {
-//                       bDecoded=false;
-//                   }
-//                   bResult = bDecoded;
-//    //                delete[] data_in_unhexed_buf;
-//                   free(data_in_unhexed_buf);
-//               }
-//           }
-//       }
-//
-//       return bResult;
-//    */
-//}
 
 
 //bool C1_1_Profile::fn111x2_CheckForConflicts(CreateNewProfileInfo datastream)

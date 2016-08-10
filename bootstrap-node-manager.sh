@@ -64,7 +64,7 @@ else
       sudo echo "root" >> /etc/cron.allow
       sudo echo "vagrant" >> /etc/incron.allow
       sudo echo "vagrant" >> /etc/cron.allow
-      sudo mkdir /var/www/img
+      sudo mkdir -p /var/www/img
       echo "*******************************" 
       echo "Clone from GitHub" 
       echo "*******************************" 
@@ -84,8 +84,8 @@ else
       sudo ./run.sh > build.log
       echo "done build - see info in file build.log"
       echo "Deploy to www"
+      sudo mkdir -p /var/www/html/CloudChatManager/img
       sudo bash deploy_www.sh
-      mkdir -p /var/www/html/CloudChatManager/img
       echo "**************************" 
       echo " cron job for cleaning "
       echo "**************************" 

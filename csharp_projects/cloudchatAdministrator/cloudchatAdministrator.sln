@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ccAdmin", "ccAdmin\ccAdmin.csproj", "{E0E53F98-15BF-4248-8055-5CD67C986DAD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ccAdmin.Test", "ccAdmin.Test\ccAdmin.Test.csproj", "{3A53A956-87C9-4443-80E1-C7F916F574A0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ccAdmin.IntegrationTests", "ccAdmin.IntegrationTests\ccAdmin.IntegrationTests.csproj", "{FCDD89FC-49CA-419F-A738-C13D7B804860}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3A53A956-87C9-4443-80E1-C7F916F574A0}.Debug|x86.ActiveCfg = Debug|x86
+		{3A53A956-87C9-4443-80E1-C7F916F574A0}.Debug|x86.Build.0 = Debug|x86
+		{3A53A956-87C9-4443-80E1-C7F916F574A0}.Release|x86.ActiveCfg = Release|x86
+		{3A53A956-87C9-4443-80E1-C7F916F574A0}.Release|x86.Build.0 = Release|x86
+		{E0E53F98-15BF-4248-8055-5CD67C986DAD}.Debug|x86.ActiveCfg = Debug|x86
+		{E0E53F98-15BF-4248-8055-5CD67C986DAD}.Debug|x86.Build.0 = Debug|x86
+		{E0E53F98-15BF-4248-8055-5CD67C986DAD}.Release|x86.ActiveCfg = Release|x86
+		{E0E53F98-15BF-4248-8055-5CD67C986DAD}.Release|x86.Build.0 = Release|x86
+		{FCDD89FC-49CA-419F-A738-C13D7B804860}.Debug|x86.ActiveCfg = Debug|x86
+		{FCDD89FC-49CA-419F-A738-C13D7B804860}.Debug|x86.Build.0 = Debug|x86
+		{FCDD89FC-49CA-419F-A738-C13D7B804860}.Release|x86.ActiveCfg = Release|x86
+		{FCDD89FC-49CA-419F-A738-C13D7B804860}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = ccAdmin\ccAdmin.csproj
+	EndGlobalSection
+EndGlobal

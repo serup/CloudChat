@@ -18,16 +18,22 @@ import static junit.framework.TestCase.assertEquals;
  */
 public class HadoopFileSystemTest {
 
+    private boolean bSetupOK=true;
     DOPsHDFSHandler fshandlerDriver;
 
-    /*
-    */
     IntegrationEnvironmentSetup env = new IntegrationEnvironmentSetup();
 
     @Before
     public void setUp() throws Exception {
-        Assert.assertEquals(true,env.setupHadoopIntegrationEnvironment());
-        fshandlerDriver = new DOPsHDFSHandler();
+        bSetupOK = env.setupHadoopIntegrationEnvironment();
+        try{
+            fshandlerDriver = new DOPsHDFSHandler();
+        }
+        catch (Exception e) {
+            bSetupOK=false;
+            e.printStackTrace();
+        }
+        assertEquals(true,bSetupOK);
     }
 
     @Test
@@ -47,30 +53,37 @@ public class HadoopFileSystemTest {
             fshandlerDriver.remove("/tmp/newfile2.txt");
         } catch (IOException e) {
             e.printStackTrace();
+            bSetupOK=false;
         }
-
+        assertEquals(true,bSetupOK);
     }
 
     @Test
     public void test_copy_file_to_hdfs() {
         try {
             String fileResource= "dummyFiles/helloworld.txt";
+            String fileResourceWithoutPath = "helloworld.txt";
             String destFolder="tmp";
             URL fileResourceUrl = this.getClass().getClassLoader().getResource(fileResource);
-            fshandlerDriver.copyTo(fileResourceUrl.getPath(), "/"+destFolder);
+            if(fshandlerDriver.copyTo(fileResourceUrl.getPath(), "/"+destFolder)) {
 
-            // verify that file is in hdfs
-            List<String> itemsToAdd = new ArrayList<String>();
-            String filepathname = destFolder+"/"+fileResource;
-            itemsToAdd.add(fshandlerDriver.uri+filepathname);
-            assertEquals("Expected 1 item in hdfs ls list", itemsToAdd, fshandlerDriver.ls("/"+filepathname));
+                // verify that file is in hdfs
+                List<String> itemsToAdd = new ArrayList<String>();
+                String filepathname = destFolder + "/" + fileResourceWithoutPath;
+                itemsToAdd.add(fshandlerDriver.uri + filepathname);
+                assertEquals("Expected 1 item in hdfs ls list", itemsToAdd, fshandlerDriver.ls("/" + filepathname));
 
-            // cleanup - when after testing - file will be deleted on exit
-            String newfileName = "/" + destFolder + "/" + fileResource;
-            fshandlerDriver.remove(newfileName);
-        } catch (IOException e) {
+                // cleanup - when after testing - file will be deleted on exit
+                String newfileName = "/" + destFolder + "/" + fileResourceWithoutPath;
+                fshandlerDriver.remove(newfileName);
+            }
+            else
+                throw new IOException("could NOT copy file to HDFS");
+        } catch (Exception e) {
             e.printStackTrace();
+            bSetupOK=false;
         }
+        assertEquals(true,bSetupOK);
 
     }
 

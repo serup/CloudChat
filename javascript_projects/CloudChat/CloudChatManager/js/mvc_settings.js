@@ -1,6 +1,3 @@
-
-
-
 /* 
  * 
  * MVC SETTINGS
@@ -12,6 +9,7 @@ var settings_model_this;
 var settings_view_this;
 var settings_controller_this;
 var timeout_url_foto;
+var imgUrl;
 
 (function () {
     'use strict';
@@ -162,7 +160,7 @@ var timeout_url_foto;
 		{
 			ulsettings = this._elements.ulsettings;
 			ulsettings.html('');
-			ulsettings.append($('<li <p style="text-align:center;" ></p><div id="ProfilePage" ><div id="RightCol"><div id="Photo"><img src="http://77.75.165.130/DOPS/CloudChat/CloudChatManager/images/serup.png" onerror="this.onerror=null;this.src="images/user.png";" height="89" width="89" alt="User Avatar" class="img-square"></div><div id="ProfileOptions">a</div></div><div id="Info"><p><strong>First Name:</strong><span>Johnny</span></p><p><strong>Last Name:</strong><span>Serup</span></p><p><strong>Address 1:</strong><span>...</span></p><p><strong>Address 2:</strong><span>...</span></p><p><strong>City:</strong><span>...</span></p></div><!-- Needed because other elements inside ProfilePage have floats --> <div style="clear:both"></div></div> </li>'));
+			ulsettings.append($('<li <p style="text-align:center;" ></p><div id="ProfilePage" ><div id="RightCol"><div id="Photo"><img src=" data:image/jpeg;base64,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" onerror="this.onerror=null;this.src="images/user.png";" height="89" width="89" alt="User Avatar" class="img-square"></div><div id="ProfileOptions">a</div></div><div id="Info"><p><strong>First Name:</strong><span>Johnny</span></p><p><strong>Last Name:</strong><span>Serup</span></p><p><strong>Address 1:</strong><span>...</span></p><p><strong>Address 2:</strong><span>...</span></p><p><strong>City:</strong><span>...</span></p></div><!-- Needed because other elements inside ProfilePage have floats --> <div style="clear:both"></div></div> </li>'));
 		}
 
 
@@ -224,72 +222,85 @@ var timeout_url_foto;
                   + '<span id="droppedimage_icon" class="glyphicon glyphicon-plus-sign" style="font-size: 20px; opacity: 0.8; color:whitesmoke ; position: absolute; left:20px; top: 20px;z-index: 0;" onclick="settings_view_this.ProfileImageClicked.notify('+ "'USER'" +');"></span>';
             }
             else {
-                _htmlfoto = '<output style="padding-top:0px" id="placeholderProfileFoto"><span><img id="profileimg" style="position: absolute;margin-top: 0px; height: 100%; width: 100%" onclick="settings_view_this.ProfileImageClicked.notify('+ "'USER'" +');" src="'+ strfoto +'" title="Avatar"></span></output>'
+                _htmlfoto = '<output style="padding-top:0px" id="placeholderProfileFoto"><span><img id="profileimg" style="position: absolute;margin-bottom: 0px; margin-top: 0px; height: 100%; width: 100%" onclick="settings_view_this.ProfileImageClicked.notify('+ "'USER'" +');" src="'+ strfoto +'" title="Avatar"></span></output>'
                 + '<span id="droppedimage_icon" class="glyphicon glyphicon-plus-sign" style="font-size: 20px; opacity: 0.8; color:whitesmoke ; position: absolute; left:20px; top: 20px;z-index: 0;" onclick="settings_view_this.ProfileImageClicked.notify('+ "'USER'" +');"></span>';
-                
             }
 
             ulsettings.append($('<div id="ProfilePage" >'
+                                + '</div>'
+                                + '<table class="table table-striped table-bordered table-condensed" style="width: 100%;  margin-bottom: 80px; font-size: 12px; margin-top: 3px">'
+                                + '  <tr>' 
                                 + '<div id="Photo" class="imageWrapper" style="position: relative; width: 180px; height: 225px;margin-top:0px;border: 2px solid;">'
                                 + _htmlfoto
-                                + '</div>'
-                                + '<table style="width: 100%;  margin-bottom: 80px;">'
-                                + '  <tr>'
-                                + '     <td ><h3 style="margin-top: 10px; margin-right: 5px; color:darkgray;"><i class="glyphicon glyphicon-user"></i></h3></td><td><b>UserName : </b><span id="_username" onclick="settings_view_this.SettingsElementClicked.notify('+ "'_username'" +');">'+strusername+'</span></td>'
                                 + '  </tr>'
                                 + '  <tr>'
-                                + '     <td ><h3 style="margin-top: 10px; margin-right: 5px; color:darkgray;"><i class="glyphicon glyphicon-lock"></i></h3></td><td><b>Password : </b><span id="_username" onclick="settings_view_this.SettingsElementClicked.notify('+ "'_username'" +');">'+strpassword+'</span></td>'
+                                + '     <td ><h3 style="margin-bottom: 0px; margin-top: 0px; margin-right: 0px; color:darkgray;"><i class="glyphicon glyphicon-user" style="font-size: 18px"></i></h3><strong>UserName</strong></td><td><span id="_username" onclick="settings_view_this.SettingsElementClicked.notify('+ "'_username'" +');">'+strusername+'</span></td>'
+                                + '  </tr>'
+                                + '  <tr>'
+                                + '     <td ><h3 style="margin-bottom: 0px; margin-top: 0px; margin-right: 0px; color:darkgray;"><i class="glyphicon glyphicon-lock" style="font-size: 18px"></i></h3><strong>Password</strong></td><td><span id="_username" onclick="settings_view_this.SettingsElementClicked.notify('+ "'_username'" +');">'+strpassword+'</span></td>'
                                 + '  </tr>'
 				+ '  <tr>'
-                                + '     <td><h3 style="color:darkgray;"><i style="font-size: 35px;" class="fa fa-male"></i></h3></td><td><b>Name : </b><span id="fullName_">'+ strfirstname + " " + strlastname +'</span></td>'
+                                + '     <td><h3 style="margin-bottom: 0px; margin-top: 0px; margin-right: 0px; color:darkgray;"><i style="margin-bottom: 0px; margin-top: 0px; font-size: 31px;" class="fa fa-male"></i></h3><strong>Name</strong></td><td><span id="fullName_">'+ strfirstname + " " + strlastname +'</span></td>'
                                 + '  </tr>'
                                 + '  <tr>'
-                                + '     <td><h3 style="color:darkgray;"><i class="glyphicon glyphicon-home"></i></h3></td><td><b>Address : </b><span id="userAddress">'+ strstreetname  + " " +  strstreetno + " , " + strpostalcode  + " " +  strcity +'</span></td>'
+                                + '     <td><h3 style="margin-bottom: 0px; margin-top: 0px; margin-right: 0px; color:darkgray;"><i class="glyphicon glyphicon-home" style="font-size: 18px"></i></h3><strong>Address</strong></td><td><span id="userAddress">'+ strstreetname  + " " +  strstreetno + " , " + strpostalcode  + " " +  strcity +'</span></td>'
                                 + '  </tr>'
                                 + '  <tr>'
-                                + '     <td><h3 style="color:darkgray;"><i class="glyphicon glyphicon-flag"></i></h3></td><td><b>Nationality : </b><span id="userNationality">'+ strcountry  + " (" + strstate + ")" +'</span></td>'
+                                + '     <td><h3 style="margin-bottom: 0px; margin-top: 0px; margin-right: 0px; color:darkgray;"><i class="glyphicon glyphicon-flag" style="font-size: 18px"></i></h3><strong>Nationality</strong></td><td><span id="userNationality">'+ strcountry  + " (" + strstate + ")" +'</span></td>'
                                 + '  </tr>'
                                 + '  <tr>'
-                                + '     <td><h3 style="color:darkgray;"><i class="glyphicon glyphicon-earphone"></i></h3></td><td><b>Phone : </b><span id="userPrimaryPhone">'+ strmobilephone +'</span></td>'
+                                + '     <td><h3 style="margin-bottom: 0px; margin-top: 0px; margin-right: 0px; color:darkgray;"><i class="glyphicon glyphicon-earphone" style="font-size: 18px"></i></h3><strong>Phone</strong></td><td><span id="userPrimaryPhone">'+ strmobilephone +'</span></td>'
                                 + '  </tr>'
                                 + '  <tr>'
-                                + '     <td><h3 style="color:darkgray;"><i class="glyphicon glyphicon-comment"></i></h3></td><td><b>Note: </b><span id="userAbout">'+ strabout +'</span></td>'
+                                + '     <td><h3 style="margin-bottom: 0px; margin-top: 0px; margin-right: 0px; color:darkgray;"><i class="glyphicon glyphicon-comment" style="font-size: 18px"></i></h3><strong>Note</strong></td><td><span id="userAbout">'+ strabout +'</span></td>'
                                 + '  </tr>'
                                 + '  <tr>'
-                                + '     <td><h3 style="color:darkgray;"><i>@</i></h3></td><td><b>Email : </b><span id="userEmail">'+ stremail +'</span></td>'
+                                + '     <td><h3 style="margin-bottom: 0px; margin-top: 0px; margin-right: 0px; color:darkgray;"><i>@</i></h3><strong>Email</strong></td><td><span id="userEmail">'+ stremail +'</span></td>'
                                 + '  </tr>'
                                 + '  <tr>'
-                                + '    <td><h3 style="color:darkgray;"><i class="glyphicon glyphicon-info-sign"></i></h3></td><td><b>About : </b><span id="userInfo"></span></td>'
+                                + '    <td><h3 style="margin-bottom: 0px; margin-top: 0px; margin-right: 0px; color:darkgray;"><i class="glyphicon glyphicon-info-sign" style="font-size: 18px"></i></h3><strong>About</strong></td><td><span id="userInfo"></span></td>'
                                 + '  </tr>'
                                 + '  <tr>'
-                                + '    <td><h3 style="color:darkgray;"><i class="glyphicon glyphicon-barcode"></i></h3></td><td><b>ID : </b>'+ UniqueIdFromSettings.small() +'<span id="userID"></span></td>'
+                                + '    <td><h3 style="margin-bottom: 0px; margin-top: 0px; margin-right: 0px; color:darkgray;"><i class="glyphicon glyphicon-barcode" style="font-size: 18px"></i></h3><strong>ID</strong></td><td>'+ UniqueIdFromSettings.small() +'<span id="userID"></span></td>'
                                 + '  </tr>'
                                 + '  <tr>'
-                                + '    <td><h3 style="color:darkgray;"><i class="glyphicon glyphicon-time"></i></h3></td><td><b>Subscription Expires : </b><span id="userCreationDate"></span></td>'
+                                + '    <td><h3 style="margin-bottom: 0px; margin-top: 0px; margin-right: 0px; color:darkgray;"><i class="glyphicon glyphicon-time" style="font-size: 18px"></i></h3><strong>Subscription Expires</strong></td><td><span id="userCreationDate"></span></td>'
+                                + '  </tr>'
+                                + '  <tr>'
+                                + '    <td><h3 style="margin-bottom: 0px; margin-top: 0px; margin-right: 0px; color:darkgray;"><i class="glyphicon glyphicon-barcode" style="font-size: 18px"></i></h3><strong>Supervisor ID</strong></td><td>'+ strsupervisor.small() +'<span id="supervisor"></span></td>'
                                 + '  </tr>'
                                 + '</table>'
                                 + '</div>'));
                                 
-                
-        //    this._elements.ulsettings.context.getElementById('imgfile').addEventListener('change', settings_controller_this.handleFileSelect, false);
-            // Refresh image 
-            clearInterval(timeout_url_foto);
-            timeout_url_foto=setInterval(function(){
-                if(/loaded|complete/.test(document.readyState)){
-                   // refresh the profileimg foto - hack - adding time to ignore cash
-                   //get the src attribute
-                   var source = ulsettings.context.getElementById('profileimg').src;
-                   //source = $('#profileimg').val();
-                   //source = jQuery(".xyro_refresh").attr("src");
-                   //remove previously added timestamps
-                   source = source.split("?", 1);//turns "image.jpg?timestamp=1234" into "image.jpg" avoiding infinitely adding new timestamps
-                   //prep new src attribute by adding a timestamp
-                   var new_source = source + "?timestamp="  + new Date().getTime();
-                   //alert(new_source); //you may want to alert that during developement to see if you're getting what you wanted
-                   //set the new src attribute
-                   $('#profileimg').removeAttr("src").attr("src", new_source);
-                }
-            }, 8000);
+
+                    // Refresh image 
+                    clearInterval(timeout_url_foto);
+                    var maxcount=0;
+                    timeout_url_foto=setInterval(function(){
+                        if(/loaded|complete/.test(document.readyState)){
+                            // refresh the profileimg foto - hack - adding time to ignore cash
+                            //get the src attribute
+                            var source = ulsettings.context.getElementById('profileimg').src;
+                            //remove previously added timestamps
+                            var new_source = "";
+                            source = source.split("?", 1);//turns "image.jpg?timestamp=1234" into "image.jpg" avoiding infinitely adding new timestamps
+                            if (/data:image/i.test(source))
+                            {
+                                // since image was NOT extracted and is still an embedded image, then due to the issue around adding timestamp to embedded images, then do NOT add timestamp
+                                new_source = source;
+                            }
+                            else {
+                                //prep new src attribute by adding a timestamp
+                                new_source = source + "?timestamp="  + new Date().getTime();
+                            } 
+                            //alert(new_source); //you may want to alert that during developement to see if you're getting what you wanted
+                            //set the new src attribute
+                            $('#profileimg').removeAttr("src").attr("src", new_source);
+                            if(maxcount>3)
+                                clearInterval(timeout_url_foto); // stop refresh
+                            maxcount++;
+                        }
+                    }, 3000);
 
            
        },
@@ -297,7 +308,7 @@ var timeout_url_foto;
             var ulsettings;
             ulsettings = this._elements.ulsettings;
             ulsettings.html('');
-            ulsettings.append($('<li <div id="ProfilePage" ><div id="RightCol"><div id="Photo"><img src="http://77.75.165.130/DOPS/CloudChat/CloudChatManager/images/serup.png" onerror="this.onerror=null;this.src="images/user.png";" height="89" width="89" alt="User Avatar" class="img-square"></div><div id="ProfileOptions">Profile access currently not possible</div></div></li>'));
+            ulsettings.append($('<li <div id="ProfilePage" ><div id="RightCol"><div id="Photo"><img src="data:image/jpeg;base64,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" onerror="this.onerror=null;this.src="images/user.png";" height="89" width="89" alt="User Avatar" class="img-square"></div><div id="ProfileOptions">Profile access currently not possible</div></div></li>'));
         }
     };
 
@@ -362,10 +373,33 @@ var timeout_url_foto;
 
             //TODO: should be moved to "attach listeners to HTML controls", since these are actually view events, thus should be in view part of MVC and controller should attach to these events -
             document.getElementById("snap").addEventListener("click", function() {
-                context.drawImage(video, 0, 0, 180, 220);
+                //context.drawImage(video, 0, 0, 180, 220);
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                /// step 1 - create off-screen canvas
+                var oc   = document.createElement('canvas'),
+                octx = oc.getContext('2d');
+                oc.width  = video.width  * 0.5;
+                oc.height = video.height * 0.5;
+                octx.drawImage(video, 0, 0, oc.width, oc.height); 
+
+                /// step 2
+                octx.drawImage(oc, 0, 0, oc.width * 0.9, oc.height * 0.9);
+
+                /// step 3
+                context.drawImage(oc, 0, 0, oc.width * 0.9, oc.height * 0.9, 0, 0, canvas.width,   canvas.height);
+
+
                 document.getElementById("camflow_snap").style.display = "none";
                 document.getElementById("camflow_validate").style.display = "inline";
                 document.getElementById("camflow_validate_upload").addEventListener("click", function() {
+                    imgUrl = canvas.toDataURL();
+                    // Render thumbnail.
+                    var span2 = document.createElement('span');
+                    span2.innerHTML = ['<img id="profileimg" style="position: absolute;margin-bottom: 0px; margin-top: 0px; height: 100%; width: 100%" onclick="settings_view_this.ProfileImageClicked.notify(' + "'USER'" + ');" src="', imgUrl,
+                    '" title="profile foto"/>'].join('');
+                    document.getElementById('placeholderProfileFoto').innerHTML = "";
+                    document.getElementById('placeholderProfileFoto').insertBefore(span2, null);
                     settings_controller_this.uploadFile();
                 });
                 document.getElementById("camflow_validate_capture").addEventListener("click", function() {
@@ -389,7 +423,6 @@ var timeout_url_foto;
                     document.getElementById("modalSelection").style.display = "none";
                     document.getElementById("selectfile").style.display = "inline";
 
-                    //document.getElementById('files').addEventListener('change', handleFileSelect, false);
                     document.getElementById('files').addEventListener('change', settings_controller_this.handleFileSelect, false);
 
                     $('#photoModal').modal('hide');
@@ -407,19 +440,14 @@ var timeout_url_foto;
         },
         
         uploadFile: function() {
-            /*var xhr = new XMLHttpRequest(); // not possible to test local due to : Cross origin requests are only supported for protocol schemes: http, data, chrome-extension, https, chrome-extension-resource.
-            xhr.open('POST', 'php/upload_data.php', true);
-            xhr.onload = function() {
-            };
-            xhr.send(settings_model_this.myfile);
-            */
-           
-            // Create ClassItemObj
+
+            $('#photoModal').modal('hide'); // hide the camera modal
+
+            // update profile in backend database
             var ClassItemObj = new classProfileSettingsInfoItemObject();
-            // add placeholderProfileFoto to ClassItemObj ref to foto in profile
-            //ClassItemObj.putItem("foto", "data:image/jpeg;base64,/9j/4AA"   ); // TODO: test since above somehow destroys dataframe -- testting 
             ClassItemObj.putItem("foto", this._view._elements.ulsettings.context.getElementById('profileimg').src)
-            UpdateProfileOnServer(ClassItemObj); // 
+            //ClassItemObj.putItem("foto", imgUrl);
+            UpdateProfileOnServer(ClassItemObj);  
         },
 
        
@@ -447,37 +475,31 @@ var timeout_url_foto;
                     // Closure to capture the file information.
                     reader.onload = (function(theFile) { // lambda function
                         return function(e) {
-  			    // now resize image so it becomes smaller
-			    var image = new Image();
-			    var urlresult = "";
-			    image.src = e.target.result; // path to image
-			    image.onload = function () {
-				    //urlresult = resizeMe(image); // should return a data URL for resized image
+          			    // now resize image so it becomes smaller
+		        	    var image = new Image();
+			            var urlresult = "";
+			            image.src = e.target.result; // path to image
+			            image.onload = function () {
+        				    //TODO: urlresult = resizeMe(image); // should return a data URL for resized image
 
-				    // Render thumbnail.
-				    var span2 = document.createElement('span');
-				    span2.innerHTML = ['<img id="profileimg" style="position: absolute;margin-top: 0px; height: 100%; width: 100%" onclick="settings_view_this.ProfileImageClicked.notify(' + "'USER'" + ');" src="', e.target.result,
-				    //span2.innerHTML = ['<img id="profileimg" style="position: absolute;margin-top: 0px; height: 100%; width: 100%" onclick="settings_view_this.ProfileImageClicked.notify(' + "'USER'" + ');" src="', urlresult,
-				    '" title="', escape(theFile.name), '"/>'].join('');
-				    document.getElementById('placeholderProfileFoto').innerHTML = "";
-				    document.getElementById('placeholderProfileFoto').insertBefore(span2, null);
+        				    // Render thumbnail.
+	        			    var span2 = document.createElement('span');
+		        		    span2.innerHTML = ['<img id="profileimg" style="position: absolute;margin-bottom: 0px; margin-top: 0px; height: 100%; width: 100%" onclick="settings_view_this.ProfileImageClicked.notify(' + "'USER'" + ');" src="', e.target.result,
+				            '" title="', escape(theFile.name), '"/>'].join('');
+				            document.getElementById('placeholderProfileFoto').innerHTML = "";
+				            document.getElementById('placeholderProfileFoto').insertBefore(span2, null);
 
-				    // upload the image and store in database file 
-				    settings_controller_this.uploadFile();
-			    };
-
-			};
-		    })(f);
+				            // upload the image and store in database file 
+				            settings_controller_this.uploadFile();
+			                };
+			            };
+		            })(f);
 
                     // Read in the image file as a data URL.
                     reader.readAsDataURL(f);
-		    // Read in the image file as a blob.
-                    //reader.readAsArrayBuffer(f);
                 }
             }
         },
-        //document.getElementById('imgfile').addEventListener('change', handleFileSelect, false);
-        //this._elements.ulsettings.context.getElementById('imgfile').addEventListener('change', settings_view_this.handleFileSelect.notify(false););
         
         editSettingsElement: function (id) {
             var element = document.getElementById(id);
@@ -498,19 +520,21 @@ var timeout_url_foto;
         },
         fetchSettingsElement: function (name) {
             var value;
-            //TODO: find element in settings and return value
+            value = settings_model_this.objSettings.getItem(name,"string");
             return value;
         },
         
         fetchSupervisorID: function () {
-            var id; // TODO: add real fetch of supervisor id
-            id = "754d148d0522659d0ceb2e6035fad6a8"; // TEST
+            var id; 
+            //id = "754d148d0522659d0ceb2e6035fad6a8"; // TEST
+            //id = fetchSettingsElement("supervisor");
+	    id = settings_model_this.objSettings.getItem("supervisor","string"); 
             return id;
         },
         
         fetchAlias: function () {
-            var alias; // TODO: fetch real alias from settings - could be username
-            alias = "SERUP"; // TEST
+            var alias; 
+            alias = settings_model_this.objSettings.getItem("username","string");
             return alias;
         }
     };
