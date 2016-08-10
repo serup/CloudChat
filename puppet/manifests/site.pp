@@ -82,7 +82,7 @@ BAMBOO_LOG_FILE=${home}/logs/bamboo.log",
 class grails_springboot {
     include maven
     include apt
-    class { "archive::prerequisites": } -> class { "idea::community": version => "15.0.1" }
+    class { "archive::prerequisites": } -> class { "idea::community": version => "2016.2" }
     apt::ppa { "ppa:webupd8team/java": }
 
 # Does NOT work for Ubuntu vivid, thus use "install-grails" exec instead
