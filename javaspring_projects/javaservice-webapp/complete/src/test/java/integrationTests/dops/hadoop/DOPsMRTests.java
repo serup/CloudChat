@@ -122,7 +122,7 @@ public class DOPsMRTests {
                         throw new IOException("Resource file NOT present");
                 }
                 else
-                    throw new IOException("could NOT copy file to HDFS");
+                    throw new IOException("could NOT copy file to HDFS - this could be because input folder is existing, created by other user - PLEASE remove it first; do following on one.cluster: vagrant ssh one; hadoop fs -mv /tmp/input /tmp/garbage ");
             }
             else
                 throw new IOException("Resource file NOT present");
