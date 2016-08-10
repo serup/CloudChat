@@ -110,57 +110,19 @@ public class ProfileFileMapper extends Mapper<LongWritable, Text, Text, Text>{
                             }
                         }
                         if(n != 0) {
-                            // fetch the TOAST file, then since TOAST file has same xml structure then take Data area of that file as _value for the keypair
-
+                            /// fetch the TOAST file, then since TOAST file has same xml structure then take Data area of that file as _value for the keypair
                             /// now fetch ALL elements with their attribute values  -- all incl. TOAST attributes
                             /// this means that now we should fetch all attributes from the TOAST entity file
                             String idOfTOASTfile = findToastFileName(dedElements, EntityName);
                             if(!idOfTOASTfile.isEmpty()) {
-                                DocumentBuilderFactory dbFactory2 = DocumentBuilderFactory.newInstance();
-                                DocumentBuilder dBuilder2;
-                                Document toastdoc = null;
-                                String Child = EntityName;
-                                String ChildRecord = EntityName + "Record";
-                                boolean bFoundFile=false;
-                                String TOASTFilePath;
-                                if(context.getConfiguration().get("dops.toast.database.dir") == null) {
-                                    TOASTFilePath = dbctrl.getRelativeENTITIES_DATABASE_TOAST_PLACE() + idOfTOASTfile + ".xml";
-                                    // now open its toast file and put all attributes and values on record_value
-                                    File ToastFile = new File(TOASTFilePath);
-                                    if (ToastFile.exists()) {
-                                        File fXmlFile = ToastFile;
-                                        try {
-                                            dBuilder2 = dbFactory2.newDocumentBuilder();
-                                            toastdoc = dBuilder2.parse(fXmlFile);
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                        bFoundFile=true;
-                                    }
-                                }
-                                else {
-                                    // handle file from hdfs
-                                    TOASTFilePath = context.getConfiguration().get("dops.toast.database.dir") + idOfTOASTfile + ".xml";
-                                    Configuration configuration = new Configuration();
-                                    FileSystem fs = FileSystem.get(new URI(context.getConfiguration().get("fs.defaultFS")),configuration);
-                                    Path filePath = new Path(TOASTFilePath);
-                                    FSDataInputStream fsDataInputStream = fs.open(filePath);
-                                    try {
-                                        dBuilder2 = dbFactory2.newDocumentBuilder();
-                                        toastdoc = dBuilder2.parse(fsDataInputStream);
-                                        System.out.println("hdfs file parsed : TransGUID: " + toastdoc.getElementsByTagName("TransGUID").item(0).getTextContent());
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                    bFoundFile=true;
-                                }
-                                if(bFoundFile) {
-                                    assembleToastChunksAndSetupKeyPair(toastdoc, context, _key, Child, ChildRecord);
+                                Document toastdoc = readToastFileIntoDocument(idOfTOASTfile,EntityName, context);
+                                if(toastdoc != null) {
+                                    assembleToastChunksAndSetupKeyPair(toastdoc, context, _key, EntityName);
                                     // now all elements from Entity should have been read, including the ones in TOAST
                                     // (they have also been merged, so no chunks exists)
                                 } else {
                                     // warning there could not be found a TOAST file, this is not necessary an error, however strange
-                                    System.out.println("[FetchTOASTEntities] WARNING: there could not be found a TOAST file, this is not necessary an error, however strange : " + TOASTFilePath);
+                                    System.out.println("[FetchTOASTEntities] WARNING: there could not be found a TOAST file, this is not necessary an error, however strange : " + idOfTOASTfile);
                                 }
                             }
                         }
@@ -172,6 +134,44 @@ public class ProfileFileMapper extends Mapper<LongWritable, Text, Text, Text>{
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private Document readToastFileIntoDocument(String idOfTOASTfile, String entityName, Mapper.Context context) throws Exception
+    {
+        Document toastdoc=null;
+        String TOASTFilePath;
+        DocumentBuilderFactory dbFactory2 = DocumentBuilderFactory.newInstance();
+        DocumentBuilder dBuilder2;
+        if(context.getConfiguration().get("dops.toast.database.dir") == null) {
+            TOASTFilePath = dbctrl.getRelativeENTITIES_DATABASE_TOAST_PLACE() + idOfTOASTfile + ".xml";
+            // now open its toast file and put all attributes and values on record_value
+            File ToastFile = new File(TOASTFilePath);
+            if (ToastFile.exists()) {
+                File fXmlFile = ToastFile;
+                try {
+                    dBuilder2 = dbFactory2.newDocumentBuilder();
+                    toastdoc = dBuilder2.parse(fXmlFile);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        else {
+            // handle file from hdfs
+            TOASTFilePath = context.getConfiguration().get("dops.toast.database.dir") + idOfTOASTfile + ".xml";
+            Configuration configuration = new Configuration();
+            FileSystem fs = FileSystem.get(new URI(context.getConfiguration().get("fs.defaultFS")),configuration);
+            Path filePath = new Path(TOASTFilePath);
+            FSDataInputStream fsDataInputStream = fs.open(filePath);
+            try {
+                dBuilder2 = dbFactory2.newDocumentBuilder();
+                toastdoc = dBuilder2.parse(fsDataInputStream);
+                System.out.println("hdfs file parsed : TransGUID: " + toastdoc.getElementsByTagName("TransGUID").item(0).getTextContent());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return toastdoc;
     }
 
     /**
@@ -188,7 +188,7 @@ public class ProfileFileMapper extends Mapper<LongWritable, Text, Text, Text>{
         String chunkID = (EntityName + "_chunk_id").toLowerCase();
         String chunkIdValue = "";
         // finding the element
-        List<DataBaseControl.Elements> resultElement = dedElements.stream()
+        List<DataBaseControl.Elements> resultElement = dedElements.parallelStream()
                 .filter((p)-> p.getStrElementID().equals((chunkID)))
                 .collect(Collectors.toList());
         if(resultElement.size()>0) {
@@ -202,10 +202,10 @@ public class ProfileFileMapper extends Mapper<LongWritable, Text, Text, Text>{
         return chunkIdValue;
     }
 
-    private void assembleToastChunksAndSetupKeyPair(Document toastdoc,Mapper.Context context, String _key, String expectedChildEntity, String ChildRecord) throws Exception {
+    private void assembleToastChunksAndSetupKeyPair(Document toastdoc,Mapper.Context context, String _key, String expectedChildEntity) throws Exception {
         String PrevChunkId = "nothing";
         boolean isPushed=true;
-
+        String ChildRecord = expectedChildEntity + "Record";
         assert toastdoc != null;
         toastdoc.getDocumentElement().normalize();
         String nodeName = toastdoc.getDocumentElement().getNodeName();
@@ -219,9 +219,9 @@ public class ProfileFileMapper extends Mapper<LongWritable, Text, Text, Text>{
             Node nodeelement = listOfElementsInToastDoc.item(index);
             if (nodeelement.getNodeType() == Node.ELEMENT_NODE) {
                 Element eElement = (Element) nodeelement;
-                DataBaseControl.DatabaseEntityRecordEntry record = createRecordEntry(eElement);
-                String md5 = dbctrl.CalculateMD5CheckSum(record.getData().getBytes());
-                if (!md5.equalsIgnoreCase(record.getDataMD5()))
+                DataBaseControl.DatabaseEntityRecordEntry recordEntry = createRecordEntry(eElement);
+                String md5 = dbctrl.CalculateMD5CheckSum(recordEntry.getData().getBytes());
+                if (!md5.equalsIgnoreCase(recordEntry.getDataMD5()))
                 {
                     System.out.println("ERROR: data area in file have changed without having the MD5 checksum changed -- Warning data could be compromised ; " + expectedChildEntity );
                     return;  // data area in file have changed without having the MD5 checksum changed -- Warning data could be compromised
@@ -229,8 +229,8 @@ public class ProfileFileMapper extends Mapper<LongWritable, Text, Text, Text>{
 
                 // According to what the protocol prescribes for DED entries in TOAST, then a loop of decode, according to specs, of entries is needed
                 // fetch the data area and unpack it with DED to check it
-                byte[] DataInUnHexedBuffer = DatatypeConverter.parseHexBinary(record.getData());
-                DataBaseControl.EntityChunkDataInfo chunk = getToastRecord(DataInUnHexedBuffer, expectedChildEntity);
+
+                DataBaseControl.EntityChunkDataInfo chunk = getToastRecord(recordEntry, expectedChildEntity);
 
                 if(PrevChunkId.contentEquals("nothing") || !PrevChunkId.contentEquals(chunk.entity_chunk_id))
                 {
@@ -269,8 +269,9 @@ public class ProfileFileMapper extends Mapper<LongWritable, Text, Text, Text>{
         }
     }
 
-    private DataBaseControl.EntityChunkDataInfo getToastRecord(byte[] DataInUnHexedBuffer, String child)
+    private DataBaseControl.EntityChunkDataInfo getToastRecord(DataBaseControl.DatabaseEntityRecordEntry record, String child)
     {
+        byte[] DataInUnHexedBuffer = DatatypeConverter.parseHexBinary(record.getData());
         DataBaseControl.EntityChunkDataInfo chunk = dbctrl.createEntityChunkDataInfo();
         DEDDecoder DED2 = new DEDDecoder();
         DED2.PUT_DATA_IN_DECODER(DataInUnHexedBuffer,DataInUnHexedBuffer.length);

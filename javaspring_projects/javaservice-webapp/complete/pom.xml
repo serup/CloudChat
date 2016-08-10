@@ -97,6 +97,7 @@
     <build>
         <finalName>DOPsJavaServiceApp</finalName>
         <plugins>
+            <!-- Set a compiler level -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -116,17 +117,6 @@
                 <version>2.0</version>
                 <configuration>
                     <mainClass>org.korecky.myjavafx.App</mainClass>
-                </configuration>
-            </plugin>
-
-            <!-- Set a compiler level -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
                 </configuration>
             </plugin>
 

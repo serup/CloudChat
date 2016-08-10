@@ -59,6 +59,22 @@ public class DOPsMRTests {
         assertEquals(true,bSetupOK);
     }
 
+    /**
+     * This test could fail if ulimit for noproc is too low
+     * suggest setting following in /etc/security/limits.conf
+     *
+
+     *          soft     nproc          1048570
+     *          hard     nproc          1048570
+     *          soft     nofile         1048570
+     *          hard     nofile         1048570
+     *          soft     nproc          1048570
+     *          hard     nproc          1048570
+     *          soft     nofile         1048570
+     *          hard     nofile         1048570
+
+     * This is done in the setupUlimit.sh file which is run in the install.sh script
+     */
     @Test
     public void testFindProfileFile() {
 
