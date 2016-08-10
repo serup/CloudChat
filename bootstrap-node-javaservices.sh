@@ -65,6 +65,8 @@ else
       cd CloudChat
       git checkout serup
       echo "CloudChat installed"
+      echo "copy commit-msg - to enable git push from this entity"
+      cp commit-msg .git/hooks/.
       echo "Set up swapfile"
       sudo bash addswapfile.sh
       echo "build javaspring project"
@@ -72,7 +74,7 @@ else
       ./gradlew
       echo "********************************************************************************************************************"
       echo "use intellij idea editor - NB! inorder for x11 forward to work, then start like this: vagrant -XY ssh javaservices"
-      echo " start idea when loged in: /usr/bin/idea"
+      echo " start idea when loged in: /usr/bin/idea or sudo idea"
       echo "********************************************************************************************************************"
       sudo ln -s /opt/idea-2016.2/idea-IC-162.1121.32/bin/idea.sh /usr/bin/idea
     fi
