@@ -55,17 +55,22 @@ public class ProfileFileReducer extends Reducer<Text, Text, Text, Text> {
         context.write(new Text("<result>"), new Text(""));
     }
 
+    public void reduce(Text fileNameOfFileBeingProcessed, Iterable<Text> lineFromFile, Context context) throws IOException, InterruptedException {
+
+        setupContextConfigurationElements(context);
+        if(parseLineFromFileToFindElementOfInterest(lineFromFile))
+            writeReducerContext(fileNameOfFileBeingProcessed, context);
+    }
+
     @Override
     protected void cleanup(Context context) throws IOException, InterruptedException {
         context.write(new Text("</result>"), new Text(""));
     }
 
     private final Text outputKey = new Text();
-
     public void setElementOfInterest(String elementOfInterest) {
         this.elementOfInterest = elementOfInterest;
     }
-
     private String elementOfInterest;
 
     public void setElementOfInterestValue(String elementOfInterestValue) {
@@ -73,7 +78,6 @@ public class ProfileFileReducer extends Reducer<Text, Text, Text, Text> {
     }
 
     private String elementOfInterestValue;
-
     private void setupContextConfigurationElements(Context context) {
         if(context.getConfiguration().get("dops.entities.database.dir") != null) {
             elementOfInterest = context.getConfiguration().get("dops.elementofinterest");
@@ -158,13 +162,4 @@ public class ProfileFileReducer extends Reducer<Text, Text, Text, Text> {
         }
         return bFound;
     }
-
-    public void reduce(Text fileNameOfFileBeingProcessed, Iterable<Text> lineFromFile, Context context) throws IOException, InterruptedException {
-
-        setupContextConfigurationElements(context);
-        if(parseLineFromFileToFindElementOfInterest(lineFromFile))
-             writeReducerContext(fileNameOfFileBeingProcessed, context);
-    }
-
-
 }
