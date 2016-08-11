@@ -66,7 +66,10 @@ else
       git checkout serup
       echo "CloudChat installed"
       echo "copy commit-msg - to enable git push from this entity"
-      cp commit-msg .git/hooks/.
+      curl -Lo .git/hooks/commit-msg http://review.gerrithub.io/tools/hooks/commit-msg
+#incase above fails - use old version of commit-msg script      
+#cp commit-msg .git/hooks/.
+      chmod u+x .git/hooks/commit-msg
       echo "Set up swapfile"
       sudo bash addswapfile.sh
       echo "build javaspring project"
