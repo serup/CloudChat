@@ -53,6 +53,9 @@ else
     echo "fetch g++ since somehow gcc default install does not get it"
     sudo apt-get install -yq g++
 
+    echo "install libraries so X11 forwarding will work for javaFX applications"
+    sudo apt-get install libgtk2.0-0 libgdk-pixbuf2.0-0 libfontconfig1 libxrender1 libx11-6 libglib2.0-0  libxft2 libfreetype6 libc6 zlib1g libpng12-0 libstdc++6-4.8-dbg-arm64-cross libgcc1 
+
     echo "Fetch latest version of CloudChat"
     if [ -d "CloudChat" ]; then
       echo "CloudChat already installed"

@@ -107,7 +107,7 @@ public class DOPsMRTests {
             FileInputFormat.addInputPath(job, new Path("hdfs://one.cluster:8020/tmp/input/findprofile/*.xml"));
             FileOutputFormat.setOutputPath(job, new Path("/tmp/output/findprofile/result/"));
 
-            // copy the internal resource file watson.txt to remote hadoop hdfs system
+            // copy the internal resource file to remote hadoop hdfs system
             String fileResource1 = "DataDictionary/Database/ENTITIEs/355760fb6afaf9c41d17ac5b9397fd45.xml"; // This is a profile database file
             String fileResource2 = "DataDictionary/Database/TOASTs/355760fb6afaf9c41d17ac5b9397fd45_toast.xml"; // This is a profile toast database file
             String destFolder="tmp/input/findprofile";
