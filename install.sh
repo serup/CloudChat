@@ -527,6 +527,23 @@ else
   echo "- Virtualbox installed"
 fi
 
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 maven* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install maven"
+   sudo apt-fast install -yq maven 
+else
+  echo "- maven installed"
+fi
+
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 autoconf* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install autoconf"
+   sudo apt-fast install -yq autoconf
+else
+  echo "- autoconf installed"
+fi
+
+
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 virtualbox-guest* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install Virtualbox guest addition "
