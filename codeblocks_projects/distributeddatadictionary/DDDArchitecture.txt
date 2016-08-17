@@ -1,0 +1,104 @@
+Data Dictionary Architecture setup
+
+DDD - Distributed Data Dictionary
+ There are to folders on each node - 'data' and 'dictionary' - inside the dictionary folder lies blockfiles with datadictionary realm file definitions
+ and inside data lies database realm files formatted in according to the dictionary definition files
+
+						     DDDAdmin
+							+
+							|
+			+-----+----+-----+------+-------+------+-------+-------+--------+
+			|          |            |              |               |        |
+	  	    [DDNode]	[DDNode]     [DDNode]	   [DDNode]	   [DDNode]  [DDNode]     ... 6 node example, it could be many more nodes
+                     |                                      |
+		     +-[BFi]                                +-[BFi]
+		        |                                      |
+		        +-[BlockEntity]                        +-[BlockEntity]
+		           |                                      |
+		           +-[BlockRecord]                        +-[BlockRecord]
+		           +-[BlockRecord]                        +-[BlockRecord]
+		           |  |                                   |  |
+		           |  +-[toast record]                    |  +-[toast record]
+		           |     |                                |  |  |
+    		           |     +-[attribut_chunk_data]          |  |  +-[attribut_chunk_data] - first chunk of an attribut (fx. attribut 'foto')
+		           |                                      |  +-[toast record]
+			   |                                      |     |
+			   |                                      |     +-[attribut_chunk_data] - second chunk of an attribut (fx. attribut 'foto') 
+		           +-[BlockRecord]                        +-[BlockRecord]
+		           |                                      |
+		           + etc...........................       + etc...........................
+
+
+
+[BFi] - Block File; several block files assembled together forms a database realm file consisting of attributes
+<?xml version="1.0" encoding="utf-8"?>
+<BlockEntity>
+ <TransGUID></TransGUID> -- each record has a unique transaction id to be used with security, when detecting inconsistencies
+ <realmfileMD5><realmfileMD5> -- this md5 checksum is the checksum for the total assembled realmfile - which could be several of these block files
+ <BlockRecord>
+	<TransGUID></TransGUID> -- each record has a unique transaction id to be used with security, when detecting inconsistencies
+   	<realmfile_chunk_id></realmfile_chunk_id>	-- name of realm file
+   	<realmfile_aiid></realmfile_aiid>		-- automatic increased id - a continues number for all of these records
+   	<realmfile_chunk_seq></realmfile_chunk_seq>	-- sequence number for this chunk of the database realm file
+	<realmfile_chunk_data> 
+	       <TransGUID></TransGUID> -- each record has a unique transaction id to be used with security, when detecting inconsistencies
+	       <Protocol>DED</Protocol>
+	       <ProtocolVersion>1.0.0.0</ProtocolVersion>
+	       <DataSize></DataSize>
+	       <Data>
+		 <chunk_record>
+		     <attribut_chunk_id></attribut_chunk_id> 		-- name of attribut described in data dictionary realm entity
+		     <attribut_aiid></attribut_aiid> 			-- automatic increased id - a continues number for all records 
+		     <attribut_chunk_seq></attribut_chunk_seq> 		-- sequence number for this chunk of the attribut
+		     <attribut_chunk_data></attribut_chunk_data> 	-- chunk data of attribut
+		 </chunk_record>
+		</Data> -- here is the pCompressedData from above protocol encoding, compression, encrypting algoritm -- currently DED (dataencoderdecoder)
+	       <DataMD5><DataMD5> -- this md5 checksum is used as an extra verification -- Data must be verified with this value before being used.
+	</realmfile_chunk_data>
+  </BlockRecord>
+  <BlockRecord>
+	<TransGUID></TransGUID> -- each record has a unique transaction id to be used with security, when detecting inconsistencies
+   	<realmfile_chunk_id></realmfile_chunk_id>	-- name of realm file
+   	<realmfile_aiid></realmfile_aiid>		-- automatic increased id - a continues number for all of these records
+   	<realmfile_chunk_seq></realmfile_chunk_seq>	-- sequence number for this chunk of the database realm file
+	<realmfile_chunk_data> 
+	       <TransGUID></TransGUID> -- each record has a unique transaction id to be used with security, when detecting inconsistencies
+	       <Protocol>DED</Protocol>
+	       <ProtocolVersion>1.0.0.0</ProtocolVersion>
+	       <DataSize></DataSize>
+	       <Data>
+		 <chunk_record>
+		     <attribut_chunk_id></attribut_chunk_id> 		-- name of attribut described in data dictionary realm entity
+		     <attribut_aiid></attribut_aiid> 			-- automatic increased id - a continues number for all records 
+		     <attribut_chunk_seq></attribut_chunk_seq> 		-- sequence number for this chunk of the attribut
+		     <attribut_chunk_data></attribut_chunk_data> 	-- chunk data of attribut
+		 </chunk_record>
+		 <chunk_record>
+		     <attribut_chunk_id></attribut_chunk_id> 		-- name of attribut described in data dictionary realm entity
+		     <attribut_aiid></attribut_aiid> 			-- automatic increased id - a continues number for all records 
+		     <attribut_chunk_seq></attribut_chunk_seq> 		-- sequence number for this chunk of the attribut
+		     <attribut_chunk_data></attribut_chunk_data> 	-- chunk data of attribut
+		 </chunk_record>
+		 ... etc - there could be several attributes in a chunk data (DED block), however not necessary
+		</Data> -- here is the pCompressedData from above protocol encoding, compression, encrypting algoritm -- currently DED (dataencoderdecoder)
+	       <DataMD5><DataMD5> -- this md5 checksum is used as an extra verification -- Data must be verified with this value before being used.
+	</realmfile_chunk_data>
+  </BlockRecord>
+ <BlockRecord>
+	<TransGUID></TransGUID> -- each record has a unique transaction id to be used with security, when detecting inconsistencies
+   	<realmfile_chunk_id></realmfile_chunk_id>				-- name of realm file
+   	<realmfile_aiid></realmfile_aiid>					-- automatic increased id - a continues number for all of these records
+   	<realmfile_chunk_seq></realmfile_chunk_seq>				-- sequence number for this chunk of the database realm file
+	<realmfile_chunk_data></realmfile_chunk_data> 	-- chunk data 
+ </BlockRecord>
+ <BlockRecord></BlockRecord> ... etc. until block size has been reached or no more data
+</BlockEntity>   
+
+-----
+definitions are in following dictionary files
+
+DD_<realmname>.xml     	-- this is a total description of all attributes belonging to a specific realm
+DD_ATTRIBUT_TOAST.xml	-- this is a description of nodes belonging to a TOAST record [chunk_record] - used for assembling attributes over several records or blockrecords
+
+
+
