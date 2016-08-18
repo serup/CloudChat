@@ -128,9 +128,10 @@ PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 vim* |grep "install ok in
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install vim on ubuntu "
   sudo apt-fast install -yq vim 
+  echo 'set mouse=a' >> ~/.vimrc 
   echo " - done."
 else
-  echo "- vim already installed"
+  echo "- vim already installed - consider adding set mouse=a   ;to enable mouse handling of splits"
 fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 sysstat |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
