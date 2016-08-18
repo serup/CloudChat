@@ -129,6 +129,9 @@ if [ "" == "$PKG_OK" ]; then
   echo -n "- install vim on ubuntu "
   sudo apt-fast install -yq vim 
   echo 'set mouse=a' >> ~/.vimrc 
+  sudo apt-fast install -yq vim-addon-manager
+  vam install youcompleteme
+  echo "NO need to use linux-install-vim-intellisense.sh script"
   echo " - done."
 else
   echo "- vim already installed - consider adding set mouse=a   ;to enable mouse handling of splits"

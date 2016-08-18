@@ -24,8 +24,18 @@ using namespace boost::unit_test;
 //     and convert the generated result output into the file test_result.html
 //////////////////////////////////////////
 // how to test:
-// make -f makefile_cygwin.mak test
-// This will convert test_results.xml file to test_results.html, based on test_results.xslt file
+//  make -f makefile_cygwin.mak test
+//  This will convert test_results.xml file to test_results.html, based on test_results.xslt file
+//
+//  if you are running vim then do following
+//  :vsp output
+//  :0,$d|:read !make -f makefile_ubuntu test
+//
+//  first line will create a split window - use only one time
+//  second line will delete output buffer and run makefile for tests - output will end up in the 
+//  split window
+//    the second line can be run after every build 
+//    NB! make sure you have focus on output window before running command !!!  press ctrl-W and then press left or right arrow to change split window
 //////////////////////////////////////////
 
 #define BOOST_AUTO_TEST_MAIN
@@ -57,3 +67,5 @@ BOOST_AUTO_TEST_CASE(datadictionarycontrol_instantiated)
     BOOST_CHECK(ptestDataDictionaryControl != 0);
     delete ptestDataDictionaryControl;
 }
+
+
