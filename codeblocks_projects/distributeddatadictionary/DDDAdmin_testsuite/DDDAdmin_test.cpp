@@ -68,4 +68,9 @@ BOOST_AUTO_TEST_CASE(datadictionarycontrol_instantiated)
     delete ptestDataDictionaryControl;
 }
 
+BOOST_AUTO_TEST_CASE(datadictionarycontrol_unknown_method)
+{
+    BOOST_CHECK(false == true);
+}
+
 
