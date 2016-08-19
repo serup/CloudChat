@@ -22,11 +22,13 @@ info:
 	@ echo '**************************';echo 'UNIT TESTCASES :';echo '**************************';echo; fgrep BOOST_AUTO_TEST_CASE *.cpp | sed -e 's/BOOST_AUTO_TEST_CASE(//g' | sed -e 's/)//g'; echo '**************************';
 
 all: compile test
-total: compile test
+total: compile display_waitfor test
+_total: nooutputcompile test
 list:
 	@ echo '**************************';echo 'UNIT TESTCASES :';echo '**************************';echo; fgrep BOOST_AUTO_TEST_CASE *.cpp | sed -e 's/BOOST_AUTO_TEST_CASE(//g' | sed -e 's/)//g'; echo '**************************';
 
-
+nooutputcompile:
+	@ $(CC)
 compile:
 	@ echo "------------------------"
 	@ echo "Build started -- please wait..."	
@@ -35,9 +37,11 @@ compile:
 	@ echo "------------------------"
 testbasic:
 	$(TEST) $(TESTFLAGS) > error.txt;$(CONVERT)
-test:
+
+display_waitfortest:
 	@ echo " Test of DDDAdmin is started - please wait... " 
 	@ echo "-----------------------------------------------" 
+test:
 	@ $(TEST) $(TESTFLAGS) > error.txt;$(CONVERT) 
 	@ $(TEST) $(TESTFLAGS3) > error2.txt;$(CONVERT2) 
 	@ echo "-----------------------------------------------" > test_txt_result.txt 

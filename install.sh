@@ -129,6 +129,10 @@ if [ "" == "$PKG_OK" ]; then
   echo -n "- install vim on ubuntu "
   sudo apt-fast install -yq vim 
   echo 'set mouse=a' >> ~/.vimrc 
+  # unfortunately links to helpfile does not work - so copy instead
+  #sudo ln -s vimhelpfile_build_commands.txt ~/.vim/doc/build_commands.txt 
+  sudo cp vimhelpfile_build_commands.txt ~/.vim/doc/build_commands.txt
+  echo "- to setup vimhelpfiles run following command; :helptags ~/.vim/doc"
   sudo apt-fast install -yq vim-addon-manager
   vam install youcompleteme
   echo "NO need to use linux-install-vim-intellisense.sh script"
