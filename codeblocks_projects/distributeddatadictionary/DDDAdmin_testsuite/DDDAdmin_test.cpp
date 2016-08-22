@@ -70,8 +70,13 @@ BOOST_AUTO_TEST_CASE(datadictionarycontrol_instantiated)
 
 BOOST_AUTO_TEST_CASE(create_BFi_blockfile)
 {
-//TODO: create a BFi file and verify that it looks ok
-    BOOST_CHECK(false == true);
+    CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
+    BOOST_CHECK(ptestDataDictionaryControl != 0);
+    bool bFileCreated = ptestDataDictionaryControl->CreateBlockFile("test.BFi");
+
+    BOOST_CHECK(bFileCreated == true);
+    delete ptestDataDictionaryControl;
 }
+
 
 
