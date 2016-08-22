@@ -68,8 +68,9 @@ BOOST_AUTO_TEST_CASE(datadictionarycontrol_instantiated)
     delete ptestDataDictionaryControl;
 }
 
-BOOST_AUTO_TEST_CASE(datadictionarycontrol_unknown_method)
+BOOST_AUTO_TEST_CASE(create_BFi_blockfile)
 {
+//TODO: create a BFi file and verify that it looks ok
     BOOST_CHECK(false == true);
 }
 

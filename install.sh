@@ -19,6 +19,7 @@ alias l='ls -CF'
 alias la='ls -A'
 alias ll='ls -alF'
 alias ls='ls --color=auto'
+alias vimstart='vim --cmd "let g:startify_disable_at_vimenter = 1" -S session.vim'
 # nb! use '\'' for each '  inside an alias
 alias ks='function _blabla(){ kill "$(ps -aux|grep $1|head -1|awk '\''{print $2}'\'')"; }; _blabla'
 
