@@ -32,9 +32,9 @@ using namespace boost::unit_test;
 //  :0,$d|:read !make -f makefile_ubuntu test
 //
 //  first line will create a split window - use only one time
-//  second line will delete output buffer and run makefile for tests - output will end up in the 
+//  second line will delete output buffer and run makefile for tests - output will end up in the
 //  split window
-//    the second line can be run after every build 
+//    the second line can be run after every build
 //    NB! make sure you have focus on output window before running command !!!  press ctrl-W and then press left or right arrow to change split window
 //////////////////////////////////////////
 
@@ -71,11 +71,15 @@ BOOST_AUTO_TEST_CASE(datadictionarycontrol_instantiated)
 BOOST_AUTO_TEST_CASE(create_BFi_blockfile)
 {
     CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
-    BOOST_CHECK(ptestDataDictionaryControl != 0);
     bool bFileCreated = ptestDataDictionaryControl->CreateBlockFile("test.BFi");
 
     BOOST_CHECK(bFileCreated == true);
-    delete ptestDataDictionaryControl;
+
+    //Cleanup
+    boost::filesystem::wpath file(L"test.BFi");
+    if(boost::filesystem::exists(L"test.BFi"))
+         boost::filesystem::remove(file);
+
 }
 
 
