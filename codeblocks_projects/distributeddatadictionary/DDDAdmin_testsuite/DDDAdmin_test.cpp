@@ -82,7 +82,7 @@ BOOST_AUTO_TEST_CASE(create_BFi_blockfile)
 
 }
 
-BOOST_AUTO_TEST_CASE(createBlockfileWith3records)
+BOOST_AUTO_TEST_CASE(create3Blockfiles)
 {
 	// Create testfile to be put into .BFi file	
     std::ofstream filestr;
@@ -121,14 +121,25 @@ BOOST_AUTO_TEST_CASE(createBlockfileWith3records)
 	
 	// Put testfile into .BFi file 
     CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
+	int amountOfBlocks = ptestDataDictionaryControl->splitFileIntoBlocks(testfilename);
+
+	// file should be split in several blocks, pt. it is setup to make 3 blocks per file 
+	BOOST_CHECK(amountOfBlocks == 3);	
 	
+	// verify that block files have been created
+	BOOST_CHECK(boost::filesystem::exists("testfile.txt_1.BFi"));	
+	BOOST_CHECK(boost::filesystem::exists("testfile.txt_2.BFi"));	
+	BOOST_CHECK(boost::filesystem::exists("testfile.txt_3.BFi"));	
+    
+
     //Cleanup
     boost::filesystem::wpath file(L"testfile.txt");
     if(boost::filesystem::exists(L"testfile.txt"))
          boost::filesystem::remove(file);
+    boost::filesystem::remove("testfile.txt_1.BFi");
+    boost::filesystem::remove("testfile.txt_2.BFi");
+    boost::filesystem::remove("testfile.txt_3.BFi");
 
-	// Not ready yet
-	BOOST_CHECK(true == false);
 }
 
 
