@@ -82,5 +82,54 @@ BOOST_AUTO_TEST_CASE(create_BFi_blockfile)
 
 }
 
+BOOST_AUTO_TEST_CASE(createBlockfileWith3records)
+{
+	// Create testfile to be put into .BFi file	
+    std::ofstream filestr;
+	std::string testfilename("testfile.txt");
+
+	filestr.open (testfilename.c_str());
+	BOOST_CHECK(filestr.is_open());
+
+	if (filestr.is_open())
+	{
+			filestr << " 0 This is a test file .";
+			filestr << " 1 This is a test file .";
+			filestr << " 2 This is a test file .";
+			filestr << " 3 This is a test file .";
+			filestr << " 4 This is a test file .";
+			filestr << " 5 This is a test file .";
+			filestr << " 6 This is a test file .";
+			filestr << " 7 This is a test file .";
+			filestr << " 8 This is a test file .";
+			filestr << " 9 This is a test file .";
+			filestr << "10 This is a test file .";
+			filestr << "11 This is a test file .";
+			filestr << "12 This is a test file .";
+			filestr << "13 This is a test file .";
+			filestr << "14 This is a test file .";
+			filestr << "15 This is a test file .";
+			filestr << "16 This is a test file .";
+			filestr << "17 This is a test file .";
+			filestr << "18 This is a test file .";
+			filestr << "19 This is a test file .";
+			filestr << "20 This is a test file .";
+			filestr << "21 This is a test file .";
+			filestr << "22 This is a test file .";
+			filestr.close();
+	}
+	
+	// Put testfile into .BFi file 
+    CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
+	
+    //Cleanup
+    boost::filesystem::wpath file(L"testfile.txt");
+    if(boost::filesystem::exists(L"testfile.txt"))
+         boost::filesystem::remove(file);
+
+	// Not ready yet
+	BOOST_CHECK(true == false);
+}
+
 
 
