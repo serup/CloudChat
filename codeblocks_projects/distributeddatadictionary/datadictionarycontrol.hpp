@@ -6,6 +6,7 @@
 #include <fstream>
 #include <boost/filesystem.hpp>
 #include <boost/foreach.hpp>
+#include <stdexcept>
 
 using namespace std;
 

@@ -55,7 +55,7 @@ vector< pair<char*, int> > CDataDictionaryControl::readFile(const char* fn)
 	ifstream file;
 	file.open(fn,ios::in|ios::binary|ios::ate);
 	if (file.is_open()) {
-			size = fileS(fn);
+			size = boost::filesystem::file_size(fn);
 			file.seekg (0, ios::beg);
 			int bs = size/3; //TODO: use maxBlockSize to determine how many blocks a file should be split into 
 			int ws = 0;
@@ -73,20 +73,9 @@ vector< pair<char*, int> > CDataDictionaryControl::readFile(const char* fn)
 			}
 	}
 	else{
-			exit(-4);
+			std::string filename(fn);
+			throw std::runtime_error("Error: Could NOT read file: " + filename );
 	}
 	return vpair;
-}
-
-ifstream::pos_type CDataDictionaryControl::fileS(const char* fn)
-{
-	ifstream file;
-	file.open(fn,ios::in|ios::binary);
-	file.seekg(0, ios::end);
-	ifstream::pos_type ret= file.tellg();
-	file.seekg(0,ios::beg);
-	ret=ret-file.tellg();
-	file.close();
-	return ret;
 }
 
