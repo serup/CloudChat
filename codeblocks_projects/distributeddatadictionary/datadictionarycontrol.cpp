@@ -79,3 +79,43 @@ vector< pair<char*, int> > CDataDictionaryControl::readFile(const char* fn)
 	return vpair;
 }
 
+/**
+ * create xml structure for .BFi file and add blob to its payload
+ *
+ *  <BlockRecord>
+ *  	<TransGUID></TransGUID> 			-- each record has a unique transaction id to be used with security, when detecting inconsistencies
+ *     	<chunk_id></chunk_id>				-- name of realm file
+ *     	<aiid></aiid>						-- automatic increased id - a continues number for all of these records
+ *    	<chunk_seq></chunk_seq>				-- sequence number for this chunk of the database realm file
+ *  	<chunk_data_in_hex>payload</chunk_data_in_hex> 	-- chunk data aka payload -- here is where blob is put, this blob should in turn also be a xml structure for DED toast element
+ *  	<chunk_size></chunk_size>
+ *  	<chunk_md5></chunk_md5>
+ *  </BlockRecord>
+ *  	   	   	   		  
+ * return ptree - containing xml structure ready to be used by fx. write_xml
+ */
+boost::property_tree::ptree CDataDictionaryControl::createBFiBlockRecord(char* blob, int size)
+{
+	pair<char*,int> p;
+	p = make_pair(blob, size);
+    using boost::property_tree::ptree;
+	ptree pt;
+	pt.clear();
+
+	long maxSize=4*size+1;
+	char* data_in_hex_buf = (char*) malloc (maxSize);
+	ZeroMemory(data_in_hex_buf,maxSize); // make sure no garbage is inside the newly allocated space
+	const std::vector<unsigned char> iterator_data_in_hex_buf(&blob[0],&blob[size]);
+	boost::algorithm::hex(iterator_data_in_hex_buf.begin(),iterator_data_in_hex_buf.end(), data_in_hex_buf);// convert the byte array to an array containing hex values in ascii
+	ptree &node = pt.add("BlockRecord", 1);
+	node.put("TransGUID","<empty>");
+	node.put("chunk_id","<empty>");
+	node.put("aiid",1);
+	node.put("chunk_seq",1);
+	node.put("chunk_data_in_hex","<empty>");
+	node.put("chunk_size",-1);
+	node.put("chunk_md5","<empty>");
+
+	return pt;
+}
+
