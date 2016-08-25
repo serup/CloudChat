@@ -153,12 +153,15 @@ BOOST_AUTO_TEST_CASE(create3Blockfiles)
 BOOST_AUTO_TEST_CASE(writeBlockIntoBFiStructure)
 {
 	cout<<"BOOS_AUTO_TEST(writeBlockIntoBFiStructure)"<<endl;
+	std::string strTransGUID = "<empty>";
+
 	// Create testfile to be put into .BFi file	
     std::ofstream filestr;
 	std::string testfilename("testfile.txt");
 
 	filestr.open (testfilename.c_str());
 	BOOST_CHECK(filestr.is_open());
+
 
 	if (filestr.is_open())
 	{
@@ -217,6 +220,9 @@ BOOST_AUTO_TEST_CASE(writeBlockIntoBFiStructure)
 			file.read (memblock, ws);
 			vp.push_back(make_pair(memblock,ws));
 		}
+		std::string _strMD5(CMD5((const char*)memblock).GetMD5s());
+		strTransGUID = _strMD5;
+
 	}
 	else{
 		std::string filename(fn);
@@ -228,9 +234,10 @@ BOOST_AUTO_TEST_CASE(writeBlockIntoBFiStructure)
 		pair <char*,int> block;
 		BlockRecord ans;
 		int count=0;
+		long aiid=0;
 		BOOST_FOREACH( block, vp )
 		{
-			boost::property_tree::ptree pt = ptestDataDictionaryControl->createBFiBlockRecord("GUID", testfilename.c_str(),block.first, block.second);
+			boost::property_tree::ptree pt = ptestDataDictionaryControl->createBFiBlockRecord(++aiid, strTransGUID, testfilename.c_str(),block.first, block.second);
 
 			BlockRecordEntry f;
 			f.TransGUID = pt.get<std::string>("BlockRecord.TransGUID");
@@ -251,6 +258,8 @@ BOOST_AUTO_TEST_CASE(writeBlockIntoBFiStructure)
 			BOOST_CHECK(f.aiid == ++count);
 			cout << "chunk_id : " << f.chunk_id <<endl;
 			BOOST_CHECK(f.chunk_id == testfilename);
+			cout << "chunk_seq : " << f.chunk_seq <<endl;
+			cout << "TransGUID : " << f.TransGUID <<endl;
 		
 		}
 	}

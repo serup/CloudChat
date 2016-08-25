@@ -94,9 +94,9 @@ vector< pair<char*, int> > CDataDictionaryControl::readFile(const char* fn)
  *  	   	   	   		  
  * return ptree - containing xml structure ready to be used by fx. write_xml
  */
-boost::property_tree::ptree CDataDictionaryControl::createBFiBlockRecord(std::string transGuid,std::string id, char* blob, int size)
+boost::property_tree::ptree CDataDictionaryControl::createBFiBlockRecord(long aiid, std::string transGuid,std::string id, char* blob, int size)
 {
-	static int aiid=0;
+	static long seq=0;
 	pair<char*,int> p;
 	p = make_pair(blob, size);
     using boost::property_tree::ptree;
@@ -114,10 +114,10 @@ boost::property_tree::ptree CDataDictionaryControl::createBFiBlockRecord(std::st
 	nSizeOfHex = strtmp.size();
 
 	ptree &node = pt.add("BlockRecord", 1);
-	node.put("TransGUID","<empty>");
+	node.put("TransGUID",transGuid);
 	node.put("chunk_id",id);
-	node.put("aiid",++aiid);
-	node.put("chunk_seq",1);
+	node.put("aiid",aiid);
+	node.put("chunk_seq",++seq); // sequence number of particular item
 	node.put("chunk_data_in_hex",data_in_hex_buf);
 	node.put("chunk_size",nSizeOfHex);
 	node.put("chunk_md5",strMD5);
