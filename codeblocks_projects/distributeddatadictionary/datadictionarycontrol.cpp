@@ -30,6 +30,9 @@ bool CDataDictionaryControl::CreateBlockFile(std::string filename)
 int CDataDictionaryControl::splitFileIntoBlocks(std::string filename)
 {
 	int amountOfBlocks=-1;
+	long aiid=0; // automatic id, increased for every record thru out the .BFi files
+	std::string strTransGUID;
+
 	vector< pair<char*, int> > vp = readFile(filename.c_str());
 	if(vp.size()>0) {
 		amountOfBlocks = vp.size();
@@ -37,7 +40,13 @@ int CDataDictionaryControl::splitFileIntoBlocks(std::string filename)
 		pair <char*,int> block;
 		BOOST_FOREACH( block, vp )
 		{
+			if(aiid==0)
+				strTransGUID = CMD5((const char*)block.first).GetMD5s();
+
 			filenumber++;
+			boost::property_tree::ptree pt = createBFiBlockRecord(++aiid, strTransGUID, filename.c_str(),block.first, block.second);
+
+
 			std::string blockfilename = filename + "_" + std::to_string(filenumber) + ".BFi";
 		    ofstream blockFile (blockfilename.c_str(), ios::out | ios::binary);
 		    blockFile.write(block.first, block.second); // buffer, size
