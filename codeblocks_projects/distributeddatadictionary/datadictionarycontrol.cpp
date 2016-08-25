@@ -31,6 +31,7 @@ int CDataDictionaryControl::splitFileIntoBlocks(std::string filename)
 {
 	int amountOfBlocks=-1;
 	long aiid=0; // automatic id, increased for every record thru out the .BFi files
+	long seq=0;
 	std::string strTransGUID;
 
 	vector< pair<char*, int> > vp = readFile(filename.c_str());
@@ -44,12 +45,12 @@ int CDataDictionaryControl::splitFileIntoBlocks(std::string filename)
 				strTransGUID = CMD5((const char*)block.first).GetMD5s();
 
 			filenumber++;
-			//boost::property_tree::ptree pt = createBFiBlockRecord(++aiid, strTransGUID, filename.c_str(),block.first, block.second);
-
+			boost::property_tree::ptree pt = createBFiBlockRecord(++aiid, ++seq, strTransGUID, filename.c_str(),block.first, block.second);
 
 			std::string blockfilename = filename + "_" + std::to_string(filenumber) + ".BFi";
 		    ofstream blockFile (blockfilename.c_str(), ios::out | ios::binary);
-		    blockFile.write(block.first, block.second); // buffer, size
+
+			write_xml(blockFile, pt);
 		}
 		assert(filenumber == amountOfBlocks);
 	}
@@ -130,6 +131,7 @@ boost::property_tree::ptree CDataDictionaryControl::createBFiBlockRecord(long ai
 	node.put("chunk_size",nSizeOfHex);
 	node.put("chunk_md5",strMD5);
 
+	free(data_in_hex_buf);
 	return pt;
 }
 

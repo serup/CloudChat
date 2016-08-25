@@ -14,6 +14,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/algorithm/hex.hpp>
 #include "md5.h"
+#include <boost/property_tree/xml_parser.hpp>
 
 using namespace std;
 
