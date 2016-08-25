@@ -109,6 +109,14 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- lib32stdc already installed"
 fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 *libxml2-utils* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install xmllint on ubuntu, to use for pretty format xml output; xmllint --format <file> "
+  sudo apt-fast install -yq libxml2-utils 
+  echo " - done."
+else
+  echo "- xmllint already installed"
+fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 gitk* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install gitk on ubuntu, to use for visualizing git repos "
