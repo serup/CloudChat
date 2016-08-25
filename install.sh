@@ -130,6 +130,9 @@ if [ "" == "$PKG_OK" ]; then
   echo -n "- install vim on ubuntu "
   sudo apt-fast install -yq vim 
   echo 'set mouse=a' >> ~/.vimrc 
+  # maximize vertical and horizontal with <Ctrl-W>M and restore with <Ctrl-W>m
+  echo 'noremap <C-W>M <C-W>\| <C-W>_'
+  echo 'noremap <C-W>m <C-W>='
   # unfortunately links to helpfile does not work - so copy instead
   #sudo ln -s vimhelpfile_build_commands.txt ~/.vim/doc/build_commands.txt 
   sudo cp vimhelpfile_build_commands.txt ~/.vim/doc/build_commands.txt

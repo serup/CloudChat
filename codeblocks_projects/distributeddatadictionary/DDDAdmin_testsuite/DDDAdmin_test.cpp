@@ -8,6 +8,8 @@
 #include <iostream>
 #include <fstream>      // std::ifstream
 #include "../datadictionarycontrol.hpp"
+#include "../md5.h"
+
 using namespace std;
 using namespace boost::unit_test;
 
@@ -194,26 +196,26 @@ BOOST_AUTO_TEST_CASE(writeBlockIntoBFiStructure)
 	ifstream file;
 	file.open(fn,ios::in|ios::binary|ios::ate);
 	if (file.is_open()) {
-			size = boost::filesystem::file_size(fn);
-			file.seekg (0, ios::beg);
-			int bs = size/3; //TODO: use maxBlockSize to determine how many blocks a file should be split into 
-			int ws = 0;
-			int i = 0;
-			cout<<"size:"<<size<<" bs:"<<bs<<endl;
-			for(i = 0; i < size; i+=bs){
-					if(i+bs > size)
-							ws = size%bs;
-					else
-							ws = bs;
-					cout<<"read:"<<ws<<endl;
-					memblock = new char [ws];
-					file.read (memblock, ws);
-					vp.push_back(make_pair(memblock,ws));
-			}
+		size = boost::filesystem::file_size(fn);
+		file.seekg (0, ios::beg);
+		int bs = size/3; //TODO: use maxBlockSize to determine how many blocks a file should be split into 
+		int ws = 0;
+		int i = 0;
+		cout<<"size:"<<size<<" bs:"<<bs<<endl;
+		for(i = 0; i < size; i+=bs){
+			if(i+bs > size)
+				ws = size%bs;
+			else
+				ws = bs;
+			cout<<"read:"<<ws<<endl;
+			memblock = new char [ws];
+			file.read (memblock, ws);
+			vp.push_back(make_pair(memblock,ws));
+		}
 	}
 	else{
-			std::string filename(fn);
-			throw std::runtime_error("Error: Could NOT read file: " + filename );
+		std::string filename(fn);
+		throw std::runtime_error("Error: Could NOT read file: " + filename );
 	}
 
 	if(vp.size()>0) {
@@ -222,7 +224,7 @@ BOOST_AUTO_TEST_CASE(writeBlockIntoBFiStructure)
 		BlockRecord ans;
 		BOOST_FOREACH( block, vp )
 		{
-			boost::property_tree::ptree pt = ptestDataDictionaryControl->createBFiBlockRecord(block.first, block.second);
+			boost::property_tree::ptree pt = ptestDataDictionaryControl->createBFiBlockRecord(testfilename.c_str(),block.first, block.second);
 
 			BlockRecordEntry f;
 			f.TransGUID = pt.get<std::string>("BlockRecord.TransGUID");
@@ -233,6 +235,15 @@ BOOST_AUTO_TEST_CASE(writeBlockIntoBFiStructure)
 			f.chunk_size = pt.get<unsigned long>("BlockRecord.chunk_size");
 			f.chunk_md5 = pt.get<std::string>("BlockRecord.chunk_md5");
 
+			// check if data is in structure, and of correct size
+			BOOST_CHECK(f.chunk_size == f.chunk_data_in_hex.size());
+		 	// check if data has correct md5 sum
+			std::string strMD5(CMD5((const char*)f.chunk_data_in_hex.c_str()).GetMD5s());
+			BOOST_CHECK(f.chunk_md5 == strMD5);
+			// check if chunk_id is correct - it should be name of realm file, inorder to follow specs
+			BOOST_CHECK(f.chunk_id == testfilename);
+			
+		
 		}
 	}
 	

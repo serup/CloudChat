@@ -13,6 +13,7 @@
 #include <stdexcept>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/algorithm/hex.hpp>
+#include "md5.h"
 
 using namespace std;
 
@@ -37,7 +38,7 @@ class CDataDictionaryControl
 
 	bool CreateBlockFile(std::string filename);
 	int splitFileIntoBlocks(std::string filename);
-	boost::property_tree::ptree createBFiBlockRecord(char* blob, int size);
+	boost::property_tree::ptree createBFiBlockRecord(std::string id, char* blob, int size);
 
 	
     protected:

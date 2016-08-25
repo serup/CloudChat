@@ -3,7 +3,7 @@
 # Make file for DDDAdmin - Distributed Data Dictionary Administrator #
 #                                                                    #
 ######################################################################
-CC=g++ -g -o bin/Debug/DDDAdmin_test DDDAdmin_test.cpp ../datadictionarycontrol.hpp ../datadictionarycontrol.cpp -L"/usr/local/lib/" -D__DEBUG__ -D__MSABI_LONG=long -lboost_system -lboost_signals -lboost_thread -lboost_filesystem -lpthread -lrt -std=gnu++11
+CC=g++ -g -o bin/Debug/DDDAdmin_test DDDAdmin_test.cpp ../datadictionarycontrol.hpp ../datadictionarycontrol.cpp ../md5.h -L"/usr/local/lib/" -D__DEBUG__ -D__MSABI_LONG=long -lboost_system -lboost_signals -lboost_thread -lboost_filesystem -lpthread -lrt -std=gnu++11
 TEST=./bin/Debug/DDDAdmin_test
 TESTFLAGS= --report_format=XML --report_level=detailed
 TESTFLAGS2= --report_level=detailed
@@ -56,8 +56,11 @@ test:
 	@ printf "Passed: " >> test_txt_result.txt;(cat test_results.txt | grep -c 'OK'; printf "") >> test_txt_result.txt
 	@ printf "Failed: " >> test_txt_result.txt;(cat test_results.txt | grep -c 'FAIL'; printf "") >> test_txt_result.txt
 	@ echo "--------------" >> test_txt_result.txt
-	@ cat test_txt_result.txt
 	@ cat test_txt_result.txt > test_results.txt
+	@ echo " " >> test_results.txt
+	@ echo "- list of errors if any" >> test_results.txt
+	@ cat error.txt >> test_results.txt
+	@ cat test_results.txt
 	@ rm test_txt_result.txt
 	@ rm error2.txt
 unittest:

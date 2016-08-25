@@ -94,7 +94,7 @@ vector< pair<char*, int> > CDataDictionaryControl::readFile(const char* fn)
  *  	   	   	   		  
  * return ptree - containing xml structure ready to be used by fx. write_xml
  */
-boost::property_tree::ptree CDataDictionaryControl::createBFiBlockRecord(char* blob, int size)
+boost::property_tree::ptree CDataDictionaryControl::createBFiBlockRecord(std::string id, char* blob, int size)
 {
 	pair<char*,int> p;
 	p = make_pair(blob, size);
@@ -103,18 +103,23 @@ boost::property_tree::ptree CDataDictionaryControl::createBFiBlockRecord(char* b
 	pt.clear();
 
 	long maxSize=4*size+1;
+	int nSizeOfHex=0;
 	char* data_in_hex_buf = (char*) malloc (maxSize);
 	ZeroMemory(data_in_hex_buf,maxSize); // make sure no garbage is inside the newly allocated space
 	const std::vector<unsigned char> iterator_data_in_hex_buf(&blob[0],&blob[size]);
 	boost::algorithm::hex(iterator_data_in_hex_buf.begin(),iterator_data_in_hex_buf.end(), data_in_hex_buf);// convert the byte array to an array containing hex values in ascii
+	std::string strMD5(CMD5((const char*)data_in_hex_buf).GetMD5s());
+	std::string strtmp((const char*)data_in_hex_buf);
+	nSizeOfHex = strtmp.size();
+
 	ptree &node = pt.add("BlockRecord", 1);
 	node.put("TransGUID","<empty>");
-	node.put("chunk_id","<empty>");
+	node.put("chunk_id",id);
 	node.put("aiid",1);
 	node.put("chunk_seq",1);
-	node.put("chunk_data_in_hex","<empty>");
-	node.put("chunk_size",-1);
-	node.put("chunk_md5","<empty>");
+	node.put("chunk_data_in_hex",data_in_hex_buf);
+	node.put("chunk_size",nSizeOfHex);
+	node.put("chunk_md5",strMD5);
 
 	return pt;
 }
