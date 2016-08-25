@@ -44,7 +44,7 @@ int CDataDictionaryControl::splitFileIntoBlocks(std::string filename)
 				strTransGUID = CMD5((const char*)block.first).GetMD5s();
 
 			filenumber++;
-			boost::property_tree::ptree pt = createBFiBlockRecord(++aiid, strTransGUID, filename.c_str(),block.first, block.second);
+			//boost::property_tree::ptree pt = createBFiBlockRecord(++aiid, strTransGUID, filename.c_str(),block.first, block.second);
 
 
 			std::string blockfilename = filename + "_" + std::to_string(filenumber) + ".BFi";
@@ -103,9 +103,8 @@ vector< pair<char*, int> > CDataDictionaryControl::readFile(const char* fn)
  *  	   	   	   		  
  * return ptree - containing xml structure ready to be used by fx. write_xml
  */
-boost::property_tree::ptree CDataDictionaryControl::createBFiBlockRecord(long aiid, std::string transGuid,std::string id, char* blob, int size)
+boost::property_tree::ptree CDataDictionaryControl::createBFiBlockRecord(long aiid,long seq, std::string transGuid,std::string id, char* blob, int size)
 {
-	static long seq=0;
 	pair<char*,int> p;
 	p = make_pair(blob, size);
     using boost::property_tree::ptree;
@@ -126,7 +125,7 @@ boost::property_tree::ptree CDataDictionaryControl::createBFiBlockRecord(long ai
 	node.put("TransGUID",transGuid);
 	node.put("chunk_id",id);
 	node.put("aiid",aiid);
-	node.put("chunk_seq",++seq); // sequence number of particular item
+	node.put("chunk_seq",seq); // sequence number of particular item
 	node.put("chunk_data_in_hex",data_in_hex_buf);
 	node.put("chunk_size",nSizeOfHex);
 	node.put("chunk_md5",strMD5);

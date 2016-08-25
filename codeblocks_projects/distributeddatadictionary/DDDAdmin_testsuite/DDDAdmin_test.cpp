@@ -235,9 +235,10 @@ BOOST_AUTO_TEST_CASE(writeBlockIntoBFiStructure)
 		BlockRecord ans;
 		int count=0;
 		long aiid=0;
+		long seq=0;
 		BOOST_FOREACH( block, vp )
 		{
-			boost::property_tree::ptree pt = ptestDataDictionaryControl->createBFiBlockRecord(++aiid, strTransGUID, testfilename.c_str(),block.first, block.second);
+			boost::property_tree::ptree pt = ptestDataDictionaryControl->createBFiBlockRecord(++aiid, ++seq, strTransGUID, testfilename.c_str(),block.first, block.second);
 
 			BlockRecordEntry f;
 			f.TransGUID = pt.get<std::string>("BlockRecord.TransGUID");
