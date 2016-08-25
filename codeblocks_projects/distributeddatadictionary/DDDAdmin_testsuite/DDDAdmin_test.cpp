@@ -66,6 +66,7 @@ BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_CASE(datadictionarycontrol_instantiated)
 {
+	cout<<"BOOS_AUTO_TEST(datadictionarycontrol_instantiated)"<<endl;
     CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
     BOOST_CHECK(ptestDataDictionaryControl != 0);
     delete ptestDataDictionaryControl;
@@ -73,6 +74,8 @@ BOOST_AUTO_TEST_CASE(datadictionarycontrol_instantiated)
 
 BOOST_AUTO_TEST_CASE(create_BFi_blockfile)
 {
+	cout<<"BOOS_AUTO_TEST(create_BFi_blockfile)"<<endl;
+
     CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
     bool bFileCreated = ptestDataDictionaryControl->CreateBlockFile("test.BFi");
 
@@ -87,6 +90,7 @@ BOOST_AUTO_TEST_CASE(create_BFi_blockfile)
 
 BOOST_AUTO_TEST_CASE(create3Blockfiles)
 {
+	cout<<"BOOS_AUTO_TEST(create3Blockfiles)"<<endl;
 	// Create testfile to be put into .BFi file	
     std::ofstream filestr;
 	std::string testfilename("testfile.txt");
@@ -148,6 +152,7 @@ BOOST_AUTO_TEST_CASE(create3Blockfiles)
 
 BOOST_AUTO_TEST_CASE(writeBlockIntoBFiStructure)
 {
+	cout<<"BOOS_AUTO_TEST(writeBlockIntoBFiStructure)"<<endl;
 	// Create testfile to be put into .BFi file	
     std::ofstream filestr;
 	std::string testfilename("testfile.txt");
@@ -222,9 +227,10 @@ BOOST_AUTO_TEST_CASE(writeBlockIntoBFiStructure)
 		amountOfBlocks = vp.size();
 		pair <char*,int> block;
 		BlockRecord ans;
+		int count=0;
 		BOOST_FOREACH( block, vp )
 		{
-			boost::property_tree::ptree pt = ptestDataDictionaryControl->createBFiBlockRecord(testfilename.c_str(),block.first, block.second);
+			boost::property_tree::ptree pt = ptestDataDictionaryControl->createBFiBlockRecord("GUID", testfilename.c_str(),block.first, block.second);
 
 			BlockRecordEntry f;
 			f.TransGUID = pt.get<std::string>("BlockRecord.TransGUID");
@@ -241,8 +247,10 @@ BOOST_AUTO_TEST_CASE(writeBlockIntoBFiStructure)
 			std::string strMD5(CMD5((const char*)f.chunk_data_in_hex.c_str()).GetMD5s());
 			BOOST_CHECK(f.chunk_md5 == strMD5);
 			// check if chunk_id is correct - it should be name of realm file, inorder to follow specs
+			cout << "aiid : " << f.aiid <<endl;
+			BOOST_CHECK(f.aiid == ++count);
+			cout << "chunk_id : " << f.chunk_id <<endl;
 			BOOST_CHECK(f.chunk_id == testfilename);
-			
 		
 		}
 	}

@@ -38,7 +38,7 @@ class CDataDictionaryControl
 
 	bool CreateBlockFile(std::string filename);
 	int splitFileIntoBlocks(std::string filename);
-	boost::property_tree::ptree createBFiBlockRecord(std::string id, char* blob, int size);
+	boost::property_tree::ptree createBFiBlockRecord(std::string transGuid,std::string id, char* blob, int size);
 
 	
     protected:
