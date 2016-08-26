@@ -19,7 +19,7 @@ alias l='ls -CF'
 alias la='ls -A'
 alias ll='ls -alF'
 alias ls='ls --color=auto'
-alias vimstart='vim --cmd "let g:startify_disable_at_vimenter = 1" -S session.vim'
+alias vimstart='vim --cmd "let g:startify_disable_at_vimenter = 1" -S Session.vim'
 # nb! use '\'' for each '  inside an alias
 alias ks='function _blabla(){ kill "$(ps -aux|grep $1|head -1|awk '\''{print $2}'\'')"; }; _blabla'
 
@@ -135,12 +135,20 @@ else
 fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 vim* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
+  echo "install pathogen.vim"
+  mkdir -p ~/.vim/autoload ~/.vim/bundle && \
+  echo -n "- install curl"
+  sudo apt-fast install -yq curl 
+  curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
   echo -n "- install vim on ubuntu "
   sudo apt-fast install -yq vim 
   echo 'set mouse=a' >> ~/.vimrc 
   # maximize vertical and horizontal with <Ctrl-W>M and restore with <Ctrl-W>m
-  echo 'noremap <C-W>M <C-W>\| <C-W>_'
-  echo 'noremap <C-W>m <C-W>='
+  echo 'noremap <C-W>M <C-W>\| <C-W>_'  >> ~/.vimrc 
+  echo 'noremap <C-W>m <C-W>=' >> ~/.vimrc  
+  echo 'execute pathogen#infect()' >> ~/.vimrc
+  echo 'syntax on' >> ~/.vimrc
+  echo 'filetype plugin indent on' >> ~/.vimrc
   # unfortunately links to helpfile does not work - so copy instead
   #sudo ln -s vimhelpfile_build_commands.txt ~/.vim/doc/build_commands.txt 
   sudo cp vimhelpfile_build_commands.txt ~/.vim/doc/build_commands.txt
@@ -148,6 +156,8 @@ if [ "" == "$PKG_OK" ]; then
   sudo apt-fast install -yq vim-addon-manager
   vam install youcompleteme
   echo "NO need to use linux-install-vim-intellisense.sh script"
+  echo "- install window-swap plugin"
+  git clone https://github.com/wesQ3/vim-windowswap ~/.vim/bundle/vim-windowswap
   echo " - done."
 else
   echo "- vim already installed - consider adding set mouse=a   ;to enable mouse handling of splits"

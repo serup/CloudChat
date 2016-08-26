@@ -37,6 +37,9 @@
 #" Install vim startify
 #Plugin 'mhinz/vim-startify'
 #
+#" Install vim-windowswap
+#Plugin 'wesQ3/vim-windowswap'
+#
 #" All of your Plugins must be added before the following line
 #call vundle#end()            " required
 #filetype plugin indent on    " required
