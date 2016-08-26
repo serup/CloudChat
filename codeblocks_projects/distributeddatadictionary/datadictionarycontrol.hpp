@@ -40,14 +40,14 @@ class CDataDictionaryControl
 	bool CreateBlockFile(std::string filename);
 	int splitFileIntoBlocks(std::string filename);
 	boost::property_tree::ptree createBFiBlockRecord(long aiid, long seq, std::string transGuid,std::string id, char* blob, int size);
+	boost::property_tree::ptree splitAttributIntoDEDchunks(std::string attributName, std::vector<unsigned char>& attributValue, long maxDEDblockSize, long maxDEDchunkSize);
 
 	
     protected:
 	
     private:
 	vector< pair<char*, int> > readFile(const char* fn);
-	ifstream::pos_type fileS(const char* fn);
-
+	std::vector<unsigned char> readFile(std::string fn);
 };
 
 #endif // CDATADICTIONARYCONTROL_H

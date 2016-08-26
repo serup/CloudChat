@@ -51,7 +51,7 @@ set omnifunc=youcompleteme#OmniComplete
 set printoptions=paper:letter
 set report=10000
 set ruler
-set runtimepath=~/.vim,~/.vim/bundle/Vundle.vim,~/.vim/bundle/vim-fugitive,~/.vim/bundle/L9,~/.vim/bundle/sparkup/vim/,~/.vim/bundle/YouCompleteMe,~/.vim/bundle/vim-startify,/var/lib/vim/addons,/usr/share/vim/vimfiles,/usr/share/vim/vim74,/usr/share/vim/vim74/pack/dist/opt/editexisting,/usr/share/vim/vimfiles/after,/var/lib/vim/addons/after,~/.vim/after,~/.vim/bundle/Vundle.vim,~/.vim/bundle/Vundle.vim/after,~/.vim/bundle/vim-fugitive/after,~/.vim/bundle/L9/after,~/.vim/bundle/sparkup/vim//after,~/.vim/bundle/YouCompleteMe/after,~/.vim/bundle/vim-startify/after
+set runtimepath=~/.vim,~/.vim/bundle/vim-windowswap,~/.vim/bundle/Vundle.vim,~/.vim/bundle/vim-fugitive,~/.vim/bundle/L9,~/.vim/bundle/sparkup/vim/,~/.vim/bundle/YouCompleteMe,~/.vim/bundle/vim-startify,/var/lib/vim/addons,/usr/share/vim/vimfiles,/usr/share/vim/vim74,/usr/share/vim/vim74/pack/dist/opt/editexisting,/usr/share/vim/vimfiles/after,/var/lib/vim/addons/after,~/.vim/after,~/.vim/bundle/Vundle.vim,~/.vim/bundle/Vundle.vim/after,~/.vim/bundle/vim-fugitive/after,~/.vim/bundle/L9/after,~/.vim/bundle/sparkup/vim//after,~/.vim/bundle/YouCompleteMe/after,~/.vim/bundle/vim-startify/after,~/.vim/bundle/vim-windowswap/after
 set shortmess=filnxtToOc
 set showcmd
 set sidescroll=1
@@ -68,10 +68,10 @@ if expand('%') == '' && !&modified && line('$') <= 1 && getline(1) == ''
 endif
 set shortmess=aoO
 badd +1 testoutput
-badd +271 DDDAdmin_test.cpp
+badd +224 DDDAdmin_test.cpp
 badd +10 output
 badd +63 makefile_ubuntu.mak
-badd +23 ~/GerritHub/CloudChat/codeblocks_projects/distributeddatadictionary/datadictionarycontrol.cpp
+badd +30 ~/GerritHub/CloudChat/codeblocks_projects/distributeddatadictionary/datadictionarycontrol.cpp
 badd +19 ~/GerritHub/CloudChat/codeblocks_projects/distributeddatadictionary/datadictionarycontrol.hpp
 badd +1 \	bool\ CreateBlockFile(std::string\ filename);
 badd +31 ~/GerritHub/CloudChat/codeblocks_projects/distributeddatadictionary/DDDArchitecture.txt
@@ -110,18 +110,18 @@ set nosplitbelow
 set nosplitright
 wincmd t
 set winheight=1 winwidth=1
-exe '1resize ' . ((&lines * 33 + 35) / 70)
-exe 'vert 1resize ' . ((&columns * 64 + 119) / 238)
-exe '2resize ' . ((&lines * 34 + 35) / 70)
-exe 'vert 2resize ' . ((&columns * 64 + 119) / 238)
-exe '3resize ' . ((&lines * 18 + 35) / 70)
-exe 'vert 3resize ' . ((&columns * 93 + 119) / 238)
-exe '4resize ' . ((&lines * 34 + 35) / 70)
-exe 'vert 4resize ' . ((&columns * 93 + 119) / 238)
-exe '5resize ' . ((&lines * 53 + 35) / 70)
-exe 'vert 5resize ' . ((&columns * 79 + 119) / 238)
-exe '6resize ' . ((&lines * 14 + 35) / 70)
-exe 'vert 6resize ' . ((&columns * 173 + 119) / 238)
+exe '1resize ' . ((&lines * 34 + 35) / 70)
+exe 'vert 1resize ' . ((&columns * 43 + 119) / 238)
+exe '2resize ' . ((&lines * 33 + 35) / 70)
+exe 'vert 2resize ' . ((&columns * 43 + 119) / 238)
+exe '3resize ' . ((&lines * 13 + 35) / 70)
+exe 'vert 3resize ' . ((&columns * 145 + 119) / 238)
+exe '4resize ' . ((&lines * 31 + 35) / 70)
+exe 'vert 4resize ' . ((&columns * 145 + 119) / 238)
+exe '5resize ' . ((&lines * 45 + 35) / 70)
+exe 'vert 5resize ' . ((&columns * 48 + 119) / 238)
+exe '6resize ' . ((&lines * 22 + 35) / 70)
+exe 'vert 6resize ' . ((&columns * 194 + 119) / 238)
 argglobal
 let s:cpo_save=&cpo
 set cpo&vim
@@ -250,7 +250,7 @@ setlocal nowinfixwidth
 setlocal nowrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 8 - ((7 * winheight(0) + 16) / 33)
+let s:l = 8 - ((7 * winheight(0) + 17) / 34)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
@@ -365,10 +365,12 @@ setlocal noundofile
 setlocal undolevels=-123456
 setlocal nowinfixheight
 setlocal nowinfixwidth
-setlocal wrap
+set nowrap
+setlocal nowrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 1 - ((0 * winheight(0) + 17) / 34)
+17,41fold
+let s:l = 1 - ((0 * winheight(0) + 16) / 33)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
@@ -486,11 +488,139 @@ setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 42 - ((13 * winheight(0) + 9) / 18)
+let s:l = 42 - ((9 * winheight(0) + 6) / 13)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
 42
+normal! 0
+lcd ~/GerritHub/CloudChat/codeblocks_projects/distributeddatadictionary/DDDAdmin_testsuite
+wincmd w
+argglobal
+edit ~/GerritHub/CloudChat/codeblocks_projects/distributeddatadictionary/DDDAdmin_testsuite/DDDAdmin_test.cpp
+setlocal keymap=
+setlocal noarabic
+setlocal noautoindent
+setlocal backupcopy=
+setlocal nobinary
+setlocal nobreakindent
+setlocal breakindentopt=
+setlocal bufhidden=
+setlocal buflisted
+setlocal buftype=
+setlocal cindent
+setlocal cinkeys=0{,0},0),:,0#,!^F,o,O,e
+setlocal cinoptions=
+setlocal cinwords=if,else,while,do,for,switch
+setlocal colorcolumn=
+setlocal comments=sO:*\ -,mO:*\ \ ,exO:*/,s1:/*,mb:*,ex:*/,://
+setlocal commentstring=/*%s*/
+setlocal complete=.,w,b,u,t,i
+setlocal concealcursor=
+setlocal conceallevel=0
+setlocal completefunc=youcompleteme#Complete
+setlocal nocopyindent
+setlocal cryptmethod=
+setlocal nocursorbind
+setlocal nocursorcolumn
+setlocal nocursorline
+setlocal define=
+setlocal dictionary=
+setlocal nodiff
+setlocal equalprg=
+setlocal errorformat=
+setlocal noexpandtab
+if &filetype != 'cpp'
+setlocal filetype=cpp
+endif
+setlocal fixendofline
+setlocal foldcolumn=0
+setlocal foldenable
+setlocal foldexpr=0
+setlocal foldignore=#
+setlocal foldlevel=0
+setlocal foldmarker={{{,}}}
+setlocal foldmethod=manual
+setlocal foldminlines=1
+setlocal foldnestmax=20
+setlocal foldtext=foldtext()
+setlocal formatexpr=
+setlocal formatoptions=croql
+setlocal formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*
+setlocal grepprg=
+setlocal iminsert=0
+setlocal imsearch=0
+setlocal include=
+setlocal includeexpr=
+setlocal indentexpr=
+setlocal indentkeys=0{,0},:,0#,!^F,o,O,e
+setlocal noinfercase
+setlocal iskeyword=@,48-57,_,192-255
+setlocal keywordprg=
+setlocal nolinebreak
+setlocal nolisp
+setlocal lispwords=
+setlocal nolist
+setlocal makeprg=
+setlocal matchpairs=(:),{:},[:]
+setlocal modeline
+setlocal modifiable
+setlocal nrformats=bin,octal,hex
+set number
+setlocal number
+setlocal numberwidth=4
+setlocal omnifunc=youcompleteme#OmniComplete
+setlocal path=
+setlocal nopreserveindent
+setlocal nopreviewwindow
+setlocal quoteescape=\\
+setlocal noreadonly
+setlocal norelativenumber
+setlocal norightleft
+setlocal rightleftcmd=search
+setlocal noscrollbind
+setlocal shiftwidth=8
+setlocal noshortname
+setlocal nosmartindent
+setlocal softtabstop=0
+setlocal nospell
+setlocal spellcapcheck=[.?!]\\_[\\])'\"\	\ ]\\+
+setlocal spellfile=
+setlocal spelllang=en
+setlocal statusline=
+setlocal suffixesadd=
+setlocal swapfile
+setlocal synmaxcol=3000
+if &syntax != 'cpp'
+setlocal syntax=cpp
+endif
+setlocal tabstop=8
+setlocal tagcase=
+setlocal tags=
+setlocal textwidth=0
+setlocal thesaurus=
+setlocal noundofile
+setlocal undolevels=-123456
+setlocal nowinfixheight
+setlocal nowinfixwidth
+setlocal nowrap
+setlocal wrapmargin=0
+silent! normal! zE
+64,69fold
+71,83fold
+71,90fold
+91,151fold
+71
+normal! zo
+71
+normal! zo
+71
+normal! zc
+let s:l = 246 - ((0 * winheight(0) + 15) / 31)
+if s:l < 1 | let s:l = 1 | endif
+exe s:l
+normal! zt
+246
 normal! 0
 lcd ~/GerritHub/CloudChat/codeblocks_projects/distributeddatadictionary/DDDAdmin_testsuite
 wincmd w
@@ -601,138 +731,16 @@ setlocal noundofile
 setlocal undolevels=-123456
 setlocal nowinfixheight
 setlocal nowinfixwidth
-setlocal wrap
-setlocal wrapmargin=0
-silent! normal! zE
-let s:l = 19 - ((6 * winheight(0) + 17) / 34)
-if s:l < 1 | let s:l = 1 | endif
-exe s:l
-normal! zt
-19
-normal! 041|
-lcd ~/GerritHub/CloudChat/codeblocks_projects/distributeddatadictionary/DDDAdmin_testsuite
-wincmd w
-argglobal
-edit ~/GerritHub/CloudChat/codeblocks_projects/distributeddatadictionary/DDDAdmin_testsuite/DDDAdmin_test.cpp
-setlocal keymap=
-setlocal noarabic
-setlocal noautoindent
-setlocal backupcopy=
-setlocal nobinary
-setlocal nobreakindent
-setlocal breakindentopt=
-setlocal bufhidden=
-setlocal buflisted
-setlocal buftype=
-setlocal cindent
-setlocal cinkeys=0{,0},0),:,0#,!^F,o,O,e
-setlocal cinoptions=
-setlocal cinwords=if,else,while,do,for,switch
-setlocal colorcolumn=
-setlocal comments=sO:*\ -,mO:*\ \ ,exO:*/,s1:/*,mb:*,ex:*/,://
-setlocal commentstring=/*%s*/
-setlocal complete=.,w,b,u,t,i
-setlocal concealcursor=
-setlocal conceallevel=0
-setlocal completefunc=youcompleteme#Complete
-setlocal nocopyindent
-setlocal cryptmethod=
-setlocal nocursorbind
-setlocal nocursorcolumn
-setlocal nocursorline
-setlocal define=
-setlocal dictionary=
-setlocal nodiff
-setlocal equalprg=
-setlocal errorformat=
-setlocal noexpandtab
-if &filetype != 'cpp'
-setlocal filetype=cpp
-endif
-setlocal fixendofline
-setlocal foldcolumn=0
-setlocal foldenable
-setlocal foldexpr=0
-setlocal foldignore=#
-setlocal foldlevel=0
-setlocal foldmarker={{{,}}}
-setlocal foldmethod=manual
-setlocal foldminlines=1
-setlocal foldnestmax=20
-setlocal foldtext=foldtext()
-setlocal formatexpr=
-setlocal formatoptions=croql
-setlocal formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*
-setlocal grepprg=
-setlocal iminsert=0
-setlocal imsearch=0
-setlocal include=
-setlocal includeexpr=
-setlocal indentexpr=
-setlocal indentkeys=0{,0},:,0#,!^F,o,O,e
-setlocal noinfercase
-setlocal iskeyword=@,48-57,_,192-255
-setlocal keywordprg=
-setlocal nolinebreak
-setlocal nolisp
-setlocal lispwords=
-setlocal nolist
-setlocal makeprg=
-setlocal matchpairs=(:),{:},[:]
-setlocal modeline
-setlocal modifiable
-setlocal nrformats=bin,octal,hex
-set number
-setlocal number
-setlocal numberwidth=4
-setlocal omnifunc=youcompleteme#OmniComplete
-setlocal path=
-setlocal nopreserveindent
-setlocal nopreviewwindow
-setlocal quoteescape=\\
-setlocal noreadonly
-setlocal norelativenumber
-setlocal norightleft
-setlocal rightleftcmd=search
-setlocal noscrollbind
-setlocal shiftwidth=8
-setlocal noshortname
-setlocal nosmartindent
-setlocal softtabstop=0
-setlocal nospell
-setlocal spellcapcheck=[.?!]\\_[\\])'\"\	\ ]\\+
-setlocal spellfile=
-setlocal spelllang=en
-setlocal statusline=
-setlocal suffixesadd=
-setlocal swapfile
-setlocal synmaxcol=3000
-if &syntax != 'cpp'
-setlocal syntax=cpp
-endif
-setlocal tabstop=8
-setlocal tagcase=
-setlocal tags=
-setlocal textwidth=0
-setlocal thesaurus=
-setlocal noundofile
-setlocal undolevels=-123456
-setlocal nowinfixheight
-setlocal nowinfixwidth
 set nowrap
 setlocal nowrap
 setlocal wrapmargin=0
 silent! normal! zE
-64,69fold
-71,83fold
-71
-normal! zo
-let s:l = 244 - ((40 * winheight(0) + 26) / 53)
+let s:l = 23 - ((22 * winheight(0) + 22) / 45)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-244
-normal! 025|
+23
+normal! 0
 lcd ~/GerritHub/CloudChat/codeblocks_projects/distributeddatadictionary/DDDAdmin_testsuite
 wincmd w
 argglobal
@@ -998,18 +1006,18 @@ setlocal wrapmargin=0
 lcd ~/GerritHub/CloudChat/codeblocks_projects/distributeddatadictionary/DDDAdmin_testsuite
 wincmd w
 2wincmd w
-exe '1resize ' . ((&lines * 33 + 35) / 70)
-exe 'vert 1resize ' . ((&columns * 64 + 119) / 238)
-exe '2resize ' . ((&lines * 34 + 35) / 70)
-exe 'vert 2resize ' . ((&columns * 64 + 119) / 238)
-exe '3resize ' . ((&lines * 18 + 35) / 70)
-exe 'vert 3resize ' . ((&columns * 93 + 119) / 238)
-exe '4resize ' . ((&lines * 34 + 35) / 70)
-exe 'vert 4resize ' . ((&columns * 93 + 119) / 238)
-exe '5resize ' . ((&lines * 53 + 35) / 70)
-exe 'vert 5resize ' . ((&columns * 79 + 119) / 238)
-exe '6resize ' . ((&lines * 14 + 35) / 70)
-exe 'vert 6resize ' . ((&columns * 173 + 119) / 238)
+exe '1resize ' . ((&lines * 34 + 35) / 70)
+exe 'vert 1resize ' . ((&columns * 43 + 119) / 238)
+exe '2resize ' . ((&lines * 33 + 35) / 70)
+exe 'vert 2resize ' . ((&columns * 43 + 119) / 238)
+exe '3resize ' . ((&lines * 13 + 35) / 70)
+exe 'vert 3resize ' . ((&columns * 145 + 119) / 238)
+exe '4resize ' . ((&lines * 31 + 35) / 70)
+exe 'vert 4resize ' . ((&columns * 145 + 119) / 238)
+exe '5resize ' . ((&lines * 45 + 35) / 70)
+exe 'vert 5resize ' . ((&columns * 48 + 119) / 238)
+exe '6resize ' . ((&lines * 22 + 35) / 70)
+exe 'vert 6resize ' . ((&columns * 194 + 119) / 238)
 tabnext 1
 if exists('s:wipebuf')
   silent exe 'bwipe ' . s:wipebuf

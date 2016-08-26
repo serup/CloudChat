@@ -89,6 +89,29 @@ vector< pair<char*, int> > CDataDictionaryControl::readFile(const char* fn)
 	return vpair;
 }
 
+std::vector<unsigned char> readFile(std::string fn)
+{
+	std::vector<unsigned char> FileDataBytesInVector;
+	std::ifstream is (fn, ios::binary);
+	if (is)
+	{
+		long length = boost::filesystem::file_size(fn);
+		std::cout << "[readFile] Reading file: " << fn << " ; amount " << length << " characters... \n";
+        FileDataBytesInVector.resize(length,0); // Make sure receipient has room
+		
+		//read content of infile
+		is.read ((char*)&FileDataBytesInVector[0],length);
+
+		std::cout << "[readFile] size: " << (int) FileDataBytesInVector.size() << '\n';
+		std::cout << "[readFile] capacity: " << (int) FileDataBytesInVector.capacity() << '\n';
+		std::cout << "[readFile] max_size: " << (int) FileDataBytesInVector.max_size() << '\n';
+
+		is.close();
+	}
+	return FileDataBytesInVector;
+
+}
+
 /**
  * create xml structure for .BFi file and add blob to its payload
  *
@@ -134,4 +157,13 @@ boost::property_tree::ptree CDataDictionaryControl::createBFiBlockRecord(long ai
 	free(data_in_hex_buf);
 	return pt;
 }
+
+boost::property_tree::ptree CDataDictionaryControl::splitAttributIntoDEDchunks(std::string attributName, std::vector<unsigned char>& attributValue, long maxDEDblockSize, long maxDEDchunkSize)
+{
+    using boost::property_tree::ptree;
+	ptree pt;
+//TODO: 
+	return pt;
+}
+
 

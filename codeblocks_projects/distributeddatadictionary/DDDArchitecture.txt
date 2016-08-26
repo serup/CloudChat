@@ -42,6 +42,7 @@ DDD - Distributed Data Dictionary
    	<aiid></aiid>		-- automatic increased id - a continues number for all of these records
    	<chunk_seq></chunk_seq>	-- sequence number for this chunk of the database realm file
 	<chunk_data_in_hex> 
+*** toast records begin
 	       <TransGUID></TransGUID> -- each record has a unique transaction id to be used with security, when detecting inconsistencies
 	       <Protocol>DED</Protocol>
 	       <ProtocolVersion>1.0.0.0</ProtocolVersion>
@@ -55,6 +56,7 @@ DDD - Distributed Data Dictionary
 		 </chunk_record>
 		</Data> -- here is the pCompressedData from above protocol encoding, compression, encrypting algoritm -- currently DED (dataencoderdecoder)
 	       <DataMD5><DataMD5> -- this md5 checksum is used as an extra verification -- Data must be verified with this value before being used.
+*** toast records end
 	</chunk_data_in_hex>
 	<chunk_size></chunk_size>
 	<chunk_md5></chunk_md5>
@@ -65,6 +67,7 @@ DDD - Distributed Data Dictionary
    	<aiid></aiid>		-- automatic increased id - a continues number for all of these records
    	<chunk_seq></chunk_seq>	-- sequence number for this chunk of the database realm file
 	<chunk_data_in_hex> 
+*** toast records begin
 	       <TransGUID></TransGUID> -- each record has a unique transaction id to be used with security, when detecting inconsistencies
 	       <Protocol>DED</Protocol>
 	       <ProtocolVersion>1.0.0.0</ProtocolVersion>
@@ -85,6 +88,7 @@ DDD - Distributed Data Dictionary
 		 ... etc - there could be several attributes in a chunk data (DED block), however not necessary
 		</Data> -- here is the pCompressedData from above protocol encoding, compression, encrypting algoritm -- currently DED (dataencoderdecoder)
 	       <DataMD5><DataMD5> -- this md5 checksum is used as an extra verification -- Data must be verified with this value before being used.
+*** toast records end 
 	</chunk_data_in_hex>
 	<chunk_size></chunk_size>
 	<chunk_md5></chunk_md5>
