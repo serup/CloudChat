@@ -66,15 +66,16 @@ BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_CASE(datadictionarycontrol_instantiated)
 {
-	cout<<"BOOS_AUTO_TEST(datadictionarycontrol_instantiated)"<<endl;
+	cout<<"BOOS_AUTO_TEST(datadictionarycontrol_instantiated)\n{"<<endl;
     CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
     BOOST_CHECK(ptestDataDictionaryControl != 0);
     delete ptestDataDictionaryControl;
+	cout<<"}"<<endl;
 }
 
 BOOST_AUTO_TEST_CASE(create_BFi_blockfile)
 {
-	cout<<"BOOS_AUTO_TEST(create_BFi_blockfile)"<<endl;
+	cout<<"BOOS_AUTO_TEST(create_BFi_blockfile)\n{"<<endl;
 
     CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
     bool bFileCreated = ptestDataDictionaryControl->CreateBlockFile("test.BFi");
@@ -86,11 +87,12 @@ BOOST_AUTO_TEST_CASE(create_BFi_blockfile)
     if(boost::filesystem::exists(L"test.BFi"))
          boost::filesystem::remove(file);
 
+	cout<<"}"<<endl;
 }
 
 BOOST_AUTO_TEST_CASE(create3Blockfiles)
 {
-	cout<<"BOOS_AUTO_TEST(create3Blockfiles)"<<endl;
+	cout<<"BOOS_AUTO_TEST(create3Blockfiles)\n{"<<endl;
 	// Create testfile to be put into .BFi file	
     std::ofstream filestr;
 	std::string testfilename("testfile.txt");
@@ -146,13 +148,13 @@ BOOST_AUTO_TEST_CASE(create3Blockfiles)
     boost::filesystem::remove("testfile.txt_1.BFi");
     boost::filesystem::remove("testfile.txt_2.BFi");
     boost::filesystem::remove("testfile.txt_3.BFi");
-
+	cout<<"}"<<endl;
 }
 
 
 BOOST_AUTO_TEST_CASE(writeBlockIntoBFiStructure)
 {
-	cout<<"BOOS_AUTO_TEST(writeBlockIntoBFiStructure)"<<endl;
+	cout<<"BOOS_AUTO_TEST(writeBlockIntoBFiStructure)\n{"<<endl;
 	std::string strTransGUID = "<empty>";
 
 	// Create testfile to be put into .BFi file	
@@ -268,11 +270,12 @@ BOOST_AUTO_TEST_CASE(writeBlockIntoBFiStructure)
     //Cleanup
     boost::filesystem::remove(testfilename);
 	
+	cout<<"}"<<endl;
 }
 
 BOOST_AUTO_TEST_CASE(create_toastrecords_for_BFi_block)
 {
-	cout<<"BOOS_AUTO_TEST(create_toastrecords_for_BFi_block)"<<endl;
+	cout<<"BOOS_AUTO_TEST(create_toastrecords_for_BFi_block)\n{"<<endl;
 	// make sure that attributes are stored in toast records as multiple chunks, and that
 	// each chunk is NOT distributed over several BlockRecords !! inother words
 	// a chunk record must always be a valid DED
@@ -304,6 +307,7 @@ BOOST_AUTO_TEST_CASE(create_toastrecords_for_BFi_block)
     boost::property_tree::ptree pt = ptestDataDictionaryControl->splitAttributIntoDEDchunks(attributName, FileDataBytesInVector, maxDEDblockSize, maxDEDchunkSize);
 
 	BOOST_CHECK(pt.size() > 0);	
+	cout<<"}"<<endl;
 }
 
 
