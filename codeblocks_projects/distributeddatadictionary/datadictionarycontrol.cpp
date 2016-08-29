@@ -158,12 +158,70 @@ boost::property_tree::ptree CDataDictionaryControl::createBFiBlockRecord(long ai
 	return pt;
 }
 
-boost::property_tree::ptree CDataDictionaryControl::splitAttributIntoDEDchunks(std::string attributName, std::vector<unsigned char>& attributValue, long maxDEDblockSize, long maxDEDchunkSize)
+std::vector< pair<unsigned char*, int> > CDataDictionaryControl::splitAttributIntoDEDchunks(long aiid, std::string attributName, std::vector<unsigned char>& attributValue, long maxDEDblockSize, long maxDEDchunkSize)
 {
     using boost::property_tree::ptree;
 	ptree pt;
-//TODO: 
-	return pt;
+
+	//int iMaxChunkSize=300; /// TEST WITH SMALL SIZE
+	int iMaxChunkSize=maxDEDchunkSize; 
+	int iTotalSize=attributValue.size();
+	int iBytesLeft=iTotalSize;
+	int n=0;
+	std::vector<unsigned char> chunkdata;
+	unsigned long entity_chunk_seq= (unsigned long)0;
+	bool bInternalFlush=false;
+	vector< pair<unsigned char*,int> > listOfDEDchunks;
+	int strangeCount=0;
+	bool bError=false;
+
+	do
+	{
+		chunkdata.clear();  // clean previous use
+
+		if(iTotalSize>iMaxChunkSize){
+				if(iMaxChunkSize>iBytesLeft){
+						std::copy(attributValue.begin()+(n*iMaxChunkSize), attributValue.begin()+(n*iMaxChunkSize)+iBytesLeft, std::back_inserter(chunkdata));
+				}
+				else {
+						std::copy(attributValue.begin()+(n*iMaxChunkSize), attributValue.begin()+(n*iMaxChunkSize)+iMaxChunkSize, std::back_inserter(chunkdata));
+				}
+		}
+		else {
+			std::copy(attributValue.begin(), attributValue.end(), std::back_inserter(chunkdata));
+		}
+
+		if(chunkdata.size()<=0){
+				std::cout << "[splitAttributIntoDEDchunks] ERROR: NO data inserted in chunkdata, default <empty> added to field : " << attributName  << "\n";
+				std::string strtmp="<empty>";
+				std::copy(strtmp.begin(), strtmp.end(), std::back_inserter(chunkdata));
+				strangeCount++;
+				if(strangeCount>10) {
+					bError=true; // avoid deadlock, due to errornous attribut
+					std::cout << "[splitAttributIntoDEDchunks] ERROR: Aborting function !!!!" << "\n";
+				}
+		}
+
+		n++;
+		aiid++;
+		entity_chunk_seq++;
+		{ /// defined in DD_ATTRIBUT_TOAST.xml in datadictionary
+			DED_START_ENCODER(encoder_ptr);
+			DED_PUT_STRUCT_START( encoder_ptr, "chunk_record" );
+				DED_PUT_STDSTRING	( encoder_ptr, "attribut_chunk_id", attributName ); // key of particular item
+				DED_PUT_ULONG   	( encoder_ptr, "attribut_aiid", (unsigned long)aiid ); // this number is continuesly increasing all thruout the entries in this table
+				DED_PUT_ULONG   	( encoder_ptr, "attribut_chunk_seq", (unsigned long)entity_chunk_seq ); // sequence number of particular item
+				DED_PUT_STDVECTOR	( encoder_ptr, "attribut_chunk_data", chunkdata );
+			DED_PUT_STRUCT_END( encoder_ptr, "chunk_record" );
+			DED_GET_ENCODED_DATA(encoder_ptr,data_ptr,iLengthOfTotalData,pCompressedData,sizeofCompressedData);
+			if(sizeofCompressedData==0) sizeofCompressedData = iLengthOfTotalData; // if sizeofcompresseddata is 0 then compression was not possible and size is the same as for uncompressed
+				iBytesLeft = iTotalSize-iMaxChunkSize*n;
+			listOfDEDchunks.push_back(make_pair(pCompressedData,sizeofCompressedData));
+	
+		}
+	}while(iBytesLeft>0 && !bError);
+
+	return listOfDEDchunks;
 }
 
 

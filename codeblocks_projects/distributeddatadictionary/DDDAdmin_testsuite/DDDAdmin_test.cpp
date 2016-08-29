@@ -273,6 +273,46 @@ BOOST_AUTO_TEST_CASE(writeBlockIntoBFiStructure)
 	cout<<"}"<<endl;
 }
 
+BOOST_AUTO_TEST_CASE(splitAttributIntoDEDchunks)
+{
+	cout<<"BOOS_AUTO_TEST(splitAttributIntoDEDchunks)\n{"<<endl;
+
+	// use an image file as attribut value
+	CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
+	std::string attributName = "foto";
+	std::vector<unsigned char> FileDataBytesInVector;
+	std::string fn = "testImage.png"; // should be of size 10.5 Kb
+	std::ifstream is (fn, ios::binary);
+	if (is)
+	{
+		long length = boost::filesystem::file_size(fn);
+		std::cout << "[readFile] Reading file: " << fn << " ; amount " << length << " characters... \n";
+		// Make sure receipient has room
+        	FileDataBytesInVector.resize(length,0); 
+		//read content of infile
+		is.read ((char*)&FileDataBytesInVector[0],length);
+		std::cout << "[readFile] size: " << (int) FileDataBytesInVector.size() << '\n';
+		std::cout << "[readFile] capacity: " << (int) FileDataBytesInVector.capacity() << '\n';
+		std::cout << "[readFile] max_size: " << (int) FileDataBytesInVector.max_size() << '\n';
+		is.close();
+	}
+	BOOST_CHECK(FileDataBytesInVector.size() > 0);
+
+	long maxDEDblockSize=65000; // should yield only one BlockRecord, since foto can be in one
+	long maxDEDchunkSize=300; // should yield several chunks for this attribut
+   
+	// split image data into several chunks of DED	
+	std::vector< pair<unsigned char*,int> > listOfDEDchunks = ptestDataDictionaryControl->splitAttributIntoDEDchunks(0, attributName, FileDataBytesInVector, maxDEDblockSize, maxDEDchunkSize);
+
+	// verify that image is in DED blocks
+	// TODO:
+
+	std::cout << "listOfDEDchunks : " << listOfDEDchunks.size() << '\n';
+
+	BOOST_CHECK(listOfDEDchunks.size() == 35);	
+	cout<<"}"<<endl;
+}
+
 BOOST_AUTO_TEST_CASE(create_toastrecords_for_BFi_block)
 {
 	cout<<"BOOS_AUTO_TEST(create_toastrecords_for_BFi_block)\n{"<<endl;
@@ -290,7 +330,7 @@ BOOST_AUTO_TEST_CASE(create_toastrecords_for_BFi_block)
 		long length = boost::filesystem::file_size(fn);
 		std::cout << "[readFile] Reading file: " << fn << " ; amount " << length << " characters... \n";
 		// Make sure receipient has room
-        FileDataBytesInVector.resize(length,0); 
+        	FileDataBytesInVector.resize(length,0); 
 		//read content of infile
 		is.read ((char*)&FileDataBytesInVector[0],length);
 		std::cout << "[readFile] size: " << (int) FileDataBytesInVector.size() << '\n';
@@ -302,11 +342,15 @@ BOOST_AUTO_TEST_CASE(create_toastrecords_for_BFi_block)
 	BOOST_CHECK(FileDataBytesInVector.size() > 0);
 
 	long maxDEDblockSize=65000; // should yield only one BlockRecord, since foto can be in one
-	long maxDEDchunkSize=1000; // should yield around 11 chunks for this attribut
+	long maxDEDchunkSize=300; // should yield several chunks for this attribut
    	
-    boost::property_tree::ptree pt = ptestDataDictionaryControl->splitAttributIntoDEDchunks(attributName, FileDataBytesInVector, maxDEDblockSize, maxDEDchunkSize);
+	std::vector< pair<unsigned char*,int> > listOfDEDchunks = ptestDataDictionaryControl->splitAttributIntoDEDchunks(0, attributName, FileDataBytesInVector, maxDEDblockSize, maxDEDchunkSize);
 
-	BOOST_CHECK(pt.size() > 0);	
+	std::cout << "listOfDEDchunks : " << listOfDEDchunks.size() << '\n';
+
+	BOOST_CHECK(listOfDEDchunks.size() > 0);	
+	
+	BOOST_CHECK(true == false);	 /// TODO: not ready yet
 	cout<<"}"<<endl;
 }
 
