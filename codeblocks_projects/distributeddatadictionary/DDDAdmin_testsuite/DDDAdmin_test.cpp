@@ -302,23 +302,17 @@ BOOST_AUTO_TEST_CASE(splitAttributIntoDEDchunks)
 	long maxDEDchunkSize=300; // should yield several chunks for this attribut
    
 	// split image data into several chunks of DED	
-	std::vector< pair<unsigned char*,int> > listOfDEDchunks = ptestDataDictionaryControl->splitAttributIntoDEDchunks(0, attributName, FileDataBytesInVector, maxDEDblockSize, maxDEDchunkSize);
-
-	// verify that image is in DED blocks
-	// TODO:
+	std::vector< pair<unsigned char*,int> > listOfDEDchunks = ptestDataDictionaryControl->splitAttributIntoDEDchunks(0, attributName, FileDataBytesInVector, maxDEDchunkSize);
 
 	std::cout << "listOfDEDchunks : " << listOfDEDchunks.size() << '\n';
-
+	// verify that image is in DED blocks
 	BOOST_CHECK(listOfDEDchunks.size() == 35);	
 	cout<<"}"<<endl;
 }
 
-BOOST_AUTO_TEST_CASE(create_toastrecords_for_BFi_block)
+BOOST_AUTO_TEST_CASE(addChunkDataToBlockRecord)
 {
-	cout<<"BOOS_AUTO_TEST(create_toastrecords_for_BFi_block)\n{"<<endl;
-	// make sure that attributes are stored in toast records as multiple chunks, and that
-	// each chunk is NOT distributed over several BlockRecords !! inother words
-	// a chunk record must always be a valid DED
+	cout<<"BOOS_AUTO_TEST(addChunkDataToBlockRecord)\n{"<<endl;
 
 	CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
 	std::string attributName = "foto";
@@ -341,15 +335,18 @@ BOOST_AUTO_TEST_CASE(create_toastrecords_for_BFi_block)
 
 	BOOST_CHECK(FileDataBytesInVector.size() > 0);
 
-	long maxDEDblockSize=65000; // should yield only one BlockRecord, since foto can be in one
+	long maxBlockRecordSize=65000; // should yield only one BlockRecord, since foto can be in one
 	long maxDEDchunkSize=300; // should yield several chunks for this attribut
    	
-	std::vector< pair<unsigned char*,int> > listOfDEDchunks = ptestDataDictionaryControl->splitAttributIntoDEDchunks(0, attributName, FileDataBytesInVector, maxDEDblockSize, maxDEDchunkSize);
-
+	std::vector< pair<unsigned char*,int> > listOfDEDchunks = ptestDataDictionaryControl->splitAttributIntoDEDchunks(0, attributName, FileDataBytesInVector, maxDEDchunkSize);
 	std::cout << "listOfDEDchunks : " << listOfDEDchunks.size() << '\n';
+	BOOST_CHECK(listOfDEDchunks.size() == 35);	
 
-	BOOST_CHECK(listOfDEDchunks.size() > 0);	
-	
+	long aiid=0;
+//	boost::property_tree::ptree pt = ptestDataDictionaryControl->addDEDchunksToBlockRecords(aiid, attributName, listOfDEDchunks, maxBlockRecordSize);
+
+//	BOOST_CHECK(pt.size() > 0);
+
 	BOOST_CHECK(true == false);	 /// TODO: not ready yet
 	cout<<"}"<<endl;
 }

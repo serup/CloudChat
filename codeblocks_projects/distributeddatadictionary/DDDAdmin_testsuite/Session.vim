@@ -12,19 +12,19 @@ noremap M | _
 nnoremap ,d :YcmShowDetailedDiagnostic
 map ,rwp <Plug>RestoreWinPosn
 map ,swp <Plug>SaveWinPosn
+noremap <silent> ,fa :%g/^{/normal! zf%
 nnoremap <silent> ,ww :call WindowSwap#EasyWindowSwap()
 nnoremap <silent> ,pw :call WindowSwap#DoWindowSwap()
 nnoremap <silent> ,yw :call WindowSwap#MarkWindowSwap()
-nnoremap \d :YcmShowDetailedDiagnostic
-map \rwp <Plug>RestoreWinPosn
 map \swp <Plug>SaveWinPosn
+map \rwp <Plug>RestoreWinPosn
+nnoremap \d :YcmShowDetailedDiagnostic
 vmap gx <Plug>NetrwBrowseXVis
 nmap gx <Plug>NetrwBrowseX
-nnoremap <SNR>19_: :=v:count ? v:count : ''
-map <F9> :so build_project.vim
-nnoremap <silent> <F10> :call conque_term#send_file()
-nnoremap <F8> :call conque_term#set_mappings("toggle")
 nnoremap <SNR>18_: :=v:count ? v:count : ''
+nnoremap <F8> :call conque_term#set_mappings("toggle")
+nnoremap <silent> <F10> :call conque_term#send_file()
+nnoremap <SNR>19_: :=v:count ? v:count : ''
 vnoremap <silent> <Plug>NetrwBrowseXVis :call netrw#BrowseXVis()
 nnoremap <silent> <Plug>NetrwBrowseX :call netrw#BrowseX(expand((exists("g:netrw_gx")? g:netrw_gx : '<cfile>')),netrw#CheckIfRemote())
 nnoremap <silent> <Plug>(startify-open-buffers) :call startify#open_buffers()
@@ -33,6 +33,7 @@ nnoremap <silent> <F11> :call conque_term#exec_file()
 nmap <silent> <Plug>RestoreWinPosn :call RestoreWinPosn()
 nmap <silent> <Plug>SaveWinPosn :call SaveWinPosn()
 noremap <F3> :so test_project.vim 
+map <F9> :so build_project.vim
 noremap <F2> :AnsiEsc
 inoremap <expr> 	 pumvisible() ? "\" : "\	"
 let &cpo=s:cpo_save
@@ -55,10 +56,10 @@ set runtimepath=~/.vim,~/.vim/bundle/vim-windowswap,~/.vim/bundle/Vundle.vim,~/.
 set shortmess=filnxtToOc
 set showcmd
 set sidescroll=1
-set statusline=%f\ %h%m%r%=%9*Obtaining\ DDDAdmin_test.cpp
+set statusline=%f\ %h%m%r%=%9*Obtaining\ DDDAdmin_test.cppcol:\ %c,
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
 set updatetime=50
-set window=65
+set window=69
 let s:so_save = &so | let s:siso_save = &siso | set so=0 siso=0
 let v:this_session=expand("<sfile>:p")
 silent only
@@ -110,18 +111,18 @@ set nosplitbelow
 set nosplitright
 wincmd t
 set winheight=1 winwidth=1
-exe '1resize ' . ((&lines * 34 + 35) / 70)
-exe 'vert 1resize ' . ((&columns * 43 + 119) / 238)
-exe '2resize ' . ((&lines * 33 + 35) / 70)
-exe 'vert 2resize ' . ((&columns * 43 + 119) / 238)
-exe '3resize ' . ((&lines * 13 + 35) / 70)
-exe 'vert 3resize ' . ((&columns * 145 + 119) / 238)
-exe '4resize ' . ((&lines * 31 + 35) / 70)
-exe 'vert 4resize ' . ((&columns * 145 + 119) / 238)
-exe '5resize ' . ((&lines * 45 + 35) / 70)
-exe 'vert 5resize ' . ((&columns * 48 + 119) / 238)
-exe '6resize ' . ((&lines * 22 + 35) / 70)
-exe 'vert 6resize ' . ((&columns * 194 + 119) / 238)
+exe '1resize ' . ((&lines * 33 + 35) / 70)
+exe 'vert 1resize ' . ((&columns * 64 + 119) / 238)
+exe '2resize ' . ((&lines * 34 + 35) / 70)
+exe 'vert 2resize ' . ((&columns * 64 + 119) / 238)
+exe '3resize ' . ((&lines * 22 + 35) / 70)
+exe 'vert 3resize ' . ((&columns * 94 + 119) / 238)
+exe '4resize ' . ((&lines * 38 + 35) / 70)
+exe 'vert 4resize ' . ((&columns * 94 + 119) / 238)
+exe '5resize ' . ((&lines * 61 + 35) / 70)
+exe 'vert 5resize ' . ((&columns * 78 + 119) / 238)
+exe '6resize ' . ((&lines * 6 + 35) / 70)
+exe 'vert 6resize ' . ((&columns * 173 + 119) / 238)
 argglobal
 let s:cpo_save=&cpo
 set cpo&vim
@@ -250,7 +251,7 @@ setlocal nowinfixwidth
 setlocal nowrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 8 - ((7 * winheight(0) + 17) / 34)
+let s:l = 8 - ((7 * winheight(0) + 16) / 33)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
@@ -370,12 +371,12 @@ setlocal nowrap
 setlocal wrapmargin=0
 silent! normal! zE
 17,41fold
-let s:l = 1 - ((0 * winheight(0) + 16) / 33)
+let s:l = 3 - ((2 * winheight(0) + 17) / 34)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-1
-normal! 0
+3
+normal! 019|
 lcd ~/GerritHub/CloudChat/codeblocks_projects/distributeddatadictionary/DDDAdmin_testsuite
 wincmd w
 argglobal
@@ -488,7 +489,7 @@ setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 42 - ((9 * winheight(0) + 6) / 13)
+let s:l = 42 - ((7 * winheight(0) + 11) / 22)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
@@ -612,16 +613,12 @@ silent! normal! zE
 91,151fold
 71
 normal! zo
-71
-normal! zo
-71
-normal! zc
-let s:l = 246 - ((0 * winheight(0) + 15) / 31)
+let s:l = 338 - ((21 * winheight(0) + 19) / 38)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-246
-normal! 0
+338
+normal! 034|
 lcd ~/GerritHub/CloudChat/codeblocks_projects/distributeddatadictionary/DDDAdmin_testsuite
 wincmd w
 argglobal
@@ -735,7 +732,7 @@ set nowrap
 setlocal nowrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 23 - ((22 * winheight(0) + 22) / 45)
+let s:l = 23 - ((22 * winheight(0) + 30) / 61)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
@@ -748,15 +745,15 @@ enew
 file ~/GerritHub/CloudChat/codeblocks_projects/distributeddatadictionary/DDDAdmin_testsuite/bash\ -\ 1
 let s:cpo_save=&cpo
 set cpo&vim
-inoremap <buffer> <silent> <End> :py3 ConqueTerm_1.write(u("\x1bOF"))
-inoremap <buffer> <silent> <Home> :py3 ConqueTerm_1.write(u("\x1bOH"))
-inoremap <buffer> <silent> <Left> :py3 ConqueTerm_1.write(u("\x1b[D"))
-inoremap <buffer> <silent> <Right> :py3 ConqueTerm_1.write(u("\x1b[C"))
-inoremap <buffer> <silent> <Down> :py3 ConqueTerm_1.write(u("\x1b[B"))
-inoremap <buffer> <silent> <Up> :py3 ConqueTerm_1.write(u("\x1b[A"))
-inoremap <buffer> <silent> <S-Space> :py3 ConqueTerm_1.write(u(" "))
-inoremap <buffer> <silent> <S-BS> :py3 ConqueTerm_1.write(u("\x08"))
 inoremap <buffer> <silent> <BS> :py3 ConqueTerm_1.write(u("\x08"))
+inoremap <buffer> <silent> <S-BS> :py3 ConqueTerm_1.write(u("\x08"))
+inoremap <buffer> <silent> <S-Space> :py3 ConqueTerm_1.write(u(" "))
+inoremap <buffer> <silent> <Up> :py3 ConqueTerm_1.write(u("\x1b[A"))
+inoremap <buffer> <silent> <Down> :py3 ConqueTerm_1.write(u("\x1b[B"))
+inoremap <buffer> <silent> <Right> :py3 ConqueTerm_1.write(u("\x1b[C"))
+inoremap <buffer> <silent> <Left> :py3 ConqueTerm_1.write(u("\x1b[D"))
+inoremap <buffer> <silent> <Home> :py3 ConqueTerm_1.write(u("\x1bOH"))
+inoremap <buffer> <silent> <End> :py3 ConqueTerm_1.write(u("\x1bOF"))
 nnoremap <buffer> <silent>  :py3 ConqueTerm_1.write_ord(3)
 nnoremap <buffer> <silent> C :echo "Change mode disabled in shell."
 nnoremap <buffer> <silent> P :py3 ConqueTerm_1.write_expr("@@")a
@@ -1005,19 +1002,19 @@ setlocal nowrap
 setlocal wrapmargin=0
 lcd ~/GerritHub/CloudChat/codeblocks_projects/distributeddatadictionary/DDDAdmin_testsuite
 wincmd w
-2wincmd w
-exe '1resize ' . ((&lines * 34 + 35) / 70)
-exe 'vert 1resize ' . ((&columns * 43 + 119) / 238)
-exe '2resize ' . ((&lines * 33 + 35) / 70)
-exe 'vert 2resize ' . ((&columns * 43 + 119) / 238)
-exe '3resize ' . ((&lines * 13 + 35) / 70)
-exe 'vert 3resize ' . ((&columns * 145 + 119) / 238)
-exe '4resize ' . ((&lines * 31 + 35) / 70)
-exe 'vert 4resize ' . ((&columns * 145 + 119) / 238)
-exe '5resize ' . ((&lines * 45 + 35) / 70)
-exe 'vert 5resize ' . ((&columns * 48 + 119) / 238)
-exe '6resize ' . ((&lines * 22 + 35) / 70)
-exe 'vert 6resize ' . ((&columns * 194 + 119) / 238)
+4wincmd w
+exe '1resize ' . ((&lines * 33 + 35) / 70)
+exe 'vert 1resize ' . ((&columns * 64 + 119) / 238)
+exe '2resize ' . ((&lines * 34 + 35) / 70)
+exe 'vert 2resize ' . ((&columns * 64 + 119) / 238)
+exe '3resize ' . ((&lines * 22 + 35) / 70)
+exe 'vert 3resize ' . ((&columns * 94 + 119) / 238)
+exe '4resize ' . ((&lines * 38 + 35) / 70)
+exe 'vert 4resize ' . ((&columns * 94 + 119) / 238)
+exe '5resize ' . ((&lines * 61 + 35) / 70)
+exe 'vert 5resize ' . ((&columns * 78 + 119) / 238)
+exe '6resize ' . ((&lines * 6 + 35) / 70)
+exe 'vert 6resize ' . ((&columns * 173 + 119) / 238)
 tabnext 1
 if exists('s:wipebuf')
   silent exe 'bwipe ' . s:wipebuf

@@ -158,7 +158,7 @@ boost::property_tree::ptree CDataDictionaryControl::createBFiBlockRecord(long ai
 	return pt;
 }
 
-std::vector< pair<unsigned char*, int> > CDataDictionaryControl::splitAttributIntoDEDchunks(long aiid, std::string attributName, std::vector<unsigned char>& attributValue, long maxDEDblockSize, long maxDEDchunkSize)
+std::vector< pair<unsigned char*, int> > CDataDictionaryControl::splitAttributIntoDEDchunks(long aiid, std::string attributName, std::vector<unsigned char>& attributValue, long maxDEDchunkSize)
 {
     using boost::property_tree::ptree;
 	ptree pt;
@@ -224,4 +224,35 @@ std::vector< pair<unsigned char*, int> > CDataDictionaryControl::splitAttributIn
 	return listOfDEDchunks;
 }
 
+boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(long aiid, std::string attributName, std::vector<pair<unsigned char*,int>>listOfDEDchunks, long maxBlockRecordSize)
+{
+    using boost::property_tree::ptree;
+	std::string strTransGUID="";
+	ptree pt;
+	pt.clear();
+	long bytesLeftInBlockRecord = maxBlockRecordSize;
+	pair <unsigned char*,int> chunk;
+	long seq=0; // every attribut starts with seq=1 and increses per chunk
+	
+	int iTotalSize=listOfDEDchunks.size();
+	int iBytesLeft=iTotalSize;
+	int n=0;
+
+	BOOST_FOREACH( chunk, listOfDEDchunks )
+	{
+		if(aiid==0)
+			strTransGUID = CMD5((const char*)chunk.first).GetMD5s();
+			
+		boost::property_tree::ptree subpt = createBFiBlockRecord(++aiid, ++seq, strTransGUID, attributName, (char*)chunk.first, chunk.second);
+		iBytesLeft = iBytesLeft - chunk.second;
+		if(iBytesLeft > 0) {
+			/// there is room for attribut chunk - add it to tree
+		    // insert subpt at the end of the list
+			pt.insert(pt.get_child("BlockRecord").end(),subpt.front());
+		}
+			
+	}
+	
+	return pt;		
+}
 
