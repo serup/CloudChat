@@ -343,11 +343,11 @@ BOOST_AUTO_TEST_CASE(addChunkDataToBlockRecord)
 	BOOST_CHECK(listOfDEDchunks.size() == 35);	
 
 	long aiid=0;
-//	boost::property_tree::ptree pt = ptestDataDictionaryControl->addDEDchunksToBlockRecords(aiid, attributName, listOfDEDchunks, maxBlockRecordSize);
+	boost::property_tree::ptree pt = ptestDataDictionaryControl->addDEDchunksToBlockRecords(aiid, attributName, listOfDEDchunks, maxBlockRecordSize);
 
-//	BOOST_CHECK(pt.size() > 0);
+	BOOST_CHECK(pt.size() > 0);
 
-	BOOST_CHECK(true == false);	 /// TODO: not ready yet
+//	BOOST_CHECK(true == false);	 /// TODO: not ready yet
 	cout<<"}"<<endl;
 }
 

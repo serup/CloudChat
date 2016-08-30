@@ -23,6 +23,10 @@ Plugin 'Valloric/YouCompleteMe'
 Plugin 'mhinz/vim-startify'
 " Install vim-windowswap
 Plugin 'wesQ3/vim-windowswap'
+" Install vim-autotag
+Plugin 'craigemery/vim-autotag'
+" Install tagbar
+Plugin 'majutsushi/tagbar'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -55,6 +59,8 @@ noremap <F2> :AnsiEsc<CR>
 noremap <F9> :so build_project.vim<CR> 
 noremap <F3> :so test_project.vim<CR>
 noremap <silent> <leader>fa :%g/^{/normal! zf%<CR>
+noremap <silent> <leader>jf <C-]><CR>
+noremap <silent> <leader>jb <C-t><CR>
 "noremap <F3> :echo 'Current time is ' . strftime('%c')<CR>
 "nnoremap <silent> <F2> :lchdir %:p:h<CR>:pwd<CR>
 set showcmd

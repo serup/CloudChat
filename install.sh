@@ -162,6 +162,17 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- vim already installed - consider adding set mouse=a   ;to enable mouse handling of splits"
 fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 *brew* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install brew on ubuntu : example: brew install ctags"
+  sudo apt-fast install -yq linuxbrew-wrapper 
+  brew install ctags
+  sudo apt-fast install -yq exuberant-ctags
+  echo "- add to .vimrc -- Plug 'craigemery/vim-autotag'"
+  echo " - done."
+else
+  echo "- brew already installed"
+fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 sysstat |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install sysstat on ubuntu : example: iostat -d 1 10"
