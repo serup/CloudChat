@@ -22,6 +22,7 @@ bool CDataDictionaryControl::CreateBlockFile(std::string filename)
 	return bResult;
 }
 
+
 /**
  * splits the file into blocks resulting in <filename>_<number>.BFi files
  * 
@@ -39,14 +40,15 @@ int CDataDictionaryControl::splitFileIntoBlocks(std::string filename)
 		amountOfBlocks = vp.size();
 		int filenumber=0;
 		pair <char*,int> block;
+		bool bfirst=true;
 		BOOST_FOREACH( block, vp )
 		{
 			if(aiid==0)
 				strTransGUID = CMD5((const char*)block.first).GetMD5s();
 
 			filenumber++;
-			boost::property_tree::ptree pt = createBFiBlockRecord(++aiid, ++seq, strTransGUID, filename.c_str(),block.first, block.second);
-
+			boost::property_tree::ptree pt = createBFiBlockRecord(bfirst, ++aiid, ++seq, strTransGUID, filename.c_str(),block.first, block.second);
+			bfirst=false;
 			std::string blockfilename = filename + "_" + std::to_string(filenumber) + ".BFi";
 		    ofstream blockFile (blockfilename.c_str(), ios::out | ios::binary);
 
@@ -127,7 +129,7 @@ std::vector<unsigned char> readFile(std::string fn)
  *  	   	   	   		  
  * return ptree - containing xml structure ready to be used by fx. write_xml
  */
-boost::property_tree::ptree CDataDictionaryControl::createBFiBlockRecord(long aiid,long seq, std::string transGuid,std::string id, char* blob, int size)
+boost::property_tree::ptree CDataDictionaryControl::createBFiBlockRecord(bool bfirst,long aiid,long seq, std::string transGuid,std::string realmName, char* blob, int size)
 {
 	pair<char*,int> p;
 	p = make_pair(blob, size);
@@ -145,15 +147,28 @@ boost::property_tree::ptree CDataDictionaryControl::createBFiBlockRecord(long ai
 	std::string strtmp((const char*)data_in_hex_buf);
 	nSizeOfHex = strtmp.size();
 
-	ptree &node = pt.add("BlockRecord", 1);
-	node.put("TransGUID",transGuid);
-	node.put("chunk_id",id);
-	node.put("aiid",aiid);
-	node.put("chunk_seq",seq); // sequence number of particular item
-	node.put("chunk_data_in_hex",data_in_hex_buf);
-	node.put("chunk_size",nSizeOfHex);
-	node.put("chunk_md5",strMD5);
-
+	if(bfirst){
+			cout << "ADD first BlockRecord entry" << endl;
+			ptree &node = pt.add("BlockRecord", "");
+			node.put("TransGUID",transGuid);
+			node.put("chunk_id",realmName);
+			node.put("aiid",aiid);
+			node.put("chunk_seq",seq); // sequence number of particular item
+			node.put("chunk_data.TransGUID",transGuid);
+			node.put("chunk_data.Protocol", "DED");
+			node.put("chunk_data.ProtocolVersion", "1.0.0.0");
+			node.put("chunk_data.chunk_record.DataSize", nSizeOfHex); //TODO: consider dropping transfer to HEX, since it is making size bigger and only needed for Debug
+			node.put("chunk_data.chunk_record.Data", data_in_hex_buf);
+			node.put("chunk_data.chunk_record.DataMD5", strMD5);
+			bfirst=false;
+	}
+	else {
+			cout << "ADD node chunk_record" << endl;
+			ptree &node = pt.add("chunk_record", "");
+			node.put("DataSize", nSizeOfHex); //TODO: consider dropping transfer to HEX, since it is making size bigger and only needed for Debug
+			node.put("Data", data_in_hex_buf);
+			node.put("DataMD5", strMD5);
+	}
 	free(data_in_hex_buf);
 	return pt;
 }
@@ -224,7 +239,8 @@ std::vector< pair<unsigned char*, int> > CDataDictionaryControl::splitAttributIn
 	return listOfDEDchunks;
 }
 
-boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(long aiid, std::string attributName, std::vector<pair<unsigned char*,int>>listOfDEDchunks, long maxBlockRecordSize)
+//TODO: refactor chunks should go into BlockRecord and there should only be created more BlockRecords if chunks can not fit standard set size of a BlockRecord
+boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(long aiid, std::string realmName, std::vector<pair<unsigned char*,int>>listOfDEDchunks, long maxBlockRecordSize)
 {
     using boost::property_tree::ptree;
 	std::string strTransGUID="";
@@ -234,25 +250,55 @@ boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(l
 	pair <unsigned char*,int> chunk;
 	long seq=0; // every attribut starts with seq=1 and increses per chunk
 	
-	int iTotalSize=listOfDEDchunks.size();
+	int iTotalSize=totalSizeOf(listOfDEDchunks);
 	int iBytesLeft=iTotalSize;
 	int n=0;
+	bool bfirst=true;
 
+	ptree &node = pt.add("listOfBlockRecords", "");
+	node.put("chunksInBlockRecords",listOfDEDchunks.size());
+
+
+	std::cout << "total size of DED chunks: " << iTotalSize << '\n';
+
+	
 	BOOST_FOREACH( chunk, listOfDEDchunks )
 	{
-		if(aiid==0)
+		if(aiid==0) 
 			strTransGUID = CMD5((const char*)chunk.first).GetMD5s();
-			
-		boost::property_tree::ptree subpt = createBFiBlockRecord(++aiid, ++seq, strTransGUID, attributName, (char*)chunk.first, chunk.second);
+
+		boost::property_tree::ptree subpt = createBFiBlockRecord(bfirst, ++aiid, ++seq, strTransGUID, realmName, (char*)chunk.first, chunk.second);
+
 		iBytesLeft = iBytesLeft - chunk.second;
+		std::cout << "bytes left : " << iBytesLeft << '\n';
 		if(iBytesLeft > 0) {
 			/// there is room for attribut chunk - add it to tree
 		    // insert subpt at the end of the list
-			pt.insert(pt.get_child("BlockRecord").end(),subpt.front());
+			std::cout << "appending chunk of size : " << chunk.second << '\n';
+			if(bfirst)
+				pt.insert(pt.get_child("listOfBlockRecords").end(),subpt.front());
+			else
+				pt.insert(pt.get_child("BlockRecord.chunk_data").end(),subpt.front());
 		}
-			
+		bfirst=false;	
 	}
+
+//DEBUG	
+// write test xml file
+	ofstream blockFile ("testing.xml", ios::out | ios::binary);
+	write_xml(blockFile, pt);
 	
 	return pt;		
+}
+
+long CDataDictionaryControl::totalSizeOf(std::vector<pair<unsigned char*, int>> vectorPairList)
+{
+	long totalCount=0;		
+	pair <unsigned char*,int> chunk;
+	BOOST_FOREACH( chunk, vectorPairList )
+	{
+		totalCount+=chunk.second;
+	}	
+	return totalCount;
 }
 

@@ -12,6 +12,7 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
+					<Add option="-std=c++11" />
 					<Add option="-g" />
 				</Compiler>
 				<Linker>
@@ -40,6 +41,10 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="../../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.cpp" />
+		<Unit filename="../../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.h" />
+		<Unit filename="../../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.cpp" />
+		<Unit filename="../../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.h" />
 		<Unit filename="../datadictionarycontrol.cpp" />
 		<Unit filename="../datadictionarycontrol.hpp" />
 		<Unit filename="DDDAdmin_test.cpp" />

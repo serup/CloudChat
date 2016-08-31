@@ -93,7 +93,7 @@ BOOST_AUTO_TEST_CASE(create_BFi_blockfile)
 BOOST_AUTO_TEST_CASE(create3Blockfiles)
 {
 	cout<<"BOOS_AUTO_TEST(create3Blockfiles)\n{"<<endl;
-	// Create testfile to be put into .BFi file	
+	// Create testfile to be put into .BFi file
     std::ofstream filestr;
 	std::string testfilename("testfile.txt");
 
@@ -127,19 +127,19 @@ BOOST_AUTO_TEST_CASE(create3Blockfiles)
 			filestr << "22 This is a test file .";
 			filestr.close();
 	}
-	
-	// Put testfile into .BFi file 
+
+	// Put testfile into .BFi file
    	CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
 	int amountOfBlocks = ptestDataDictionaryControl->splitFileIntoBlocks(testfilename);
 
-	// file should be split in several blocks, pt. it is setup to make 3 blocks per file 
-	BOOST_CHECK(amountOfBlocks == 3);	
-	
+	// file should be split in several blocks, pt. it is setup to make 3 blocks per file
+	BOOST_CHECK(amountOfBlocks == 3);
+
 	// verify that block files have been created
-	BOOST_CHECK(boost::filesystem::exists("testfile.txt_1.BFi"));	
-	BOOST_CHECK(boost::filesystem::exists("testfile.txt_2.BFi"));	
-	BOOST_CHECK(boost::filesystem::exists("testfile.txt_3.BFi"));	
-    
+	BOOST_CHECK(boost::filesystem::exists("testfile.txt_1.BFi"));
+	BOOST_CHECK(boost::filesystem::exists("testfile.txt_2.BFi"));
+	BOOST_CHECK(boost::filesystem::exists("testfile.txt_3.BFi"));
+
 
     //Cleanup
     boost::filesystem::wpath file(L"testfile.txt");
@@ -157,7 +157,7 @@ BOOST_AUTO_TEST_CASE(writeBlockIntoBFiStructure)
 	cout<<"BOOS_AUTO_TEST(writeBlockIntoBFiStructure)\n{"<<endl;
 	std::string strTransGUID = "<empty>";
 
-	// Create testfile to be put into .BFi file	
+	// Create testfile to be put into .BFi file
     std::ofstream filestr;
 	std::string testfilename("testfile.txt");
 
@@ -192,8 +192,8 @@ BOOST_AUTO_TEST_CASE(writeBlockIntoBFiStructure)
 			filestr << "22 This is a test file .";
 			filestr.close();
 	}
-	
-	// put testfile into .BFi file 
+
+	// put testfile into .BFi file
    	CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
 
 	int amountOfBlocks=-1;
@@ -208,7 +208,7 @@ BOOST_AUTO_TEST_CASE(writeBlockIntoBFiStructure)
 	if (file.is_open()) {
 		size = boost::filesystem::file_size(fn);
 		file.seekg (0, ios::beg);
-		int bs = size/3; //TODO: use maxBlockSize to determine how many blocks a file should be split into 
+		int bs = size/3; //TODO: use maxBlockSize to determine how many blocks a file should be split into
 		int ws = 0;
 		int i = 0;
 		cout<<"size:"<<size<<" bs:"<<bs<<endl;
@@ -238,38 +238,47 @@ BOOST_AUTO_TEST_CASE(writeBlockIntoBFiStructure)
 		int count=0;
 		long aiid=0;
 		long seq=0;
+		bool bfirst=true;
 		BOOST_FOREACH( block, vp )
 		{
-			boost::property_tree::ptree pt = ptestDataDictionaryControl->createBFiBlockRecord(++aiid, ++seq, strTransGUID, testfilename.c_str(),block.first, block.second);
+			boost::property_tree::ptree pt = ptestDataDictionaryControl->createBFiBlockRecord(bfirst,++aiid, ++seq, strTransGUID, testfilename.c_str(),block.first, block.second);
 
 			BlockRecordEntry f;
-			f.TransGUID = pt.get<std::string>("BlockRecord.TransGUID");
-			f.chunk_id  = pt.get<std::string>("BlockRecord.chunk_id");
-			f.aiid 		= pt.get<unsigned long>("BlockRecord.aiid");
-			f.chunk_seq = pt.get<unsigned long>("BlockRecord.chunk_seq");
-			f.chunk_data_in_hex = pt.get<std::string>("BlockRecord.chunk_data_in_hex");
-			f.chunk_size = pt.get<unsigned long>("BlockRecord.chunk_size");
-			f.chunk_md5 = pt.get<std::string>("BlockRecord.chunk_md5");
+			if(bfirst) {
+					f.TransGUID = pt.get<std::string>("BlockRecord.TransGUID");
+					f.chunk_id  = pt.get<std::string>("BlockRecord.chunk_id");
+					f.aiid 		= pt.get<unsigned long>("BlockRecord.aiid");
+					f.chunk_seq = pt.get<unsigned long>("BlockRecord.chunk_seq");
+					cout << "aiid : " << f.aiid <<endl;
+					BOOST_CHECK(f.aiid == ++count);
+					cout << "chunk_id : " << f.chunk_id <<endl;
+					// check if chunk_id is correct - it should be name of realm file, inorder to follow specs
+					BOOST_CHECK(f.chunk_id == testfilename);
+					cout << "chunk_seq : " << f.chunk_seq <<endl;
+					cout << "TransGUID : " << f.TransGUID <<endl;
+					f.chunk_data_in_hex = pt.get<std::string>("BlockRecord.chunk_data.chunk_record.Data");
+					f.chunk_size = pt.get<unsigned long>("BlockRecord.chunk_data.chunk_record.DataSize");
+					f.chunk_md5 = pt.get<std::string>("BlockRecord.chunk_data.chunk_record.DataMD5");
+			}
+			else {
+					f.chunk_data_in_hex = pt.get<std::string>("chunk_record.Data");
+					f.chunk_size = pt.get<unsigned long>("chunk_record.DataSize");
+					f.chunk_md5 = pt.get<std::string>("chunk_record.DataMD5");
+			}
+			bfirst=false;
 
 			// check if data is in structure, and of correct size
 			BOOST_CHECK(f.chunk_size == f.chunk_data_in_hex.size());
 		 	// check if data has correct md5 sum
 			std::string strMD5(CMD5((const char*)f.chunk_data_in_hex.c_str()).GetMD5s());
 			BOOST_CHECK(f.chunk_md5 == strMD5);
-			// check if chunk_id is correct - it should be name of realm file, inorder to follow specs
-			cout << "aiid : " << f.aiid <<endl;
-			BOOST_CHECK(f.aiid == ++count);
-			cout << "chunk_id : " << f.chunk_id <<endl;
-			BOOST_CHECK(f.chunk_id == testfilename);
-			cout << "chunk_seq : " << f.chunk_seq <<endl;
-			cout << "TransGUID : " << f.TransGUID <<endl;
-		
+
 		}
 	}
-	
+
     //Cleanup
     boost::filesystem::remove(testfilename);
-	
+
 	cout<<"}"<<endl;
 }
 
@@ -288,7 +297,7 @@ BOOST_AUTO_TEST_CASE(splitAttributIntoDEDchunks)
 		long length = boost::filesystem::file_size(fn);
 		std::cout << "[readFile] Reading file: " << fn << " ; amount " << length << " characters... \n";
 		// Make sure receipient has room
-        	FileDataBytesInVector.resize(length,0); 
+        	FileDataBytesInVector.resize(length,0);
 		//read content of infile
 		is.read ((char*)&FileDataBytesInVector[0],length);
 		std::cout << "[readFile] size: " << (int) FileDataBytesInVector.size() << '\n';
@@ -300,13 +309,13 @@ BOOST_AUTO_TEST_CASE(splitAttributIntoDEDchunks)
 
 	long maxDEDblockSize=65000; // should yield only one BlockRecord, since foto can be in one
 	long maxDEDchunkSize=300; // should yield several chunks for this attribut
-   
-	// split image data into several chunks of DED	
+
+	// split image data into several chunks of DED
 	std::vector< pair<unsigned char*,int> > listOfDEDchunks = ptestDataDictionaryControl->splitAttributIntoDEDchunks(0, attributName, FileDataBytesInVector, maxDEDchunkSize);
 
 	std::cout << "listOfDEDchunks : " << listOfDEDchunks.size() << '\n';
 	// verify that image is in DED blocks
-	BOOST_CHECK(listOfDEDchunks.size() == 35);	
+	BOOST_CHECK(listOfDEDchunks.size() == 35);
 	cout<<"}"<<endl;
 }
 
@@ -324,7 +333,7 @@ BOOST_AUTO_TEST_CASE(addChunkDataToBlockRecord)
 		long length = boost::filesystem::file_size(fn);
 		std::cout << "[readFile] Reading file: " << fn << " ; amount " << length << " characters... \n";
 		// Make sure receipient has room
-        	FileDataBytesInVector.resize(length,0); 
+        	FileDataBytesInVector.resize(length,0);
 		//read content of infile
 		is.read ((char*)&FileDataBytesInVector[0],length);
 		std::cout << "[readFile] size: " << (int) FileDataBytesInVector.size() << '\n';
@@ -337,17 +346,19 @@ BOOST_AUTO_TEST_CASE(addChunkDataToBlockRecord)
 
 	long maxBlockRecordSize=65000; // should yield only one BlockRecord, since foto can be in one
 	long maxDEDchunkSize=300; // should yield several chunks for this attribut
-   	
+
 	std::vector< pair<unsigned char*,int> > listOfDEDchunks = ptestDataDictionaryControl->splitAttributIntoDEDchunks(0, attributName, FileDataBytesInVector, maxDEDchunkSize);
 	std::cout << "listOfDEDchunks : " << listOfDEDchunks.size() << '\n';
-	BOOST_CHECK(listOfDEDchunks.size() == 35);	
+	BOOST_CHECK(listOfDEDchunks.size() == 35);
+
 
 	long aiid=0;
-	boost::property_tree::ptree pt = ptestDataDictionaryControl->addDEDchunksToBlockRecords(aiid, attributName, listOfDEDchunks, maxBlockRecordSize);
+	std::string realmName = "profile";
+	boost::property_tree::ptree pt = ptestDataDictionaryControl->addDEDchunksToBlockRecords(aiid, realmName, listOfDEDchunks, maxBlockRecordSize);
 
 	BOOST_CHECK(pt.size() > 0);
 
-//	BOOST_CHECK(true == false);	 /// TODO: not ready yet
+	BOOST_CHECK(true == false);	 /// TODO: not ready yet
 	cout<<"}"<<endl;
 }
 

@@ -41,66 +41,66 @@ DDD - Distributed Data Dictionary
    	<chunk_id></chunk_id>	-- name of realm file
    	<aiid></aiid>		-- automatic increased id - a continues number for all of these records
    	<chunk_seq></chunk_seq>	-- sequence number for this chunk of the database realm file
-	<chunk_data_in_hex> 
-*** toast records begin
+	<chunk_data> 
 	       <TransGUID></TransGUID> -- each record has a unique transaction id to be used with security, when detecting inconsistencies
 	       <Protocol>DED</Protocol>
 	       <ProtocolVersion>1.0.0.0</ProtocolVersion>
-	       <DataSize></DataSize>
-	       <Data>
-		 <chunk_record>
-		     <attribut_chunk_id></attribut_chunk_id> 		-- name of attribut described in data dictionary realm entity
-		     <attribut_aiid></attribut_aiid> 			-- automatic increased id - a continues number for all records 
-		     <attribut_chunk_seq></attribut_chunk_seq> 		-- sequence number for this chunk of the attribut
-		     <attribut_chunk_data></attribut_chunk_data> 	-- chunk data of attribut
-		 </chunk_record>
+	       <chunk_record>
+	       	<DataSize></DataSize>
+	       		<Data>
+-- DED binary begin
+		     		<attribut_chunk_id></attribut_chunk_id> 		-- name of attribut described in data dictionary realm entity
+		     		<attribut_aiid></attribut_aiid> 			-- automatic increased id - a continues number for all records 
+		     		<attribut_chunk_seq></attribut_chunk_seq> 		-- sequence number for this chunk of the attribut
+		     		<attribut_chunk_data></attribut_chunk_data> 	-- chunk data of attribut
+-- DED binary end 
+				</Data>
+	        	<DataMD5><DataMD5> -- this md5 checksum is used as an extra verification -- Data must be verified with this value before being used.
+		 	</chunk_record>
 		</Data> -- here is the pCompressedData from above protocol encoding, compression, encrypting algoritm -- currently DED (dataencoderdecoder)
-	       <DataMD5><DataMD5> -- this md5 checksum is used as an extra verification -- Data must be verified with this value before being used.
-*** toast records end
-	</chunk_data_in_hex>
-	<chunk_size></chunk_size>
-	<chunk_md5></chunk_md5>
+	</chunk_data>
   </BlockRecord>
   <BlockRecord>
 	<TransGUID></TransGUID> -- each record has a unique transaction id to be used with security, when detecting inconsistencies
    	<chunk_id></chunk_id>	-- name of realm file
    	<aiid></aiid>		-- automatic increased id - a continues number for all of these records
    	<chunk_seq></chunk_seq>	-- sequence number for this chunk of the database realm file
-	<chunk_data_in_hex> 
-*** toast records begin
-	       <TransGUID></TransGUID> -- each record has a unique transaction id to be used with security, when detecting inconsistencies
-	       <Protocol>DED</Protocol>
-	       <ProtocolVersion>1.0.0.0</ProtocolVersion>
-	       <DataSize></DataSize>
-	       <Data>
-		 <chunk_record>
-		     <attribut_chunk_id></attribut_chunk_id> 		-- name of attribut described in data dictionary realm entity
-		     <attribut_aiid></attribut_aiid> 			-- automatic increased id - a continues number for all records 
-		     <attribut_chunk_seq></attribut_chunk_seq> 		-- sequence number for this chunk of the attribut
-		     <attribut_chunk_data></attribut_chunk_data> 	-- chunk data of attribut
-		 </chunk_record>
-		 <chunk_record>
-		     <attribut_chunk_id></attribut_chunk_id> 		-- name of attribut described in data dictionary realm entity
-		     <attribut_aiid></attribut_aiid> 			-- automatic increased id - a continues number for all records 
-		     <attribut_chunk_seq></attribut_chunk_seq> 		-- sequence number for this chunk of the attribut
-		     <attribut_chunk_data></attribut_chunk_data> 	-- chunk data of attribut
-		 </chunk_record>
-		 ... etc - there could be several attributes in a chunk data (DED block), however not necessary
-		</Data> -- here is the pCompressedData from above protocol encoding, compression, encrypting algoritm -- currently DED (dataencoderdecoder)
-	       <DataMD5><DataMD5> -- this md5 checksum is used as an extra verification -- Data must be verified with this value before being used.
-*** toast records end 
-	</chunk_data_in_hex>
-	<chunk_size></chunk_size>
-	<chunk_md5></chunk_md5>
+	<chunk_data> 
+	       	<TransGUID></TransGUID> -- each record has a unique transaction id to be used with security, when detecting inconsistencies
+	       	<Protocol>DED</Protocol>
+	  		<ProtocolVersion>1.0.0.0</ProtocolVersion>
+		 	<chunk_record>
+	       		<DataSize></DataSize>
+	      	 	<Data>
+-- DED binary begin
+		     		<attribut_chunk_id></attribut_chunk_id> 		-- name of attribut described in data dictionary realm entity
+		     		<attribut_aiid></attribut_aiid> 			-- automatic increased id - a continues number for all records 
+		     		<attribut_chunk_seq></attribut_chunk_seq> 		-- sequence number for this chunk of the attribut
+		     		<attribut_chunk_data></attribut_chunk_data> 	-- chunk data of attribut
+-- DED binary end
+				</Data> 
+	       	    <DataMD5><DataMD5> -- this md5 checksum is used as an extra verification -- Data must be verified with this value before being used.
+		 	</chunk_record>
+		 	<chunk_record>
+	       		<DataSize></DataSize>
+	      	 	<Data>
+-- DED binary begin
+			     	<attribut_chunk_id></attribut_chunk_id> 		-- name of attribut described in data dictionary realm entity
+		     		<attribut_aiid></attribut_aiid> 			-- automatic increased id - a continues number for all records 
+		     		<attribut_chunk_seq></attribut_chunk_seq> 		-- sequence number for this chunk of the attribut
+		     		<attribut_chunk_data></attribut_chunk_data> 	-- chunk data of attribut
+-- DED binary end 
+				</Data> 
+	       	    <DataMD5><DataMD5> -- this md5 checksum is used as an extra verification -- Data must be verified with this value before being used.
+		 	</chunk_record>
+	</chunk_data>
   </BlockRecord>
   <BlockRecord>
 	<TransGUID></TransGUID> -- each record has a unique transaction id to be used with security, when detecting inconsistencies
    	<chunk_id></chunk_id>				-- name of realm file
    	<aiid></aiid>					-- automatic increased id - a continues number for all of these records
    	<chunk_seq></chunk_seq>				-- sequence number for this chunk of the database realm file
-	<chunk_data_in_hex></chunk_data_in_hex> 	-- chunk data 
-	<chunk_size></chunk_size>
-	<chunk_md5></chunk_md5>
+	<chunk_data></chunk_data> 			-- chunk data 
  </BlockRecord>
  <BlockRecord></BlockRecord> ... etc. until block size has been reached or no more data
 </BlockEntity>   
