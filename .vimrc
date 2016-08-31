@@ -27,6 +27,12 @@ Plugin 'wesQ3/vim-windowswap'
 Plugin 'craigemery/vim-autotag'
 " Install tagbar
 Plugin 'majutsushi/tagbar'
+" Install ConqueGdb
+Plugin 'vim-scripts/Conque-GDB'
+" Install nerdtree
+Plugin 'scrooloose/nerdtree'
+" Install nerdtree git plugin
+Plugin 'Xuyuanp/nerdtree-git-plugin'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -61,6 +67,9 @@ noremap <F3> :so test_project.vim<CR>
 noremap <silent> <leader>fa :%g/^{/normal! zf%<CR>
 noremap <silent> <leader>jf <C-]><CR>
 noremap <silent> <leader>jb <C-t><CR>
+noremap <silent> <leader>tb :TagbarToggle<CR>
+noremap <leader>M <C-W>\| <C-W>_
+noremap <leader>m <C-W>=
 "noremap <F3> :echo 'Current time is ' . strftime('%c')<CR>
 "nnoremap <silent> <F2> :lchdir %:p:h<CR>:pwd<CR>
 set showcmd
