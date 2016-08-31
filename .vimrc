@@ -48,7 +48,8 @@ filetype plugin indent on    " required
 "
 " see :h vundle for more details or wiki for FAQ
 " Put your non-Plugin stuff after this line
-set mouse=a
+" mouse=r to avoid copy/paste issues from vim to vim
+set mouse=r
 noremap <C-W>M <C-W>\| <C-W>_
 noremap <C-W>m <C-W>=
 execute pathogen#infect()
