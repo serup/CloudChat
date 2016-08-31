@@ -68,6 +68,7 @@ noremap <silent> <leader>jf <C-]><CR>
 noremap <silent> <leader>jb <C-t><CR>
 noremap <silent> <leader>tb :TagbarToggle<CR>
 noremap <silent> <leader>ft :NERDTreeToggle<CR>
+noremap <silent> <leader>nt :NERDTreeToggle<CR>
 noremap <leader>M <C-W>\| <C-W>_
 noremap <leader>m <C-W>=
 "noremap <F3> :echo 'Current time is ' . strftime('%c')<CR>

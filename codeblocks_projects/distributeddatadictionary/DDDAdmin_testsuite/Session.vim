@@ -9,6 +9,7 @@ inoremap <expr> <S-Tab> pumvisible() ? "\" : "\<S-Tab>"
 inoremap <expr> <Down> pumvisible() ? "\" : "\<Down>"
 noremap m =
 noremap M | _
+nnoremap ,d :YcmShowDetailedDiagnostic
 nnoremap <silent> ,p :call conque_gdb#print_word(expand("<cword>"))
 nnoremap <silent> ,t :call conque_gdb#command("backtrace")
 nnoremap <silent> ,f :call conque_gdb#command("finish")
@@ -17,7 +18,6 @@ nnoremap <silent> ,n :call conque_gdb#command("next")
 nnoremap <silent> ,r :call conque_gdb#command("run")
 nnoremap <silent> ,c :call conque_gdb#command("continue")
 nnoremap <silent> ,b :call conque_gdb#toggle_breakpoint(expand("%:p"), line("."))
-nnoremap ,d :YcmShowDetailedDiagnostic
 map ,rwp <Plug>RestoreWinPosn
 map ,swp <Plug>SaveWinPosn
 noremap ,m =
@@ -29,24 +29,26 @@ noremap <silent> ,fa :%g/^{/normal! zf%
 nnoremap <silent> ,ww :call WindowSwap#EasyWindowSwap()
 nnoremap <silent> ,pw :call WindowSwap#DoWindowSwap()
 nnoremap <silent> ,yw :call WindowSwap#MarkWindowSwap()
-nnoremap \d :YcmShowDetailedDiagnostic
-map \rwp <Plug>RestoreWinPosn
 map \swp <Plug>SaveWinPosn
+map \rwp <Plug>RestoreWinPosn
+nnoremap \d :YcmShowDetailedDiagnostic
 vmap gx <Plug>NetrwBrowseXVis
 nmap gx <Plug>NetrwBrowseX
-nnoremap <SNR>27_: :=v:count ? v:count : ''
-nnoremap <SNR>19_: :=v:count ? v:count : ''
-nnoremap <silent> <F10> :call conque_term#send_file()
-nnoremap <F8> :call conque_term#set_mappings("toggle")
+nnoremap <SNR>29_: :=v:count ? v:count : ''
 nnoremap <SNR>18_: :=v:count ? v:count : ''
+nnoremap <F8> :call conque_term#set_mappings("toggle")
+nnoremap <silent> <F10> :call conque_term#send_file()
+nnoremap <SNR>19_: :=v:count ? v:count : ''
+nnoremap <SNR>27_: :=v:count ? v:count : ''
 vnoremap <silent> <Plug>NetrwBrowseXVis :call netrw#BrowseXVis()
 nnoremap <silent> <Plug>NetrwBrowseX :call netrw#BrowseX(expand((exists("g:netrw_gx")? g:netrw_gx : '<cfile>')),netrw#CheckIfRemote())
 nnoremap <silent> <Plug>(startify-open-buffers) :call startify#open_buffers()
-nnoremap <SNR>29_: :=v:count ? v:count : ''
+nnoremap <SNR>54_: :=v:count ? v:count : ''
 nnoremap <silent> <F11> :call conque_term#exec_file()
 nmap <silent> <Plug>RestoreWinPosn :call RestoreWinPosn()
 nmap <silent> <Plug>SaveWinPosn :call SaveWinPosn()
 noremap <F3> :so test_project.vim 
+noremap ,ft :NERDTreeToggle
 map <F9> :so build_project.vim
 noremap <F2> :AnsiEsc
 inoremap <expr> 	 pumvisible() ? "\" : "\	"
@@ -84,7 +86,7 @@ endif
 set shortmess=aoO
 badd +1 testoutput
 badd +333 DDDAdmin_test.cpp
-badd +10 output
+badd +52 output
 badd +63 makefile_ubuntu.mak
 badd +18 ~/GerritHub/CloudChat/codeblocks_projects/distributeddatadictionary/datadictionarycontrol.cpp
 badd +48 ~/GerritHub/CloudChat/codeblocks_projects/distributeddatadictionary/datadictionarycontrol.hpp
@@ -101,18 +103,11 @@ badd +1 tmp
 badd +0 ~/GerritHub/CloudChat/codeblocks_projects/distributeddatadictionary/DDDAdmin_testsuite/bash\ -\ 1
 argglobal
 silent! argdel *
-edit ~/GerritHub/CloudChat/codeblocks_projects/distributeddatadictionary/DDDAdmin_testsuite
+edit DDDAdmin_test.cpp
 set splitbelow splitright
 wincmd _ | wincmd |
 vsplit
-wincmd _ | wincmd |
-vsplit
-2wincmd h
-wincmd _ | wincmd |
-split
-1wincmd k
-wincmd w
-wincmd w
+1wincmd h
 wincmd _ | wincmd |
 split
 1wincmd k
@@ -130,282 +125,16 @@ set nosplitbelow
 set nosplitright
 wincmd t
 set winheight=1 winwidth=1
-exe '1resize ' . ((&lines * 34 + 35) / 70)
-exe 'vert 1resize ' . ((&columns * 66 + 119) / 238)
-exe '2resize ' . ((&lines * 33 + 35) / 70)
-exe 'vert 2resize ' . ((&columns * 66 + 119) / 238)
-exe '3resize ' . ((&lines * 45 + 35) / 70)
-exe 'vert 3resize ' . ((&columns * 66 + 119) / 238)
+exe '1resize ' . ((&lines * 45 + 35) / 70)
+exe 'vert 1resize ' . ((&columns * 99 + 119) / 238)
+exe '2resize ' . ((&lines * 22 + 35) / 70)
+exe 'vert 2resize ' . ((&columns * 99 + 119) / 238)
+exe '3resize ' . ((&lines * 22 + 35) / 70)
+exe 'vert 3resize ' . ((&columns * 99 + 119) / 238)
 exe '4resize ' . ((&lines * 22 + 35) / 70)
-exe 'vert 4resize ' . ((&columns * 65 + 119) / 238)
-exe '5resize ' . ((&lines * 22 + 35) / 70)
-exe 'vert 5resize ' . ((&columns * 65 + 119) / 238)
-exe '6resize ' . ((&lines * 22 + 35) / 70)
-exe 'vert 6resize ' . ((&columns * 132 + 119) / 238)
-exe 'vert 7resize ' . ((&columns * 38 + 119) / 238)
+exe 'vert 4resize ' . ((&columns * 199 + 119) / 238)
+exe 'vert 5resize ' . ((&columns * 38 + 119) / 238)
 argglobal
-let s:cpo_save=&cpo
-set cpo&vim
-imap <buffer> <MiddleMouse> <Plug>IMiddlemouse
-imap <buffer> <LeftMouse> <Plug>ILeftmouse
-nmap <buffer>  <Plug>NetrwHideEdit
-nmap <buffer>  <Plug>NetrwRefresh
-nnoremap <buffer> <F1> :he netrw-quickhelp
-nmap <buffer> <silent> <Plug>Netrw2Leftmouse -
-nmap <buffer> <2-LeftMouse> <Plug>Netrw2Leftmouse
-nmap <buffer> <S-LeftDrag> <Plug>NetrwSLeftdrag
-nmap <buffer> <S-LeftMouse> <Plug>NetrwSLeftmouse
-nmap <buffer> <MiddleMouse> <Plug>NetrwMiddlemouse
-nmap <buffer> <C-LeftMouse> <Plug>NetrwCLeftmouse
-nmap <buffer> <LeftMouse> <Plug>NetrwLeftmouse
-nmap <buffer> <nowait> <silent> <S-CR> <Plug>NetrwTreeSqueeze
-nnoremap <buffer> <silent> <S-Up> :Pexplore
-nnoremap <buffer> <silent> <S-Down> :Nexplore
-let &cpo=s:cpo_save
-unlet s:cpo_save
-setlocal keymap=
-setlocal noarabic
-setlocal noautoindent
-setlocal backupcopy=
-setlocal nobinary
-setlocal nobreakindent
-setlocal breakindentopt=
-setlocal bufhidden=hide
-setlocal nobuflisted
-setlocal buftype=
-setlocal nocindent
-setlocal cinkeys=0{,0},0),:,0#,!^F,o,O,e
-setlocal cinoptions=
-setlocal cinwords=if,else,while,do,for,switch
-setlocal colorcolumn=
-setlocal comments=s1:/*,mb:*,ex:*/,://,b:#,:%,:XCOMM,n:>,fb:-
-setlocal commentstring=/*%s*/
-setlocal complete=.,w,b,u,t,i
-setlocal concealcursor=
-setlocal conceallevel=0
-setlocal completefunc=youcompleteme#Complete
-setlocal nocopyindent
-setlocal cryptmethod=
-setlocal nocursorbind
-setlocal nocursorcolumn
-setlocal cursorline
-setlocal define=
-setlocal dictionary=
-setlocal nodiff
-setlocal equalprg=
-setlocal errorformat=
-setlocal noexpandtab
-if &filetype != 'netrw'
-setlocal filetype=netrw
-endif
-setlocal fixendofline
-setlocal foldcolumn=0
-setlocal foldenable
-setlocal foldexpr=0
-setlocal foldignore=#
-setlocal foldlevel=0
-setlocal foldmarker={{{,}}}
-setlocal foldmethod=manual
-setlocal foldminlines=1
-setlocal foldnestmax=20
-setlocal foldtext=foldtext()
-setlocal formatexpr=
-setlocal formatoptions=tcq
-setlocal formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*
-setlocal grepprg=
-setlocal iminsert=0
-setlocal imsearch=0
-setlocal include=
-setlocal includeexpr=
-setlocal indentexpr=
-setlocal indentkeys=0{,0},:,0#,!^F,o,O,e
-setlocal noinfercase
-setlocal iskeyword=@,48-57,_,192-255
-setlocal keywordprg=
-setlocal nolinebreak
-setlocal nolisp
-setlocal lispwords=
-setlocal nolist
-setlocal makeprg=
-setlocal matchpairs=(:),{:},[:]
-setlocal modeline
-setlocal nomodifiable
-setlocal nrformats=bin,octal,hex
-set number
-setlocal nonumber
-setlocal numberwidth=4
-setlocal omnifunc=youcompleteme#OmniComplete
-setlocal path=
-setlocal nopreserveindent
-setlocal nopreviewwindow
-setlocal quoteescape=\\
-setlocal readonly
-setlocal norelativenumber
-setlocal norightleft
-setlocal rightleftcmd=search
-setlocal noscrollbind
-setlocal shiftwidth=8
-setlocal noshortname
-setlocal nosmartindent
-setlocal softtabstop=0
-setlocal nospell
-setlocal spellcapcheck=[.?!]\\_[\\])'\"\	\ ]\\+
-setlocal spellfile=
-setlocal spelllang=en
-setlocal statusline=
-setlocal suffixesadd=
-setlocal noswapfile
-setlocal synmaxcol=3000
-if &syntax != 'netrw'
-setlocal syntax=netrw
-endif
-setlocal tabstop=33
-setlocal tagcase=
-setlocal tags=
-setlocal textwidth=0
-setlocal thesaurus=
-setlocal noundofile
-setlocal undolevels=-123456
-setlocal nowinfixheight
-setlocal nowinfixwidth
-setlocal nowrap
-setlocal wrapmargin=0
-silent! normal! zE
-let s:l = 8 - ((7 * winheight(0) + 17) / 34)
-if s:l < 1 | let s:l = 1 | endif
-exe s:l
-normal! zt
-8
-normal! 0
-lcd ~/GerritHub/CloudChat/codeblocks_projects/distributeddatadictionary/DDDAdmin_testsuite
-wincmd w
-argglobal
-edit ~/GerritHub/CloudChat/codeblocks_projects/distributeddatadictionary/DDDAdmin_testsuite/output
-setlocal keymap=
-setlocal noarabic
-setlocal noautoindent
-setlocal backupcopy=
-setlocal nobinary
-setlocal nobreakindent
-setlocal breakindentopt=
-setlocal bufhidden=
-setlocal buflisted
-setlocal buftype=
-setlocal nocindent
-setlocal cinkeys=0{,0},0),:,0#,!^F,o,O,e
-setlocal cinoptions=
-setlocal cinwords=if,else,while,do,for,switch
-setlocal colorcolumn=
-setlocal comments=s1:/*,mb:*,ex:*/,://,b:#,:%,:XCOMM,n:>,fb:-
-setlocal commentstring=/*%s*/
-setlocal complete=.,w,b,u,t,i
-setlocal concealcursor=nv
-setlocal conceallevel=3
-setlocal completefunc=youcompleteme#Complete
-setlocal nocopyindent
-setlocal cryptmethod=
-setlocal nocursorbind
-setlocal nocursorcolumn
-setlocal nocursorline
-setlocal define=
-setlocal dictionary=
-setlocal nodiff
-setlocal equalprg=
-setlocal errorformat=
-setlocal noexpandtab
-if &filetype != ''
-setlocal filetype=
-endif
-setlocal fixendofline
-setlocal foldcolumn=0
-setlocal foldenable
-setlocal foldexpr=0
-setlocal foldignore=#
-setlocal foldlevel=0
-setlocal foldmarker={{{,}}}
-setlocal foldmethod=manual
-setlocal foldminlines=1
-setlocal foldnestmax=20
-setlocal foldtext=foldtext()
-setlocal formatexpr=
-setlocal formatoptions=tcq
-setlocal formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*
-setlocal grepprg=
-setlocal iminsert=0
-setlocal imsearch=0
-setlocal include=
-setlocal includeexpr=
-setlocal indentexpr=
-setlocal indentkeys=0{,0},:,0#,!^F,o,O,e
-setlocal noinfercase
-setlocal iskeyword=@,48-57,_,192-255
-setlocal keywordprg=
-setlocal nolinebreak
-setlocal nolisp
-setlocal lispwords=
-setlocal nolist
-setlocal makeprg=
-setlocal matchpairs=(:),{:},[:]
-setlocal modeline
-setlocal modifiable
-setlocal nrformats=bin,octal,hex
-set number
-setlocal nonumber
-setlocal numberwidth=4
-setlocal omnifunc=
-setlocal path=
-setlocal nopreserveindent
-setlocal nopreviewwindow
-setlocal quoteescape=\\
-setlocal noreadonly
-setlocal norelativenumber
-setlocal norightleft
-setlocal rightleftcmd=search
-setlocal noscrollbind
-setlocal shiftwidth=8
-setlocal noshortname
-setlocal nosmartindent
-setlocal softtabstop=0
-setlocal nospell
-setlocal spellcapcheck=[.?!]\\_[\\])'\"\	\ ]\\+
-setlocal spellfile=
-setlocal spelllang=en
-setlocal statusline=
-setlocal suffixesadd=
-setlocal swapfile
-setlocal synmaxcol=3000
-if &syntax != ''
-setlocal syntax=
-endif
-setlocal tabstop=8
-setlocal tagcase=
-setlocal tags=
-setlocal textwidth=0
-setlocal thesaurus=
-setlocal noundofile
-setlocal undolevels=-123456
-setlocal nowinfixheight
-setlocal nowinfixwidth
-set nowrap
-setlocal nowrap
-setlocal wrapmargin=0
-silent! normal! zE
-21,22fold
-24,25fold
-27,32fold
-34,51fold
-53,59fold
-61,68fold
-let s:l = 52 - ((51 * winheight(0) + 16) / 33)
-if s:l < 1 | let s:l = 1 | endif
-exe s:l
-normal! zt
-52
-normal! 0
-lcd ~/GerritHub/CloudChat/codeblocks_projects/distributeddatadictionary/DDDAdmin_testsuite
-wincmd w
-argglobal
-edit ~/GerritHub/CloudChat/codeblocks_projects/distributeddatadictionary/DDDAdmin_testsuite/DDDAdmin_test.cpp
 setlocal keymap=
 setlocal noarabic
 setlocal noautoindent
@@ -773,15 +502,15 @@ enew
 file ~/GerritHub/CloudChat/codeblocks_projects/distributeddatadictionary/DDDAdmin_testsuite/bash\ -\ 1
 let s:cpo_save=&cpo
 set cpo&vim
-inoremap <buffer> <silent> <End> :py3 ConqueTerm_1.write(u("\x1bOF"))
-inoremap <buffer> <silent> <Home> :py3 ConqueTerm_1.write(u("\x1bOH"))
-inoremap <buffer> <silent> <Left> :py3 ConqueTerm_1.write(u("\x1b[D"))
-inoremap <buffer> <silent> <Right> :py3 ConqueTerm_1.write(u("\x1b[C"))
-inoremap <buffer> <silent> <Down> :py3 ConqueTerm_1.write(u("\x1b[B"))
-inoremap <buffer> <silent> <Up> :py3 ConqueTerm_1.write(u("\x1b[A"))
-inoremap <buffer> <silent> <S-Space> :py3 ConqueTerm_1.write(u(" "))
-inoremap <buffer> <silent> <S-BS> :py3 ConqueTerm_1.write(u("\x08"))
 inoremap <buffer> <silent> <BS> :py3 ConqueTerm_1.write(u("\x08"))
+inoremap <buffer> <silent> <S-BS> :py3 ConqueTerm_1.write(u("\x08"))
+inoremap <buffer> <silent> <S-Space> :py3 ConqueTerm_1.write(u(" "))
+inoremap <buffer> <silent> <Up> :py3 ConqueTerm_1.write(u("\x1b[A"))
+inoremap <buffer> <silent> <Down> :py3 ConqueTerm_1.write(u("\x1b[B"))
+inoremap <buffer> <silent> <Right> :py3 ConqueTerm_1.write(u("\x1b[C"))
+inoremap <buffer> <silent> <Left> :py3 ConqueTerm_1.write(u("\x1b[D"))
+inoremap <buffer> <silent> <Home> :py3 ConqueTerm_1.write(u("\x1bOH"))
+inoremap <buffer> <silent> <End> :py3 ConqueTerm_1.write(u("\x1bOF"))
 nnoremap <buffer> <silent>  :py3 ConqueTerm_1.write_ord(3)
 nnoremap <buffer> <silent> C :echo "Change mode disabled in shell."
 nnoremap <buffer> <silent> P :py3 ConqueTerm_1.write_expr("@@")a
@@ -1142,19 +871,15 @@ setlocal nowrap
 setlocal wrapmargin=0
 lcd ~/GerritHub/CloudChat/codeblocks_projects/distributeddatadictionary/DDDAdmin_testsuite
 wincmd w
-exe '1resize ' . ((&lines * 34 + 35) / 70)
-exe 'vert 1resize ' . ((&columns * 66 + 119) / 238)
-exe '2resize ' . ((&lines * 33 + 35) / 70)
-exe 'vert 2resize ' . ((&columns * 66 + 119) / 238)
-exe '3resize ' . ((&lines * 45 + 35) / 70)
-exe 'vert 3resize ' . ((&columns * 66 + 119) / 238)
+exe '1resize ' . ((&lines * 45 + 35) / 70)
+exe 'vert 1resize ' . ((&columns * 99 + 119) / 238)
+exe '2resize ' . ((&lines * 22 + 35) / 70)
+exe 'vert 2resize ' . ((&columns * 99 + 119) / 238)
+exe '3resize ' . ((&lines * 22 + 35) / 70)
+exe 'vert 3resize ' . ((&columns * 99 + 119) / 238)
 exe '4resize ' . ((&lines * 22 + 35) / 70)
-exe 'vert 4resize ' . ((&columns * 65 + 119) / 238)
-exe '5resize ' . ((&lines * 22 + 35) / 70)
-exe 'vert 5resize ' . ((&columns * 65 + 119) / 238)
-exe '6resize ' . ((&lines * 22 + 35) / 70)
-exe 'vert 6resize ' . ((&columns * 132 + 119) / 238)
-exe 'vert 7resize ' . ((&columns * 38 + 119) / 238)
+exe 'vert 4resize ' . ((&columns * 199 + 119) / 238)
+exe 'vert 5resize ' . ((&columns * 38 + 119) / 238)
 tabnext 1
 if exists('s:wipebuf')
   silent exe 'bwipe ' . s:wipebuf
