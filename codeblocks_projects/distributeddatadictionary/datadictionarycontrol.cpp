@@ -285,7 +285,7 @@ boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(l
 
 //DEBUG	
 // write test xml file
-	ofstream blockFile ("testing.xml", ios::out | ios::binary);
+	ofstream blockFile ("xmlresult.xml", ios::out | ios::binary);
 	write_xml(blockFile, pt);
 	
 	return pt;		
