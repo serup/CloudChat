@@ -72,11 +72,16 @@ noremap <silent> <leader>jf <C-]><CR>
 noremap <silent> <leader>jb <C-t><CR>
 noremap <silent> <leader>tb :TagbarToggle<CR>
 noremap <silent> <leader>ft :NERDTreeToggle<CR>
-noremap <silent> <leader>nt :NERDTreeToggle<CR>
+noremap <leader>xml :so xml_project_output.vim<CR>
 noremap <leader>M <C-W>\| <C-W>_
 noremap <leader>m <C-W>=
 "noremap <F3> :echo 'Current time is ' . strftime('%c')<CR>
 "nnoremap <silent> <F2> :lchdir %:p:h<CR>:pwd<CR>
 set showcmd
 set sessionoptions+=folds
-set statusline+=col:\ %c,
+set statusline+=_col:\ %c,
+augroup XML
+	autocmd!
+	autocmd FileType xml setlocal foldmethod=indent foldlevelstart=999 foldminlines=0
+augroup END
+set autoread	

@@ -10,7 +10,7 @@ TESTFLAGS2= --report_level=detailed
 TESTFLAGS3= --report_format=XML --report_level=detailed
 CONVERT=xsltproc -o test_results.html ../test_results.xslt test_results.xml
 CONVERT2=xsltproc -o test_results.txt ../test_results_text.xslt test_results.xml
-
+XMLRESULT=xmllint --format --recover xmlresult.xml  > xmlresult.formatted.xml
 
 info:
 	@ echo "------------------------------"
@@ -18,6 +18,7 @@ info:
 	@ echo "------------------------------"
 	@ echo "to build all : make -f makefile_ubuntu.mak total"
 	@ echo "to test one unittest use following format: make -f makefile_ubuntu.mak unittest unittest=<name of unittest>"
+	@ echo "to show BFi xml test result in color format in VIM use following: make -f makefile_ubuntu.mak xml"
 	@ echo " "
 	@ echo '**************************';echo 'UNIT TESTCASES :';echo '**************************';echo; fgrep BOOST_AUTO_TEST_CASE *.cpp | sed -e 's/BOOST_AUTO_TEST_CASE(//g' | sed -e 's/)//g'; echo '**************************';
 
@@ -81,5 +82,9 @@ unittest:
 	@ rm test_txt_result.txt
 	@ rm error2.txt
 	@ rm output*.txt
+xml:
+	@ $(XMLRESULT)
+	@ vim xmlresult.formatted.xml
+
 
 .PHONY: info
