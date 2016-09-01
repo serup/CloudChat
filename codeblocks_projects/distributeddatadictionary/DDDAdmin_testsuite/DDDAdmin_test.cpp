@@ -333,7 +333,7 @@ BOOST_AUTO_TEST_CASE(addChunkDataToBlockRecord)
 		long length = boost::filesystem::file_size(fn);
 		std::cout << "[readFile] Reading file: " << fn << " ; amount " << length << " characters... \n";
 		// Make sure receipient has room
-        	FileDataBytesInVector.resize(length,0);
+		FileDataBytesInVector.resize(length,0);
 		//read content of infile
 		is.read ((char*)&FileDataBytesInVector[0],length);
 		std::cout << "[readFile] size: " << (int) FileDataBytesInVector.size() << '\n';
@@ -357,9 +357,15 @@ BOOST_AUTO_TEST_CASE(addChunkDataToBlockRecord)
 	boost::property_tree::ptree pt = ptestDataDictionaryControl->addDEDchunksToBlockRecords(aiid, realmName, listOfDEDchunks, maxBlockRecordSize);
 
 	BOOST_CHECK(pt.size() > 0);
-
-	BOOST_CHECK(true == false);	 /// TODO: not ready yet
+	
 	cout<<"}"<<endl;
 }
 
+BOOST_AUTO_TEST_CASE(addBlockRecordToBlockEntity)
+{
+	cout<<"BOOS_AUTO_TEST(addBlockRecordToBlockEntity)\n{"<<endl;
+
+	BOOST_CHECK(false == true); // NOT ready yet
+	cout<<"}"<<endl;
+}
 
