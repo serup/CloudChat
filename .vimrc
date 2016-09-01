@@ -86,3 +86,5 @@ augroup XML
 	autocmd FileType xml setlocal foldmethod=indent foldlevelstart=999 foldminlines=0
 augroup END
 set autoread	
+set term=screen-256color
+colorscheme desert
