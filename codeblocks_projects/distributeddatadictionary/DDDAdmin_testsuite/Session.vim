@@ -31,17 +31,17 @@ noremap <silent> ,fa :%g/^{/normal! zf%
 nnoremap <silent> ,ww :call WindowSwap#EasyWindowSwap()
 nnoremap <silent> ,pw :call WindowSwap#DoWindowSwap()
 nnoremap <silent> ,yw :call WindowSwap#MarkWindowSwap()
-map \swp <Plug>SaveWinPosn
-map \rwp <Plug>RestoreWinPosn
 nnoremap \d :YcmShowDetailedDiagnostic
+map \rwp <Plug>RestoreWinPosn
+map \swp <Plug>SaveWinPosn
 vmap gx <Plug>NetrwBrowseXVis
 nmap gx <Plug>NetrwBrowseX
-nnoremap <SNR>29_: :=v:count ? v:count : ''
-nnoremap <SNR>18_: :=v:count ? v:count : ''
-nnoremap <F8> :call conque_term#set_mappings("toggle")
-nnoremap <silent> <F10> :call conque_term#send_file()
-nnoremap <SNR>19_: :=v:count ? v:count : ''
 nnoremap <SNR>27_: :=v:count ? v:count : ''
+nnoremap <SNR>19_: :=v:count ? v:count : ''
+nnoremap <silent> <F10> :call conque_term#send_file()
+nnoremap <F8> :call conque_term#set_mappings("toggle")
+nnoremap <SNR>18_: :=v:count ? v:count : ''
+nnoremap <SNR>29_: :=v:count ? v:count : ''
 vnoremap <silent> <Plug>NetrwBrowseXVis :call netrw#BrowseXVis()
 nnoremap <silent> <Plug>NetrwBrowseX :call netrw#BrowseX(expand((exists("g:netrw_gx")? g:netrw_gx : '<cfile>')),netrw#CheckIfRemote())
 nnoremap <silent> <Plug>(startify-open-buffers) :call startify#open_buffers()
@@ -110,7 +110,10 @@ wincmd _ | wincmd |
 vsplit
 wincmd _ | wincmd |
 vsplit
-2wincmd h
+wincmd _ | wincmd |
+vsplit
+3wincmd h
+wincmd w
 wincmd w
 wincmd _ | wincmd |
 split
@@ -121,12 +124,169 @@ set nosplitbelow
 set nosplitright
 wincmd t
 set winheight=1 winwidth=1
-exe 'vert 1resize ' . ((&columns * 99 + 119) / 238)
-exe '2resize ' . ((&lines * 22 + 35) / 70)
-exe 'vert 2resize ' . ((&columns * 99 + 119) / 238)
-exe '3resize ' . ((&lines * 45 + 35) / 70)
+exe 'vert 1resize ' . ((&columns * 31 + 119) / 238)
+exe 'vert 2resize ' . ((&columns * 67 + 119) / 238)
+exe '3resize ' . ((&lines * 22 + 35) / 70)
 exe 'vert 3resize ' . ((&columns * 99 + 119) / 238)
-exe 'vert 4resize ' . ((&columns * 38 + 119) / 238)
+exe '4resize ' . ((&lines * 45 + 35) / 70)
+exe 'vert 4resize ' . ((&columns * 99 + 119) / 238)
+exe 'vert 5resize ' . ((&columns * 38 + 119) / 238)
+argglobal
+enew
+file NERD_tree_1
+let s:cpo_save=&cpo
+set cpo&vim
+nnoremap <buffer> <silent> <NL> :call nerdtree#ui_glue#invokeKeyMap("<C-j>")
+nnoremap <buffer> <silent>  :call nerdtree#ui_glue#invokeKeyMap("<C-k>")
+nnoremap <buffer> <silent>  :call nerdtree#ui_glue#invokeKeyMap(g:NERDTreeMapActivateNode)
+nnoremap <buffer> <silent> ? :call nerdtree#ui_glue#invokeKeyMap("?")
+nnoremap <buffer> <silent> A :call nerdtree#ui_glue#invokeKeyMap("A")
+nnoremap <buffer> <silent> B :call nerdtree#ui_glue#invokeKeyMap("B")
+nnoremap <buffer> <silent> CD :call nerdtree#ui_glue#invokeKeyMap("CD")
+nnoremap <buffer> <silent> C :call nerdtree#ui_glue#invokeKeyMap("C")
+nnoremap <buffer> <silent> D :call nerdtree#ui_glue#invokeKeyMap("D")
+nnoremap <buffer> <silent> F :call nerdtree#ui_glue#invokeKeyMap("F")
+nnoremap <buffer> <silent> I :call nerdtree#ui_glue#invokeKeyMap("I")
+nnoremap <buffer> <silent> J :call nerdtree#ui_glue#invokeKeyMap("J")
+nnoremap <buffer> <silent> K :call nerdtree#ui_glue#invokeKeyMap("K")
+nnoremap <buffer> <silent> O :call nerdtree#ui_glue#invokeKeyMap("O")
+nnoremap <buffer> <silent> P :call nerdtree#ui_glue#invokeKeyMap("P")
+nnoremap <buffer> <silent> R :call nerdtree#ui_glue#invokeKeyMap("R")
+nnoremap <buffer> <silent> T :call nerdtree#ui_glue#invokeKeyMap("T")
+nnoremap <buffer> <silent> U :call nerdtree#ui_glue#invokeKeyMap("U")
+nnoremap <buffer> <silent> X :call nerdtree#ui_glue#invokeKeyMap("X")
+nnoremap <buffer> <silent> [c :call nerdtree#ui_glue#invokeKeyMap("[c")
+nnoremap <buffer> <silent> ]c :call nerdtree#ui_glue#invokeKeyMap("]c")
+nnoremap <buffer> <silent> cd :call nerdtree#ui_glue#invokeKeyMap("cd")
+nnoremap <buffer> <silent> e :call nerdtree#ui_glue#invokeKeyMap("e")
+nnoremap <buffer> <silent> f :call nerdtree#ui_glue#invokeKeyMap("f")
+nnoremap <buffer> <silent> gi :call nerdtree#ui_glue#invokeKeyMap("gi")
+nnoremap <buffer> <silent> gs :call nerdtree#ui_glue#invokeKeyMap("gs")
+nnoremap <buffer> <silent> go :call nerdtree#ui_glue#invokeKeyMap("go")
+nnoremap <buffer> <silent> i :call nerdtree#ui_glue#invokeKeyMap("i")
+nnoremap <buffer> <silent> m :call nerdtree#ui_glue#invokeKeyMap("m")
+nnoremap <buffer> <silent> o :call nerdtree#ui_glue#invokeKeyMap("o")
+nnoremap <buffer> <silent> p :call nerdtree#ui_glue#invokeKeyMap("p")
+nnoremap <buffer> <silent> q :call nerdtree#ui_glue#invokeKeyMap("q")
+nnoremap <buffer> <silent> r :call nerdtree#ui_glue#invokeKeyMap("r")
+nnoremap <buffer> <silent> s :call nerdtree#ui_glue#invokeKeyMap("s")
+nnoremap <buffer> <silent> t :call nerdtree#ui_glue#invokeKeyMap("t")
+nnoremap <buffer> <silent> u :call nerdtree#ui_glue#invokeKeyMap("u")
+nnoremap <buffer> <silent> x :call nerdtree#ui_glue#invokeKeyMap("x")
+nnoremap <buffer> <silent> <2-LeftMouse> :call nerdtree#ui_glue#invokeKeyMap("<2-LeftMouse>")
+nnoremap <buffer> <silent> <LeftRelease> <LeftRelease>:call nerdtree#ui_glue#invokeKeyMap("<LeftRelease>")
+nnoremap <buffer> <silent> <MiddleRelease> :call nerdtree#ui_glue#invokeKeyMap("<MiddleRelease>")
+let &cpo=s:cpo_save
+unlet s:cpo_save
+setlocal keymap=
+setlocal noarabic
+setlocal noautoindent
+setlocal backupcopy=
+setlocal nobinary
+setlocal nobreakindent
+setlocal breakindentopt=
+setlocal bufhidden=hide
+setlocal nobuflisted
+setlocal buftype=nofile
+setlocal nocindent
+setlocal cinkeys=0{,0},0),:,0#,!^F,o,O,e
+setlocal cinoptions=
+setlocal cinwords=if,else,while,do,for,switch
+setlocal colorcolumn=
+setlocal comments=s1:/*,mb:*,ex:*/,://,b:#,:%,:XCOMM,n:>,fb:-
+setlocal commentstring=/*%s*/
+setlocal complete=.,w,b,u,t,i
+setlocal concealcursor=
+setlocal conceallevel=0
+setlocal completefunc=youcompleteme#Complete
+setlocal nocopyindent
+setlocal cryptmethod=
+setlocal nocursorbind
+setlocal nocursorcolumn
+setlocal cursorline
+setlocal define=
+setlocal dictionary=
+setlocal nodiff
+setlocal equalprg=
+setlocal errorformat=
+setlocal noexpandtab
+if &filetype != 'nerdtree'
+setlocal filetype=nerdtree
+endif
+setlocal fixendofline
+setlocal foldcolumn=0
+setlocal nofoldenable
+setlocal foldexpr=0
+setlocal foldignore=#
+setlocal foldlevel=0
+setlocal foldmarker={{{,}}}
+setlocal foldmethod=manual
+setlocal foldminlines=1
+setlocal foldnestmax=20
+setlocal foldtext=foldtext()
+setlocal formatexpr=
+setlocal formatoptions=tcq
+setlocal formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*
+setlocal grepprg=
+setlocal iminsert=0
+setlocal imsearch=0
+setlocal include=
+setlocal includeexpr=
+setlocal indentexpr=GetRSTIndent()
+setlocal indentkeys=!^F,o,O
+setlocal noinfercase
+setlocal iskeyword=@,48-57,_,192-255
+setlocal keywordprg=
+setlocal nolinebreak
+setlocal nolisp
+setlocal lispwords=
+setlocal nolist
+setlocal makeprg=
+setlocal matchpairs=(:),{:},[:]
+setlocal modeline
+setlocal nomodifiable
+setlocal nrformats=bin,octal,hex
+set number
+setlocal nonumber
+setlocal numberwidth=4
+setlocal omnifunc=youcompleteme#OmniComplete
+setlocal path=
+setlocal nopreserveindent
+setlocal nopreviewwindow
+setlocal quoteescape=\\
+setlocal noreadonly
+setlocal norelativenumber
+setlocal norightleft
+setlocal rightleftcmd=search
+setlocal noscrollbind
+setlocal shiftwidth=8
+setlocal noshortname
+setlocal nosmartindent
+setlocal softtabstop=0
+setlocal nospell
+setlocal spellcapcheck=[.?!]\\_[\\])'\"\	\ ]\\+
+setlocal spellfile=
+setlocal spelllang=en
+setlocal statusline=%{exists('b:NERDTree')?b:NERDTree.root.path.str():''}
+setlocal suffixesadd=
+setlocal noswapfile
+setlocal synmaxcol=3000
+if &syntax != 'nerdtree'
+setlocal syntax=nerdtree
+endif
+setlocal tabstop=4
+setlocal tagcase=
+setlocal tags=
+setlocal textwidth=0
+setlocal thesaurus=
+setlocal noundofile
+setlocal undolevels=-123456
+setlocal nowinfixheight
+setlocal winfixwidth
+setlocal nowrap
+setlocal wrapmargin=0
+lcd ~/GerritHub/CloudChat/codeblocks_projects/distributeddatadictionary/DDDAdmin_testsuite
+wincmd w
 argglobal
 setlocal keymap=
 setlocal noarabic
@@ -482,12 +642,12 @@ set nowrap
 setlocal nowrap
 setlocal wrapmargin=0
 silent! normal! zE
-let s:l = 18 - ((12 * winheight(0) + 22) / 45)
+let s:l = 18 - ((15 * winheight(0) + 22) / 45)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
 18
-normal! 0
+normal! 09|
 lcd ~/GerritHub/CloudChat/codeblocks_projects/distributeddatadictionary/DDDAdmin_testsuite
 wincmd w
 argglobal
@@ -602,12 +762,14 @@ setlocal nowrap
 setlocal wrapmargin=0
 lcd ~/GerritHub/CloudChat/codeblocks_projects/distributeddatadictionary/DDDAdmin_testsuite
 wincmd w
-exe 'vert 1resize ' . ((&columns * 99 + 119) / 238)
-exe '2resize ' . ((&lines * 22 + 35) / 70)
-exe 'vert 2resize ' . ((&columns * 99 + 119) / 238)
-exe '3resize ' . ((&lines * 45 + 35) / 70)
+4wincmd w
+exe 'vert 1resize ' . ((&columns * 31 + 119) / 238)
+exe 'vert 2resize ' . ((&columns * 67 + 119) / 238)
+exe '3resize ' . ((&lines * 22 + 35) / 70)
 exe 'vert 3resize ' . ((&columns * 99 + 119) / 238)
-exe 'vert 4resize ' . ((&columns * 38 + 119) / 238)
+exe '4resize ' . ((&lines * 45 + 35) / 70)
+exe 'vert 4resize ' . ((&columns * 99 + 119) / 238)
+exe 'vert 5resize ' . ((&columns * 38 + 119) / 238)
 tabnext 1
 if exists('s:wipebuf')
   silent exe 'bwipe ' . s:wipebuf
