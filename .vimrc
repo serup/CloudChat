@@ -48,8 +48,11 @@ filetype plugin indent on    " required
 "
 " see :h vundle for more details or wiki for FAQ
 " Put your non-Plugin stuff after this line
-" mouse=r to avoid copy/paste issues from vim to vim
-set mouse=r
+set mouse+=r
+"if &term =~ '^screen'
+" tmux knows the extended mouse mode
+	set ttymouse=xterm2
+"endif
 noremap <C-W>M <C-W>\| <C-W>_
 noremap <C-W>m <C-W>=
 execute pathogen#infect()
