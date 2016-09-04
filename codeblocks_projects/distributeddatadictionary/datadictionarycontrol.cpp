@@ -261,11 +261,20 @@ boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(l
 
 	std::cout << "total size of DED chunks: " << iTotalSize << '\n';
 
-	
+
+	ptree &ptinit = pt;
+
 	BOOST_FOREACH( chunk, listOfDEDchunks )
 	{
 		if(aiid==0) 
 			strTransGUID = CMD5((const char*)chunk.first).GetMD5s();
+
+		if(bytesLeftInBlockRecord<=0) {
+			bfirst=true;
+			bytesLeftInBlockRecord = maxBlockRecordSize;
+		}
+
+		bytesLeftInBlockRecord-= chunk.second;
 
 		boost::property_tree::ptree subpt = createBFiBlockRecord(bfirst, ++aiid, ++seq, strTransGUID, realmName, (char*)chunk.first, chunk.second);
 
@@ -275,10 +284,60 @@ boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(l
 			/// there is room for attribut chunk - add it to tree
 		    // insert subpt at the end of the list
 			std::cout << "appending chunk of size : " << chunk.second << '\n';
-			if(bfirst)
+			if(bfirst) {
 				pt.insert(pt.get_child("listOfBlockRecords").end(),subpt.front());
+			}
 			else
+			{
+					// tests :
+				cout << "***TEST " << endl;
+
+				ptree::iterator iter = pt.get_child("BlockRecord").begin();
+				cout << "sub first : " << iter->first << endl;
+
+				boost::optional<ptree&> e = pt.get_child_optional("BlockRecord");
+				std::cout << " initialize :  " << e.is_initialized() << endl;
+				
+				 {{{
+				    ptree empty_tree;
+				     for (const auto& c : pt.get_child("BlockRecord", empty_tree)) { cout << " search for BlockRecord : " << empty_tree.size() << endl; }
+				 }}}
+				 
+
+
+				 {{{
+					   ptree empty_tree;
+//					   ptree::iterator iter = pt.get_child("BlockRecord", empty_tree).end();
+					   for(ptree::iterator iter = pt.get_child("listOfBlockRecords", empty_tree).begin(); iter != pt.get_child("listOfBlockRecords", empty_tree).end(); )
+					   {
+
+						   std::cout << "BlockRecord: first :  " << iter->first << std::endl;
+						   iter++;
+						   if(iter == pt.get_child("listOfBlockRecords", empty_tree).end())
+							   cout << " sidste : " << endl;
+					   }
+						
+					   
+/*
+					   ptree _subpt = pt.get_child("BlockRecord", empty_tree);
+					   cout << " -- " << endl;
+					   for(ptree::iterator iter = _subpt.begin(); iter != _subpt.end(); iter++)
+					   {
+						   std::cout << "BlockRecord: first :  " << iter->first << std::endl;
+					   }
+					   */
+
+				 }}}
+
+				cout << "***TEST insert begin " << endl;
+
 				pt.insert(pt.get_child("BlockRecord.chunk_data").end(),subpt.front());
+
+				cout << "***TEST insert end" << endl;
+			
+
+
+			}
 		}
 		bfirst=false;	
 	}

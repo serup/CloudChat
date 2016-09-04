@@ -365,6 +365,41 @@ BOOST_AUTO_TEST_CASE(addBlockRecordToBlockEntity)
 {
 	cout<<"BOOS_AUTO_TEST(addBlockRecordToBlockEntity)\n{"<<endl;
 
+	CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
+	std::string attributName = "foto";
+	std::vector<unsigned char> FileDataBytesInVector;
+	std::string fn = "testImage.png"; // should be of size 10.5 Kb
+	std::ifstream is (fn, ios::binary);
+	if (is)
+	{
+		long length = boost::filesystem::file_size(fn);
+		std::cout << "[readFile] Reading file: " << fn << " ; amount " << length << " characters... \n";
+		// Make sure receipient has room
+		FileDataBytesInVector.resize(length,0);
+		//read content of infile
+		is.read ((char*)&FileDataBytesInVector[0],length);
+		std::cout << "[readFile] size: " << (int) FileDataBytesInVector.size() << '\n';
+		std::cout << "[readFile] capacity: " << (int) FileDataBytesInVector.capacity() << '\n';
+		std::cout << "[readFile] max_size: " << (int) FileDataBytesInVector.max_size() << '\n';
+		is.close();
+	}
+
+	BOOST_CHECK(FileDataBytesInVector.size() > 0);
+
+	long maxBlockRecordSize=5250; // should yield in 3 BlockRecord, since foto can be in one
+	long maxDEDchunkSize=300; // should yield several chunks for this attribut
+
+	std::vector< pair<unsigned char*,int> > listOfDEDchunks = ptestDataDictionaryControl->splitAttributIntoDEDchunks(0, attributName, FileDataBytesInVector, maxDEDchunkSize);
+	std::cout << "listOfDEDchunks : " << listOfDEDchunks.size() << '\n';
+	BOOST_CHECK(listOfDEDchunks.size() == 35);
+
+
+	long aiid=0;
+	std::string realmName = "profile";
+	boost::property_tree::ptree pt = ptestDataDictionaryControl->addDEDchunksToBlockRecords(aiid, realmName, listOfDEDchunks, maxBlockRecordSize);
+
+	BOOST_CHECK(pt.size() > 0);
+
 	BOOST_CHECK(false == true); // NOT ready yet
 	cout<<"}"<<endl;
 }
