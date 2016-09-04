@@ -32,9 +32,9 @@ function set-title() {
   fi
   TITLE="\[\e]2;$@\a\]"
   #PS1=${ORIG}${TITLE}
-  #export PS1='\e[0;34m\w> '
+  export PS1='\e[01;33m\w>\[\033[00m\] '
   echo "put PS1 statement in ~/.bashrc : "
-  export PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+  #export PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
 }
 
 set-title environment for DOPS ok
@@ -100,6 +100,14 @@ if [ "" == "$PKG_OK" ]; then
   echo " - done."
 else
   echo "- oracle-java already installed"
+fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 gpointing* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install gpointing-device-settings on ubuntu, to enable middlemouse button copy / past "
+  sudo apt-fast install -yq gpointing-device-settings
+  echo " - done."
+else
+  echo "- gpointing already installed"
 fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 *stdc* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
