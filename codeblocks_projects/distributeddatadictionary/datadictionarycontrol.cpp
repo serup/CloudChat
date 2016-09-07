@@ -286,7 +286,7 @@ boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(l
 						if(v2.first == "BlockRecord")
 						{ 
 							cout << "- OK: Found Last BlockRecord " << endl;
-							BOOST_FOREACH(ptree::value_type &v3, v2.second)
+							BOOST_REVERSE_FOREACH(ptree::value_type &v3, v2.second)
 							{
 								if(v3.first == "chunk_data"){
 									cout << "- append new chunk_record inside chunk_data " << endl;
