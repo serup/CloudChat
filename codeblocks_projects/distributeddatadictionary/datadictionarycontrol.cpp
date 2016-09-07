@@ -239,7 +239,6 @@ std::vector< pair<unsigned char*, int> > CDataDictionaryControl::splitAttributIn
 	return listOfDEDchunks;
 }
 
-//TODO: refactor chunks should go into BlockRecord and there should only be created more BlockRecords if chunks can not fit standard set size of a BlockRecord
 boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(long aiid, std::string realmName, std::vector<pair<unsigned char*,int>>listOfDEDchunks, long maxBlockRecordSize)
 {
     using boost::property_tree::ptree;
@@ -249,7 +248,6 @@ boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(l
 	long bytesLeftInBlockRecord = maxBlockRecordSize;
 	pair <unsigned char*,int> chunk;
 	long seq=0; // every attribut starts with seq=1 and increses per chunk
-	
 	int iTotalSize=totalSizeOf(listOfDEDchunks);
 	int iBytesLeft=iTotalSize;
 	int n=0;
@@ -258,11 +256,7 @@ boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(l
 	ptree &node = pt.add("listOfBlockRecords", "");
 	node.put("chunksInBlockRecords",listOfDEDchunks.size());
 
-
 	std::cout << "total size of DED chunks: " << iTotalSize << '\n';
-
-
-	ptree &ptinit = pt;
 
 	BOOST_FOREACH( chunk, listOfDEDchunks )
 	{
@@ -273,39 +267,43 @@ boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(l
 			bfirst=true;
 			bytesLeftInBlockRecord = maxBlockRecordSize;
 		}
-
 		bytesLeftInBlockRecord-= chunk.second;
-
 		boost::property_tree::ptree subpt = createBFiBlockRecord(bfirst, ++aiid, ++seq, strTransGUID, realmName, (char*)chunk.first, chunk.second);
-
 		iBytesLeft = iBytesLeft - chunk.second;
 		std::cout << "bytes left : " << iBytesLeft << '\n';
 		if(iBytesLeft > 0) {
-			/// there is room for attribut chunk - add it to tree
-		    // insert subpt at the end of the list
 			std::cout << "appending chunk of size : " << chunk.second << '\n';
+			cout << "- search for last BlockRecord " << endl;
 			if(bfirst) {
 				pt.insert(pt.get_child("listOfBlockRecords").end(),subpt.front());
 			}
 			else
 			{
-				ptree _empty_tree;
-				BOOST_REVERSE_FOREACH(ptree::value_type &v2, pt.get_child("listOfBlockRecords", _empty_tree)) 
-				{
-					if(v2.first == "BlockRecord")
-					{ 
-						cout << "Last BlockRecord " << endl;
-						BOOST_FOREACH(ptree::value_type &v3, v2.second)
-						{
-							if(v3.first == "chunk_data"){
-								cout << "inside chunk_data " << endl;
-								v3.second.add_child("chunk_record", subpt.get_child("chunk_record", _empty_tree));
+				try {
+					ptree _empty_tree;
+					BOOST_REVERSE_FOREACH(ptree::value_type &v2, pt.get_child("listOfBlockRecords", _empty_tree)) 
+					{
+						if(v2.first == "BlockRecord")
+						{ 
+							cout << "- OK: Found Last BlockRecord " << endl;
+							BOOST_FOREACH(ptree::value_type &v3, v2.second)
+							{
+								if(v3.first == "chunk_data"){
+									cout << "- append new chunk_record inside chunk_data " << endl;
+									v3.second.add_child("chunk_record", subpt.get_child("chunk_record", _empty_tree));
+								}
 							}
-						}
-					} 
+						} 
+					}
+				} 
+				catch(...)
+				{
+					cout << "- FAIL: somehow there was no BlockRecords.chunk_data section - possible corrupt data" << endl;
 				}
 			}
 		}
+		else
+			cout << "- OK! no more chunks to insert " << endl;
 		bfirst=false;	
 	}
 
