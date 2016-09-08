@@ -44,7 +44,6 @@ class CDataDictionaryControl
 	boost::property_tree::ptree createBFiBlockRecord(bool bfirst,long aiid, long seq, std::string transGuid,std::string id, char* blob, int size);
 	std::vector< pair<unsigned char*,int> > splitAttributIntoDEDchunks(long aiid, std::string attributName, std::vector<unsigned char>& attributValue, long maxDEDchunkSize);
 	boost::property_tree::ptree addDEDchunksToBlockRecords(long aiid, std::string attributName, std::vector<pair<unsigned char*,int>>listOfDEDchunks, long maxDEDblockSize);
-	bool appendChunkRecordToLastBlockRecordsChunkData(boost::property_tree::ptree &pt, boost::property_tree::ptree &subpt);
 
 	
     protected:
@@ -53,6 +52,7 @@ class CDataDictionaryControl
 	vector< pair<char*, int> > readFile(const char* fn);
 	std::vector<unsigned char> readFile(std::string fn);
 	long totalSizeOf(std::vector<pair<unsigned char*, int>> vectorPairList);
+	bool appendChunkRecordToLastBlockRecordsChunkData(boost::property_tree::ptree &pt, boost::property_tree::ptree &subpt);
 };
 
 #endif // CDATADICTIONARYCONTROL_H

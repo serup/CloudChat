@@ -268,19 +268,17 @@ boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(l
 			bytesLeftInBlockRecord = maxBlockRecordSize;
 		}
 		bytesLeftInBlockRecord-= chunk.second;
-		boost::property_tree::ptree subpt = createBFiBlockRecord(bfirst, ++aiid, ++seq, strTransGUID, realmName, (char*)chunk.first, chunk.second);
 		iBytesLeft = iBytesLeft - chunk.second;
 		std::cout << "bytes left : " << iBytesLeft << '\n';
 		if(iBytesLeft > 0) {
+			boost::property_tree::ptree subpt = createBFiBlockRecord(bfirst, ++aiid, ++seq, strTransGUID, realmName, (char*)chunk.first, chunk.second);
 			std::cout << "appending chunk of size : " << chunk.second << '\n';
 			cout << "- search for last BlockRecord " << endl;
 			if(bfirst) {
 				pt.insert(pt.get_child("listOfBlockRecords").end(),subpt.front());
 			}
-			else
-			{
-				bool bResult = appendChunkRecordToLastBlockRecordsChunkData(pt, subpt);
-				if (!bResult) cout << "- FAIL: somehow there was no BlockRecords.chunk_data section to append chunk_record to - possible corrupt data" << endl;
+			else {
+				if (!appendChunkRecordToLastBlockRecordsChunkData(pt, subpt)) cout << "- FAIL: somehow there was no BlockRecords.chunk_data section to append chunk_record to - possible corrupt data" << endl;
 			}
 		}
 		else
