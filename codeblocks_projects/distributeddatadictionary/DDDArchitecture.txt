@@ -58,6 +58,7 @@ DDD - Distributed Data Dictionary
 	        	<DataMD5><DataMD5> -- this md5 checksum is used as an extra verification -- Data must be verified with this value before being used.
 		 	</chunk_record>
 		</Data> -- here is the pCompressedData from above protocol encoding, compression, encrypting algoritm -- currently DED (dataencoderdecoder)
+		</chunk_record>
 	</chunk_data>
   </BlockRecord>
   <BlockRecord>
@@ -68,8 +69,8 @@ DDD - Distributed Data Dictionary
 	<chunk_data> 
 	       	<TransGUID></TransGUID> -- each record has a unique transaction id to be used with security, when detecting inconsistencies
 	       	<Protocol>DED</Protocol>
-	  		<ProtocolVersion>1.0.0.0</ProtocolVersion>
-		 	<chunk_record>
+	  	<ProtocolVersion>1.0.0.0</ProtocolVersion>
+		<chunk_record>
 	       		<DataSize></DataSize>
 	      	 	<Data>
 -- DED binary begin
@@ -78,10 +79,10 @@ DDD - Distributed Data Dictionary
 		     		<attribut_chunk_seq></attribut_chunk_seq> 		-- sequence number for this chunk of the attribut
 		     		<attribut_chunk_data></attribut_chunk_data> 	-- chunk data of attribut
 -- DED binary end
-				</Data> 
-	       	    <DataMD5><DataMD5> -- this md5 checksum is used as an extra verification -- Data must be verified with this value before being used.
-		 	</chunk_record>
-		 	<chunk_record>
+			</Data> 
+	       	    	<DataMD5><DataMD5> -- this md5 checksum is used as an extra verification -- Data must be verified with this value before being used.
+		</chunk_record>
+		<chunk_record>
 	       		<DataSize></DataSize>
 	      	 	<Data>
 -- DED binary begin
@@ -90,9 +91,9 @@ DDD - Distributed Data Dictionary
 		     		<attribut_chunk_seq></attribut_chunk_seq> 		-- sequence number for this chunk of the attribut
 		     		<attribut_chunk_data></attribut_chunk_data> 	-- chunk data of attribut
 -- DED binary end 
-				</Data> 
-	       	    <DataMD5><DataMD5> -- this md5 checksum is used as an extra verification -- Data must be verified with this value before being used.
-		 	</chunk_record>
+			</Data> 
+	       	    	<DataMD5><DataMD5> -- this md5 checksum is used as an extra verification -- Data must be verified with this value before being used.
+		 </chunk_record>
 	</chunk_data>
   </BlockRecord>
   <BlockRecord>

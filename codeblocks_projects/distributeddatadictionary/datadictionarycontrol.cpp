@@ -196,10 +196,10 @@ std::vector< pair<unsigned char*, int> > CDataDictionaryControl::splitAttributIn
 
 		if(iTotalSize>iMaxChunkSize){
 				if(iMaxChunkSize>iBytesLeft){
-						std::copy(attributValue.begin()+(n*iMaxChunkSize), attributValue.begin()+(n*iMaxChunkSize)+iBytesLeft, std::back_inserter(chunkdata));
+					std::copy(attributValue.begin()+(n*iMaxChunkSize), attributValue.begin()+(n*iMaxChunkSize)+iBytesLeft, std::back_inserter(chunkdata));
 				}
 				else {
-						std::copy(attributValue.begin()+(n*iMaxChunkSize), attributValue.begin()+(n*iMaxChunkSize)+iMaxChunkSize, std::back_inserter(chunkdata));
+					std::copy(attributValue.begin()+(n*iMaxChunkSize), attributValue.begin()+(n*iMaxChunkSize)+iMaxChunkSize, std::back_inserter(chunkdata));
 				}
 		}
 		else {
@@ -294,6 +294,14 @@ boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(l
 	return pt;		
 }
 
+/**
+ * Insert a sub ptree containing chunk_data.chunk_records into last BlockRecord.chunk_data
+ *
+ * parameters:
+ *
+ * pt     - pointer to ptree which has BlockRecords to append to
+ * subpt  - pointer to ptree structure containing a BlockRecord with chunk_data.chunk_records
+ */
 bool CDataDictionaryControl::appendChunkRecordToLastBlockRecordsChunkData(boost::property_tree::ptree &pt, boost::property_tree::ptree &subpt) 
 {
 	bool bResult = false;
@@ -334,3 +342,62 @@ long CDataDictionaryControl::totalSizeOf(std::vector<pair<unsigned char*, int>> 
 	return totalCount;
 }
 
+boost::property_tree::ptree CDataDictionaryControl::addBlockRecordToBlockEntity(boost::property_tree::ptree &pt, long maxBlockEntitySize)
+{
+	using boost::property_tree::ptree;
+	ptree _empty_tree;
+	ptree blockEntity_tree;
+		
+	cout << "ADD - adding blockrecords to blockentity " << endl;
+		
+	long blockRecordSize = 0;
+	long iBytesLeftInBlockEntity=0;
+	bool bFirst=true;
+	BOOST_FOREACH(ptree::value_type &blockrecord, pt.get_child("BlockRecord", _empty_tree))
+	{
+		blockRecordSize += blockrecord.second.data().size();
+
+		if(iBytesLeftInBlockEntity <= 0){
+			bFirst = true; // make sure next data is put in a new BlockEntity
+			iBytesLeftInBlockEntity=maxBlockEntitySize;
+		}
+
+
+		// iterate thru elements in current BlockRecord add them to result ptree and calculate size of BlockRecord
+		BOOST_FOREACH(ptree::value_type &v2, blockrecord.second)
+		{
+			if(v2.first == "chunk_record") {
+				cout << "-- chunk_record size : " << v2.second.get_child("DataSize", _empty_tree).data() << endl;
+				//TODO: find a way to verify DataSize and actual size of item Data
+				//long datasize=boost::lexical_cast<long>(v2.second.get_child("DataSize", _empty_tree).data());
+				//if( datasize != v2.second.get_child("Data", _empty_tree).data().size())
+				//	cout << "- FAIL: somehow DataSize is NOT correct size of Data; DataSize :  " << v2.second.get_child("DataSize", _empty_tree).data() << " : Data actual size : " << v2.second.get_child("Data", _empty_tree).data().size() << endl;
+				blockRecordSize += v2.second.get_child("Data", _empty_tree).data().size();
+			}
+			else
+				cout << "- item : " << v2.first << " : size : " << v2.second.data().size() << endl;
+			blockRecordSize += v2.second.data().size();
+
+		}
+		
+
+
+		iBytesLeftInBlockEntity -= blockRecordSize;
+
+		if(bFirst) {
+
+
+			cout << "- OK : blockrecord : " << blockrecord.first.data() << " : " << blockrecord.second.data() << endl;
+		}
+		else {
+			cout << "- OK : bytes left in blockrecord : " << iBytesLeftInBlockEntity << endl;
+		}
+
+		if(blockRecordSize > 0)
+			cout << "- OK : blockrecordsize : " << blockRecordSize << endl;
+		
+		bFirst=false;
+	}
+
+	return blockEntity_tree;
+}

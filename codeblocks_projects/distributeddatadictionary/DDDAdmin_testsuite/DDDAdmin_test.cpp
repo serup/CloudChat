@@ -396,11 +396,15 @@ BOOST_AUTO_TEST_CASE(addBlockRecordToBlockEntity)
 
 	long aiid=0;
 	std::string realmName = "profile";
-	boost::property_tree::ptree pt = ptestDataDictionaryControl->addDEDchunksToBlockRecords(aiid, realmName, listOfDEDchunks, maxBlockRecordSize);
+	boost::property_tree::ptree ptListOfBlockRecords = ptestDataDictionaryControl->addDEDchunksToBlockRecords(aiid, realmName, listOfDEDchunks, maxBlockRecordSize);
 
-	BOOST_CHECK(pt.size() > 0);
+	BOOST_CHECK(ptListOfBlockRecords.size() > 0);
 
-	BOOST_CHECK(false == true); // NOT ready yet
+	long maxBlockEntitySize=64000; // should result in 1 BlockEntity 
+	boost::property_tree::ptree ptBlockEntity = ptestDataDictionaryControl->addBlockRecordToBlockEntity(ptListOfBlockRecords, maxBlockEntitySize);
+
+	BOOST_CHECK(ptBlockEntity.size()>0);
+
 	cout<<"}"<<endl;
 }
 

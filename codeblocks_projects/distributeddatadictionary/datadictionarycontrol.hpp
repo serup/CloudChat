@@ -44,6 +44,7 @@ class CDataDictionaryControl
 	boost::property_tree::ptree createBFiBlockRecord(bool bfirst,long aiid, long seq, std::string transGuid,std::string id, char* blob, int size);
 	std::vector< pair<unsigned char*,int> > splitAttributIntoDEDchunks(long aiid, std::string attributName, std::vector<unsigned char>& attributValue, long maxDEDchunkSize);
 	boost::property_tree::ptree addDEDchunksToBlockRecords(long aiid, std::string attributName, std::vector<pair<unsigned char*,int>>listOfDEDchunks, long maxDEDblockSize);
+	boost::property_tree::ptree addBlockRecordToBlockEntity(boost::property_tree::ptree &pt, long maxBlockEntitySize);
 
 	
     protected:
