@@ -241,7 +241,7 @@ std::vector< pair<unsigned char*, int> > CDataDictionaryControl::splitAttributIn
 
 boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(long aiid, std::string realmName, std::vector<pair<unsigned char*,int>>listOfDEDchunks, long maxBlockRecordSize)
 {
-    using boost::property_tree::ptree;
+	using boost::property_tree::ptree;
 	std::string strTransGUID="";
 	ptree pt;
 	pt.clear();
@@ -279,27 +279,8 @@ boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(l
 			}
 			else
 			{
-				try {
-					ptree _empty_tree;
-					BOOST_REVERSE_FOREACH(ptree::value_type &v2, pt.get_child("listOfBlockRecords", _empty_tree)) 
-					{
-						if(v2.first == "BlockRecord")
-						{ 
-							cout << "- OK: Found Last BlockRecord " << endl;
-							BOOST_REVERSE_FOREACH(ptree::value_type &v3, v2.second)
-							{
-								if(v3.first == "chunk_data"){
-									cout << "- append new chunk_record inside chunk_data " << endl;
-									v3.second.add_child("chunk_record", subpt.get_child("chunk_record", _empty_tree));
-								}
-							}
-						} 
-					}
-				} 
-				catch(...)
-				{
-					cout << "- FAIL: somehow there was no BlockRecords.chunk_data section - possible corrupt data" << endl;
-				}
+				bool bResult = appendChunkRecordToLastBlockRecordsChunkData(pt, subpt);
+				if (!bResult) cout << "- FAIL: somehow there was no BlockRecords.chunk_data section to append chunk_record to - possible corrupt data" << endl;
 			}
 		}
 		else
@@ -307,12 +288,41 @@ boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(l
 		bfirst=false;	
 	}
 
-//DEBUG	
-// write test xml file
+	//DEBUG	
+	// write test xml file
 	ofstream blockFile ("xmlresult.xml", ios::out | ios::binary);
 	write_xml(blockFile, pt);
-	
+
 	return pt;		
+}
+
+bool CDataDictionaryControl::appendChunkRecordToLastBlockRecordsChunkData(boost::property_tree::ptree &pt, boost::property_tree::ptree &subpt) 
+{
+	bool bResult = false;
+	try {
+		boost::property_tree::ptree _empty_tree;
+		BOOST_REVERSE_FOREACH(boost::property_tree::ptree::value_type &v2, pt.get_child("listOfBlockRecords", _empty_tree)) 
+		{
+			if(v2.first == "BlockRecord")
+			{ 
+				cout << "- OK: Found Last BlockRecord " << endl;
+				BOOST_REVERSE_FOREACH(boost::property_tree::ptree::value_type &v3, v2.second)
+				{
+					if(v3.first == "chunk_data"){
+						cout << "- append new chunk_record inside chunk_data " << endl;
+						v3.second.add_child("chunk_record", subpt.get_child("chunk_record", _empty_tree));
+						bResult=true;
+						break;	
+					}
+				}
+			}	 
+		}
+	} 
+	catch(...)
+	{
+		cout << "- FAIL: somehow there was no BlockRecords.chunk_data section - possible corrupt data" << endl;
+	}
+	return bResult; 
 }
 
 long CDataDictionaryControl::totalSizeOf(std::vector<pair<unsigned char*, int>> vectorPairList)
