@@ -28,6 +28,7 @@ struct BlockRecordEntry{
 	std::string chunk_data_in_hex;
 	unsigned long chunk_size;
 	std::string chunk_md5;
+	std::string chunk_attribut;
 };
 typedef std::vector<BlockRecordEntry> BlockRecord;
 
@@ -41,9 +42,9 @@ class CDataDictionaryControl
 
 	bool CreateBlockFile(std::string filename);
 	int splitFileIntoBlocks(std::string filename);
-	boost::property_tree::ptree createBFiBlockRecord(bool bfirst,long aiid, long seq, std::string transGuid,std::string id, char* blob, int size);
+	boost::property_tree::ptree createBFiBlockRecord(bool bfirst,long aiid, long seq, std::string transGuid,std::string attributName, std::string id, char* blob, int size);
 	std::vector< pair<unsigned char*,int> > splitAttributIntoDEDchunks(long aiid, std::string attributName, std::vector<unsigned char>& attributValue, long maxDEDchunkSize);
-	boost::property_tree::ptree addDEDchunksToBlockRecords(long aiid, std::string attributName, std::vector<pair<unsigned char*,int>>listOfDEDchunks, long maxDEDblockSize);
+	boost::property_tree::ptree addDEDchunksToBlockRecords(long aiid, std::string realmName, std::string attributName, std::vector<pair<unsigned char*,int>>listOfDEDchunks, long maxDEDblockSize);
 	boost::property_tree::ptree addBlockRecordToBlockEntity(boost::property_tree::ptree &pt, long maxBlockEntitySize);
 
 	

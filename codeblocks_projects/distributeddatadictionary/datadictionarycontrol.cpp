@@ -47,7 +47,7 @@ int CDataDictionaryControl::splitFileIntoBlocks(std::string filename)
 				strTransGUID = CMD5((const char*)block.first).GetMD5s();
 
 			filenumber++;
-			boost::property_tree::ptree pt = createBFiBlockRecord(bfirst, ++aiid, ++seq, strTransGUID, filename.c_str(),block.first, block.second);
+			boost::property_tree::ptree pt = createBFiBlockRecord(bfirst, ++aiid, ++seq, strTransGUID, "attributName", filename.c_str(),block.first, block.second);
 			bfirst=false;
 			std::string blockfilename = filename + "_" + std::to_string(filenumber) + ".BFi";
 		    ofstream blockFile (blockfilename.c_str(), ios::out | ios::binary);
@@ -129,11 +129,11 @@ std::vector<unsigned char> readFile(std::string fn)
  *  	   	   	   		  
  * return ptree - containing xml structure ready to be used by fx. write_xml
  */
-boost::property_tree::ptree CDataDictionaryControl::createBFiBlockRecord(bool bfirst,long aiid,long seq, std::string transGuid,std::string realmName, char* blob, int size)
+boost::property_tree::ptree CDataDictionaryControl::createBFiBlockRecord(bool bfirst,long aiid,long seq, std::string transGuid,std::string attributName, std::string realmName, char* blob, int size)
 {
 	pair<char*,int> p;
 	p = make_pair(blob, size);
-    using boost::property_tree::ptree;
+	using boost::property_tree::ptree;
 	ptree pt;
 	pt.clear();
 
@@ -157,6 +157,7 @@ boost::property_tree::ptree CDataDictionaryControl::createBFiBlockRecord(bool bf
 			node.put("chunk_data.TransGUID",transGuid);
 			node.put("chunk_data.Protocol", "DED");
 			node.put("chunk_data.ProtocolVersion", "1.0.0.0");
+			node.put("chunk_data.chunk_record.attribut", attributName); 
 			node.put("chunk_data.chunk_record.DataSize", nSizeOfHex); //TODO: consider dropping transfer to HEX, since it is making size bigger and only needed for Debug
 			node.put("chunk_data.chunk_record.Data", data_in_hex_buf);
 			node.put("chunk_data.chunk_record.DataMD5", strMD5);
@@ -165,6 +166,7 @@ boost::property_tree::ptree CDataDictionaryControl::createBFiBlockRecord(bool bf
 	else {
 			cout << "ADD node chunk_record" << endl;
 			ptree &node = pt.add("chunk_record", "");
+			node.put("attribut", attributName); 
 			node.put("DataSize", nSizeOfHex); //TODO: consider dropping transfer to HEX, since it is making size bigger and only needed for Debug
 			node.put("Data", data_in_hex_buf);
 			node.put("DataMD5", strMD5);
@@ -239,7 +241,7 @@ std::vector< pair<unsigned char*, int> > CDataDictionaryControl::splitAttributIn
 	return listOfDEDchunks;
 }
 
-boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(long aiid, std::string realmName, std::vector<pair<unsigned char*,int>>listOfDEDchunks, long maxBlockRecordSize)
+boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(long aiid, std::string realmName, std::string attributName, std::vector<pair<unsigned char*,int>>listOfDEDchunks, long maxBlockRecordSize)
 {
 	using boost::property_tree::ptree;
 	std::string strTransGUID="";
@@ -271,7 +273,7 @@ boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(l
 		iBytesLeft = iBytesLeft - chunk.second;
 		std::cout << "bytes left : " << iBytesLeft << '\n';
 		if(iBytesLeft > 0) {
-			boost::property_tree::ptree subpt = createBFiBlockRecord(bfirst, ++aiid, ++seq, strTransGUID, realmName, (char*)chunk.first, chunk.second);
+			boost::property_tree::ptree subpt = createBFiBlockRecord(bfirst, ++aiid, ++seq, strTransGUID, attributName, realmName, (char*)chunk.first, chunk.second);
 			std::cout << "appending chunk of size : " << chunk.second << '\n';
 			cout << "- search for last BlockRecord " << endl;
 			if(bfirst) {
@@ -385,11 +387,14 @@ boost::property_tree::ptree CDataDictionaryControl::addBlockRecordToBlockEntity(
 		iBytesLeftInBlockEntity -= blockRecordSize;
 
 		if(bFirst) {
-
-
+			// new BlockEntity entry
+			ptree & node = blockEntity_tree.add("BlockEntity", "");
+				
 			cout << "- OK : blockrecord : " << blockrecord.first.data() << " : " << blockrecord.second.data() << endl;
 		}
 		else {
+			// append to BlockEntity
+			
 			cout << "- OK : bytes left in blockrecord : " << iBytesLeftInBlockEntity << endl;
 		}
 

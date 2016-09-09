@@ -42,12 +42,13 @@ DDD - Distributed Data Dictionary
    	<aiid></aiid>		-- automatic increased id - a continues number for all of these records
    	<chunk_seq></chunk_seq>	-- sequence number for this chunk of the database realm file
 	<chunk_data> 
-	       <TransGUID></TransGUID> -- each record has a unique transaction id to be used with security, when detecting inconsistencies
-	       <Protocol>DED</Protocol>
-	       <ProtocolVersion>1.0.0.0</ProtocolVersion>
-	       <chunk_record>
-	       	<DataSize></DataSize>
-	       		<Data>
+	       	<TransGUID></TransGUID> -- each record has a unique transaction id to be used with security, when detecting inconsistencies
+	       	<Protocol>DED</Protocol>
+	       	<ProtocolVersion>1.0.0.0</ProtocolVersion>
+	       	<chunk_record>
+		 <attribut></attribut> -- to help with searching for a specific attribut, then name of attribut is here - it should be same as attribut_chunk_id
+	       	 <DataSize></DataSize>
+	       	 <Data>
 -- DED binary begin
 		     		<attribut_chunk_id></attribut_chunk_id> 		-- name of attribut described in data dictionary realm entity
 		     		<attribut_aiid></attribut_aiid> 			-- automatic increased id - a continues number for all records 
@@ -57,7 +58,7 @@ DDD - Distributed Data Dictionary
 				</Data>
 	        	<DataMD5><DataMD5> -- this md5 checksum is used as an extra verification -- Data must be verified with this value before being used.
 		 	</chunk_record>
-		</Data> -- here is the pCompressedData from above protocol encoding, compression, encrypting algoritm -- currently DED (dataencoderdecoder)
+		 </Data> -- here is the pCompressedData from above protocol encoding, compression, encrypting algoritm -- currently DED (dataencoderdecoder)
 		</chunk_record>
 	</chunk_data>
   </BlockRecord>
@@ -71,6 +72,7 @@ DDD - Distributed Data Dictionary
 	       	<Protocol>DED</Protocol>
 	  	<ProtocolVersion>1.0.0.0</ProtocolVersion>
 		<chunk_record>
+		 	<attribut></attribut> -- to help with searching for a specific attribut, then name of attribut is here - it should be same as attribut_chunk_id
 	       		<DataSize></DataSize>
 	      	 	<Data>
 -- DED binary begin
@@ -83,6 +85,7 @@ DDD - Distributed Data Dictionary
 	       	    	<DataMD5><DataMD5> -- this md5 checksum is used as an extra verification -- Data must be verified with this value before being used.
 		</chunk_record>
 		<chunk_record>
+		 	<attribut></attribut> -- to help with searching for a specific attribut, then name of attribut is here - it should be same as attribut_chunk_id
 	       		<DataSize></DataSize>
 	      	 	<Data>
 -- DED binary begin

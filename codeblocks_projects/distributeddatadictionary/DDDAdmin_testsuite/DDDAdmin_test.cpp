@@ -239,9 +239,10 @@ BOOST_AUTO_TEST_CASE(writeBlockIntoBFiStructure)
 		long aiid=0;
 		long seq=0;
 		bool bfirst=true;
+		std::string attributName = "testfile";
 		BOOST_FOREACH( block, vp )
 		{
-			boost::property_tree::ptree pt = ptestDataDictionaryControl->createBFiBlockRecord(bfirst,++aiid, ++seq, strTransGUID, testfilename.c_str(),block.first, block.second);
+			boost::property_tree::ptree pt = ptestDataDictionaryControl->createBFiBlockRecord(bfirst,++aiid, ++seq, strTransGUID, attributName, testfilename.c_str(),block.first, block.second);
 
 			BlockRecordEntry f;
 			if(bfirst) {
@@ -256,6 +257,7 @@ BOOST_AUTO_TEST_CASE(writeBlockIntoBFiStructure)
 					BOOST_CHECK(f.chunk_id == testfilename);
 					cout << "chunk_seq : " << f.chunk_seq <<endl;
 					cout << "TransGUID : " << f.TransGUID <<endl;
+					f.chunk_attribut = pt.get<std::string>("BlockRecord.chunk_data.chunk_record.attribut");
 					f.chunk_data_in_hex = pt.get<std::string>("BlockRecord.chunk_data.chunk_record.Data");
 					f.chunk_size = pt.get<unsigned long>("BlockRecord.chunk_data.chunk_record.DataSize");
 					f.chunk_md5 = pt.get<std::string>("BlockRecord.chunk_data.chunk_record.DataMD5");
@@ -354,7 +356,7 @@ BOOST_AUTO_TEST_CASE(addChunkDataToBlockRecord)
 
 	long aiid=0;
 	std::string realmName = "profile";
-	boost::property_tree::ptree pt = ptestDataDictionaryControl->addDEDchunksToBlockRecords(aiid, realmName, listOfDEDchunks, maxBlockRecordSize);
+	boost::property_tree::ptree pt = ptestDataDictionaryControl->addDEDchunksToBlockRecords(aiid, realmName, attributName, listOfDEDchunks, maxBlockRecordSize);
 
 	BOOST_CHECK(pt.size() > 0);
 	
@@ -386,7 +388,7 @@ BOOST_AUTO_TEST_CASE(addBlockRecordToBlockEntity)
 
 	BOOST_CHECK(FileDataBytesInVector.size() > 0);
 
-	long maxBlockRecordSize=5250; // should yield in 3 BlockRecord, since foto can be in one
+	long maxBlockRecordSize=5250; // should yield in 3 BlockRecord, since foto cant be in one
 	long maxDEDchunkSize=300; // should yield several chunks for this attribut
 
 	std::vector< pair<unsigned char*,int> > listOfDEDchunks = ptestDataDictionaryControl->splitAttributIntoDEDchunks(0, attributName, FileDataBytesInVector, maxDEDchunkSize);
@@ -396,7 +398,7 @@ BOOST_AUTO_TEST_CASE(addBlockRecordToBlockEntity)
 
 	long aiid=0;
 	std::string realmName = "profile";
-	boost::property_tree::ptree ptListOfBlockRecords = ptestDataDictionaryControl->addDEDchunksToBlockRecords(aiid, realmName, listOfDEDchunks, maxBlockRecordSize);
+	boost::property_tree::ptree ptListOfBlockRecords = ptestDataDictionaryControl->addDEDchunksToBlockRecords(aiid, realmName, attributName, listOfDEDchunks, maxBlockRecordSize);
 
 	BOOST_CHECK(ptListOfBlockRecords.size() > 0);
 
