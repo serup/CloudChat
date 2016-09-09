@@ -257,12 +257,13 @@ BOOST_AUTO_TEST_CASE(writeBlockIntoBFiStructure)
 					BOOST_CHECK(f.chunk_id == testfilename);
 					cout << "chunk_seq : " << f.chunk_seq <<endl;
 					cout << "TransGUID : " << f.TransGUID <<endl;
-					f.chunk_attribut = pt.get<std::string>("BlockRecord.chunk_data.chunk_record.attribut");
+					f.chunk_ddid = pt.get<std::string>("BlockRecord.chunk_data.chunk_record.chunk_ddid");
 					f.chunk_data_in_hex = pt.get<std::string>("BlockRecord.chunk_data.chunk_record.Data");
 					f.chunk_size = pt.get<unsigned long>("BlockRecord.chunk_data.chunk_record.DataSize");
 					f.chunk_md5 = pt.get<std::string>("BlockRecord.chunk_data.chunk_record.DataMD5");
 			}
 			else {
+					f.chunk_ddid = pt.get<std::string>("chunk_record.chunk_ddid");
 					f.chunk_data_in_hex = pt.get<std::string>("chunk_record.Data");
 					f.chunk_size = pt.get<unsigned long>("chunk_record.DataSize");
 					f.chunk_md5 = pt.get<std::string>("chunk_record.DataMD5");
@@ -368,7 +369,7 @@ BOOST_AUTO_TEST_CASE(addBlockRecordToBlockEntity)
 	cout<<"BOOS_AUTO_TEST(addBlockRecordToBlockEntity)\n{"<<endl;
 
 	CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
-	std::string attributName = "foto";
+	std::string attributName = "foto"; // it should be ddid -- datadictionary id which refers to attribut description
 	std::vector<unsigned char> FileDataBytesInVector;
 	std::string fn = "testImage.png"; // should be of size 10.5 Kb
 	std::ifstream is (fn, ios::binary);
