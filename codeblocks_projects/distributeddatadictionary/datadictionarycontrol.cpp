@@ -153,7 +153,7 @@ boost::property_tree::ptree CDataDictionaryControl::createBFiBlockRecord(bool bf
 			node.put("TransGUID",transGuid);
 			node.put("chunk_id",realmName);
 			node.put("aiid",aiid);
-			node.put("chunk_seq",seq); // sequence number of particular item
+			node.put("chunk_seq",seq); // sequence number of particular BlockRecord 
 			node.put("chunk_data.TransGUID",transGuid);
 			node.put("chunk_data.Protocol", "DED");
 			node.put("chunk_data.ProtocolVersion", "1.0.0.0");
@@ -249,7 +249,7 @@ boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(l
 	pt.clear();
 	long bytesLeftInBlockRecord = maxBlockRecordSize;
 	pair <unsigned char*,int> chunk;
-	long seq=0; // every attribut starts with seq=1 and increses per chunk
+	long seq=1; // Every BlockRecord have a sequence number 
 	int iTotalSize=totalSizeOf(listOfDEDchunks);
 	int iBytesLeft=iTotalSize;
 	int n=0;
@@ -273,11 +273,12 @@ boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(l
 		iBytesLeft = iBytesLeft - chunk.second;
 		std::cout << "bytes left : " << iBytesLeft << '\n';
 		if(iBytesLeft > 0) {
-			boost::property_tree::ptree subpt = createBFiBlockRecord(bfirst, ++aiid, ++seq, strTransGUID, ddid, realmName, (char*)chunk.first, chunk.second);
+			boost::property_tree::ptree subpt = createBFiBlockRecord(bfirst, ++aiid, seq, strTransGUID, ddid, realmName, (char*)chunk.first, chunk.second);
 			std::cout << "appending chunk of size : " << chunk.second << '\n';
 			cout << "- search for last BlockRecord " << endl;
 			if(bfirst) {
 				pt.insert(pt.get_child("listOfBlockRecords").end(),subpt.front());
+				seq++; // new BlockRecord, thus new sequence number
 			}
 			else {
 				if (!appendChunkRecordToLastBlockRecordsChunkData(pt, subpt)) cout << "- FAIL: somehow there was no BlockRecords.chunk_data section to append chunk_record to - possible corrupt data" << endl;
