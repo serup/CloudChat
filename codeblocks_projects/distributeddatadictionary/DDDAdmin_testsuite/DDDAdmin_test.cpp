@@ -90,6 +90,7 @@ BOOST_AUTO_TEST_CASE(create_BFi_blockfile)
 	cout<<"}"<<endl;
 }
 
+//DEPRECATED - a file should be an attribut in a realm
 BOOST_AUTO_TEST_CASE(create3Blockfiles)
 {
 	cout<<"BOOS_AUTO_TEST(create3Blockfiles)\n{"<<endl;
@@ -404,7 +405,8 @@ BOOST_AUTO_TEST_CASE(addBlockRecordToBlockEntity)
 	BOOST_CHECK(ptListOfBlockRecords.size() > 0);
 
 	long maxBlockEntitySize=64000; // should result in 1 BlockEntity 
-	boost::property_tree::ptree ptBlockEntity = ptestDataDictionaryControl->addBlockRecordToBlockEntity(ptListOfBlockRecords, maxBlockEntitySize);
+	std::string transGuid = "E4C23762ED2823A27E62A64B95C024E7";
+	boost::property_tree::ptree ptBlockEntity = ptestDataDictionaryControl->addBlockRecordToBlockEntity(transGuid, ptListOfBlockRecords, maxBlockEntitySize);
 
 	BOOST_CHECK(ptBlockEntity.size()>0);
 

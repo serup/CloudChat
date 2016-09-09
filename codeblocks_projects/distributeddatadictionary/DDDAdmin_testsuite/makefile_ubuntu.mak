@@ -11,6 +11,7 @@ TESTFLAGS3= --report_format=XML --report_level=detailed
 CONVERT=xsltproc -o test_results.html ../test_results.xslt test_results.xml
 CONVERT2=xsltproc -o test_results.txt ../test_results_text.xslt test_results.xml
 XMLRESULT=xmllint --format --recover xmlresult.xml  > xmlresult.formatted.xml
+XMLRESULT2=xmllint --format --recover xmlresult2.xml  > xmlresult2.formatted.xml
 
 info:
 	@ echo "------------------------------"
@@ -85,6 +86,11 @@ unittest:
 xml:
 	@ $(XMLRESULT)
 	@ vim xmlresult.formatted.xml
+
+
+xml2:
+	@ $(XMLRESULT2)
+	@ vim xmlresult2.formatted.xml
 
 
 .PHONY: info

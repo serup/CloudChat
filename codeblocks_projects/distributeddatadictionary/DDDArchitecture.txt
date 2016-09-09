@@ -33,12 +33,10 @@ DDD - Distributed Data Dictionary
 [BFi] - Block File; several block files assembled together forms a database realm file consisting of attributes
 <?xml version="1.0" encoding="utf-8"?>
 <BlockEntity>
- <TransGUID></TransGUID> -- each record has a unique transaction id to be used with security, when detecting inconsistencies
- <realmfile_name></realmfile_name>
- <realmfileMD5><realmfileMD5> -- this md5 checksum is the checksum for the total assembled realmfile - which could be several of these block files
+ <TransGUID></TransGUID> -- each block entity has a unique transaction id to be used with multiple clusters - each cluster can have multiple BlockEntities
  <BlockRecord>
 	<TransGUID></TransGUID> -- each record has a unique transaction id to be used with security, when detecting inconsistencies
-   	<chunk_id></chunk_id>	-- name of realm file
+   	<chunk_id></chunk_id>	-- name of realm fx. "profile" - the realm for which its attributes are stored in blockrecords and chunks
    	<aiid></aiid>		-- automatic increased id - a continues number for all of these records
    	<chunk_seq></chunk_seq>	-- sequence number for this chunk of the database realm file
 	<chunk_data> 

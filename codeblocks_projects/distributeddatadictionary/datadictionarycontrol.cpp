@@ -345,7 +345,7 @@ long CDataDictionaryControl::totalSizeOf(std::vector<pair<unsigned char*, int>> 
 	return totalCount;
 }
 
-boost::property_tree::ptree CDataDictionaryControl::addBlockRecordToBlockEntity(boost::property_tree::ptree &pt, long maxBlockEntitySize)
+boost::property_tree::ptree CDataDictionaryControl::addBlockRecordToBlockEntity(std::string transGuid, boost::property_tree::ptree &pt, long maxBlockEntitySize)
 {
 	using boost::property_tree::ptree;
 	ptree _empty_tree;
@@ -356,6 +356,7 @@ boost::property_tree::ptree CDataDictionaryControl::addBlockRecordToBlockEntity(
 	long blockRecordSize = 0;
 	long iBytesLeftInBlockEntity=0;
 	bool bFirst=true;
+
 	BOOST_FOREACH(ptree::value_type &blockrecord, pt.get_child("BlockRecord", _empty_tree))
 	{
 		blockRecordSize += blockrecord.second.data().size();
@@ -389,12 +390,13 @@ boost::property_tree::ptree CDataDictionaryControl::addBlockRecordToBlockEntity(
 
 		if(bFirst) {
 			// new BlockEntity entry
-			ptree & node = blockEntity_tree.add("BlockEntity", "");
-				
+
+			
 			cout << "- OK : blockrecord : " << blockrecord.first.data() << " : " << blockrecord.second.data() << endl;
 		}
 		else {
 			// append to BlockEntity
+				
 			
 			cout << "- OK : bytes left in blockrecord : " << iBytesLeftInBlockEntity << endl;
 		}
@@ -404,6 +406,40 @@ boost::property_tree::ptree CDataDictionaryControl::addBlockRecordToBlockEntity(
 		
 		bFirst=false;
 	}
+
+
+	bFirst=true;
+	BOOST_FOREACH(ptree::value_type &blr, pt.get_child("listOfBlockRecords", _empty_tree))
+	{
+
+		if(bFirst) {
+			// new BlockEntity entry
+			ptree & node = blockEntity_tree.add("BlockEntity", "");
+			node.put("TransGUID",transGuid);
+			//node.put_child("BlockRecord", blr.second.get_child("BlockRecord", _empty_tree));
+//			node.put_child("BlockRecord", pt);
+			
+			blockEntity_tree.put_child("BlockEntity", node);
+
+			
+		}
+		else {
+			// append to BlockEntity
+				
+			blockEntity_tree.insert(blockEntity_tree.get_child("BlockRecord", _empty_tree).end(), blr.second.front() );
+			
+		}
+		
+		bFirst=false;
+
+
+	}
+
+
+	//DEBUG	
+	// write test xml file
+	ofstream blockFile ("xmlresult2.xml", ios::out | ios::binary);
+	write_xml(blockFile, blockEntity_tree);
 
 	return blockEntity_tree;
 }
