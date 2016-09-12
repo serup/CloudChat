@@ -381,12 +381,39 @@ boost::property_tree::ptree CDataDictionaryControl::addBlockRecordToBlockEntity(
 			{
 				iBytesLeftInBlockEntity=maxBlockEntitySize;
 				node.add("BlockEntity","");
-				node.put_child("BlockEntity.BlockRecord", v2.second);
+//				node.put_child("BlockEntity.BlockRecord", v2.second);
+				BOOST_REVERSE_FOREACH(boost::property_tree::ptree::value_type &v3, node) 
+				{
+					cout << "-- first : " << v3.first << endl;
+
+					if(v3.first == "BlockEntity")
+					{ 
+						cout << "- OK: Found Last BlockEntity " << endl;
+						//v3.second.add("BlockEntity","");
+						v3.second.add_child("BlockRecord", v2.second);
+
+					}	 
+				}
 			}
 			else {
-				node.add_child("BlockEntity.BlockRecord", v2.second);
+				BOOST_REVERSE_FOREACH(boost::property_tree::ptree::value_type &v3, node) 
+				{
+					cout << "-- first : " << v3.first << endl;
+
+					if(v3.first == "BlockEntity")
+					{ 
+						cout << "- OK: Found Last BlockEntity " << endl;
+						//v3.second.add("BlockEntity","");
+						v3.second.add_child("BlockRecord", v2.second);
+
+					}	 
+				}
+				//node.add_child("BlockRecord", v2.second);
 				//boost::property_tree::ptree subpt = v2.second;
 				//node.insert(node.get_child("BlockEntity").end(),subpt.front());
+				//
+				//
+	
 			}	
 			
 		}	 
