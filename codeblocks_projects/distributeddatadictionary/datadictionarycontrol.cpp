@@ -380,17 +380,18 @@ boost::property_tree::ptree CDataDictionaryControl::addBlockRecordToBlockEntity(
 			if(iBytesLeftInBlockEntity <= 0)
 			{
 				iBytesLeftInBlockEntity=maxBlockEntitySize;
-				node.add("BlockEntity","");
 //				node.put_child("BlockEntity.BlockRecord", v2.second);
 				BOOST_REVERSE_FOREACH(boost::property_tree::ptree::value_type &v3, node) 
 				{
-					cout << "-- first : " << v3.first << endl;
+					cout << "-- no more bytes left in this BlockEntity - this is for next ; first : " << v3.first << endl;
 
 					if(v3.first == "BlockEntity")
 					{ 
 						cout << "- OK: Found Last BlockEntity " << endl;
 						//v3.second.add("BlockEntity","");
 						v3.second.add_child("BlockRecord", v2.second);
+						node.add("BlockEntity","");
+						break;
 
 					}	 
 				}
@@ -405,7 +406,7 @@ boost::property_tree::ptree CDataDictionaryControl::addBlockRecordToBlockEntity(
 						cout << "- OK: Found Last BlockEntity " << endl;
 						//v3.second.add("BlockEntity","");
 						v3.second.add_child("BlockRecord", v2.second);
-
+						break;
 					}	 
 				}
 				//node.add_child("BlockRecord", v2.second);
