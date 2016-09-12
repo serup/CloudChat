@@ -46,6 +46,7 @@ class CDataDictionaryControl
 	std::vector< pair<unsigned char*,int> > splitAttributIntoDEDchunks(long aiid, std::string attributName, std::vector<unsigned char>& attributValue, long maxDEDchunkSize);
 	boost::property_tree::ptree addDEDchunksToBlockRecords(long aiid, std::string realmName, std::string ddid, std::vector<pair<unsigned char*,int>>listOfDEDchunks, long maxDEDblockSize);
 	boost::property_tree::ptree addBlockRecordToBlockEntity(std::string transGuid, boost::property_tree::ptree &pt, long maxBlockEntitySize);
+	long fetchBlockRecordSize(boost::property_tree::ptree::value_type &vt);
 
 	
     protected:
