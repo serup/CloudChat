@@ -56,6 +56,7 @@ class CDataDictionaryControl
 	std::vector<unsigned char> readFile(std::string fn);
 	long totalSizeOf(std::vector<pair<unsigned char*, int>> vectorPairList);
 	bool appendChunkRecordToLastBlockRecordsChunkData(boost::property_tree::ptree &pt, boost::property_tree::ptree &subpt);
+	bool appendToLastBlockEntity(boost::property_tree::ptree &node, boost::property_tree::ptree &subpt, std::string transGuid);
 };
 
 #endif // CDATADICTIONARYCONTROL_H

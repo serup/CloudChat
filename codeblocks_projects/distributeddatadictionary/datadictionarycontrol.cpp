@@ -353,7 +353,6 @@ boost::property_tree::ptree CDataDictionaryControl::addBlockRecordToBlockEntity(
 {
 	using boost::property_tree::ptree;
 	ptree _empty_tree;
-	ptree blockEntity_tree;
 		
 	cout << "ADD - adding blockrecords to blockentity " << endl;
 		
@@ -362,61 +361,30 @@ boost::property_tree::ptree CDataDictionaryControl::addBlockRecordToBlockEntity(
 	bool bFirst=true;
 
 	ptree blkrecord;
-	ptree &node = blkrecord.add("listOfBlockEnties", "");
+	ptree &node = blkrecord.add("listOfBlockEntities", "");
 	node.add("BlockEntity", "");
 
-
 	iBytesLeftInBlockEntity=maxBlockEntitySize;
-
 	BOOST_FOREACH(boost::property_tree::ptree::value_type &v2, pt.get_child("listOfBlockRecords", _empty_tree)) 
 	{
 		if(v2.first == "BlockRecord")
 		{
 			blockRecordSize = fetchBlockRecordSize(v2);	
 			cout << "BlockRecordSize : " << blockRecordSize << endl;	
-
 			iBytesLeftInBlockEntity -= blockRecordSize;
-
 			if(iBytesLeftInBlockEntity <= 0)
 			{
 				iBytesLeftInBlockEntity=maxBlockEntitySize;
-//				node.put_child("BlockEntity.BlockRecord", v2.second);
-				BOOST_REVERSE_FOREACH(boost::property_tree::ptree::value_type &v3, node) 
-				{
-					cout << "-- no more bytes left in this BlockEntity - this is for next ; first : " << v3.first << endl;
-
-					if(v3.first == "BlockEntity")
-					{ 
-						cout << "- OK: Found Last BlockEntity " << endl;
-						//v3.second.add("BlockEntity","");
-						v3.second.add_child("BlockRecord", v2.second);
-						node.add("BlockEntity","");
-						break;
-
-					}	 
-				}
+				cout << "-- no more bytes left in this BlockEntity - " << endl;
+				if( appendToLastBlockEntity(node, v2.second, transGuid) )
+					node.add("BlockEntity",""); // ready for next BlockEntity
+				else
+					cout << "- FAIL: could not append to last blockentity" << endl;
 			}
 			else {
-				BOOST_REVERSE_FOREACH(boost::property_tree::ptree::value_type &v3, node) 
-				{
-					cout << "-- first : " << v3.first << endl;
-
-					if(v3.first == "BlockEntity")
-					{ 
-						cout << "- OK: Found Last BlockEntity " << endl;
-						//v3.second.add("BlockEntity","");
-						v3.second.add_child("BlockRecord", v2.second);
-						break;
-					}	 
-				}
-				//node.add_child("BlockRecord", v2.second);
-				//boost::property_tree::ptree subpt = v2.second;
-				//node.insert(node.get_child("BlockEntity").end(),subpt.front());
-				//
-				//
-	
+				if( !appendToLastBlockEntity(node, v2.second, transGuid) )
+					cout << "- FAIL: could not append to last blockentity" << endl;
 			}	
-			
 		}	 
 	}
 
@@ -425,10 +393,28 @@ boost::property_tree::ptree CDataDictionaryControl::addBlockRecordToBlockEntity(
 	ofstream blockFile ("xmlresult2.xml", ios::out | ios::binary);
 	write_xml(blockFile, blkrecord);
 
-	return blockEntity_tree;
+	return blkrecord;
 }
 
+bool CDataDictionaryControl::appendToLastBlockEntity(boost::property_tree::ptree &node, boost::property_tree::ptree &subpt, std::string transGuid)
+{
+	bool bResult=false;
 
+	BOOST_REVERSE_FOREACH(boost::property_tree::ptree::value_type &v3, node) 
+	{
+		cout << "-- first : " << v3.first << endl;
+		if(v3.first == "BlockEntity")
+		{ 
+			cout << "- OK: Found Last BlockEntity " << endl;
+			v3.second.put("TransGUID", transGuid);
+			v3.second.add_child("BlockRecord", subpt);
+			bResult=true;
+			break;
+		}	 
+	}
+
+	return bResult;
+}
 
 
 long CDataDictionaryControl::fetchBlockRecordSize(boost::property_tree::ptree::value_type &vt)

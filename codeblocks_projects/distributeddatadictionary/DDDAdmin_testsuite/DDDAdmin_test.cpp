@@ -280,8 +280,8 @@ BOOST_AUTO_TEST_CASE(writeBlockIntoBFiStructure)
 		}
 	}
 
-    //Cleanup
-    boost::filesystem::remove(testfilename);
+	//Cleanup
+	boost::filesystem::remove(testfilename);
 
 	cout<<"}"<<endl;
 }

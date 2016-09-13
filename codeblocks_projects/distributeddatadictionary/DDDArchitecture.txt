@@ -27,11 +27,12 @@ DDD - Distributed Data Dictionary
 		           +-[BlockRecord]                        +-[BlockRecord]
 		           |                                      |
 		           + etc...........................       + etc...........................
-
+			+-[BlockEntity]
 
 
 [BFi] - Block File; several block files assembled together forms a database realm file consisting of attributes
 <?xml version="1.0" encoding="utf-8"?>
+<BFi>
 <BlockEntity>
  <TransGUID></TransGUID> -- each block entity has a unique transaction id to be used with multiple clusters - each cluster can have multiple BlockEntities
  <BlockRecord>
@@ -104,7 +105,7 @@ DDD - Distributed Data Dictionary
  </BlockRecord>
  <BlockRecord></BlockRecord> ... etc. until block size has been reached or no more data
 </BlockEntity>   
-
+</BFi>
 -----
 definitions are in following dictionary files
 
