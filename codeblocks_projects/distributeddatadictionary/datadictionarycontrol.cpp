@@ -50,7 +50,7 @@ int CDataDictionaryControl::splitFileIntoBlocks(std::string filename)
 			boost::property_tree::ptree pt = createBFiBlockRecord(bfirst, ++aiid, ++seq, strTransGUID, "ddid", filename.c_str(),block.first, block.second);
 			bfirst=false;
 			std::string blockfilename = filename + "_" + std::to_string(filenumber) + ".BFi";
-		    ofstream blockFile (blockfilename.c_str(), ios::out | ios::binary);
+			ofstream blockFile (blockfilename.c_str(), ios::out | ios::binary);
 
 			write_xml(blockFile, pt);
 		}
@@ -432,7 +432,6 @@ long CDataDictionaryControl::fetchBlockRecordSize(boost::property_tree::ptree::v
 			if(v3.first == "chunk_record") {
 				cout << "-- chunk_record size : " << v3.second.get_child("DataSize", _empty_tree).data() << endl;
 				lResult += v3.second.get_child("Data", _empty_tree).data().size();
-
 			}
 			lResult += v3.second.data().size();
 		}
@@ -440,3 +439,14 @@ long CDataDictionaryControl::fetchBlockRecordSize(boost::property_tree::ptree::v
 	}
 	return	lResult;
 }
+
+std::vector< pair<std::string ,int> > CDataDictionaryControl::writeBlockEntityToBFiFile(boost::property_tree::ptree &ptBlockEntities)
+{
+	std::vector< pair<std::string ,int> > listOfBlockEntityFiles;
+
+
+
+	return listOfBlockEntityFiles;
+}
+
+

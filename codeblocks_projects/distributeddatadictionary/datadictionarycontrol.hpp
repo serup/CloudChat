@@ -47,6 +47,7 @@ class CDataDictionaryControl
 	boost::property_tree::ptree addDEDchunksToBlockRecords(long aiid, std::string realmName, std::string ddid, std::vector<pair<unsigned char*,int>>listOfDEDchunks, long maxDEDblockSize);
 	boost::property_tree::ptree addBlockRecordToBlockEntity(std::string transGuid, boost::property_tree::ptree &pt, long maxBlockEntitySize);
 	long fetchBlockRecordSize(boost::property_tree::ptree::value_type &vt);
+	std::vector< pair<std::string ,int> > writeBlockEntityToBFiFile(boost::property_tree::ptree &ptBlockEntities);
 
 	
     protected:
