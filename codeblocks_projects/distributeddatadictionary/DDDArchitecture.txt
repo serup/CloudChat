@@ -27,7 +27,6 @@ DDD - Distributed Data Dictionary
 		           +-[BlockRecord]                        +-[BlockRecord]
 		           |                                      |
 		           + etc...........................       + etc...........................
-			+-[BlockEntity]
 
 
 [BFi] - Block File; several block files assembled together forms a database realm file consisting of attributes
