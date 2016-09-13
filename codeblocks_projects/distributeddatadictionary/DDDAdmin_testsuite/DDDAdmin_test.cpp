@@ -413,6 +413,7 @@ BOOST_AUTO_TEST_CASE(addBlockRecordToBlockEntity)
 
 	cout<<"}"<<endl;
 }
+
 BOOST_AUTO_TEST_CASE(writeBlockEntitiesToBFiFiles)
 {
 	cout<<"BOOS_AUTO_TEST(writeBlockEntitiesToBFiFiles)\n{"<<endl;
@@ -463,6 +464,25 @@ BOOST_AUTO_TEST_CASE(writeBlockEntitiesToBFiFiles)
 	BOOST_CHECK(listOfBlockEntityFiles.size()==2);
 
 	pair <std::string,int> block;
+	BOOST_FOREACH(block, listOfBlockEntityFiles)
+	{
+			cout << "- OK Created file : " << block.first << " size : " << block.second << endl;
+			cout << "cleanup file " << endl;
+			boost::filesystem::remove(block.first);
+	}
+
+	// test with only 1 blockentity file
+	//
+	maxBlockEntitySize=64000; // should result in 1 BlockEntity 
+	transGuid = "F4C23762ED2823A27E62A64B95C024EF";
+	ptBlockEntity = ptestDataDictionaryControl->addBlockRecordToBlockEntity(transGuid, ptListOfBlockRecords, maxBlockEntitySize);
+
+	BOOST_CHECK(ptBlockEntity.size()>0);
+
+	listOfBlockEntityFiles = ptestDataDictionaryControl->writeBlockEntityToBFiFile(ptBlockEntity);
+
+	BOOST_CHECK(listOfBlockEntityFiles.size()==1);
+
 	BOOST_FOREACH(block, listOfBlockEntityFiles)
 	{
 			cout << "- OK Created file : " << block.first << " size : " << block.second << endl;

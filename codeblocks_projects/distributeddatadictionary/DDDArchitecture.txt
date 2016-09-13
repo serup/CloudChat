@@ -18,10 +18,10 @@ DDD - Distributed Data Dictionary
 		           +-[BlockRecord]                        +-[BlockRecord]
 		           +-[BlockRecord]                        +-[BlockRecord]
 		           |  |                                   |  |
-		           |  +-[toast record]                    |  +-[toast record]
+		           |  +-[chunk record aka toast record]   |  +-[chunk record aka toast record]
 		           |     |                                |  |  |
     		           |     +-[attribut_chunk_data]          |  |  +-[attribut_chunk_data] - first chunk of an attribut (fx. attribut 'foto')
-		           |                                      |  +-[toast record]
+		           |                                      |  +-[chunk record aka toast record]
 			   |                                      |     |
 			   |                                      |     +-[attribut_chunk_data] - second chunk of an attribut (fx. attribut 'foto') 
 		           +-[BlockRecord]                        +-[BlockRecord]
