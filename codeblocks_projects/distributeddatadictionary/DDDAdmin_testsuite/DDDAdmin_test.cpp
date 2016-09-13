@@ -462,6 +462,11 @@ BOOST_AUTO_TEST_CASE(writeBlockEntitiesToBFiFiles)
 
 	BOOST_CHECK(listOfBlockEntityFiles.size()>0);
 
+	pair <std::string,int> block;
+	BOOST_FOREACH(block, listOfBlockEntityFiles)
+	{
+			cout << "- OK Created file : " << block.first << " size : " << block.second << endl;
+	}
 	cout<<"}"<<endl;
 }
 

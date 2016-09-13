@@ -442,8 +442,31 @@ long CDataDictionaryControl::fetchBlockRecordSize(boost::property_tree::ptree::v
 
 std::vector< pair<std::string ,int> > CDataDictionaryControl::writeBlockEntityToBFiFile(boost::property_tree::ptree &ptBlockEntities)
 {
+	using boost::property_tree::ptree;
+	ptree _empty_tree;
 	std::vector< pair<std::string ,int> > listOfBlockEntityFiles;
 
+	cout << "- writeBlockEntityToBFiFile " << endl;
+	long filenumber=0;
+	ptree blkEntity;
+	BOOST_FOREACH(ptree::value_type &v2, ptBlockEntities.get_child("listOfBlockEntities", _empty_tree))
+	{
+		filenumber++;
+		ptree &node = blkEntity.add("BFi", "");
+		node.add_child("BlockEntity", v2.second);
+		
+		std::string filename =  v2.second.get_child("TransGUID").data();
+		cout << "- BlockEntity, transGUID : " << filename << endl;
+
+		std::string blockfilename = filename + "_" + std::to_string(filenumber) + ".BFi";
+		ofstream blockFile (blockfilename.c_str(), ios::out | ios::binary);
+		write_xml(blockFile, blkEntity);
+		
+		int filesize = (int)boost::filesystem::file_size(blockfilename);
+		listOfBlockEntityFiles.push_back(make_pair(blockfilename,filesize));
+
+		blkEntity.clear();
+	}
 
 
 	return listOfBlockEntityFiles;
