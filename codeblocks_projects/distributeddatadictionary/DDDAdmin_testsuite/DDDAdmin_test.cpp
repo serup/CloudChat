@@ -460,13 +460,16 @@ BOOST_AUTO_TEST_CASE(writeBlockEntitiesToBFiFiles)
 
 	std::vector< pair<std::string ,int> > listOfBlockEntityFiles = ptestDataDictionaryControl->writeBlockEntityToBFiFile(ptBlockEntity);
 
-	BOOST_CHECK(listOfBlockEntityFiles.size()>0);
+	BOOST_CHECK(listOfBlockEntityFiles.size()==2);
 
 	pair <std::string,int> block;
 	BOOST_FOREACH(block, listOfBlockEntityFiles)
 	{
 			cout << "- OK Created file : " << block.first << " size : " << block.second << endl;
+			cout << "cleanup file " << endl;
+			boost::filesystem::remove(block.first);
 	}
+
 	cout<<"}"<<endl;
 }
 
