@@ -390,8 +390,8 @@ boost::property_tree::ptree CDataDictionaryControl::addBlockRecordToBlockEntity(
 
 	//DEBUG	
 	// write test xml file
-	ofstream blockFile ("xmlresult2.xml", ios::out | ios::binary);
-	write_xml(blockFile, blkrecord);
+	//ofstream blockFile ("xmlresult2.xml", ios::out | ios::binary);
+	//write_xml(blockFile, blkrecord);
 
 	return blkrecord;
 }

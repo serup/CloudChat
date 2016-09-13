@@ -459,6 +459,10 @@ BOOST_AUTO_TEST_CASE(writeBlockEntitiesToBFiFiles)
 
 	BOOST_CHECK(ptBlockEntity.size()>0);
 
+	// write test xml file
+	ofstream blockFile1 ("xmlresult2.xml", ios::out | ios::binary);
+	write_xml(blockFile1, ptBlockEntity);
+
 	std::vector< pair<std::string ,int> > listOfBlockEntityFiles = ptestDataDictionaryControl->writeBlockEntityToBFiFile(ptBlockEntity);
 
 	BOOST_CHECK(listOfBlockEntityFiles.size()==2);
@@ -475,11 +479,16 @@ BOOST_AUTO_TEST_CASE(writeBlockEntitiesToBFiFiles)
 	//
 	maxBlockEntitySize=64000; // should result in 1 BlockEntity 
 	transGuid = "F4C23762ED2823A27E62A64B95C024EF";
-	ptBlockEntity = ptestDataDictionaryControl->addBlockRecordToBlockEntity(transGuid, ptListOfBlockRecords, maxBlockEntitySize);
+	boost::property_tree::ptree ptBlockEntity2 = ptestDataDictionaryControl->addBlockRecordToBlockEntity(transGuid, ptListOfBlockRecords, maxBlockEntitySize);
+
+	// write test xml file
+	ofstream blockFile2 ("xmlresult3.xml", ios::out | ios::binary);
+	write_xml(blockFile2, ptBlockEntity2);
+
 
 	BOOST_CHECK(ptBlockEntity.size()>0);
 
-	listOfBlockEntityFiles = ptestDataDictionaryControl->writeBlockEntityToBFiFile(ptBlockEntity);
+	listOfBlockEntityFiles = ptestDataDictionaryControl->writeBlockEntityToBFiFile(ptBlockEntity2);
 
 	BOOST_CHECK(listOfBlockEntityFiles.size()==1);
 
@@ -492,4 +501,15 @@ BOOST_AUTO_TEST_CASE(writeBlockEntitiesToBFiFiles)
 
 	cout<<"}"<<endl;
 }
+
+
+BOOST_AUTO_TEST_CASE(multipleAttributsInBlockEntities)
+{
+	cout<<"BOOS_AUTO_TEST(multipleAttributsInBlockEntities)\n{"<<endl;
+
+	BOOST_CHECK(false == true); // NOT ready yet
+
+	cout<<"}"<<endl;
+}
+
 
