@@ -503,11 +503,21 @@ BOOST_AUTO_TEST_CASE(writeBlockEntitiesToBFiFiles)
 }
 
 
-BOOST_AUTO_TEST_CASE(multipleAttributsInBlockEntities)
+BOOST_AUTO_TEST_CASE(addAttributToBlockRecord)
 {
-	cout<<"BOOS_AUTO_TEST(multipleAttributsInBlockEntities)\n{"<<endl;
+	using boost::optional;
+	using boost::property_tree::ptree;
 
-	BOOST_CHECK(false == true); // NOT ready yet
+	cout<<"BOOS_AUTO_TEST(addAttributToBlockRecord)\n{"<<endl;
+
+	CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
+	// check for return value
+	ptree ptListOfBlockRecords;
+	BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(ptListOfBlockRecords)); 
+ 	// check that list now contain basic 'listOfBlockRecords' - which is necessary	
+	optional< ptree& > child = ptListOfBlockRecords.get_child_optional( "listOfBlockRecords" );
+	BOOST_CHECK(child);
+
 
 	cout<<"}"<<endl;
 }

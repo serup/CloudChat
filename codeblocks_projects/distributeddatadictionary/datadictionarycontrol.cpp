@@ -349,7 +349,7 @@ long CDataDictionaryControl::totalSizeOf(std::vector<pair<unsigned char*, int>> 
 	return totalCount;
 }
 
-boost::property_tree::ptree CDataDictionaryControl::addBlockRecordToBlockEntity(std::string transGuid, boost::property_tree::ptree &pt, long maxBlockEntitySize)
+boost::property_tree::ptree CDataDictionaryControl::addBlockRecordToBlockEntity(std::string transGuid, boost::property_tree::ptree &ptListOfBlockRecords, long maxBlockEntitySize)
 {
 	using boost::property_tree::ptree;
 	ptree _empty_tree;
@@ -365,7 +365,7 @@ boost::property_tree::ptree CDataDictionaryControl::addBlockRecordToBlockEntity(
 	node.add("BlockEntity", "");
 
 	iBytesLeftInBlockEntity=maxBlockEntitySize;
-	BOOST_FOREACH(boost::property_tree::ptree::value_type &v2, pt.get_child("listOfBlockRecords", _empty_tree)) 
+	BOOST_FOREACH(boost::property_tree::ptree::value_type &v2, ptListOfBlockRecords.get_child("listOfBlockRecords", _empty_tree)) 
 	{
 		if(v2.first == "BlockRecord")
 		{
@@ -470,6 +470,31 @@ std::vector< pair<std::string ,int> > CDataDictionaryControl::writeBlockEntityTo
 
 
 	return listOfBlockEntityFiles;
+}
+
+bool CDataDictionaryControl::addAttributToBlockRecord(boost::property_tree::ptree &ptListOfBlockRecords)
+{
+	using boost::property_tree::ptree;
+	using boost::optional;
+	bool bResult=false;
+	
+	// make sure a list is present or else create
+	optional< ptree& > child = ptListOfBlockRecords.get_child_optional( "listOfBlockRecords" );
+	if( !child )
+	{
+		// child node is missing - now create initial basic node
+		ptListOfBlockRecords.add("listOfBlockRecords", "");		
+	}
+
+	ptree &node = ptListOfBlockRecords;
+
+	//TODO: add attribut ...
+	
+
+
+	//bResult=true;
+
+	return bResult;
 }
 
 

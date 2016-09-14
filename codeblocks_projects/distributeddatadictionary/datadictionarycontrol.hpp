@@ -49,6 +49,7 @@ class CDataDictionaryControl
 	long fetchBlockRecordSize(boost::property_tree::ptree::value_type &vt);
 	std::vector< pair<std::string ,int> > writeBlockEntityToBFiFile(boost::property_tree::ptree &ptBlockEntities);
 
+	bool addAttributToBlockRecord(boost::property_tree::ptree &ptListOfBlockRecords);
 	
     protected:
 	
