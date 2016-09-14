@@ -175,7 +175,7 @@ boost::property_tree::ptree CDataDictionaryControl::createBFiBlockRecord(bool bf
 	return pt;
 }
 
-std::vector< pair<unsigned char*, int> > CDataDictionaryControl::splitAttributIntoDEDchunks(long aiid, std::string attributName, std::vector<unsigned char>& attributValue, long maxDEDchunkSize)
+std::vector< pair<unsigned char*, int> > CDataDictionaryControl::splitAttributIntoDEDchunks(long &aiid, std::string attributName, std::vector<unsigned char>& attributValue, long maxDEDchunkSize)
 {
     using boost::property_tree::ptree;
 	ptree pt;
@@ -242,7 +242,7 @@ std::vector< pair<unsigned char*, int> > CDataDictionaryControl::splitAttributIn
 }
 
 
-boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(long aiid, std::string realmName, std::string ddid, std::vector<pair<unsigned char*,int>>listOfDEDchunks, long maxBlockRecordSize)
+boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(long &aiid, std::string realmName, std::string ddid, std::vector<pair<unsigned char*,int>>listOfDEDchunks, long maxBlockRecordSize)
 {
 	using boost::property_tree::ptree;
 	std::string strTransGUID="";
@@ -388,11 +388,6 @@ boost::property_tree::ptree CDataDictionaryControl::addBlockRecordToBlockEntity(
 		}	 
 	}
 
-	//DEBUG	
-	// write test xml file
-	//ofstream blockFile ("xmlresult2.xml", ios::out | ios::binary);
-	//write_xml(blockFile, blkrecord);
-
 	return blkrecord;
 }
 
@@ -472,7 +467,7 @@ std::vector< pair<std::string ,int> > CDataDictionaryControl::writeBlockEntityTo
 	return listOfBlockEntityFiles;
 }
 
-bool CDataDictionaryControl::addAttributToBlockRecord(boost::property_tree::ptree &ptListOfBlockRecords)
+bool CDataDictionaryControl::addAttributToBlockRecord(boost::property_tree::ptree &ptListOfBlockRecords, long maxBlockRecordSize, std::string realmName, std::string attributName, std::vector<unsigned char> attributValue)
 {
 	using boost::property_tree::ptree;
 	using boost::optional;
@@ -488,11 +483,18 @@ bool CDataDictionaryControl::addAttributToBlockRecord(boost::property_tree::ptre
 
 	ptree &node = ptListOfBlockRecords;
 
-	//TODO: add attribut ...
+	long maxDEDchunkSize=300;
+	static long aiid=0;
+	std::vector< pair<unsigned char*,int> > listOfDEDchunks = splitAttributIntoDEDchunks(aiid, attributName, attributValue, maxDEDchunkSize);
+
+	aiid=0;
+//	boost::property_tree::ptree ptListOfBlockRecords = addDEDchunksToBlockRecords(aiid, realmName, attributName, listOfDEDchunks, maxBlockRecordSize);
+
+//TODO: add attribut ...
 	
 
 
-	//bResult=true;
+	bResult=true;
 
 	return bResult;
 }

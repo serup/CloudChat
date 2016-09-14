@@ -315,7 +315,8 @@ BOOST_AUTO_TEST_CASE(splitAttributIntoDEDchunks)
 	long maxDEDchunkSize=300; // should yield several chunks for this attribut
 
 	// split image data into several chunks of DED
-	std::vector< pair<unsigned char*,int> > listOfDEDchunks = ptestDataDictionaryControl->splitAttributIntoDEDchunks(0, attributName, FileDataBytesInVector, maxDEDchunkSize);
+	long aiid=0;
+	std::vector< pair<unsigned char*,int> > listOfDEDchunks = ptestDataDictionaryControl->splitAttributIntoDEDchunks(aiid, attributName, FileDataBytesInVector, maxDEDchunkSize);
 
 	std::cout << "listOfDEDchunks : " << listOfDEDchunks.size() << '\n';
 	// verify that image is in DED blocks
@@ -351,12 +352,13 @@ BOOST_AUTO_TEST_CASE(addChunkDataToBlockRecord)
 	long maxBlockRecordSize=65000; // should yield only one BlockRecord, since foto can be in one
 	long maxDEDchunkSize=300; // should yield several chunks for this attribut
 
-	std::vector< pair<unsigned char*,int> > listOfDEDchunks = ptestDataDictionaryControl->splitAttributIntoDEDchunks(0, attributName, FileDataBytesInVector, maxDEDchunkSize);
+	long aiid=0;
+	std::vector< pair<unsigned char*,int> > listOfDEDchunks = ptestDataDictionaryControl->splitAttributIntoDEDchunks(aiid, attributName, FileDataBytesInVector, maxDEDchunkSize);
 	std::cout << "listOfDEDchunks : " << listOfDEDchunks.size() << '\n';
 	BOOST_CHECK(listOfDEDchunks.size() == 35);
 
 
-	long aiid=0;
+	aiid=0;
 	std::string realmName = "profile";
 	boost::property_tree::ptree pt = ptestDataDictionaryControl->addDEDchunksToBlockRecords(aiid, realmName, attributName, listOfDEDchunks, maxBlockRecordSize);
 
@@ -393,12 +395,13 @@ BOOST_AUTO_TEST_CASE(addBlockRecordToBlockEntity)
 	long maxBlockRecordSize=5250; // should yield in 3 BlockRecord, since foto cant be in one
 	long maxDEDchunkSize=300; // should yield several chunks for this attribut
 
-	std::vector< pair<unsigned char*,int> > listOfDEDchunks = ptestDataDictionaryControl->splitAttributIntoDEDchunks(0, attributName, FileDataBytesInVector, maxDEDchunkSize);
+	long aiid=0;
+	std::vector< pair<unsigned char*,int> > listOfDEDchunks = ptestDataDictionaryControl->splitAttributIntoDEDchunks(aiid, attributName, FileDataBytesInVector, maxDEDchunkSize);
 	std::cout << "listOfDEDchunks : " << listOfDEDchunks.size() << '\n';
 	BOOST_CHECK(listOfDEDchunks.size() == 35);
 
 
-	long aiid=0;
+	aiid=0;
 	std::string realmName = "profile";
 	boost::property_tree::ptree ptListOfBlockRecords = ptestDataDictionaryControl->addDEDchunksToBlockRecords(aiid, realmName, attributName, listOfDEDchunks, maxBlockRecordSize);
 
@@ -442,12 +445,13 @@ BOOST_AUTO_TEST_CASE(writeBlockEntitiesToBFiFiles)
 	long maxBlockRecordSize=5250; // should yield in 3 BlockRecord, since foto cant be in one
 	long maxDEDchunkSize=300; // should yield several chunks for this attribut
 
-	std::vector< pair<unsigned char*,int> > listOfDEDchunks = ptestDataDictionaryControl->splitAttributIntoDEDchunks(0, attributName, FileDataBytesInVector, maxDEDchunkSize);
+	long aiid=0;
+	std::vector< pair<unsigned char*,int> > listOfDEDchunks = ptestDataDictionaryControl->splitAttributIntoDEDchunks(aiid, attributName, FileDataBytesInVector, maxDEDchunkSize);
 	std::cout << "listOfDEDchunks : " << listOfDEDchunks.size() << '\n';
 	BOOST_CHECK(listOfDEDchunks.size() == 35);
 
 
-	long aiid=0;
+	aiid=0;
 	std::string realmName = "profile";
 	boost::property_tree::ptree ptListOfBlockRecords = ptestDataDictionaryControl->addDEDchunksToBlockRecords(aiid, realmName, attributName, listOfDEDchunks, maxBlockRecordSize);
 
@@ -513,11 +517,18 @@ BOOST_AUTO_TEST_CASE(addAttributToBlockRecord)
 	CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
 	// check for return value
 	ptree ptListOfBlockRecords;
-	BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(ptListOfBlockRecords)); 
+	std::string attributName = "name";
+	std::string name = "Johnny Serup";	
+	std::vector<unsigned char> attributValue(name.begin(), name.end());
+	std::string realmName = "profile";
+	long maxBlockRecordSize=64000;	
+
+	BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName, attributValue)); 
  	// check that list now contain basic 'listOfBlockRecords' - which is necessary	
 	optional< ptree& > child = ptListOfBlockRecords.get_child_optional( "listOfBlockRecords" );
 	BOOST_CHECK(child);
 
+	
 
 	cout<<"}"<<endl;
 }
