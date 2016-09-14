@@ -528,8 +528,55 @@ BOOST_AUTO_TEST_CASE(addAttributToBlockRecord)
 	optional< ptree& > child = ptListOfBlockRecords.get_child_optional( "listOfBlockRecords" );
 	BOOST_CHECK(child);
 
-	
+	// verify that attribut has been added
+	BOOST_FOREACH(ptree::value_type &vt, ptListOfBlockRecords.get_child("listOfBlockRecords"))
+	{
+		cout << " - first : " << vt.first << endl;
 
+	}
+
+	child = ptListOfBlockRecords.get_child_optional( "BlockRecord.chunk_data.chunk_record.chunk_ddid" );
+	BOOST_CHECK(child);
+
+	std::string chunk_ddid = ptListOfBlockRecords.get_child( "BlockRecord.chunk_data.chunk_record.chunk_ddid" ).data();
+	cout << "chunk_ddid : " << chunk_ddid << endl;		
+	BOOST_CHECK(chunk_ddid == attributName);	
+
+	std::string hexdata = ptListOfBlockRecords.get_child( "BlockRecord.chunk_data.chunk_record.Data" ).data();
+
+	unsigned char* data_in_unhexed_buf = (unsigned char*) malloc (hexdata.size());
+        ZeroMemory(data_in_unhexed_buf,hexdata.size()); // make sure no garbage is inside the newly allocated space
+        boost::algorithm::unhex(hexdata.begin(),hexdata.end(), data_in_unhexed_buf);// convert the hex array to an array containing byte values
+
+	cout << "hexdata : < " << hexdata << " > " << endl; 
+        cout << "hexdata size: " << hexdata.size() << endl;
+
+        DED_PUT_DATA_IN_DECODER(decoder_ptr,data_in_unhexed_buf,hexdata.size());
+        BOOST_CHECK(decoder_ptr != 0);
+
+struct EntityChunkDataInfo{
+    std::string entity_chunk_id;
+    unsigned long aiid;
+    unsigned long entity_chunk_seq;
+    std::vector<unsigned char> entity_chunk_data;
+};
+	
+        EntityChunkDataInfo chunk;
+ 	// decode data ...
+        DED_GET_STRUCT_START( decoder_ptr, "chunk_record" );
+            DED_GET_STDSTRING	( decoder_ptr, "attribut_chunk_id", chunk.entity_chunk_id ); // key of particular item
+            DED_GET_ULONG   	( decoder_ptr, "attribut_aiid", chunk.aiid ); // this number is continuesly increasing all thruout the entries in this table
+            DED_GET_ULONG   	( decoder_ptr, "attribut_chunk_seq", chunk.entity_chunk_seq ); // sequence number of particular item
+            DED_GET_STDVECTOR	( decoder_ptr, "attribut_chunk_data", chunk.entity_chunk_data ); //
+        DED_GET_STRUCT_END( decoder_ptr, "chunk_record" );
+	
+	cout << "entity_chunk_id : " << chunk.entity_chunk_id << endl;
+	cout << "entity_aiid : " << chunk.aiid << endl;
+	cout << "entity_chunk_seq : " << chunk.entity_chunk_seq << endl;
+	//cout << "entity_chunk_data : " << chunk.entity_chunk_data << endl;
+
+	BOOST_CHECK(chunk.entity_chunk_id == attributName); 
+		
 	cout<<"}"<<endl;
 }
 

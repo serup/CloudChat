@@ -241,7 +241,6 @@ std::vector< pair<unsigned char*, int> > CDataDictionaryControl::splitAttributIn
 	return listOfDEDchunks;
 }
 
-
 boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(long &aiid, std::string realmName, std::string ddid, std::vector<pair<unsigned char*,int>>listOfDEDchunks, long maxBlockRecordSize)
 {
 	using boost::property_tree::ptree;
@@ -296,6 +295,69 @@ boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(l
 	write_xml(blockFile, pt);
 
 	return pt;		
+}
+
+
+
+bool CDataDictionaryControl::addDEDchunksToBlockRecords(boost::property_tree::ptree &pt, long &aiid, std::string realmName, std::string ddid, std::vector<pair<unsigned char*,int>>listOfDEDchunks, long maxBlockRecordSize)
+{
+	using boost::property_tree::ptree;
+	using boost::optional;
+	
+	bool bResult=false;
+	std::string strTransGUID="";
+	long bytesLeftInBlockRecord = maxBlockRecordSize;
+	pair <unsigned char*,int> chunk;
+	long seq=1; // Every BlockRecord have a sequence number 
+	int iTotalSize=totalSizeOf(listOfDEDchunks);
+	int iBytesLeft=iTotalSize;
+	int n=0;
+	bool bfirst=true;
+
+		// make sure a list is present or else create
+	optional< ptree& > child = pt.get_child_optional( "listOfBlockRecords" );
+	if( !child )
+	{
+		// child node is missing - now create initial basic node
+		pt.add("listOfBlockRecords", "");		
+	}
+
+	ptree &node = pt.get_child("listOfBlockRecords");
+	node.put("chunksInBlockRecords",listOfDEDchunks.size());
+
+	std::cout << "total size of DED chunks: " << iTotalSize << '\n';
+
+	BOOST_FOREACH( chunk, listOfDEDchunks )
+	{
+		if(aiid==0) 
+			strTransGUID = CMD5((const char*)chunk.first).GetMD5s();
+
+		if(bytesLeftInBlockRecord<=0) {
+			bfirst=true;
+			bytesLeftInBlockRecord = maxBlockRecordSize;
+		}
+		bytesLeftInBlockRecord-= chunk.second;
+		iBytesLeft = iBytesLeft - chunk.second;
+		std::cout << "bytes left : " << iBytesLeft << '\n';
+		if(iBytesLeft >= 0) {
+			boost::property_tree::ptree subpt = createBFiBlockRecord(bfirst, ++aiid, seq, strTransGUID, ddid, realmName, (char*)chunk.first, chunk.second);
+			std::cout << "appending chunk of size : " << chunk.second << '\n';
+			cout << "- search for last BlockRecord " << endl;
+			if(bfirst) {
+				pt.insert(pt.get_child("listOfBlockRecords").end(),subpt.front());
+				seq++; // new BlockRecord, thus new sequence number
+			}
+			else {
+				if (!appendChunkRecordToLastBlockRecordsChunkData(pt, subpt)) cout << "- FAIL: somehow there was no BlockRecords.chunk_data section to append chunk_record to - possible corrupt data" << endl;
+			}
+			bResult=true;
+		}
+		else
+			cout << "- OK! no more chunks to insert " << endl;
+		bfirst=false;	
+	}
+
+	return bResult;		
 }
 
 
@@ -481,20 +543,20 @@ bool CDataDictionaryControl::addAttributToBlockRecord(boost::property_tree::ptre
 		ptListOfBlockRecords.add("listOfBlockRecords", "");		
 	}
 
-	ptree &node = ptListOfBlockRecords;
+//	ptree &node = ptListOfBlockRecords;
 
 	long maxDEDchunkSize=300;
 	static long aiid=0;
 	std::vector< pair<unsigned char*,int> > listOfDEDchunks = splitAttributIntoDEDchunks(aiid, attributName, attributValue, maxDEDchunkSize);
 
 	aiid=0;
-//	boost::property_tree::ptree ptListOfBlockRecords = addDEDchunksToBlockRecords(aiid, realmName, attributName, listOfDEDchunks, maxBlockRecordSize);
+	bool bAdded = addDEDchunksToBlockRecords(ptListOfBlockRecords, aiid, realmName, attributName, listOfDEDchunks, maxBlockRecordSize);
 
 //TODO: add attribut ...
 	
 
 
-	bResult=true;
+	bResult=bAdded;
 
 	return bResult;
 }
