@@ -277,6 +277,7 @@ BOOST_AUTO_TEST_CASE(writeBlockIntoBFiStructure)
 			std::string strMD5(CMD5((const char*)f.chunk_data_in_hex.c_str()).GetMD5s());
 			BOOST_CHECK(f.chunk_md5 == strMD5);
 
+			//TODO: check that data can be decoded !!!!
 		}
 	}
 
@@ -285,6 +286,63 @@ BOOST_AUTO_TEST_CASE(writeBlockIntoBFiStructure)
 
 	cout<<"}"<<endl;
 }
+
+
+BOOST_AUTO_TEST_CASE(DecodeAftersplitAttributIntoDEDchunks_small)
+{
+	cout<<"BOOS_AUTO_TEST(DecodeAftersplitAttributIntoDEDchunks)\n{"<<endl;
+
+	std::string attributName = "name";
+	std::string name = "Johnny Serup";	
+	std::vector<unsigned char> attributValue(name.begin(), name.end());
+
+	long maxDEDblockSize=65000; // should yield only one BlockRecord, since foto can be in one
+	long maxDEDchunkSize=300; // should yield 1 chunk for this attribut
+
+	// split data into several chunks of DED if size is bigger than DEDchunkSize
+	long aiid=0;
+	CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
+	std::vector< pair<unsigned char*,int> > listOfDEDchunks = ptestDataDictionaryControl->splitAttributIntoDEDchunks(aiid, attributName, attributValue, maxDEDchunkSize);
+
+	std::cout << "listOfDEDchunks : " << listOfDEDchunks.size() << '\n';
+	// verify that data is in DED blocks
+	BOOST_CHECK(listOfDEDchunks.size() == 1);
+
+	struct EntityChunkDataInfo{
+			std::string entity_chunk_id;
+			unsigned long aiid;
+			unsigned long entity_chunk_seq;
+			std::vector<unsigned char> entity_chunk_data;
+	};
+
+	// now decode and verify
+	pair <unsigned char*,int> chunk;
+	BOOST_FOREACH( chunk, listOfDEDchunks )
+	{
+			cout << "decode outside function " << endl;
+			cout << "--- chunk.second ; size of chunk " << chunk.second << endl;
+			DED_PUT_DATA_IN_DECODER(decoder_ptr,chunk.first,chunk.second);
+
+			EntityChunkDataInfo chunk;
+			// decode data ...
+			DED_GET_STRUCT_START( decoder_ptr, "chunk_record" );
+			DED_GET_STDSTRING	( decoder_ptr, "attribut_chunk_id", chunk.entity_chunk_id ); // key of particular item
+			DED_GET_ULONG   	( decoder_ptr, "attribut_aiid", chunk.aiid ); // this number is continuesly increasing all thruout the entries in this table
+			DED_GET_ULONG   	( decoder_ptr, "attribut_chunk_seq", chunk.entity_chunk_seq ); // sequence number of particular item
+			DED_GET_STDVECTOR	( decoder_ptr, "attribut_chunk_data", chunk.entity_chunk_data ); //
+			DED_GET_STRUCT_END( decoder_ptr, "chunk_record" );
+
+			cout << "--- entity_chunk_id : " << chunk.entity_chunk_id << endl;
+			cout << "--- entity_aiid : " << chunk.aiid << endl;
+			cout << "--- entity_chunk_seq : " << chunk.entity_chunk_seq << endl;
+			std::string strtmp(chunk.entity_chunk_data.begin(), chunk.entity_chunk_data.end());
+			if(strtmp.size() < 30)
+					cout << "--- entity_chunk_data : " << strtmp << endl;
+	}
+
+	cout<<"}"<<endl;
+}
+
 
 BOOST_AUTO_TEST_CASE(splitAttributIntoDEDchunks)
 {
@@ -564,7 +622,7 @@ struct EntityChunkDataInfo{
         EntityChunkDataInfo chunk;
  	// decode data ...
         DED_GET_STRUCT_START( decoder_ptr, "chunk_record" );
-            DED_GET_STDSTRING	( decoder_ptr, "attribut_chunk_id", chunk.entity_chunk_id ); // key of particular item
+            BOOST_CHECK(DED_GET_STDSTRING	( decoder_ptr, "attribut_chunk_id", chunk.entity_chunk_id )); // key of particular item
             DED_GET_ULONG   	( decoder_ptr, "attribut_aiid", chunk.aiid ); // this number is continuesly increasing all thruout the entries in this table
             DED_GET_ULONG   	( decoder_ptr, "attribut_chunk_seq", chunk.entity_chunk_seq ); // sequence number of particular item
             DED_GET_STDVECTOR	( decoder_ptr, "attribut_chunk_data", chunk.entity_chunk_data ); //
