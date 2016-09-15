@@ -60,9 +60,27 @@ BOOST_GLOBAL_FIXTURE(ReportRedirector)
 #endif
 #endif
 
+boost::shared_ptr< std::vector<int> > getV(){
+//Note the 'new' on the next line, as it is what actually creates the vector
+	boost::shared_ptr< std::vector<int> > v( new std::vector<int>() );
+	v->push_back(1);
+	v->push_back(2);
+	return v;
+}
+
 
 BOOST_AUTO_TEST_SUITE ( datadictionarycontrol ) // name of the test suite
 BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_CASE(returnstdvector)
+{
+	cout<<"BOOS_AUTO_TEST(returnstdvector)\n{"<<endl;
+		boost::shared_ptr< std::vector<int> > v = getV();
+		cout << " returning std::vector from function " << endl;
+		std::cout << v->at(0) << endl;
+		std::cout << v->at(1) << endl;
+	cout<<"}"<<endl;
+}
 
 BOOST_AUTO_TEST_CASE(datadictionarycontrol_instantiated)
 {
