@@ -60,11 +60,17 @@ BOOST_GLOBAL_FIXTURE(ReportRedirector)
 #endif
 #endif
 
-boost::shared_ptr< std::vector<int> > getV(){
+boost::shared_ptr< std::vector<pair<std::vector<unsigned char>,int>> > getV(){
 //Note the 'new' on the next line, as it is what actually creates the vector
-	boost::shared_ptr< std::vector<int> > v( new std::vector<int>() );
-	v->push_back(1);
-	v->push_back(2);
+	boost::shared_ptr< std::vector<pair<std::vector<unsigned char>,int>> > v( new std::vector<pair<std::vector<unsigned char>,int>>() );
+	std::string name1 = "Johnny Serup";	
+	std::vector<unsigned char> attributValue1(name1.begin(), name1.end());
+
+	std::string name2 = "Lee Xiao Long";	
+	std::vector<unsigned char> attributValue2(name2.begin(), name2.end());
+
+	v->push_back(make_pair(attributValue1,attributValue1.size()));
+	v->push_back(make_pair(attributValue2,attributValue2.size()));
 	return v;
 }
 
@@ -75,10 +81,12 @@ BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_CASE(returnstdvector)
 {
 	cout<<"BOOS_AUTO_TEST(returnstdvector)\n{"<<endl;
-		boost::shared_ptr< std::vector<int> > v = getV();
+		boost::shared_ptr< std::vector<pair<std::vector<unsigned char>,int>> > v = getV();
 		cout << " returning std::vector from function " << endl;
-		std::cout << v->at(0) << endl;
-		std::cout << v->at(1) << endl;
+		std::string strtmp(v->at(0).first.begin(),v->at(0).first.end()); 
+		std::string strtmp2(v->at(1).first.begin(),v->at(1).first.end()); 
+		std::cout << strtmp << " : " << v->at(0).second << endl;
+		std::cout << strtmp2 <<" : " << v->at(1).second << endl;
 	cout<<"}"<<endl;
 }
 
