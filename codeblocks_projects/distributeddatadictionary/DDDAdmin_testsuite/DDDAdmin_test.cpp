@@ -108,9 +108,9 @@ BOOST_AUTO_TEST_CASE(returnstdvectorpair)
 	cout<<"}"<<endl;
 }
 
-BOOST_AUTO_TEST_CASE(returnstdvectorpairWithpointerToBlob)
+BOOST_AUTO_TEST_CASE(returnstdvectorpairWithUnique_ptrToBlob)
 {
-	cout<<"BOOS_AUTO_TEST(returnstdvectorpairWithpointerToBlob)\n{"<<endl;
+	cout<<"BOOS_AUTO_TEST(returnstdvectorpairWithUnique_ptrToBlob)\n{"<<endl;
 	boost::shared_ptr< std::vector< pair<std::unique_ptr<unsigned char>,int>> > v = getVblob();
 	cout << " returning std::vector from function " << endl;
 
@@ -353,7 +353,7 @@ BOOST_AUTO_TEST_CASE(writeBlockIntoBFiStructure)
 
 BOOST_AUTO_TEST_CASE(DecodeAftersplitAttributIntoDEDchunks_small)
 {
-	cout<<"BOOS_AUTO_TEST(DecodeAftersplitAttributIntoDEDchunks)\n{"<<endl;
+	cout<<"BOOS_AUTO_TEST(DecodeAftersplitAttributIntoDEDchunks_small)\n{"<<endl;
 
 	std::string attributName = "name";
 	std::string name = "Johnny Serup";	
@@ -401,6 +401,7 @@ BOOST_AUTO_TEST_CASE(DecodeAftersplitAttributIntoDEDchunks_small)
 			std::string strtmp(chunk.entity_chunk_data.begin(), chunk.entity_chunk_data.end());
 			if(strtmp.size() < 30)
 					cout << "--- entity_chunk_data : " << strtmp << endl;
+			BOOST_CHECK(strtmp == name);
 	}
 
 	cout<<"}"<<endl;
