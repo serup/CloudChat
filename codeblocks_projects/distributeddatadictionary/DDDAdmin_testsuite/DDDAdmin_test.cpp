@@ -111,12 +111,12 @@ BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_CASE(returnstdvectorpair)
 {
 	cout<<"BOOS_AUTO_TEST(returnstdvector)\n{"<<endl;
-		boost::shared_ptr< std::vector<pair<std::vector<unsigned char>,int>> > v = getV();
-		cout << " returning std::vector from function " << endl;
-		std::string strtmp(v->at(0).first.begin(),v->at(0).first.end()); 
-		std::string strtmp2(v->at(1).first.begin(),v->at(1).first.end()); 
-		std::cout << strtmp << " : " << v->at(0).second << endl;
-		std::cout << strtmp2 <<" : " << v->at(1).second << endl;
+	boost::shared_ptr< std::vector<pair<std::vector<unsigned char>,int>> > v = getV();
+	cout << " returning std::vector from function " << endl;
+	std::string strtmp(v->at(0).first.begin(),v->at(0).first.end()); 
+	std::string strtmp2(v->at(1).first.begin(),v->at(1).first.end()); 
+	std::cout << strtmp << " : " << v->at(0).second << endl;
+	std::cout << strtmp2 <<" : " << v->at(1).second << endl;
 	cout<<"}"<<endl;
 }
 
@@ -544,6 +544,73 @@ BOOST_AUTO_TEST_CASE(splitAttributIntoDEDchunks)
 	std::cout << "listOfDEDchunks : " << listOfDEDchunks.size() << '\n';
 	// verify that image is in DED blocks
 	BOOST_CHECK(listOfDEDchunks.size() == 35);
+	cout<<"}"<<endl;
+}
+
+BOOST_AUTO_TEST_CASE(_splitAttributIntoDEDchunks)
+{
+	cout<<"BOOS_AUTO_TEST(_splitAttributIntoDEDchunks)\n{"<<endl;
+
+	// use an image file as attribut value
+	CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
+	std::string attributName = "foto";
+	std::vector<unsigned char> FileDataBytesInVector;
+	std::string fn = "testImage.png"; // should be of size 10.5 Kb
+	std::ifstream is (fn, ios::binary);
+	if (is)
+	{
+		long length = boost::filesystem::file_size(fn);
+		std::cout << "[readFile] Reading file: " << fn << " ; amount " << length << " characters... \n";
+		// Make sure receipient has room
+        	FileDataBytesInVector.resize(length,0);
+		//read content of infile
+		is.read ((char*)&FileDataBytesInVector[0],length);
+		std::cout << "[readFile] size: " << (int) FileDataBytesInVector.size() << '\n';
+		std::cout << "[readFile] capacity: " << (int) FileDataBytesInVector.capacity() << '\n';
+		std::cout << "[readFile] max_size: " << (int) FileDataBytesInVector.max_size() << '\n';
+		is.close();
+	}
+	BOOST_CHECK(FileDataBytesInVector.size() > 0);
+
+	long maxDEDblockSize=65000; // should yield only one BlockRecord, since foto can be in one
+	long maxDEDchunkSize=300; // should yield several chunks for this attribut
+
+	// split image data into several chunks of DED
+	long aiid=0;
+	std::vector< pair<std::vector<unsigned char>,int> > listOfDEDchunks = ptestDataDictionaryControl->_splitAttributIntoDEDchunks(aiid, attributName, FileDataBytesInVector, maxDEDchunkSize);
+
+	std::cout << "listOfDEDchunks : " << listOfDEDchunks.size() << '\n';
+	// verify that image is in DED blocks
+	BOOST_CHECK(listOfDEDchunks.size() == 35);
+
+	struct EntityChunkDataInfo{
+			std::string entity_chunk_id;
+			unsigned long aiid;
+			unsigned long entity_chunk_seq;
+			std::vector<unsigned char> entity_chunk_data;
+	};
+
+	BOOST_FOREACH( auto &chunk, listOfDEDchunks )
+	{
+			cout << "decode outside function " << endl;
+			cout << "--- chunk.second ; size of chunk " << chunk.second << endl;
+			DED_PUT_DATA_IN_DECODER(decoder_ptr,chunk.first.data(),chunk.second);
+
+			EntityChunkDataInfo _chunk;
+			// decode data ...
+			DED_GET_STRUCT_START( decoder_ptr, "chunk_record" );
+			DED_GET_STDSTRING	( decoder_ptr, "attribut_chunk_id", _chunk.entity_chunk_id ); // key of particular item
+			DED_GET_ULONG   	( decoder_ptr, "attribut_aiid", _chunk.aiid ); // this number is continuesly increasing all thruout the entries in this table
+			DED_GET_ULONG   	( decoder_ptr, "attribut_chunk_seq", _chunk.entity_chunk_seq ); // sequence number of particular item
+			DED_GET_STDVECTOR	( decoder_ptr, "attribut_chunk_data", _chunk.entity_chunk_data ); //
+			DED_GET_STRUCT_END( decoder_ptr, "chunk_record" );
+
+			cout << "--- entity_chunk_id : " << _chunk.entity_chunk_id << endl;
+			cout << "--- entity_aiid : " << _chunk.aiid << endl;
+			cout << "--- entity_chunk_seq : " << _chunk.entity_chunk_seq << endl;
+	}
+
+
 	cout<<"}"<<endl;
 }
 
