@@ -294,19 +294,19 @@ struct EntityChunkDataInfo{
 			cout << "--- chunk.second ; size of chunk " << chunk.second << endl;
 			DED_PUT_DATA_IN_DECODER(decoder_ptr,chunk.first,chunk.second);
 
-			EntityChunkDataInfo chunk;
+			EntityChunkDataInfo di;
 			// decode data ...
 			DED_GET_STRUCT_START( decoder_ptr, "chunk_record" );
-			DED_GET_STDSTRING	( decoder_ptr, "attribut_chunk_id", chunk.entity_chunk_id ); // key of particular item
-			DED_GET_ULONG   	( decoder_ptr, "attribut_aiid", chunk.aiid ); // this number is continuesly increasing all thruout the entries in this table
-			DED_GET_ULONG   	( decoder_ptr, "attribut_chunk_seq", chunk.entity_chunk_seq ); // sequence number of particular item
-			DED_GET_STDVECTOR	( decoder_ptr, "attribut_chunk_data", chunk.entity_chunk_data ); //
+			DED_GET_STDSTRING	( decoder_ptr, "attribut_chunk_id", di.entity_chunk_id ); // key of particular item
+			DED_GET_ULONG   	( decoder_ptr, "attribut_aiid", di.aiid ); // this number is continuesly increasing all thruout the entries in this table
+			DED_GET_ULONG   	( decoder_ptr, "attribut_chunk_seq", di.entity_chunk_seq ); // sequence number of particular item
+			DED_GET_STDVECTOR	( decoder_ptr, "attribut_chunk_data", di.entity_chunk_data ); //
 			DED_GET_STRUCT_END( decoder_ptr, "chunk_record" );
 
-			cout << "--- entity_chunk_id : " << chunk.entity_chunk_id << endl;
-			cout << "--- entity_aiid : " << chunk.aiid << endl;
-			cout << "--- entity_chunk_seq : " << chunk.entity_chunk_seq << endl;
-			std::string strtmp(chunk.entity_chunk_data.begin(), chunk.entity_chunk_data.end());
+			cout << "--- entity_chunk_id : " << di.entity_chunk_id << endl;
+			cout << "--- entity_aiid : " << di.aiid << endl;
+			cout << "--- entity_chunk_seq : " << di.entity_chunk_seq << endl;
+			std::string strtmp(di.entity_chunk_data.begin(), di.entity_chunk_data.end());
 			if(strtmp.size() < 30)
 					cout << "--- entity_chunk_data : " << strtmp << endl;
 	}
@@ -320,7 +320,8 @@ struct EntityChunkDataInfo{
 	return listOfDEDchunks;
 }
 
-/*boost::shared_ptr< std::vector< pair<unsigned char*, int> > > CDataDictionaryControl::splitAttributIntoDEDchunks(long &aiid, std::string attributName, std::vector<unsigned char>& attributValue, long maxDEDchunkSize)
+/*
+boost::shared_ptr<std::vector< pair<std::unique_ptr<unsigned char>, int> >> CDataDictionaryControl::_splitAttributIntoDEDchunks(long &aiid, std::string attributName, std::vector<unsigned char>& attributValue, long maxDEDchunkSize)
 {
     using boost::property_tree::ptree;
 	ptree pt;
@@ -333,7 +334,7 @@ struct EntityChunkDataInfo{
 	std::vector<unsigned char> chunkdata;
 	unsigned long entity_chunk_seq= (unsigned long)0;
 	bool bInternalFlush=false;
-	boost::shared_ptr< std::vector< pair<unsigned char*, int> > > listOfDEDchunks = new std::vector< pair<unsigned char*, int> >;
+	boost::shared_ptr<std::vector< pair<std::unique_ptr<unsigned char>, int> >> listOfDEDchunks;
 	int strangeCount=0;
 	bool bError=false;
 
@@ -386,38 +387,8 @@ struct EntityChunkDataInfo{
 			cout << "--- sizeofCompressedData : " << sizeofCompressedData << endl;
 			if(sizeofCompressedData==0) sizeofCompressedData = iLengthOfTotalData; // if sizeofcompresseddata is 0 then compression was not possible and size is the same as for uncompressed
 				iBytesLeft = iTotalSize-iMaxChunkSize*n;
-//+DEBUG
-//
-
-        DED_PUT_DATA_IN_DECODER(decoder_ptr,pCompressedData,sizeofCompressedData);
-
-struct EntityChunkDataInfo{
-    std::string entity_chunk_id;
-    unsigned long aiid;
-    unsigned long entity_chunk_seq;
-    std::vector<unsigned char> entity_chunk_data;
-};
-	
-        EntityChunkDataInfo chunk;
- 	// decode data ...
-        DED_GET_STRUCT_START( decoder_ptr, "chunk_record" );
-            DED_GET_STDSTRING	( decoder_ptr, "attribut_chunk_id", chunk.entity_chunk_id ); // key of particular item
-            DED_GET_ULONG   	( decoder_ptr, "attribut_aiid", chunk.aiid ); // this number is continuesly increasing all thruout the entries in this table
-            DED_GET_ULONG   	( decoder_ptr, "attribut_chunk_seq", chunk.entity_chunk_seq ); // sequence number of particular item
-            DED_GET_STDVECTOR	( decoder_ptr, "attribut_chunk_data", chunk.entity_chunk_data ); //
-        DED_GET_STRUCT_END( decoder_ptr, "chunk_record" );
-	
-	cout << "--- entity_chunk_id : " << chunk.entity_chunk_id << endl;
-	cout << "--- entity_aiid : " << chunk.aiid << endl;
-	cout << "--- entity_chunk_seq : " << chunk.entity_chunk_seq << endl;
-	std::string strtmp(chunk.entity_chunk_data.begin(), chunk.entity_chunk_data.end());
-	if(strtmp.size() < 30)
-		cout << "--- entity_chunk_data : " << strtmp << endl;
-	
-//-DEBUG
-
-
-			listOfDEDchunks->push_back(make_pair(pCompressedData,sizeofCompressedData));
+/
+			listOfDEDchunks->push_back(make_pair(std::unique_ptr<unsigned char>(pCompressedData),sizeofCompressedData));
 	
 
 //+DEBUG
@@ -429,12 +400,12 @@ struct EntityChunkDataInfo{
 	};
 
 	// now decode and verify
-	pair <unsigned char*,int> chunk;
+	pair <std::unique_ptr<unsigned char>,int> chunk;
 	BOOST_FOREACH( chunk, listOfDEDchunks )
 	{
 			cout << "decode inside function " << endl;
 			cout << "--- chunk.second ; size of chunk " << chunk.second << endl;
-			DED_PUT_DATA_IN_DECODER(decoder_ptr,chunk.first,chunk.second);
+			DED_PUT_DATA_IN_DECODER(decoder_ptr,chunk.first.get(),chunk.second);
 
 			EntityChunkDataInfo chunk;
 			// decode data ...
@@ -462,6 +433,7 @@ struct EntityChunkDataInfo{
 	return listOfDEDchunks;
 }
 */
+
 
 boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(long &aiid, std::string realmName, std::string ddid, std::vector<pair<unsigned char*,int>>listOfDEDchunks, long maxBlockRecordSize)
 {

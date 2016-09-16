@@ -92,6 +92,18 @@ boost::shared_ptr< std::vector< pair<std::unique_ptr<unsigned char>,int>> > getV
 	return v;
 }
 
+std::vector< pair<std::unique_ptr<unsigned char>,int>> getVVblob()
+{
+	std::vector< pair<std::unique_ptr<unsigned char>,int>> v;
+
+    std::unique_ptr<unsigned char> testData;
+	int sizeofdata=30;
+	testData.reset(new unsigned char[sizeofdata]);
+	memset(testData.get(),'M',sizeofdata);
+
+	v.push_back(make_pair(std::move(testData),sizeofdata)); // the std::move() is a cast that produces an rvalue-reference to an object, to enable moving from it.
+	return v;
+}
 
 BOOST_AUTO_TEST_SUITE ( datadictionarycontrol ) // name of the test suite
 BOOST_AUTO_TEST_SUITE_END()
@@ -108,11 +120,11 @@ BOOST_AUTO_TEST_CASE(returnstdvectorpair)
 	cout<<"}"<<endl;
 }
 
-BOOST_AUTO_TEST_CASE(returnstdvectorpairWithUnique_ptrToBlob)
+BOOST_AUTO_TEST_CASE(return_shared_ptr_stdvectorpairWithUnique_ptrToBlob)
 {
-	cout<<"BOOS_AUTO_TEST(returnstdvectorpairWithUnique_ptrToBlob)\n{"<<endl;
+	cout<<"BOOS_AUTO_TEST(return_shared_ptr_stdvectorpairWithUnique_ptrToBlob)\n{"<<endl;
 	boost::shared_ptr< std::vector< pair<std::unique_ptr<unsigned char>,int>> > v = getVblob();
-	cout << " returning std::vector from function " << endl;
+	cout << " returning shared_ptr std::vector from function " << endl;
 
 	std::vector<unsigned char> test;
 	test.assign(v->at(0).first.get(), v->at(0).first.get() + v->at(0).second);
@@ -125,6 +137,40 @@ BOOST_AUTO_TEST_CASE(returnstdvectorpairWithUnique_ptrToBlob)
 
 	cout<<"}"<<endl;
 }
+
+BOOST_AUTO_TEST_CASE(returnstdvectorpairWithUnique_ptrToBlob)
+{
+	cout<<"BOOS_AUTO_TEST(returnstdvectorpairWithUnique_ptrToBlob)\n{"<<endl;
+	std::vector< pair<std::unique_ptr<unsigned char>,int>> v = getVVblob();
+	cout << " returning std::vector from function " << endl;
+
+	std::vector<unsigned char> test;
+	test.assign(v.at(0).first.get(), v.at(0).first.get() + v.at(0).second);
+
+	std::string strResult(test.begin(),test.end()); 
+	std::cout << " value : " << strResult << endl << " size of value : " << v.at(0).second << endl;
+
+	std::string expected = "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMM";
+	BOOST_CHECK(expected == strResult);
+
+	cout << " - using BOOST_FOREACH " << endl;
+	BOOST_FOREACH( auto& chunk, v )
+	{
+		cout << " - " << chunk.second << endl;	
+		BOOST_CHECK(chunk.second == 30);
+		
+		std::vector<unsigned char> test;
+		test.assign(chunk.first.get(), chunk.first.get() + chunk.second);
+		std::string strResult(test.begin(),test.end()); 
+		 
+		cout << " - " << strResult << endl;
+		BOOST_CHECK(expected == strResult);
+
+	}
+
+	cout<<"}"<<endl;
+}
+
 
 
 BOOST_AUTO_TEST_CASE(datadictionarycontrol_instantiated)
