@@ -56,6 +56,8 @@ struct ReportRedirector
     }
 };
 
+typedef unsigned char __byte;
+
 BOOST_GLOBAL_FIXTURE(ReportRedirector)
 #endif
 #endif
@@ -74,11 +76,27 @@ boost::shared_ptr< std::vector<pair<std::vector<unsigned char>,int>> > getV(){
 	return v;
 }
 
+boost::shared_ptr< std::vector< pair<std::unique_ptr<unsigned char>,int>> > getVblob()
+{
+//Note the 'new' on the next line, as it is what actually creates the vector
+	boost::shared_ptr< std::vector< pair<std::unique_ptr<unsigned char>,int>> > v( new std::vector< pair<std::unique_ptr<unsigned char>,int> >() );
+
+
+    std::unique_ptr<unsigned char> testData;
+	int sizeofdata=30;
+	testData.reset(new unsigned char[sizeofdata]);
+	//ZeroMemory(testData.get(),sizeofdata);
+	memset(testData.get(),'M',sizeofdata);
+
+	v->push_back(make_pair(std::move(testData),sizeofdata)); // the std::move() is a cast that produces an rvalue-reference to an object, to enable moving from it.
+	return v;
+}
+
 
 BOOST_AUTO_TEST_SUITE ( datadictionarycontrol ) // name of the test suite
 BOOST_AUTO_TEST_SUITE_END()
 
-BOOST_AUTO_TEST_CASE(returnstdvector)
+BOOST_AUTO_TEST_CASE(returnstdvectorpair)
 {
 	cout<<"BOOS_AUTO_TEST(returnstdvector)\n{"<<endl;
 		boost::shared_ptr< std::vector<pair<std::vector<unsigned char>,int>> > v = getV();
@@ -89,6 +107,25 @@ BOOST_AUTO_TEST_CASE(returnstdvector)
 		std::cout << strtmp2 <<" : " << v->at(1).second << endl;
 	cout<<"}"<<endl;
 }
+
+BOOST_AUTO_TEST_CASE(returnstdvectorpairWithpointerToBlob)
+{
+	cout<<"BOOS_AUTO_TEST(returnstdvectorpairWithpointerToBlob)\n{"<<endl;
+	boost::shared_ptr< std::vector< pair<std::unique_ptr<unsigned char>,int>> > v = getVblob();
+	cout << " returning std::vector from function " << endl;
+
+	std::vector<unsigned char> test;
+	test.assign(v->at(0).first.get(), v->at(0).first.get() + v->at(0).second);
+
+	std::string strResult(test.begin(),test.end()); 
+	std::cout << " value : " << strResult << endl << " size of value : " << v->at(0).second << endl;
+
+	std::string expected = "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMM";
+	BOOST_CHECK(expected == strResult);
+
+	cout<<"}"<<endl;
+}
+
 
 BOOST_AUTO_TEST_CASE(datadictionarycontrol_instantiated)
 {
