@@ -467,7 +467,7 @@ BOOST_AUTO_TEST_CASE(DecodeAfter_splitAttributIntoDEDchunks_small)
 	// split data into several chunks of DED if size is bigger than DEDchunkSize
 	long aiid=0;
 	CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
-	std::vector< pair<std::unique_ptr<unsigned char>,int> > listOfDEDchunks = ptestDataDictionaryControl->_splitAttributIntoDEDchunks(aiid, attributName, attributValue, maxDEDchunkSize);
+	std::vector< pair<std::vector<unsigned char>,int> > listOfDEDchunks = ptestDataDictionaryControl->_splitAttributIntoDEDchunks(aiid, attributName, attributValue, maxDEDchunkSize);
 
 	std::cout << "listOfDEDchunks : " << listOfDEDchunks.size() << '\n';
 	// verify that data is in DED blocks
@@ -486,7 +486,7 @@ BOOST_AUTO_TEST_CASE(DecodeAfter_splitAttributIntoDEDchunks_small)
 	{
 			cout << "decode outside function " << endl;
 			cout << "--- chunk.second ; size of chunk " << chunk.second << endl;
-			DED_PUT_DATA_IN_DECODER(decoder_ptr,chunk.first.get(),chunk.second);
+			DED_PUT_DATA_IN_DECODER(decoder_ptr,chunk.first.data(),chunk.second);
 
 			EntityChunkDataInfo _chunk;
 			// decode data ...

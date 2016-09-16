@@ -321,7 +321,7 @@ struct EntityChunkDataInfo{
 
 
 
-std::vector< pair<std::unique_ptr<unsigned char>, int> > CDataDictionaryControl::_splitAttributIntoDEDchunks(long &aiid, std::string attributName, std::vector<unsigned char>& attributValue, long maxDEDchunkSize)
+std::vector< pair<std::vector<unsigned char>, int> > CDataDictionaryControl::_splitAttributIntoDEDchunks(long &aiid, std::string attributName, std::vector<unsigned char>& attributValue, long maxDEDchunkSize)
 {
     using boost::property_tree::ptree;
 	ptree pt;
@@ -334,7 +334,7 @@ std::vector< pair<std::unique_ptr<unsigned char>, int> > CDataDictionaryControl:
 	std::vector<unsigned char> chunkdata;
 	unsigned long entity_chunk_seq= (unsigned long)0;
 	bool bInternalFlush=false;
-	std::vector< pair<std::unique_ptr<unsigned char>,int> > listOfDEDchunks;
+	std::vector< pair<std::vector<unsigned char>,int> > listOfDEDchunks;
 	int strangeCount=0;
 	bool bError=false;
 
@@ -418,9 +418,9 @@ struct EntityChunkDataInfo{
 	
 //-DEBUG
 */
-
-			std::unique_ptr<unsigned char> up(pCompressedData);
-			listOfDEDchunks.push_back(make_pair(std::move(up),sizeofCompressedData));
+			std::vector<unsigned char> vdata;
+			vdata.assign(pCompressedData, pCompressedData + sizeofCompressedData);  
+			listOfDEDchunks.push_back(make_pair(vdata,sizeofCompressedData));
 	
 
 //+DEBUG
@@ -432,12 +432,12 @@ struct EntityChunkDataInfo{
 	};
 
 	// now decode and verify
-	//pair <unsigned char*,int> chunk;
+	//pair <std::vector<unsigned char>,int> chunk;
 	BOOST_FOREACH( auto &chunk, listOfDEDchunks )
 	{
 			cout << "decode inside function " << endl;
 			cout << "--- chunk.second ; size of chunk " << chunk.second << endl;
-			DED_PUT_DATA_IN_DECODER(decoder_ptr,chunk.first.get(),chunk.second);
+			DED_PUT_DATA_IN_DECODER(decoder_ptr,chunk.first.data(),chunk.second);
 
 			EntityChunkDataInfo di;
 			// decode data ...
