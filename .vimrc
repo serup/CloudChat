@@ -88,7 +88,6 @@ augroup END
 set autoread	
 set term=screen-256color
 colorscheme desert
-set foldmethod=syntax
 set foldnestmax=1
 
 if exists('$TMUX')
