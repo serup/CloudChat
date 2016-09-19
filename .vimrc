@@ -66,8 +66,8 @@ nnoremap <silent> <leader>yw :call WindowSwap#MarkWindowSwap()<CR>
 nnoremap <silent> <leader>pw :call WindowSwap#DoWindowSwap()<CR>
 nnoremap <silent> <leader>ww :call WindowSwap#EasyWindowSwap()<CR>
 noremap <F2> :AnsiEsc<CR>
-noremap <F9> :so build_project.vim<CR>:%g/^{/normal! zf%<CR> 
-noremap <F3> :so test_project.vim <CR>:%g/^{/normal! zf%<CR>
+noremap <F9> :so build_project.vim<CR>:%g/^{/normal! zf%<CR>gg<CR> 
+noremap <F3> :so test_project.vim <CR>:%g/^{/normal! zf%<CR>gg<CR>
 noremap <silent> <leader>fa :%g/^{/normal! zf%<CR>
 noremap <silent> <leader>jf <C-]><CR>
 noremap <silent> <leader>jb <C-t><CR>
