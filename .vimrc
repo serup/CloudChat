@@ -73,6 +73,7 @@ noremap <silent> <leader>jf <C-]><CR>
 noremap <silent> <leader>jb <C-t><CR>
 noremap <silent> <leader>tb :TagbarToggle<CR>
 noremap <silent> <leader>ft :NERDTreeToggle<CR>
+noremap <silent> <leader>gb :Gblame<CR>
 noremap <leader>xml :so xml_project_output.vim<CR>
 noremap <leader>M <C-W>\| <C-W>_
 noremap <leader>m <C-W>=

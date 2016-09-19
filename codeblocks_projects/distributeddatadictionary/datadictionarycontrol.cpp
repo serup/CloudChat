@@ -343,7 +343,8 @@ bool CDataDictionaryControl::addDEDchunksToBlockRecords(boost::property_tree::pt
 	}
 
 	ptree &node = pt.get_child("listOfBlockRecords");
-	node.put("chunksInBlockRecords",listOfDEDchunks.size());
+
+	
 
 	std::cout << "total size of DED chunks: " << iTotalSize << '\n';
 
@@ -394,11 +395,14 @@ bool CDataDictionaryControl::addDEDchunksToBlockRecords(boost::property_tree::pt
  */
 bool CDataDictionaryControl::appendChunkRecordToLastBlockRecordsChunkData(boost::property_tree::ptree &pt, boost::property_tree::ptree &subpt) 
 {
+	using boost::property_tree::ptree;
+	using boost::optional;
 	bool bResult = false;
 	try {
 		boost::property_tree::ptree _empty_tree;
 		BOOST_REVERSE_FOREACH(boost::property_tree::ptree::value_type &v2, pt.get_child("listOfBlockRecords", _empty_tree)) 
 		{
+
 			if(v2.first == "BlockRecord")
 			{ 
 				cout << "- OK: Found Last BlockRecord " << endl;
