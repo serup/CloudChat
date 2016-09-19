@@ -856,8 +856,11 @@ BOOST_AUTO_TEST_CASE(add2AttributsToBlockRecord)
 	child = ptListOfBlockRecords.get_child_optional( "BlockRecord.chunk_data.chunk_record.chunk_ddid" );
 	BOOST_CHECK(child);
 
+	cout << "________________________________________" << endl;
 	cout << "attributs added : " << endl;
 	int amountOfBlockRecords = 0;
+	int amountOfchunk_records = 0;
+
 	BOOST_FOREACH(ptree::value_type &vt, ptListOfBlockRecords.get_child("listOfBlockRecords"))
 	{
 		cout << " - attribut name : " << vt.first << endl;
@@ -866,16 +869,32 @@ BOOST_AUTO_TEST_CASE(add2AttributsToBlockRecord)
 			amountOfBlockRecords++;
 			BOOST_FOREACH(ptree::value_type &vt2 , vt.second)
 			{
-				cout << " - chunk_data : " << vt2.first << endl; 
+				if(vt2.first == "chunk_data")
+				{
+					cout << " - chunk_data : " << vt2.first << endl; 
+					BOOST_FOREACH(ptree::value_type &vt3, vt2.second)
+					{
+						if(vt3.first == "chunk_record") {
+							cout << " -- chunk_record : " << vt3.second.get_child("chunk_ddid").data() << endl; 
+							amountOfchunk_records++;
+						}
+					}
+				}
 			}
 		}
 	}
 
 	BOOST_CHECK(amountOfBlockRecords == 1); // Only one BlockRecord - the attributs should be added to BlockRecord until it is full, then new BlockRecord will be added
+	BOOST_CHECK(amountOfchunk_records == 2); // There should be two chunk_records - one for attribut1 and one for attribut2
+	cout << "________________________________________" << endl;
 
 	std::string chunk_ddid = ptListOfBlockRecords.get_child( "BlockRecord.chunk_data.chunk_record.chunk_ddid" ).data();
 	cout << "chunk_ddid : " << chunk_ddid << endl;		
 	BOOST_CHECK(chunk_ddid == attributName);	
+
+
+
+
 
 	// fetch Data from xml node
 	std::string hexdata = ptListOfBlockRecords.get_child( "BlockRecord.chunk_data.chunk_record.Data" ).data();
