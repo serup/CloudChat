@@ -275,7 +275,7 @@ BOOST_AUTO_TEST_CASE(writeBlockIntoBFiStructure)
 	std::string strTransGUID = "<empty>";
 
 	// Create testfile to be put into .BFi file
-    std::ofstream filestr;
+	std::ofstream filestr;
 	std::string testfilename("testfile.txt");
 
 	filestr.open (testfilename.c_str());
@@ -284,34 +284,34 @@ BOOST_AUTO_TEST_CASE(writeBlockIntoBFiStructure)
 
 	if (filestr.is_open())
 	{
-			filestr << " 0 This is a test file .";
-			filestr << " 1 This is a test file .";
-			filestr << " 2 This is a test file .";
-			filestr << " 3 This is a test file .";
-			filestr << " 4 This is a test file .";
-			filestr << " 5 This is a test file .";
-			filestr << " 6 This is a test file .";
-			filestr << " 7 This is a test file .";
-			filestr << " 8 This is a test file .";
-			filestr << " 9 This is a test file .";
-			filestr << "10 This is a test file .";
-			filestr << "11 This is a test file .";
-			filestr << "12 This is a test file .";
-			filestr << "13 This is a test file .";
-			filestr << "14 This is a test file .";
-			filestr << "15 This is a test file .";
-			filestr << "16 This is a test file .";
-			filestr << "17 This is a test file .";
-			filestr << "18 This is a test file .";
-			filestr << "19 This is a test file .";
-			filestr << "20 This is a test file .";
-			filestr << "21 This is a test file .";
-			filestr << "22 This is a test file .";
-			filestr.close();
+		filestr << " 0 This is a test file .";
+		filestr << " 1 This is a test file .";
+		filestr << " 2 This is a test file .";
+		filestr << " 3 This is a test file .";
+		filestr << " 4 This is a test file .";
+		filestr << " 5 This is a test file .";
+		filestr << " 6 This is a test file .";
+		filestr << " 7 This is a test file .";
+		filestr << " 8 This is a test file .";
+		filestr << " 9 This is a test file .";
+		filestr << "10 This is a test file .";
+		filestr << "11 This is a test file .";
+		filestr << "12 This is a test file .";
+		filestr << "13 This is a test file .";
+		filestr << "14 This is a test file .";
+		filestr << "15 This is a test file .";
+		filestr << "16 This is a test file .";
+		filestr << "17 This is a test file .";
+		filestr << "18 This is a test file .";
+		filestr << "19 This is a test file .";
+		filestr << "20 This is a test file .";
+		filestr << "21 This is a test file .";
+		filestr << "22 This is a test file .";
+		filestr.close();
 	}
 
 	// put testfile into .BFi file
-   	CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
+	CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
 
 	int amountOfBlocks=-1;
 
@@ -363,33 +363,33 @@ BOOST_AUTO_TEST_CASE(writeBlockIntoBFiStructure)
 
 			BlockRecordEntry f;
 			if(bfirst) {
-					f.TransGUID = pt.get<std::string>("BlockRecord.TransGUID");
-					f.chunk_id  = pt.get<std::string>("BlockRecord.chunk_id");
-					f.aiid 		= pt.get<unsigned long>("BlockRecord.aiid");
-					f.chunk_seq = pt.get<unsigned long>("BlockRecord.chunk_seq");
-					cout << "aiid : " << f.aiid <<endl;
-					BOOST_CHECK(f.aiid == ++count);
-					cout << "chunk_id : " << f.chunk_id <<endl;
-					// check if chunk_id is correct - it should be name of realm file, inorder to follow specs
-					BOOST_CHECK(f.chunk_id == testfilename);
-					cout << "chunk_seq : " << f.chunk_seq <<endl;
-					cout << "TransGUID : " << f.TransGUID <<endl;
-					f.chunk_ddid = pt.get<std::string>("BlockRecord.chunk_data.chunk_record.chunk_ddid");
-					f.chunk_data_in_hex = pt.get<std::string>("BlockRecord.chunk_data.chunk_record.Data");
-					f.chunk_size = pt.get<unsigned long>("BlockRecord.chunk_data.chunk_record.DataSize");
-					f.chunk_md5 = pt.get<std::string>("BlockRecord.chunk_data.chunk_record.DataMD5");
+				f.TransGUID = pt.get<std::string>("BlockRecord.TransGUID");
+				f.chunk_id  = pt.get<std::string>("BlockRecord.chunk_id");
+				f.aiid 		= pt.get<unsigned long>("BlockRecord.aiid");
+				f.chunk_seq = pt.get<unsigned long>("BlockRecord.chunk_seq");
+				cout << "aiid : " << f.aiid <<endl;
+				BOOST_CHECK(f.aiid == ++count);
+				cout << "chunk_id : " << f.chunk_id <<endl;
+				// check if chunk_id is correct - it should be name of realm file, inorder to follow specs
+				BOOST_CHECK(f.chunk_id == testfilename);
+				cout << "chunk_seq : " << f.chunk_seq <<endl;
+				cout << "TransGUID : " << f.TransGUID <<endl;
+				f.chunk_ddid = pt.get<std::string>("BlockRecord.chunk_data.chunk_record.chunk_ddid");
+				f.chunk_data_in_hex = pt.get<std::string>("BlockRecord.chunk_data.chunk_record.Data");
+				f.chunk_size = pt.get<unsigned long>("BlockRecord.chunk_data.chunk_record.DataSize");
+				f.chunk_md5 = pt.get<std::string>("BlockRecord.chunk_data.chunk_record.DataMD5");
 			}
 			else {
-					f.chunk_ddid = pt.get<std::string>("chunk_record.chunk_ddid");
-					f.chunk_data_in_hex = pt.get<std::string>("chunk_record.Data");
-					f.chunk_size = pt.get<unsigned long>("chunk_record.DataSize");
-					f.chunk_md5 = pt.get<std::string>("chunk_record.DataMD5");
+				f.chunk_ddid = pt.get<std::string>("chunk_record.chunk_ddid");
+				f.chunk_data_in_hex = pt.get<std::string>("chunk_record.Data");
+				f.chunk_size = pt.get<unsigned long>("chunk_record.DataSize");
+				f.chunk_md5 = pt.get<std::string>("chunk_record.DataMD5");
 			}
 			bfirst=false;
 
 			// check if data is in structure, and of correct size
 			BOOST_CHECK(f.chunk_size == f.chunk_data_in_hex.size());
-		 	// check if data has correct md5 sum
+			// check if data has correct md5 sum
 			std::string strMD5(CMD5((const char*)f.chunk_data_in_hex.c_str()).GetMD5s());
 			BOOST_CHECK(f.chunk_md5 == strMD5);
 
@@ -739,8 +739,6 @@ BOOST_AUTO_TEST_CASE(writeBlockEntitiesToBFiFiles)
 }
 
 
-
-
 BOOST_AUTO_TEST_CASE(addAttributToBlockRecord)
 {
 	using boost::optional;
@@ -749,7 +747,6 @@ BOOST_AUTO_TEST_CASE(addAttributToBlockRecord)
 	cout<<"BOOS_AUTO_TEST(addAttributToBlockRecord)\n{"<<endl;
 
 	CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
-	// check for return value
 	ptree ptListOfBlockRecords;
 	std::string attributName = "name";
 	std::string name = "Johnny Serup";	
@@ -776,18 +773,18 @@ BOOST_AUTO_TEST_CASE(addAttributToBlockRecord)
 	cout << "chunk_ddid : " << chunk_ddid << endl;		
 	BOOST_CHECK(chunk_ddid == attributName);	
 
+	// fetch Data from xml node
 	std::string hexdata = ptListOfBlockRecords.get_child( "BlockRecord.chunk_data.chunk_record.Data" ).data();
-
+	// convert Data 
 	unsigned char* data_in_unhexed_buf = (unsigned char*) malloc (hexdata.size());
         ZeroMemory(data_in_unhexed_buf,hexdata.size()); // make sure no garbage is inside the newly allocated space
         boost::algorithm::unhex(hexdata.begin(),hexdata.end(), data_in_unhexed_buf);// convert the hex array to an array containing byte values
 
 	cout << "hexdata : < " << hexdata << " > " << endl; 
         cout << "hexdata size: " << hexdata.size() << endl;
-
+	// initialize decoder with Data 
         DED_PUT_DATA_IN_DECODER(decoder_ptr,data_in_unhexed_buf,hexdata.size());
         BOOST_CHECK(decoder_ptr != 0);
-
 
         EntityChunkDataInfo _chunk;
  	// decode data ...
@@ -802,8 +799,113 @@ BOOST_AUTO_TEST_CASE(addAttributToBlockRecord)
 	cout << "entity_aiid : " << _chunk.aiid << endl;
 	cout << "entity_chunk_seq : " << _chunk.entity_chunk_seq << endl;
 
+	// verify decoded Data
 	BOOST_CHECK(_chunk.entity_chunk_id == attributName); 
+	std::string strtmp(_chunk.entity_chunk_data.begin(), _chunk.entity_chunk_data.end());
+	BOOST_CHECK(strtmp == name); 
+	BOOST_CHECK(_chunk.entity_chunk_data == attributValue); 
+
 		
+	cout<<"}"<<endl;
+}
+
+
+
+BOOST_AUTO_TEST_CASE(add2AttributsToBlockRecord)
+{
+	using boost::optional;
+	using boost::property_tree::ptree;
+
+	cout<<"BOOS_AUTO_TEST(add2AttributsToBlockRecord)\n{"<<endl;
+
+	CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
+	ptree ptListOfBlockRecords;
+
+	// attribut 1
+	std::string attributName = "name";
+	std::string name = "Johnny Serup";	
+	std::vector<unsigned char> attributValue(name.begin(), name.end());
+
+	// attribut 2
+	std::string attributName2 = "mobil";
+	std::string mobil = "555 - 332 211 900";	
+	std::vector<unsigned char> attributValue2(mobil.begin(), mobil.end());
+
+	std::string realmName = "profile";
+	long maxBlockRecordSize=64000;	
+
+	BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName, attributValue)); 
+	BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName2, attributValue2)); 
+ 
+
+	// check that list now contain basic 'listOfBlockRecords' - which is necessary	
+	optional< ptree& > child = ptListOfBlockRecords.get_child_optional( "listOfBlockRecords" );
+	BOOST_CHECK(child);
+
+	// verify that BlockRecord has been added
+	child = ptListOfBlockRecords.get_child_optional( "BlockRecord.chunk_data" );
+	BOOST_CHECK(child);
+
+	child = ptListOfBlockRecords.get_child_optional( "BlockRecord.chunk_data.chunk_record" );
+	BOOST_CHECK(child);
+
+	child = ptListOfBlockRecords.get_child_optional( "BlockRecord.chunk_data.chunk_record.chunk_ddid" );
+	BOOST_CHECK(child);
+
+	cout << "attributs added : " << endl;
+	int amountOfBlockRecords = 0;
+	BOOST_FOREACH(ptree::value_type &vt, ptListOfBlockRecords.get_child("listOfBlockRecords"))
+	{
+		cout << " - attribut name : " << vt.first << endl;
+		if(vt.first == "BlockRecord")
+		{
+			amountOfBlockRecords++;
+			BOOST_FOREACH(ptree::value_type &vt2 , vt.second)
+			{
+				cout << " - chunk_data : " << vt2.first << endl; 
+			}
+		}
+	}
+
+	BOOST_CHECK(amountOfBlockRecords == 1); // Only one BlockRecord - the attributs should be added to BlockRecord until it is full, then new BlockRecord will be added
+
+	std::string chunk_ddid = ptListOfBlockRecords.get_child( "BlockRecord.chunk_data.chunk_record.chunk_ddid" ).data();
+	cout << "chunk_ddid : " << chunk_ddid << endl;		
+	BOOST_CHECK(chunk_ddid == attributName);	
+
+	// fetch Data from xml node
+	std::string hexdata = ptListOfBlockRecords.get_child( "BlockRecord.chunk_data.chunk_record.Data" ).data();
+	// convert Data 
+	unsigned char* data_in_unhexed_buf = (unsigned char*) malloc (hexdata.size());
+        ZeroMemory(data_in_unhexed_buf,hexdata.size()); // make sure no garbage is inside the newly allocated space
+        boost::algorithm::unhex(hexdata.begin(),hexdata.end(), data_in_unhexed_buf);// convert the hex array to an array containing byte values
+
+	cout << "hexdata : < " << hexdata << " > " << endl; 
+        cout << "hexdata size: " << hexdata.size() << endl;
+	// initialize decoder with Data 
+        DED_PUT_DATA_IN_DECODER(decoder_ptr,data_in_unhexed_buf,hexdata.size());
+        BOOST_CHECK(decoder_ptr != 0);
+
+        EntityChunkDataInfo _chunk;
+ 	// decode data ...
+        DED_GET_STRUCT_START( decoder_ptr, "chunk_record" );
+            BOOST_CHECK(DED_GET_STDSTRING	( decoder_ptr, "attribut_chunk_id", _chunk.entity_chunk_id )); // key of particular item
+            DED_GET_ULONG   	( decoder_ptr, "attribut_aiid", _chunk.aiid ); // this number is continuesly increasing all thruout the entries in this table
+            DED_GET_ULONG   	( decoder_ptr, "attribut_chunk_seq", _chunk.entity_chunk_seq ); // sequence number of particular item
+            DED_GET_STDVECTOR	( decoder_ptr, "attribut_chunk_data", _chunk.entity_chunk_data ); //
+        DED_GET_STRUCT_END( decoder_ptr, "chunk_record" );
+	
+	cout << "entity_chunk_id : " << _chunk.entity_chunk_id << endl;
+	cout << "entity_aiid : " << _chunk.aiid << endl;
+	cout << "entity_chunk_seq : " << _chunk.entity_chunk_seq << endl;
+
+	// verify decoded Data
+	BOOST_CHECK(_chunk.entity_chunk_id == attributName); 
+	std::string strtmp(_chunk.entity_chunk_data.begin(), _chunk.entity_chunk_data.end());
+	BOOST_CHECK(strtmp == name); 
+	BOOST_CHECK(_chunk.entity_chunk_data == attributValue); 
+
+	
 	cout<<"}"<<endl;
 }
 
