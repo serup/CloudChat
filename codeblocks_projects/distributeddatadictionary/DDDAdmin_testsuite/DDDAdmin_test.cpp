@@ -834,8 +834,12 @@ BOOST_AUTO_TEST_CASE(add2AttributsToBlockRecord)
 	std::string realmName = "profile";
 	long maxBlockRecordSize=64000;	
 
+
+	cout << "BlockRecord size before: " << maxBlockRecordSize << endl;
 	BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName, attributValue)); 
+	cout << "BlockRecord size after 1 attribut add : " << maxBlockRecordSize << endl;
 	BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName2, attributValue2)); 
+	cout << "BlockRecord size after 2 atrribut add : " << maxBlockRecordSize << endl;
  
 
 	// check that list now contain basic 'listOfBlockRecords' - which is necessary	

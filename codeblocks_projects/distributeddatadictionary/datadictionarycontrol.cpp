@@ -312,7 +312,7 @@ boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(l
 
 
 
-bool CDataDictionaryControl::addDEDchunksToBlockRecords(boost::property_tree::ptree &pt, long &aiid, std::string realmName, std::string ddid, std::vector<pair<std::vector<unsigned char>,int>>listOfDEDchunks, long maxBlockRecordSize)
+bool CDataDictionaryControl::addDEDchunksToBlockRecords(boost::property_tree::ptree &pt, long &aiid, std::string realmName, std::string ddid, std::vector<pair<std::vector<unsigned char>,int>>listOfDEDchunks, long &maxBlockRecordSize)
 {
 	using boost::property_tree::ptree;
 	using boost::optional;
@@ -325,14 +325,21 @@ bool CDataDictionaryControl::addDEDchunksToBlockRecords(boost::property_tree::pt
 	int iTotalSize=totalSizeOf(listOfDEDchunks);
 	int iBytesLeft=iTotalSize;
 	int n=0;
-	bool bfirst=true;
+	bool bfirst=false;
 
-		// make sure a list is present or else create
+	// make sure a list is present or else create
 	optional< ptree& > child = pt.get_child_optional( "listOfBlockRecords" );
 	if( !child )
 	{
 		// child node is missing - now create initial basic node
 		pt.add("listOfBlockRecords", "");		
+	}
+	
+	child = pt.get_child_optional( "BlockRecord.chunk_data" );
+	if( !child )
+	{
+		// child node is missing - this must be first time 
+		bfirst=true;
 	}
 
 	ptree &node = pt.get_child("listOfBlockRecords");
@@ -370,6 +377,7 @@ bool CDataDictionaryControl::addDEDchunksToBlockRecords(boost::property_tree::pt
 		bfirst=false;	
 	}
 
+	maxBlockRecordSize = bytesLeftInBlockRecord;
 	return bResult;		
 }
 
@@ -542,12 +550,13 @@ std::vector< pair<std::string ,int> > CDataDictionaryControl::writeBlockEntityTo
 	return listOfBlockEntityFiles;
 }
 
-bool CDataDictionaryControl::addAttributToBlockRecord(boost::property_tree::ptree &ptListOfBlockRecords, long maxBlockRecordSize, std::string realmName, std::string attributName, std::vector<unsigned char> attributValue)
+bool CDataDictionaryControl::addAttributToBlockRecord(boost::property_tree::ptree &ptListOfBlockRecords, long &maxBlockRecordSize, std::string realmName, std::string attributName, std::vector<unsigned char> attributValue)
 {
 	using boost::property_tree::ptree;
 	using boost::optional;
 	bool bResult=false;
-	
+
+/* redundant	
 	// make sure a list is present or else create
 	optional< ptree& > child = ptListOfBlockRecords.get_child_optional( "listOfBlockRecords" );
 	if( !child )
@@ -555,7 +564,7 @@ bool CDataDictionaryControl::addAttributToBlockRecord(boost::property_tree::ptre
 		// child node is missing - now create initial basic node
 		ptListOfBlockRecords.add("listOfBlockRecords", "");		
 	}
-
+*/
 
 	long maxDEDchunkSize=300;
 	static long aiid=0;
@@ -564,12 +573,8 @@ bool CDataDictionaryControl::addAttributToBlockRecord(boost::property_tree::ptre
 	aiid=0;
 	bool bAdded = addDEDchunksToBlockRecords(ptListOfBlockRecords, aiid, realmName, attributName, listOfDEDchunks, maxBlockRecordSize);
 
-//TODO: add attribut ...
-	
-
 
 	bResult=bAdded;
-
 	return bResult;
 }
 
