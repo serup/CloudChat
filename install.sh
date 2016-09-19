@@ -32,7 +32,9 @@ function set-title() {
   fi
   TITLE="\[\e]2;$@\a\]"
   #PS1=${ORIG}${TITLE}
-  export PS1='\e[01;33m\w>\[\033[00m\] '
+  #export PS1='\e[01;33m\w>\[\033[00m\] '
+  export PS1='\[\033[01;32m\]\u:\[\033[00m\]\W\$ '
+
   echo "put PS1 statement in ~/.bashrc : "
   #export PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
 }
@@ -132,6 +134,14 @@ if [ "" == "$PKG_OK" ]; then
   echo " - done."
 else
   echo "- gitk already installed"
+fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 kdiff3* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install kdiff3 on ubuntu, to use when comparing files "
+  sudo apt-fast install -yq kdiff3 
+  echo " - done."
+else
+  echo "- kdiff3 already installed"
 fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 wireshark |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
