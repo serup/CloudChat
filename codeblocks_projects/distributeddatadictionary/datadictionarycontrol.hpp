@@ -43,10 +43,9 @@ class CDataDictionaryControl
 	bool CreateBlockFile(std::string filename);
 	int splitFileIntoBlocks(std::string filename);
 	boost::property_tree::ptree createBFiBlockRecord(bool bfirst,long aiid, long seq, std::string transGuid,std::string ddid, std::string realmName, char* blob, int size);
-	std::vector< pair<unsigned char*,int> > splitAttributIntoDEDchunks(long &aiid, std::string attributName, std::vector<unsigned char>& attributValue, long maxDEDchunkSize);
-	std::vector< pair<std::vector<unsigned char>,int> > _splitAttributIntoDEDchunks(long &aiid, std::string attributName, std::vector<unsigned char>& attributValue, long maxDEDchunkSize);
-	boost::property_tree::ptree addDEDchunksToBlockRecords(long &aiid, std::string realmName, std::string ddid, std::vector<pair<unsigned char*,int>>listOfDEDchunks, long maxBlockRecordSize);
-	bool addDEDchunksToBlockRecords(boost::property_tree::ptree &pt, long &aiid, std::string realmName, std::string ddid, std::vector<pair<unsigned char*,int>>listOfDEDchunks, long maxBlockRecordSize);
+	std::vector< pair<std::vector<unsigned char>,int> > splitAttributIntoDEDchunks(long &aiid, std::string attributName, std::vector<unsigned char>& attributValue, long maxDEDchunkSize);
+	boost::property_tree::ptree addDEDchunksToBlockRecords(long &aiid, std::string realmName, std::string ddid, std::vector<pair<std::vector<unsigned char>,int>>listOfDEDchunks, long maxBlockRecordSize);
+	bool addDEDchunksToBlockRecords(boost::property_tree::ptree &pt, long &aiid, std::string realmName, std::string ddid, std::vector<pair<std::vector<unsigned char>,int>>listOfDEDchunks, long maxBlockRecordSize);
 
 	boost::property_tree::ptree addBlockRecordToBlockEntity(std::string transGuid, boost::property_tree::ptree &pt, long maxBlockEntitySize);
 	long fetchBlockRecordSize(boost::property_tree::ptree::value_type &vt);
@@ -59,7 +58,7 @@ class CDataDictionaryControl
     private:
 	vector< pair<char*, int> > readFile(const char* fn);
 	std::vector<unsigned char> readFile(std::string fn);
-	long totalSizeOf(std::vector<pair<unsigned char*, int>> vectorPairList);
+	long totalSizeOf(std::vector<pair<std::vector<unsigned char>, int>> vectorPairList);
 	bool appendChunkRecordToLastBlockRecordsChunkData(boost::property_tree::ptree &pt, boost::property_tree::ptree &subpt);
 	bool appendToLastBlockEntity(boost::property_tree::ptree &node, boost::property_tree::ptree &subpt, std::string transGuid);
 };
