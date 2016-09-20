@@ -988,3 +988,166 @@ BOOST_AUTO_TEST_CASE(add2AttributsToBlockRecord)
 }
 
 
+
+BOOST_AUTO_TEST_CASE(add2AttributsOneLargeOneSmallToBlockRecord)
+{
+	using boost::optional;
+	using boost::property_tree::ptree;
+
+	cout<<"BOOS_AUTO_TEST(add2AttributsOneLargeOneSmallToBlockRecord)\n{"<<endl;
+
+	CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
+	ptree ptListOfBlockRecords;
+
+	// attribut 1 - large
+	std::string attributName = "foto"; // it should be ddid -- datadictionary id which refers to attribut description
+	std::vector<unsigned char> attributValue;
+	std::string fn = "testImage.png"; // should be of size 10.5 Kb
+	std::ifstream is (fn, ios::binary);
+	if (is)
+	{
+		long length = boost::filesystem::file_size(fn);
+		std::cout << "[readFile] Reading file: " << fn << " ; amount " << length << " characters... \n";
+		// Make sure receipient has room
+		attributValue.resize(length,0);
+		//read content of infile
+		is.read ((char*)&attributValue[0],length);
+		std::cout << "[readFile] size: " << (int) attributValue.size() << '\n';
+		std::cout << "[readFile] capacity: " << (int) attributValue.capacity() << '\n';
+		std::cout << "[readFile] max_size: " << (int) attributValue.max_size() << '\n';
+		is.close();
+	}
+	BOOST_CHECK(attributValue.size() > 0);
+
+	// attribut 2
+	std::string attributName2 = "mobil";
+	std::string mobil = "555 - 332 211 900";	
+	std::vector<unsigned char> attributValue2(mobil.begin(), mobil.end());
+
+	std::string realmName = "profile";
+	long maxBlockRecordSize=64000;	
+
+
+	cout << "BlockRecord size before: " << maxBlockRecordSize << endl;
+	BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName, attributValue)); 
+	cout << "BlockRecord size after 1 attribut add : " << maxBlockRecordSize << endl;
+	BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName2, attributValue2)); 
+	cout << "BlockRecord size after 2 atrribut add : " << maxBlockRecordSize << endl;
+ 
+
+	// check that list now contain basic 'listOfBlockRecords' - which is necessary	
+	optional< ptree& > child = ptListOfBlockRecords.get_child_optional( "listOfBlockRecords" );
+	BOOST_CHECK(child);
+
+	// verify that BlockRecord has been added
+	child = ptListOfBlockRecords.get_child_optional( "BlockRecord.chunk_data" );
+	BOOST_CHECK(child);
+
+	child = ptListOfBlockRecords.get_child_optional( "BlockRecord.chunk_data.chunk_record" );
+	BOOST_CHECK(child);
+
+	child = ptListOfBlockRecords.get_child_optional( "BlockRecord.chunk_data.chunk_record.chunk_ddid" );
+	BOOST_CHECK(child);
+
+	cout << "________________________________________" << endl;
+	cout << "attributs added : " << endl;
+	int amountOfBlockRecords = 0;
+	int amountOfAttributchunk_records = 0;
+	std::string hexdata_attribut1="";
+	std::string hexdata_attribut2="";
+	std::string chunk_ddid2="";
+
+	BOOST_FOREACH(ptree::value_type &vt, ptListOfBlockRecords.get_child("listOfBlockRecords"))
+	{
+		cout << " - attribut name : " << vt.first << endl;
+		if(vt.first == "BlockRecord")
+		{
+			amountOfBlockRecords++;
+			BOOST_FOREACH(ptree::value_type &vt2 , vt.second)
+			{
+				if(vt2.first == "chunk_data")
+				{
+					cout << " - chunk_data : " << vt2.first; 
+					std::string strPrevId = "";
+					BOOST_FOREACH(ptree::value_type &vt3, vt2.second)
+					{
+						if(vt3.first == "chunk_record") {
+							if(strPrevId != vt3.second.get_child("chunk_ddid").data()) {
+								strPrevId = vt3.second.get_child("chunk_ddid").data();
+								cout << endl;
+								cout << " -- chunk_record : " << vt3.second.get_child("chunk_ddid").data() << " "; 
+								amountOfAttributchunk_records++;
+								if(amountOfAttributchunk_records==2) { // fetch only 2nd attribut, since that only has one record - 1st attribut is foto and consists of many records
+									chunk_ddid2 = strPrevId;
+									cout << endl;	
+									hexdata_attribut2 = vt3.second.get_child("Data").data();
+								}
+							}
+							else
+								cout << ".";
+						}
+					}
+				}
+			}
+		}
+	}
+
+	BOOST_CHECK(amountOfBlockRecords == 1); // Only one BlockRecord - the attributs should be added to BlockRecord until it is full, then new BlockRecord will be added
+	BOOST_CHECK(amountOfAttributchunk_records == 2); // There should be two chunk_records - one for attribut1 and one for attribut2
+	cout << "________________________________________" << endl;
+
+	cout << "verify if data is correctly stored - attributs 1 and 2" << endl;		
+
+	std::string chunk_ddid = ptListOfBlockRecords.get_child( "BlockRecord.chunk_data.chunk_record.chunk_ddid" ).data();
+	cout << "chunk_ddid : " << chunk_ddid << endl;		
+	BOOST_CHECK(chunk_ddid == attributName);	
+
+
+	// attribut 1
+	// fetch Data from xml node
+	//TODO: assemble all chunks to a full attribut then compare with original
+	//
+	cout << "TODO:  assemble all chunks to a full attribut then compare with original" << endl;
+
+	// attribut 2
+	// fetch Data from xml node
+	std::string hexdata = hexdata_attribut2;
+	cout << "chunk_ddid : " << chunk_ddid2 << endl;		
+
+	// convert Data 
+	unsigned char* data_in_unhexed_buf2 = (unsigned char*) malloc (hexdata.size());
+        ZeroMemory(data_in_unhexed_buf2,hexdata.size()); // make sure no garbage is inside the newly allocated space
+        boost::algorithm::unhex(hexdata.begin(),hexdata.end(), data_in_unhexed_buf2);// convert the hex array to an array containing byte values
+
+	cout << "hexdata : < " << hexdata << " > " << endl; 
+        cout << "hexdata size: " << hexdata.size() << endl;
+	// initialize decoder with Data 
+	{
+        DED_PUT_DATA_IN_DECODER(decoder_ptr2,data_in_unhexed_buf2,hexdata.size());
+        BOOST_CHECK(decoder_ptr2 != 0);
+
+        EntityChunkDataInfo _chunk2;
+ 	// decode data ...
+        DED_GET_STRUCT_START( decoder_ptr2, "chunk_record" );
+            BOOST_CHECK(DED_GET_STDSTRING	( decoder_ptr2, "attribut_chunk_id", _chunk2.entity_chunk_id )); // key of particular item
+            DED_GET_ULONG   	( decoder_ptr2, "attribut_aiid", _chunk2.aiid ); // this number is continuesly increasing all thruout the entries in this table
+            DED_GET_ULONG   	( decoder_ptr2, "attribut_chunk_seq", _chunk2.entity_chunk_seq ); // sequence number of particular item
+            DED_GET_STDVECTOR	( decoder_ptr2, "attribut_chunk_data", _chunk2.entity_chunk_data ); //
+        DED_GET_STRUCT_END( decoder_ptr2, "chunk_record" );
+	
+	cout << "entity_chunk_id : " << _chunk2.entity_chunk_id << endl;
+	cout << "entity_aiid : " << _chunk2.aiid << endl;
+	cout << "entity_chunk_seq : " << _chunk2.entity_chunk_seq << endl;
+
+	// verify decoded Data
+	BOOST_CHECK(_chunk2.entity_chunk_id == attributName2); 
+	std::string strtmp2(_chunk2.entity_chunk_data.begin(), _chunk2.entity_chunk_data.end());
+	BOOST_CHECK(strtmp2 == mobil); 
+	BOOST_CHECK(_chunk2.entity_chunk_data == attributValue2); 
+	BOOST_CHECK(_chunk2.entity_chunk_seq == 1);
+	}
+	
+	cout<<"}"<<endl;
+}
+
+
