@@ -13,6 +13,7 @@
 #include <stdexcept>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/algorithm/hex.hpp>
+#include <boost/log/trivial.hpp>
 #include "md5.h"
 #include <boost/property_tree/xml_parser.hpp>
 #include "../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.h"
