@@ -860,6 +860,9 @@ BOOST_AUTO_TEST_CASE(add2AttributsToBlockRecord)
 	cout << "attributs added : " << endl;
 	int amountOfBlockRecords = 0;
 	int amountOfchunk_records = 0;
+	std::string hexdata_attribut1="";
+	std::string hexdata_attribut2="";
+
 
 	BOOST_FOREACH(ptree::value_type &vt, ptListOfBlockRecords.get_child("listOfBlockRecords"))
 	{
@@ -877,6 +880,12 @@ BOOST_AUTO_TEST_CASE(add2AttributsToBlockRecord)
 						if(vt3.first == "chunk_record") {
 							cout << " -- chunk_record : " << vt3.second.get_child("chunk_ddid").data() << endl; 
 							amountOfchunk_records++;
+							if(amountOfchunk_records==1) {
+								hexdata_attribut1 = vt3.second.get_child("Data").data();
+							}
+							if(amountOfchunk_records==2) {
+								hexdata_attribut2 = vt3.second.get_child("Data").data();
+							}
 						}
 					}
 				}
@@ -888,16 +897,18 @@ BOOST_AUTO_TEST_CASE(add2AttributsToBlockRecord)
 	BOOST_CHECK(amountOfchunk_records == 2); // There should be two chunk_records - one for attribut1 and one for attribut2
 	cout << "________________________________________" << endl;
 
+	cout << "verify if data is correctly stored - attributs 1 and 2" << endl;		
+
 	std::string chunk_ddid = ptListOfBlockRecords.get_child( "BlockRecord.chunk_data.chunk_record.chunk_ddid" ).data();
 	cout << "chunk_ddid : " << chunk_ddid << endl;		
 	BOOST_CHECK(chunk_ddid == attributName);	
 
 
-
-
-
+	// attribut 1
 	// fetch Data from xml node
-	std::string hexdata = ptListOfBlockRecords.get_child( "BlockRecord.chunk_data.chunk_record.Data" ).data();
+	//std::string hexdata = ptListOfBlockRecords.get_child( "BlockRecord.chunk_data.chunk_record.Data" ).data();
+	std::string hexdata = hexdata_attribut1;
+
 	// convert Data 
 	unsigned char* data_in_unhexed_buf = (unsigned char*) malloc (hexdata.size());
         ZeroMemory(data_in_unhexed_buf,hexdata.size()); // make sure no garbage is inside the newly allocated space
@@ -905,7 +916,9 @@ BOOST_AUTO_TEST_CASE(add2AttributsToBlockRecord)
 
 	cout << "hexdata : < " << hexdata << " > " << endl; 
         cout << "hexdata size: " << hexdata.size() << endl;
+	long attribut1_aiid=0;
 	// initialize decoder with Data 
+	{
         DED_PUT_DATA_IN_DECODER(decoder_ptr,data_in_unhexed_buf,hexdata.size());
         BOOST_CHECK(decoder_ptr != 0);
 
@@ -918,6 +931,8 @@ BOOST_AUTO_TEST_CASE(add2AttributsToBlockRecord)
             DED_GET_STDVECTOR	( decoder_ptr, "attribut_chunk_data", _chunk.entity_chunk_data ); //
         DED_GET_STRUCT_END( decoder_ptr, "chunk_record" );
 	
+	attribut1_aiid = _chunk.aiid;
+
 	cout << "entity_chunk_id : " << _chunk.entity_chunk_id << endl;
 	cout << "entity_aiid : " << _chunk.aiid << endl;
 	cout << "entity_chunk_seq : " << _chunk.entity_chunk_seq << endl;
@@ -927,7 +942,47 @@ BOOST_AUTO_TEST_CASE(add2AttributsToBlockRecord)
 	std::string strtmp(_chunk.entity_chunk_data.begin(), _chunk.entity_chunk_data.end());
 	BOOST_CHECK(strtmp == name); 
 	BOOST_CHECK(_chunk.entity_chunk_data == attributValue); 
+	BOOST_CHECK(_chunk.entity_chunk_seq == 1);
+	}
 
+	// attribut 2
+	// fetch Data from xml node
+	hexdata = hexdata_attribut2;
+
+	// convert Data 
+	unsigned char* data_in_unhexed_buf2 = (unsigned char*) malloc (hexdata.size());
+        ZeroMemory(data_in_unhexed_buf2,hexdata.size()); // make sure no garbage is inside the newly allocated space
+        boost::algorithm::unhex(hexdata.begin(),hexdata.end(), data_in_unhexed_buf2);// convert the hex array to an array containing byte values
+
+	cout << "hexdata : < " << hexdata << " > " << endl; 
+        cout << "hexdata size: " << hexdata.size() << endl;
+	// initialize decoder with Data 
+	{
+        DED_PUT_DATA_IN_DECODER(decoder_ptr2,data_in_unhexed_buf2,hexdata.size());
+        BOOST_CHECK(decoder_ptr2 != 0);
+
+        EntityChunkDataInfo _chunk2;
+ 	// decode data ...
+        DED_GET_STRUCT_START( decoder_ptr2, "chunk_record" );
+            BOOST_CHECK(DED_GET_STDSTRING	( decoder_ptr2, "attribut_chunk_id", _chunk2.entity_chunk_id )); // key of particular item
+            DED_GET_ULONG   	( decoder_ptr2, "attribut_aiid", _chunk2.aiid ); // this number is continuesly increasing all thruout the entries in this table
+            DED_GET_ULONG   	( decoder_ptr2, "attribut_chunk_seq", _chunk2.entity_chunk_seq ); // sequence number of particular item
+            DED_GET_STDVECTOR	( decoder_ptr2, "attribut_chunk_data", _chunk2.entity_chunk_data ); //
+        DED_GET_STRUCT_END( decoder_ptr2, "chunk_record" );
+	
+	cout << "entity_chunk_id : " << _chunk2.entity_chunk_id << endl;
+	cout << "entity_aiid : " << _chunk2.aiid << endl;
+	cout << "entity_chunk_seq : " << _chunk2.entity_chunk_seq << endl;
+
+	// verify decoded Data
+	BOOST_CHECK(_chunk2.entity_chunk_id == attributName2); 
+	std::string strtmp2(_chunk2.entity_chunk_data.begin(), _chunk2.entity_chunk_data.end());
+	BOOST_CHECK(strtmp2 == mobil); 
+	BOOST_CHECK(_chunk2.entity_chunk_data == attributValue2); 
+	BOOST_CHECK(_chunk2.entity_chunk_seq == 1);
+	// verify that internal aiid is incrementing
+	BOOST_CHECK(_chunk2.aiid > attribut1_aiid);
+	}
 	
 	cout<<"}"<<endl;
 }

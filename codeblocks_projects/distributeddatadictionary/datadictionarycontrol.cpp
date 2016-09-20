@@ -286,7 +286,8 @@ boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(l
 		iBytesLeft = iBytesLeft - chunk.second;
 		std::cout << "bytes left : " << iBytesLeft << '\n';
 		if(iBytesLeft > 0) {
-			boost::property_tree::ptree subpt = createBFiBlockRecord(bfirst, ++aiid, seq, strTransGUID, ddid, realmName, (char*)chunk.first.data(), chunk.second);
+			aiid++;
+			boost::property_tree::ptree subpt = createBFiBlockRecord(bfirst, aiid, seq, strTransGUID, ddid, realmName, (char*)chunk.first.data(), chunk.second);
 			std::cout << "appending chunk of size : " << chunk.second << '\n';
 			cout << "- search for last BlockRecord " << endl;
 			if(bfirst) {
@@ -361,7 +362,8 @@ bool CDataDictionaryControl::addDEDchunksToBlockRecords(boost::property_tree::pt
 		iBytesLeft = iBytesLeft - chunk.second;
 		std::cout << "bytes left : " << iBytesLeft << '\n';
 		if(iBytesLeft >= 0) {
-			boost::property_tree::ptree subpt = createBFiBlockRecord(bfirst, ++aiid, seq, strTransGUID, ddid, realmName, (char*)chunk.first.data(), chunk.second);
+			aiid++;
+			boost::property_tree::ptree subpt = createBFiBlockRecord(bfirst, aiid, seq, strTransGUID, ddid, realmName, (char*)chunk.first.data(), chunk.second);
 			std::cout << "appending chunk of size : " << chunk.second << '\n';
 			cout << "- search for last BlockRecord " << endl;
 			if(bfirst) {
@@ -559,22 +561,13 @@ bool CDataDictionaryControl::addAttributToBlockRecord(boost::property_tree::ptre
 	using boost::property_tree::ptree;
 	using boost::optional;
 	bool bResult=false;
+	static long aiid=0;
 
-/* redundant	
-	// make sure a list is present or else create
-	optional< ptree& > child = ptListOfBlockRecords.get_child_optional( "listOfBlockRecords" );
-	if( !child )
-	{
-		// child node is missing - now create initial basic node
-		ptListOfBlockRecords.add("listOfBlockRecords", "");		
-	}
-*/
 
 	long maxDEDchunkSize=300;
-	static long aiid=0;
 	std::vector< pair<std::vector<unsigned char>,int> > listOfDEDchunks = splitAttributIntoDEDchunks(aiid, attributName, attributValue, maxDEDchunkSize);
 
-	aiid=0;
+	
 	bool bAdded = addDEDchunksToBlockRecords(ptListOfBlockRecords, aiid, realmName, attributName, listOfDEDchunks, maxBlockRecordSize);
 
 
