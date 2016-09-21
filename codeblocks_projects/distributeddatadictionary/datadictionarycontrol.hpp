@@ -12,10 +12,11 @@
 #include <boost/foreach.hpp>
 #include <stdexcept>
 #include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
+#include <boost/property_tree/detail/xml_parser_writer_settings.hpp>
 #include <boost/algorithm/hex.hpp>
 #include <boost/log/trivial.hpp>
 #include "md5.h"
-#include <boost/property_tree/xml_parser.hpp>
 #include "../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.h"
 #include "../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.h"
 
@@ -55,13 +56,17 @@ class CDataDictionaryControl
 	bool addAttributToBlockRecord(boost::property_tree::ptree &ptListOfBlockRecords, long &maxBlockRecordSize, std::string realmName, std::string attributName, std::vector<unsigned char> attributValue);
 	
     protected:
-	
+	long _maxDEDchunkSize;
+
     private:
 	vector< pair<char*, int> > readFile(const char* fn);
 	std::vector<unsigned char> readFile(std::string fn);
 	long totalSizeOf(std::vector<pair<std::vector<unsigned char>, int>> vectorPairList);
 	bool appendChunkRecordToLastBlockRecordsChunkData(boost::property_tree::ptree &pt, boost::property_tree::ptree &subpt);
 	bool appendToLastBlockEntity(boost::property_tree::ptree &node, boost::property_tree::ptree &subpt, std::string transGuid);
+	void setMaxDEDchunkSize(long maxSize);
+	long getMaxDEDchunkSize();
+
 };
 
 #endif // CDATADICTIONARYCONTROL_H

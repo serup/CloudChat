@@ -998,6 +998,8 @@ BOOST_AUTO_TEST_CASE(add2AttributsOneLargeOneSmallToBlockRecord)
 
 	CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
 	ptree ptListOfBlockRecords;
+	ptListOfBlockRecords.clear();
+	
 
 	// attribut 1 - large
 	std::string attributName = "foto"; // it should be ddid -- datadictionary id which refers to attribut description
@@ -1049,6 +1051,21 @@ BOOST_AUTO_TEST_CASE(add2AttributsOneLargeOneSmallToBlockRecord)
 	child = ptListOfBlockRecords.get_child_optional( "BlockRecord.chunk_data.chunk_record.chunk_ddid" );
 	BOOST_CHECK(child);
 
+	long maxBlockEntitySize=27000; // should result in 2 BlockEntity 
+	std::string transGuid = "F8C23762ED2823A27E62A64B95C024E8";
+	boost::property_tree::ptree ptBlockEntity = ptestDataDictionaryControl->addBlockRecordToBlockEntity(transGuid, ptListOfBlockRecords, maxBlockEntitySize);
+	BOOST_CHECK(ptBlockEntity.size()>0);
+
+	cout << "{{{ blockrecords : " << endl;
+	write_xml(std::cout, ptBlockEntity, boost::property_tree::xml_writer_make_settings<std::string>('\t', 1) );
+
+	cout << "}}} blockrecords " << endl;
+
+	//DEBUG	
+	// write test xml file
+	//ofstream blockFile ("add2attrToBlr.xml", ios::out | ios::binary);
+	//write_xml(blockFile, ptBlockEntity);
+
 	cout << "________________________________________" << endl;
 	cout << "attributs added : " << endl;
 	int amountOfBlockRecords = 0;
@@ -1095,6 +1112,7 @@ BOOST_AUTO_TEST_CASE(add2AttributsOneLargeOneSmallToBlockRecord)
 	BOOST_CHECK(amountOfBlockRecords == 1); // Only one BlockRecord - the attributs should be added to BlockRecord until it is full, then new BlockRecord will be added
 	BOOST_CHECK(amountOfAttributchunk_records == 2); // There should be two chunk_records - one for attribut1 and one for attribut2
 	cout << "________________________________________" << endl;
+
 
 	cout << "verify if data is correctly stored - attributs 1 and 2" << endl;		
 

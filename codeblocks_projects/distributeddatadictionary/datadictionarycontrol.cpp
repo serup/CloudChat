@@ -4,6 +4,7 @@
 CDataDictionaryControl::CDataDictionaryControl()
 {
     //ctor
+	setMaxDEDchunkSize(300); // Default DED chunk size 
 }
 
 CDataDictionaryControl::~CDataDictionaryControl()
@@ -558,6 +559,7 @@ std::vector< pair<std::string ,int> > CDataDictionaryControl::writeBlockEntityTo
 	return listOfBlockEntityFiles;
 }
 
+
 bool CDataDictionaryControl::addAttributToBlockRecord(boost::property_tree::ptree &ptListOfBlockRecords, long &maxBlockRecordSize, std::string realmName, std::string attributName, std::vector<unsigned char> attributValue)
 {
 	using boost::property_tree::ptree;
@@ -566,15 +568,20 @@ bool CDataDictionaryControl::addAttributToBlockRecord(boost::property_tree::ptre
 	static long aiid=0;
 
 
-	long maxDEDchunkSize=300;
+	long maxDEDchunkSize=getMaxDEDchunkSize();
 	std::vector< pair<std::vector<unsigned char>,int> > listOfDEDchunks = splitAttributIntoDEDchunks(aiid, attributName, attributValue, maxDEDchunkSize);
+	bResult = addDEDchunksToBlockRecords(ptListOfBlockRecords, aiid, realmName, attributName, listOfDEDchunks, maxBlockRecordSize);
 
 	
-	bool bAdded = addDEDchunksToBlockRecords(ptListOfBlockRecords, aiid, realmName, attributName, listOfDEDchunks, maxBlockRecordSize);
-
-
-	bResult=bAdded;
 	return bResult;
 }
 
+void CDataDictionaryControl::setMaxDEDchunkSize(long maxSize)
+{
+	_maxDEDchunkSize = maxSize;
+}
 
+long CDataDictionaryControl::getMaxDEDchunkSize()
+{
+	return _maxDEDchunkSize;
+}
