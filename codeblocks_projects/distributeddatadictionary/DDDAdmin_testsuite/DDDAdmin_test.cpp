@@ -1056,10 +1056,13 @@ BOOST_AUTO_TEST_CASE(add2AttributsOneLargeOneSmallToBlockRecord)
 	boost::property_tree::ptree ptBlockEntity = ptestDataDictionaryControl->addBlockRecordToBlockEntity(transGuid, ptListOfBlockRecords, maxBlockEntitySize);
 	BOOST_CHECK(ptBlockEntity.size()>0);
 
-	cout << "{{{ blockrecords : " << endl;
+	cout << "/*{{{*/" << endl;
+	cout << "± blockrecords - begin : " << endl;
 	write_xml(std::cout, ptBlockEntity, boost::property_tree::xml_writer_make_settings<std::string>('\t', 1) );
 
-	cout << "}}} blockrecords " << endl;
+	cout << "± blockrecords - end " << endl;
+
+	cout << "/*}}}*/" << endl;
 
 	//DEBUG	
 	// write test xml file

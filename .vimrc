@@ -90,6 +90,7 @@ set autoread
 set term=screen-256color
 colorscheme desert
 set foldnestmax=1
+set foldmethod=marker
 
 if exists('$TMUX')
 	autocmd BufEnter * call system("tmux rename-window " . expand("%:t"))
