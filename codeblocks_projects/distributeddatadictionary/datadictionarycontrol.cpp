@@ -439,6 +439,7 @@ boost::property_tree::ptree CDataDictionaryControl::addBlockRecordToBlockEntity(
 		{
 			blockRecordSize = fetchBlockRecordSize(v2);	
 			iBytesLeftInBlockEntity -= blockRecordSize;
+			cout << "- blockRecordSize : " << blockRecordSize << " bytesLeftInBlockEntity : " << iBytesLeftInBlockEntity << " maxBlockEntitySize : " << maxBlockEntitySize << endl;
 			if(iBytesLeftInBlockEntity <= 0)
 			{
 				iBytesLeftInBlockEntity=maxBlockEntitySize;
