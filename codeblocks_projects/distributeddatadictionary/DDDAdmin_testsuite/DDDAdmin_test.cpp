@@ -661,6 +661,7 @@ BOOST_AUTO_TEST_CASE(writeBlockEntitiesToBFiFiles)
 
 	std::vector< pair<std::string ,int> > listOfBlockEntityFiles = ptestDataDictionaryControl->writeBlockEntityToBFiFile(ptBlockEntity);
 
+	cout << "amount of BlockEntityFiles created : " << listOfBlockEntityFiles.size() << endl; 
 	BOOST_CHECK(listOfBlockEntityFiles.size()==2);
 
 	pair <std::string,int> block;
@@ -686,6 +687,7 @@ BOOST_AUTO_TEST_CASE(writeBlockEntitiesToBFiFiles)
 
 	listOfBlockEntityFiles = ptestDataDictionaryControl->writeBlockEntityToBFiFile(ptBlockEntity2);
 
+	cout << "amount of BlockEntityFiles created : " << listOfBlockEntityFiles.size() << endl; 
 	BOOST_CHECK(listOfBlockEntityFiles.size()==1);
 
 	BOOST_FOREACH(block, listOfBlockEntityFiles)
