@@ -516,46 +516,6 @@ BOOST_AUTO_TEST_CASE(splitAttributIntoDEDchunks)
 	cout<<"}"<<endl;
 }
 
-/* breaks
-BOOST_AUTO_TEST_CASE(_splitAttributIntoDEDchunks)
-{
-	cout<<"BOOS_AUTO_TEST(_splitAttributIntoDEDchunks)\n{"<<endl;
-
-	// use an image file as attribut value
-	CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
-	std::string attributName = "foto";
-	std::vector<unsigned char> FileDataBytesInVector;
-	std::string fn = "testImage.png"; // should be of size 10.5 Kb
-	std::ifstream is (fn, ios::binary);
-	if (is)
-	{
-		long length = boost::filesystem::file_size(fn);
-		std::cout << "[readFile] Reading file: " << fn << " ; amount " << length << " characters... \n";
-		// Make sure receipient has room
-        	FileDataBytesInVector.resize(length,0);
-		//read content of infile
-		is.read ((char*)&FileDataBytesInVector[0],length);
-		std::cout << "[readFile] size: " << (int) FileDataBytesInVector.size() << '\n';
-		std::cout << "[readFile] capacity: " << (int) FileDataBytesInVector.capacity() << '\n';
-		std::cout << "[readFile] max_size: " << (int) FileDataBytesInVector.max_size() << '\n';
-		is.close();
-	}
-	BOOST_CHECK(FileDataBytesInVector.size() > 0);
-
-	long maxDEDblockSize=65000; // should yield only one BlockRecord, since foto can be in one
-	long maxDEDchunkSize=300; // should yield several chunks for this attribut
-
-	// split image data into several chunks of DED
-	long aiid=0;
-	std::vector< pair<std::unique_ptr<unsigned char>,int> > listOfDEDchunks = ptestDataDictionaryControl->_splitAttributIntoDEDchunks(aiid, attributName, FileDataBytesInVector, maxDEDchunkSize);
-
-	std::cout << "listOfDEDchunks : " << listOfDEDchunks.size() << '\n';
-	// verify that image is in DED blocks
-	BOOST_CHECK(listOfDEDchunks.size() == 35);
-	cout<<"}"<<endl;
-}
-*/
-
 BOOST_AUTO_TEST_CASE(addChunkDataToBlockRecord)
 {
 	cout<<"BOOS_AUTO_TEST(addChunkDataToBlockRecord)\n{"<<endl;
@@ -722,7 +682,7 @@ BOOST_AUTO_TEST_CASE(writeBlockEntitiesToBFiFiles)
 	write_xml(blockFile2, ptBlockEntity2);
 
 
-	BOOST_CHECK(ptBlockEntity.size()>0);
+	BOOST_CHECK(ptBlockEntity2.size()>0);
 
 	listOfBlockEntityFiles = ptestDataDictionaryControl->writeBlockEntityToBFiFile(ptBlockEntity2);
 
@@ -754,7 +714,8 @@ BOOST_AUTO_TEST_CASE(addAttributToBlockRecord)
 	std::string realmName = "profile";
 	long maxBlockRecordSize=64000;	
 
-	BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName, attributValue)); 
+	std::string transGuid = "F4C23762ED2823A27E62A64B95C024EF";
+	BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(transGuid, ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName, attributValue)); 
  	// check that list now contain basic 'listOfBlockRecords' - which is necessary	
 	optional< ptree& > child = ptListOfBlockRecords.get_child_optional( "listOfBlockRecords" );
 	BOOST_CHECK(child);
@@ -836,9 +797,10 @@ BOOST_AUTO_TEST_CASE(add2AttributsToBlockRecord)
 
 
 	cout << "BlockRecord size before: " << maxBlockRecordSize << endl;
-	BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName, attributValue)); 
+	std::string transGuid = "F4C23762ED2823A27E62A64B95C024EF";
+	BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName, attributValue)); 
 	cout << "BlockRecord size after 1 attribut add : " << maxBlockRecordSize << endl;
-	BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName2, attributValue2)); 
+	BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName2, attributValue2)); 
 	cout << "BlockRecord size after 2 atrribut add : " << maxBlockRecordSize << endl;
  
 
@@ -1031,9 +993,10 @@ BOOST_AUTO_TEST_CASE(add2AttributsOneLargeOneSmallToBlockRecord)
 
 
 	cout << "BlockRecord size before: " << maxBlockRecordSize << endl;
-	BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName, attributValue)); 
+	std::string transGuid = "F4C23762ED2823A27E62A64B95C024EF";
+	BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName, attributValue)); 
 	cout << "BlockRecord size after 1 attribut add : " << maxBlockRecordSize << endl;
-	BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName2, attributValue2)); 
+	BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName2, attributValue2)); 
 	cout << "BlockRecord size after 2 atrribut add : " << maxBlockRecordSize << endl;
  
 
@@ -1052,22 +1015,23 @@ BOOST_AUTO_TEST_CASE(add2AttributsOneLargeOneSmallToBlockRecord)
 	BOOST_CHECK(child);
 
 	long maxBlockEntitySize=27000; // should result in 2 BlockEntity 
-	std::string transGuid = "F8C23762ED2823A27E62A64B95C024E8";
 	boost::property_tree::ptree ptBlockEntity = ptestDataDictionaryControl->addBlockRecordToBlockEntity(transGuid, ptListOfBlockRecords, maxBlockEntitySize);
 	BOOST_CHECK(ptBlockEntity.size()>0);
 
-	cout << "/*{{{*/" << endl;
-	cout << "± blockrecords - begin : " << endl;
+	cout << "*{{{" << endl;
 	write_xml(std::cout, ptBlockEntity, boost::property_tree::xml_writer_make_settings<std::string>('\t', 1) );
+	cout << "*}}}" << endl;
 
-	cout << "± blockrecords - end " << endl;
-
-	cout << "/*}}}*/" << endl;
-
-	//DEBUG	
-	// write test xml file
-	//ofstream blockFile ("add2attrToBlr.xml", ios::out | ios::binary);
-	//write_xml(blockFile, ptBlockEntity);
+	std::vector< pair<std::string ,int> > listOfBlockEntityFiles = ptestDataDictionaryControl->writeBlockEntityToBFiFile(ptBlockEntity);
+/*	BOOST_CHECK(listOfBlockEntityFiles.size()==2);
+	pair <std::string,int> block;
+	BOOST_FOREACH(block, listOfBlockEntityFiles)
+	{
+		cout << "- OK Created file : " << block.first << " size : " << block.second << endl;
+		cout << "cleanup file " << endl;
+		boost::filesystem::remove(block.first);
+	}
+*/
 
 	cout << "________________________________________" << endl;
 	cout << "attributs added : " << endl;

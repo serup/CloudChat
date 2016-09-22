@@ -194,8 +194,6 @@ std::vector< pair<std::vector<unsigned char>, int> > CDataDictionaryControl::spl
 	int strangeCount=0;
 	bool bError=false;
 
-//	cout << "--- attributValue size : " << attributValue.size() << endl;
-
 	do
 	{
 		chunkdata.clear();  
@@ -227,10 +225,6 @@ std::vector< pair<std::vector<unsigned char>, int> > CDataDictionaryControl::spl
 		aiid++;
 		entity_chunk_seq++;
 	
-//		cout << "--- chunkdata size : " << chunkdata.size() << endl;
-//		cout << "--- adding to DED attributName : " << attributName << endl;
-//		cout << "--- adding to DED aiid: " << aiid << endl;
-//		cout << "--- adding to DED seq:  " << entity_chunk_seq << endl;
 		{ /// defined in DD_ATTRIBUT_TOAST.xml in datadictionary
 			DED_START_ENCODER(encoder_ptr);
 			DED_PUT_STRUCT_START( encoder_ptr, "chunk_record" );
@@ -240,8 +234,6 @@ std::vector< pair<std::vector<unsigned char>, int> > CDataDictionaryControl::spl
 				DED_PUT_STDVECTOR	( encoder_ptr, "attribut_chunk_data", chunkdata );
 			DED_PUT_STRUCT_END( encoder_ptr, "chunk_record" );
 			DED_GET_ENCODED_DATA(encoder_ptr,data_ptr,iLengthOfTotalData,pCompressedData,sizeofCompressedData);
-//			cout << "--- iLengthOfTotalData : " << iLengthOfTotalData << endl;
-//			cout << "--- sizeofCompressedData : " << sizeofCompressedData << endl;
 			if(sizeofCompressedData==0) sizeofCompressedData = iLengthOfTotalData; // if sizeofcompresseddata is 0 then compression was not possible and size is the same as for uncompressed
 				iBytesLeft = iTotalSize-iMaxChunkSize*n;
 
@@ -274,8 +266,6 @@ boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(l
 	ptree &node = pt.add("listOfBlockRecords", "");
 	node.put("chunksInBlockRecords",listOfDEDchunks.size());
 
-//	std::cout << "total size of DED chunks: " << iTotalSize << '\n';
-
 	BOOST_FOREACH( auto &chunk, listOfDEDchunks )
 	{
 		if(aiid==0) 
@@ -287,12 +277,9 @@ boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(l
 		}
 		bytesLeftInBlockRecord-= chunk.second;
 		iBytesLeft = iBytesLeft - chunk.second;
-		//std::cout << "bytes left : " << iBytesLeft << '\n';
 		if(iBytesLeft > 0) {
 			aiid++;
 			boost::property_tree::ptree subpt = createBFiBlockRecord(bfirst, aiid, seq, strTransGUID, ddid, realmName, (char*)chunk.first.data(), chunk.second);
-//			std::cout << "appending chunk of size : " << chunk.second << '\n';
-			//cout << "- search for last BlockRecord " << endl;
 			if(bfirst) {
 				pt.insert(pt.get_child("listOfBlockRecords").end(),subpt.front());
 				seq++; // new BlockRecord, thus new sequence number
@@ -301,8 +288,6 @@ boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(l
 				if (!appendChunkRecordToLastBlockRecordsChunkData(pt, subpt)) cout << "- FAIL: somehow there was no BlockRecords.chunk_data section to append chunk_record to - possible corrupt data" << endl;
 			}
 		}
-//		else
-//			cout << "- OK! no more chunks to insert " << endl;
 		bfirst=false;	
 	}
 
@@ -316,7 +301,7 @@ boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(l
 
 
 
-bool CDataDictionaryControl::addDEDchunksToBlockRecords(boost::property_tree::ptree &pt, long &aiid, std::string realmName, std::string ddid, std::vector<pair<std::vector<unsigned char>,int>>listOfDEDchunks, long &maxBlockRecordSize)
+bool CDataDictionaryControl::addDEDchunksToBlockRecords(std::string transGuid, boost::property_tree::ptree &pt, long &aiid, std::string realmName, std::string ddid, std::vector<pair<std::vector<unsigned char>,int>>listOfDEDchunks, long &maxBlockRecordSize)
 {
 	using boost::property_tree::ptree;
 	using boost::optional;
@@ -348,14 +333,9 @@ bool CDataDictionaryControl::addDEDchunksToBlockRecords(boost::property_tree::pt
 
 	ptree &node = pt.get_child("listOfBlockRecords");
 
-	
-
-//	std::cout << "total size of DED chunks: " << iTotalSize << '\n';
-
 	BOOST_FOREACH( auto &chunk, listOfDEDchunks )
 	{
-		if(aiid==0) 
-			strTransGUID = CMD5((const char*)chunk.first.data()).GetMD5s();
+		strTransGUID = transGuid;
 
 		if(bytesLeftInBlockRecord<=0) {
 			bfirst=true;
@@ -363,12 +343,9 @@ bool CDataDictionaryControl::addDEDchunksToBlockRecords(boost::property_tree::pt
 		}
 		bytesLeftInBlockRecord-= chunk.second;
 		iBytesLeft = iBytesLeft - chunk.second;
-	//	std::cout << "bytes left : " << iBytesLeft << '\n';
 		if(iBytesLeft >= 0) {
 			aiid++;
 			boost::property_tree::ptree subpt = createBFiBlockRecord(bfirst, aiid, seq, strTransGUID, ddid, realmName, (char*)chunk.first.data(), chunk.second);
-//			std::cout << "appending chunk of size : " << chunk.second << '\n';
-//			cout << "- search for last BlockRecord " << endl;
 			if(bfirst) {
 				pt.insert(pt.get_child("listOfBlockRecords").end(),subpt.front());
 				seq++; // new BlockRecord, thus new sequence number
@@ -378,8 +355,6 @@ bool CDataDictionaryControl::addDEDchunksToBlockRecords(boost::property_tree::pt
 			}
 			bResult=true;
 		}
-//		else
-//			cout << "- OK! no more chunks to insert " << endl;
 		bfirst=false;	
 	}
 
@@ -446,8 +421,6 @@ boost::property_tree::ptree CDataDictionaryControl::addBlockRecordToBlockEntity(
 	using boost::property_tree::ptree;
 	ptree _empty_tree;
 		
-//	cout << "ADD - adding blockrecords to blockentity " << endl;
-		
 	long blockRecordSize = 0;
 	long iBytesLeftInBlockEntity=0;
 	bool bFirst=true;
@@ -457,19 +430,28 @@ boost::property_tree::ptree CDataDictionaryControl::addBlockRecordToBlockEntity(
 	node.add("BlockEntity", "");
 
 	iBytesLeftInBlockEntity=maxBlockEntitySize;
+
+	long amountOfBlockRecords=0;
+	BOOST_FOREACH(boost::property_tree::ptree::value_type &v2, ptListOfBlockRecords.get_child("listOfBlockRecords", _empty_tree)) 
+	{
+		amountOfBlockRecords++;
+	}
+
 	BOOST_FOREACH(boost::property_tree::ptree::value_type &v2, ptListOfBlockRecords.get_child("listOfBlockRecords", _empty_tree)) 
 	{
 		if(v2.first == "BlockRecord")
 		{
+			amountOfBlockRecords--;
 			blockRecordSize = fetchBlockRecordSize(v2);	
-//			cout << "BlockRecordSize : " << blockRecordSize << endl;	
 			iBytesLeftInBlockEntity -= blockRecordSize;
 			if(iBytesLeftInBlockEntity <= 0)
 			{
 				iBytesLeftInBlockEntity=maxBlockEntitySize;
-//				cout << "-- no more bytes left in this BlockEntity - " << endl;
-				if( appendToLastBlockEntity(node, v2.second, transGuid) )
-					node.add("BlockEntity",""); // ready for next BlockEntity
+				if( appendToLastBlockEntity(node, v2.second, transGuid) ){
+						if(amountOfBlockRecords>0) {
+							node.add("BlockEntity",""); // ready for next BlockEntity
+						}
+				}
 				else
 					cout << "- FAIL: could not append to last blockentity" << endl;
 			}
@@ -489,10 +471,8 @@ bool CDataDictionaryControl::appendToLastBlockEntity(boost::property_tree::ptree
 
 	BOOST_REVERSE_FOREACH(boost::property_tree::ptree::value_type &v3, node) 
 	{
-//		cout << "-- first : " << v3.first << endl;
 		if(v3.first == "BlockEntity")
 		{ 
-//			cout << "- OK: Found Last BlockEntity " << endl;
 			v3.second.put("TransGUID", transGuid);
 			v3.second.add_child("BlockRecord", subpt);
 			bResult=true;
@@ -517,7 +497,6 @@ long CDataDictionaryControl::fetchBlockRecordSize(boost::property_tree::ptree::v
 		BOOST_FOREACH(ptree::value_type &v3, v2.second)
 		{
 			if(v3.first == "chunk_record") {
-//				cout << "-- chunk_record size : " << v3.second.get_child("DataSize", _empty_tree).data() << endl;
 				lResult += v3.second.get_child("Data", _empty_tree).data().size();
 			}
 			lResult += v3.second.data().size();
@@ -533,7 +512,6 @@ std::vector< pair<std::string ,int> > CDataDictionaryControl::writeBlockEntityTo
 	ptree _empty_tree;
 	std::vector< pair<std::string ,int> > listOfBlockEntityFiles;
 
-	//cout << "- writeBlockEntityToBFiFile " << endl;
 	long filenumber=0;
 	ptree blkEntity;
 	BOOST_FOREACH(ptree::value_type &v2, ptBlockEntities.get_child("listOfBlockEntities", _empty_tree))
@@ -543,7 +521,6 @@ std::vector< pair<std::string ,int> > CDataDictionaryControl::writeBlockEntityTo
 		node.add_child("BlockEntity", v2.second);
 		
 		std::string filename =  v2.second.get_child("TransGUID").data();
-		//cout << "- BlockEntity, transGUID : " << filename << endl;
 
 		std::string blockfilename = filename + "_" + std::to_string(filenumber) + ".BFi";
 		ofstream blockFile (blockfilename.c_str(), ios::out | ios::binary);
@@ -560,7 +537,7 @@ std::vector< pair<std::string ,int> > CDataDictionaryControl::writeBlockEntityTo
 }
 
 
-bool CDataDictionaryControl::addAttributToBlockRecord(boost::property_tree::ptree &ptListOfBlockRecords, long &maxBlockRecordSize, std::string realmName, std::string attributName, std::vector<unsigned char> attributValue)
+bool CDataDictionaryControl::addAttributToBlockRecord(std::string transGuid, boost::property_tree::ptree &ptListOfBlockRecords, long &maxBlockRecordSize, std::string realmName, std::string attributName, std::vector<unsigned char> attributValue)
 {
 	using boost::property_tree::ptree;
 	using boost::optional;
@@ -570,7 +547,7 @@ bool CDataDictionaryControl::addAttributToBlockRecord(boost::property_tree::ptre
 
 	long maxDEDchunkSize=getMaxDEDchunkSize();
 	std::vector< pair<std::vector<unsigned char>,int> > listOfDEDchunks = splitAttributIntoDEDchunks(aiid, attributName, attributValue, maxDEDchunkSize);
-	bResult = addDEDchunksToBlockRecords(ptListOfBlockRecords, aiid, realmName, attributName, listOfDEDchunks, maxBlockRecordSize);
+	bResult = addDEDchunksToBlockRecords(transGuid, ptListOfBlockRecords, aiid, realmName, attributName, listOfDEDchunks, maxBlockRecordSize);
 
 	
 	return bResult;
