@@ -1014,7 +1014,7 @@ BOOST_AUTO_TEST_CASE(add2AttributsOneLargeOneSmallToBlockRecord)
 	child = ptListOfBlockRecords.get_child_optional( "BlockRecord.chunk_data.chunk_record.chunk_ddid" );
 	BOOST_CHECK(child);
 
-	long maxBlockEntitySize=27000; // should result in 2 BlockEntity 
+	long maxBlockEntitySize=27000; // should result in 1 BlockEntity 
 	boost::property_tree::ptree ptBlockEntity = ptestDataDictionaryControl->addBlockRecordToBlockEntity(transGuid, ptListOfBlockRecords, maxBlockEntitySize);
 	BOOST_CHECK(ptBlockEntity.size()>0);
 
@@ -1023,7 +1023,8 @@ BOOST_AUTO_TEST_CASE(add2AttributsOneLargeOneSmallToBlockRecord)
 	cout << "*}}}" << endl;
 
 	std::vector< pair<std::string ,int> > listOfBlockEntityFiles = ptestDataDictionaryControl->writeBlockEntityToBFiFile(ptBlockEntity);
-/*	BOOST_CHECK(listOfBlockEntityFiles.size()==2);
+	BOOST_CHECK(listOfBlockEntityFiles.size()==1);
+
 	pair <std::string,int> block;
 	BOOST_FOREACH(block, listOfBlockEntityFiles)
 	{
@@ -1031,7 +1032,6 @@ BOOST_AUTO_TEST_CASE(add2AttributsOneLargeOneSmallToBlockRecord)
 		cout << "cleanup file " << endl;
 		boost::filesystem::remove(block.first);
 	}
-*/
 
 	cout << "________________________________________" << endl;
 	cout << "attributs added : " << endl;

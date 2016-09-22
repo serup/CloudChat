@@ -431,12 +431,7 @@ boost::property_tree::ptree CDataDictionaryControl::addBlockRecordToBlockEntity(
 
 	iBytesLeftInBlockEntity=maxBlockEntitySize;
 
-	long amountOfBlockRecords=0;
-	BOOST_FOREACH(boost::property_tree::ptree::value_type &v2, ptListOfBlockRecords.get_child("listOfBlockRecords", _empty_tree)) 
-	{
-		amountOfBlockRecords++;
-	}
-
+	long amountOfBlockRecords=ptListOfBlockRecords.count("listOfBlockRecords"); 
 	BOOST_FOREACH(boost::property_tree::ptree::value_type &v2, ptListOfBlockRecords.get_child("listOfBlockRecords", _empty_tree)) 
 	{
 		if(v2.first == "BlockRecord")
