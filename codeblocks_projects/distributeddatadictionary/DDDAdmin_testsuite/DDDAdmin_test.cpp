@@ -1107,14 +1107,14 @@ BOOST_AUTO_TEST_CASE(add2AttributsOneLargeOneSmallToBlockRecord)
         boost::algorithm::unhex(hexdata.begin(),hexdata.end(), data_in_unhexed_buf2);// convert the hex array to an array containing byte values
 
 	cout << "hexdata : < " << hexdata << " > " << endl; 
-        cout << "hexdata size: " << hexdata.size() << endl;
+	cout << "hexdata size: " << hexdata.size() << endl;
 	// initialize decoder with Data 
 	{
         DED_PUT_DATA_IN_DECODER(decoder_ptr2,data_in_unhexed_buf2,hexdata.size());
         BOOST_CHECK(decoder_ptr2 != 0);
 
         EntityChunkDataInfo _chunk2;
- 	// decode data ...
+		// decode data ...
         DED_GET_STRUCT_START( decoder_ptr2, "chunk_record" );
             BOOST_CHECK(DED_GET_STDSTRING	( decoder_ptr2, "attribut_chunk_id", _chunk2.entity_chunk_id )); // key of particular item
             DED_GET_ULONG   	( decoder_ptr2, "attribut_aiid", _chunk2.aiid ); // this number is continuesly increasing all thruout the entries in this table
@@ -1122,19 +1122,26 @@ BOOST_AUTO_TEST_CASE(add2AttributsOneLargeOneSmallToBlockRecord)
             DED_GET_STDVECTOR	( decoder_ptr2, "attribut_chunk_data", _chunk2.entity_chunk_data ); //
         DED_GET_STRUCT_END( decoder_ptr2, "chunk_record" );
 	
-	cout << "entity_chunk_id : " << _chunk2.entity_chunk_id << endl;
-	cout << "entity_aiid : " << _chunk2.aiid << endl;
-	cout << "entity_chunk_seq : " << _chunk2.entity_chunk_seq << endl;
+		cout << "entity_chunk_id : " << _chunk2.entity_chunk_id << endl;
+		cout << "entity_aiid : " << _chunk2.aiid << endl;
+		cout << "entity_chunk_seq : " << _chunk2.entity_chunk_seq << endl;
 
-	// verify decoded Data
-	BOOST_CHECK(_chunk2.entity_chunk_id == attributName2); 
-	std::string strtmp2(_chunk2.entity_chunk_data.begin(), _chunk2.entity_chunk_data.end());
-	BOOST_CHECK(strtmp2 == mobil); 
-	BOOST_CHECK(_chunk2.entity_chunk_data == attributValue2); 
-	BOOST_CHECK(_chunk2.entity_chunk_seq == 1);
+		// verify decoded Data
+		BOOST_CHECK(_chunk2.entity_chunk_id == attributName2); 
+		std::string strtmp2(_chunk2.entity_chunk_data.begin(), _chunk2.entity_chunk_data.end());
+		BOOST_CHECK(strtmp2 == mobil); 
+		BOOST_CHECK(_chunk2.entity_chunk_data == attributValue2); 
+		BOOST_CHECK(_chunk2.entity_chunk_seq == 1);
 	}
 	
 	cout<<"}"<<endl;
 }
 
+BOOST_AUTO_TEST_CASE(listDataDictionaryAttributs)
+{
+	CDataDictionaryControl *pDDC = new CDataDictionaryControl();
+	std::string strResult = pDDC->cmdline("ls");	
+	std::string expected = "";
 
+	BOOST_CHECK(expected == strResult);
+}

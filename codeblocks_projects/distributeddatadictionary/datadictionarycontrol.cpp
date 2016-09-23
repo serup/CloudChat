@@ -440,14 +440,15 @@ boost::property_tree::ptree CDataDictionaryControl::addBlockRecordToBlockEntity(
 			if(iBytesLeftInBlockEntity <= 0)
 			{
 				if(iBytesLeftInBlockEntity < 0)
-						BOOST_LOG_TRIVIAL(warning) << "- WARNING: BlockRecord size exceeds BlockEntity size " << endl;
-				iBytesLeftInBlockEntity=maxBlockEntitySize;
+					BOOST_LOG_TRIVIAL(warning) << "- WARNING: BlockRecord size exceeds BlockEntity size " << endl;
+				
 				if( !appendToLastBlockEntity(node, v2.second, transGuid) ) 
 					BOOST_LOG_TRIVIAL(error) << "[addBlockRecordToBlockEntity] - FAIL: could not append to last blockentity" << endl;
 				
-				if(amountOfBlockRecords>0) {
+				if(amountOfBlockRecords>0) 
 					node.add("BlockEntity",""); // ready for next BlockEntity
-				}
+				
+				iBytesLeftInBlockEntity=maxBlockEntitySize;
 			}
 			else {
 				if( !appendToLastBlockEntity(node, v2.second, transGuid) )
@@ -555,4 +556,12 @@ void CDataDictionaryControl::setMaxDEDchunkSize(long maxSize)
 long CDataDictionaryControl::getMaxDEDchunkSize()
 {
 	return _maxDEDchunkSize;
+}
+
+
+std::string CDataDictionaryControl::cmdline(std::string command)
+{
+	std::string strResult="";
+
+	return strResult;
 }
