@@ -951,8 +951,6 @@ BOOST_AUTO_TEST_CASE(add2AttributsToBlockRecord)
 	cout<<"}"<<endl;
 }
 
-
-
 BOOST_AUTO_TEST_CASE(add2AttributsOneLargeOneSmallToBlockRecord)
 {
 	using boost::optional;
@@ -1139,9 +1137,99 @@ BOOST_AUTO_TEST_CASE(add2AttributsOneLargeOneSmallToBlockRecord)
 
 BOOST_AUTO_TEST_CASE(listDataDictionaryAttributs)
 {
+	cout<<"BOOS_AUTO_TEST(listDataDictionaryAttributs)\n{"<<endl;
+
+	using boost::optional;
+	using boost::property_tree::ptree;
+
 	CDataDictionaryControl *pDDC = new CDataDictionaryControl();
 	std::string strResult = pDDC->cmdline("ls");	
 	std::string expected = "";
 
 	BOOST_CHECK(expected == strResult);
+
+	// create BFi files
+	CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
+	ptree ptListOfBlockRecords;
+
+	// attribut 1
+	std::string attributName = "name";
+	std::string name = "Johnny Serup";	
+	std::vector<unsigned char> attributValue(name.begin(), name.end());
+
+	// attribut 2
+	std::string attributName2 = "mobil";
+	std::string mobil = "555 - 332 211 900";	
+	std::vector<unsigned char> attributValue2(mobil.begin(), mobil.end());
+
+	std::string realmName = "profile";
+	long maxBlockRecordSize=64000;	
+
+
+	cout << "BlockRecord size before: " << maxBlockRecordSize << endl;
+	std::string transGuid = "F4C23762ED2823A27E62A64B95C024EF";
+	BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName, attributValue)); 
+	cout << "BlockRecord size after 1 attribut add : " << maxBlockRecordSize << endl;
+	BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName2, attributValue2)); 
+	cout << "BlockRecord size after 2 atrribut add : " << maxBlockRecordSize << endl;
+ 
+
+	// check that list now contain basic 'listOfBlockRecords' - which is necessary	
+	optional< ptree& > child = ptListOfBlockRecords.get_child_optional( "listOfBlockRecords" );
+	BOOST_CHECK(child);
+
+	// verify that BlockRecord has been added
+	child = ptListOfBlockRecords.get_child_optional( "BlockRecord.chunk_data" );
+	BOOST_CHECK(child);
+
+	child = ptListOfBlockRecords.get_child_optional( "BlockRecord.chunk_data.chunk_record" );
+	BOOST_CHECK(child);
+
+	child = ptListOfBlockRecords.get_child_optional( "BlockRecord.chunk_data.chunk_record.chunk_ddid" );
+	BOOST_CHECK(child);
+
+	cout << "________________________________________" << endl;
+	cout << "attributs added : " << endl;
+		
+	int amountOfBlockRecords = 0;
+	int amountOfchunk_records = 0;
+	std::string hexdata_attribut1="";
+	std::string hexdata_attribut2="";
+
+
+	BOOST_FOREACH(ptree::value_type &vt, ptListOfBlockRecords.get_child("listOfBlockRecords"))
+	{
+		cout << " - attribut name : " << vt.first << endl;
+		if(vt.first == "BlockRecord")
+		{
+			amountOfBlockRecords++;
+			BOOST_FOREACH(ptree::value_type &vt2 , vt.second)
+			{
+				if(vt2.first == "chunk_data")
+				{
+					cout << " - chunk_data : " << vt2.first << endl; 
+					BOOST_FOREACH(ptree::value_type &vt3, vt2.second)
+					{
+						if(vt3.first == "chunk_record") {
+							cout << " -- chunk_record : " << vt3.second.get_child("chunk_ddid").data() << endl; 
+							amountOfchunk_records++;
+							if(amountOfchunk_records==1) {
+								hexdata_attribut1 = vt3.second.get_child("Data").data();
+							}
+							if(amountOfchunk_records==2) {
+								hexdata_attribut2 = vt3.second.get_child("Data").data();
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	BOOST_CHECK(amountOfBlockRecords == 1); // Only one BlockRecord - the attributs should be added to BlockRecord until it is full, then new BlockRecord will be added
+	BOOST_CHECK(amountOfchunk_records == 2); // There should be two chunk_records - one for attribut1 and one for attribut2
+	cout << "________________________________________" << endl;
+
+
+	cout<<"}"<<endl;
 }

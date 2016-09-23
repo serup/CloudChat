@@ -37,9 +37,7 @@ typedef std::vector<BlockRecordEntry> BlockRecord;
 class CDataDictionaryControl
 {
     public:
-        /** Default constructor */
         CDataDictionaryControl();
-        /** Default destructor */
         virtual ~CDataDictionaryControl();
 
 		bool CreateBlockFile(std::string filename);
@@ -56,16 +54,16 @@ class CDataDictionaryControl
 	  	std::string cmdline(std::string command);
 	
     protected:
-	long _maxDEDchunkSize;
+		long _maxDEDchunkSize;
 
     private:
-	vector< pair<char*, int> > readFile(const char* fn);
-	std::vector<unsigned char> readFile(std::string fn);
-	long totalSizeOf(std::vector<pair<std::vector<unsigned char>, int>> vectorPairList);
-	bool appendChunkRecordToLastBlockRecordsChunkData(boost::property_tree::ptree &pt, boost::property_tree::ptree &subpt);
-	bool appendToLastBlockEntity(boost::property_tree::ptree &node, boost::property_tree::ptree &subpt, std::string transGuid);
-	void setMaxDEDchunkSize(long maxSize);
-	long getMaxDEDchunkSize();
+		vector< pair<char*, int> > readFile(const char* fn);
+		std::vector<unsigned char> readFile(std::string fn);
+		long totalSizeOf(std::vector<pair<std::vector<unsigned char>, int>> vectorPairList);
+		bool appendChunkRecordToLastBlockRecordsChunkData(boost::property_tree::ptree &pt, boost::property_tree::ptree &subpt);
+		bool appendToLastBlockEntity(boost::property_tree::ptree &node, boost::property_tree::ptree &subpt, std::string transGuid);
+		void setMaxDEDchunkSize(long maxSize);
+		long getMaxDEDchunkSize();
 
 };
 
