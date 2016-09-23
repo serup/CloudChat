@@ -418,6 +418,7 @@ long CDataDictionaryControl::totalSizeOf(std::vector<pair<std::vector<unsigned c
 
 boost::property_tree::ptree CDataDictionaryControl::addBlockRecordToBlockEntity(std::string transGuid, boost::property_tree::ptree &ptListOfBlockRecords, long maxBlockEntitySize)
 {
+	using boost::optional;
 	using boost::property_tree::ptree;
 	ptree _empty_tree;
 		
@@ -430,9 +431,9 @@ boost::property_tree::ptree CDataDictionaryControl::addBlockRecordToBlockEntity(
 //	node.add("BlockEntity", "");
 
 	iBytesLeftInBlockEntity=maxBlockEntitySize;
+	long amountOfBlockRecords=ptListOfBlockRecords.count("BlockRecord"); 
 
-	long amountOfBlockRecords=ptListOfBlockRecords.count("listOfBlockRecords"); 
-	bool bBlockEntityExists=false;
+	cout << "- amount of BlockRecords : " << amountOfBlockRecords << endl;
 	BOOST_FOREACH(boost::property_tree::ptree::value_type &v2, ptListOfBlockRecords.get_child("listOfBlockRecords", _empty_tree)) 
 	{
 		if(v2.first == "BlockRecord")
@@ -442,17 +443,22 @@ boost::property_tree::ptree CDataDictionaryControl::addBlockRecordToBlockEntity(
 			cout << "- blockRecordSize : " << blockRecordSize << " bytesLeftInBlockEntity : " << iBytesLeftInBlockEntity << " maxBlockEntitySize : " << maxBlockEntitySize << endl;
 			if(iBytesLeftInBlockEntity <= 0)
 			{
+				optional< ptree& > child = node.get_child_optional( "BlockEntity" );
+				if(!child) node.add("BlockEntity",""); // BlockEntity node initialized
+				cout << "- add new BlockEntity node " << endl;
 				iBytesLeftInBlockEntity=maxBlockEntitySize;
-				if(amountOfBlockRecords>=0) { node.add("BlockEntity",""); bBlockEntityExists=true; } // ready for next BlockEntity
 				if( !appendToLastBlockEntity(node, v2.second, transGuid) ) cout << "- FAIL: could not append to last blockentity" << endl;
+				node.add("BlockEntity",""); // ready for next BlockEntity
 			}
 			else {
-				if(!bBlockEntityExists) node.add("BlockEntity",""); // ready for next BlockEntity
+				cout << "- append to already existing BlockEntity node " << endl;
+				optional< ptree& > child = node.get_child_optional( "BlockEntity" );
+				if(!child) node.add("BlockEntity",""); // ready for next BlockEntity
 				if( !appendToLastBlockEntity(node, v2.second, transGuid) )
 					cout << "- FAIL: could not append to last blockentity" << endl;
 			}	
-			amountOfBlockRecords--;
 		}	 
+		amountOfBlockRecords--;
 	}
 
 	return blkrecord;
