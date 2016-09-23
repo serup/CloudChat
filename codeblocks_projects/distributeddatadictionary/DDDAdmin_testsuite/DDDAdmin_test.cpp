@@ -1173,6 +1173,25 @@ BOOST_AUTO_TEST_CASE(listDataDictionaryAttributs)
 	BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName2, attributValue2)); 
 	cout << "BlockRecord size after 2 atrribut add : " << maxBlockRecordSize << endl;
  
+	long maxBlockEntitySize=27000; // should result in 1 BlockEntity 
+	boost::property_tree::ptree ptBlockEntity = ptestDataDictionaryControl->addBlockRecordToBlockEntity(transGuid, ptListOfBlockRecords, maxBlockEntitySize);
+	BOOST_CHECK(ptBlockEntity.size()>0);
+
+	cout << "*{{{" << endl;
+	write_xml(std::cout, ptBlockEntity, boost::property_tree::xml_writer_make_settings<std::string>('\t', 1) );
+	cout << "*}}}" << endl;
+
+	std::vector< pair<std::string ,int> > listOfBlockEntityFiles = ptestDataDictionaryControl->writeBlockEntityToBFiFile(ptBlockEntity);
+	BOOST_CHECK(listOfBlockEntityFiles.size()==1);
+
+	pair <std::string,int> block;
+	BOOST_FOREACH(block, listOfBlockEntityFiles)
+	{
+		cout << "- OK Created file : " << block.first << " size : " << block.second << endl;
+		cout << "cleanup file " << endl;
+		boost::filesystem::remove(block.first);
+	}
+
 
 	// check that list now contain basic 'listOfBlockRecords' - which is necessary	
 	optional< ptree& > child = ptListOfBlockRecords.get_child_optional( "listOfBlockRecords" );
@@ -1229,6 +1248,10 @@ BOOST_AUTO_TEST_CASE(listDataDictionaryAttributs)
 	BOOST_CHECK(amountOfBlockRecords == 1); // Only one BlockRecord - the attributs should be added to BlockRecord until it is full, then new BlockRecord will be added
 	BOOST_CHECK(amountOfchunk_records == 2); // There should be two chunk_records - one for attribut1 and one for attribut2
 	cout << "________________________________________" << endl;
+
+
+	strResult = pDDC->cmdline("ls");	
+	expected = "";
 
 
 	cout<<"}"<<endl;
