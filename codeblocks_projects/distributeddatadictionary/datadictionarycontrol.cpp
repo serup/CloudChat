@@ -438,6 +438,7 @@ boost::property_tree::ptree CDataDictionaryControl::addBlockRecordToBlockEntity(
 	{
 		if(v2.first == "BlockRecord")
 		{
+			amountOfBlockRecords--;
 			blockRecordSize = fetchBlockRecordSize(v2);	
 			iBytesLeftInBlockEntity -= blockRecordSize;
 			cout << "- blockRecordSize : " << blockRecordSize << " bytesLeftInBlockEntity : " << iBytesLeftInBlockEntity << " maxBlockEntitySize : " << maxBlockEntitySize << endl;
@@ -445,10 +446,14 @@ boost::property_tree::ptree CDataDictionaryControl::addBlockRecordToBlockEntity(
 			{
 				optional< ptree& > child = node.get_child_optional( "BlockEntity" );
 				if(!child) node.add("BlockEntity",""); // BlockEntity node initialized
-				cout << "- add new BlockEntity node " << endl;
 				iBytesLeftInBlockEntity=maxBlockEntitySize;
 				if( !appendToLastBlockEntity(node, v2.second, transGuid) ) cout << "- FAIL: could not append to last blockentity" << endl;
-				node.add("BlockEntity",""); // ready for next BlockEntity
+				if(amountOfBlockRecords>0) {
+					cout << "- add new BlockEntity node " << endl;
+					node.add("BlockEntity",""); // ready for next BlockEntity
+				}
+				else
+					cout << "- NO more nodes to fill " << endl;
 			}
 			else {
 				cout << "- append to already existing BlockEntity node " << endl;
@@ -458,7 +463,6 @@ boost::property_tree::ptree CDataDictionaryControl::addBlockRecordToBlockEntity(
 					cout << "- FAIL: could not append to last blockentity" << endl;
 			}	
 		}	 
-		amountOfBlockRecords--;
 	}
 
 	return blkrecord;
