@@ -431,7 +431,7 @@ boost::property_tree::ptree CDataDictionaryControl::addBlockRecordToBlockEntity(
 	ptree &node = blkrecord.add("listOfBlockEntities", "");
 	node.add("BlockEntity", "");
 
-	BOOST_FOREACH(boost::property_tree::ptree::value_type &v2, ptListOfBlockRecords.get_child("listOfBlockRecords", _empty_tree)) 
+	BOOST_FOREACH(ptree::value_type &v2, ptListOfBlockRecords.get_child("listOfBlockRecords", _empty_tree)) 
 	{
 		if(v2.first == "BlockRecord")
 		{
@@ -439,6 +439,8 @@ boost::property_tree::ptree CDataDictionaryControl::addBlockRecordToBlockEntity(
 			iBytesLeftInBlockEntity -= fetchBlockRecordSize(v2);
 			if(iBytesLeftInBlockEntity <= 0)
 			{
+				if(iBytesLeftInBlockEntity < 0)
+						BOOST_LOG_TRIVIAL(warning) << "- WARNING: BlockRecord size exceeds BlockEntity size " << endl;
 				iBytesLeftInBlockEntity=maxBlockEntitySize;
 				if( !appendToLastBlockEntity(node, v2.second, transGuid) ) 
 					BOOST_LOG_TRIVIAL(error) << "[addBlockRecordToBlockEntity] - FAIL: could not append to last blockentity" << endl;
