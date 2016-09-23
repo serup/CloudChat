@@ -6,6 +6,7 @@
 
 
 #include <string>
+#include <list>
 #include <iostream>
 #include <fstream>
 #include <boost/filesystem.hpp>

@@ -1185,11 +1185,11 @@ BOOST_AUTO_TEST_CASE(listDataDictionaryAttributs)
 	BOOST_CHECK(listOfBlockEntityFiles.size()==1);
 
 	pair <std::string,int> block;
+	std::list<std::string> listBFiFiles;
 	BOOST_FOREACH(block, listOfBlockEntityFiles)
 	{
 		cout << "- OK Created file : " << block.first << " size : " << block.second << endl;
-		cout << "cleanup file " << endl;
-		boost::filesystem::remove(block.first);
+		listBFiFiles.push_back(block.first);
 	}
 
 
@@ -1252,6 +1252,12 @@ BOOST_AUTO_TEST_CASE(listDataDictionaryAttributs)
 
 	strResult = pDDC->cmdline("ls");	
 	expected = "";
+
+	BOOST_FOREACH(std::string filename, listBFiFiles)
+	{
+		cout << "- OK Cleanup file : " << filename << endl;
+		boost::filesystem::remove(filename);
+	}
 
 
 	cout<<"}"<<endl;
