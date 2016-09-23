@@ -424,10 +424,12 @@ boost::property_tree::ptree CDataDictionaryControl::addBlockRecordToBlockEntity(
 	long iBytesLeftInBlockEntity=maxBlockEntitySize;
 	long amountOfBlockRecords=ptListOfBlockRecords.count("BlockRecord"); 
 
+	if(amountOfBlockRecords<=0)
+		BOOST_LOG_TRIVIAL(error) << "[addBlockRecordToBlockEntity] - FAIL: ERROR: There was no BlockRecords, hence BlockEntity will be empty " << endl;
+
 	ptree blkrecord;
 	ptree &node = blkrecord.add("listOfBlockEntities", "");
 	node.add("BlockEntity", "");
-
 
 	BOOST_FOREACH(boost::property_tree::ptree::value_type &v2, ptListOfBlockRecords.get_child("listOfBlockRecords", _empty_tree)) 
 	{
@@ -438,14 +440,16 @@ boost::property_tree::ptree CDataDictionaryControl::addBlockRecordToBlockEntity(
 			if(iBytesLeftInBlockEntity <= 0)
 			{
 				iBytesLeftInBlockEntity=maxBlockEntitySize;
-				if( !appendToLastBlockEntity(node, v2.second, transGuid) ) cout << "- FAIL: could not append to last blockentity" << endl;
+				if( !appendToLastBlockEntity(node, v2.second, transGuid) ) 
+					BOOST_LOG_TRIVIAL(error) << "[addBlockRecordToBlockEntity] - FAIL: could not append to last blockentity" << endl;
+				
 				if(amountOfBlockRecords>0) {
 					node.add("BlockEntity",""); // ready for next BlockEntity
 				}
 			}
 			else {
 				if( !appendToLastBlockEntity(node, v2.second, transGuid) )
-					cout << "- FAIL: could not append to last blockentity" << endl;
+					BOOST_LOG_TRIVIAL(error) << "[addBlockRecordToBlockEntity] - FAIL: could not append to last blockentity" << endl;
 			}	
 		}	 
 	}
