@@ -1253,6 +1253,9 @@ BOOST_AUTO_TEST_CASE(listDataDictionaryAttributs)
 	strResult = pDDC->cmdline("ls");	
 	expected = "";
 
+
+
+	// Clean up section - must be in bottom
 	BOOST_FOREACH(std::string filename, listBFiFiles)
 	{
 		cout << "- OK Cleanup file : " << filename << endl;

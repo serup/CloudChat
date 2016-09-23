@@ -562,6 +562,17 @@ long CDataDictionaryControl::getMaxDEDchunkSize()
 std::string CDataDictionaryControl::cmdline(std::string command)
 {
 	std::string strResult="";
+	boost::filesystem::path targetDir( boost::filesystem::current_path() );
+
+	boost::filesystem::recursive_directory_iterator iter(targetDir), eod;
+
+	BOOST_FOREACH(boost::filesystem::path const& i, make_pair(iter, eod))
+	{
+			if (is_regular_file(i)){
+					if(boost::filesystem::extension(i.string()) == ".BFi")
+						cout << i.string() << endl;
+			}
+	}
 
 	return strResult;
 }
