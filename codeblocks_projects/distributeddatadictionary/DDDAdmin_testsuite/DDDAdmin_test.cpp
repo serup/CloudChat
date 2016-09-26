@@ -1326,7 +1326,7 @@ BOOST_AUTO_TEST_CASE(listDataDictionaryAttributsWithOneLarge)
 	BOOST_CHECK(attributValue3.size() > 0);
 
 	std::string realmName = "profile";
-	long maxBlockRecordSize=64000;	
+	long maxBlockRecordSize=27000;	
 
 
 	cout << "BlockRecord size before: " << maxBlockRecordSize << endl;
@@ -1338,7 +1338,7 @@ BOOST_AUTO_TEST_CASE(listDataDictionaryAttributsWithOneLarge)
 	BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName3, attributValue3)); 
 	cout << "BlockRecord size after 3 atrribut add : " << maxBlockRecordSize << endl;
 	 
-	long maxBlockEntitySize=27000; // should result in 1 BlockEntity 
+	long maxBlockEntitySize=37000; // should result in 1 BlockEntity 
 	boost::property_tree::ptree ptBlockEntity = ptestDataDictionaryControl->addBlockRecordToBlockEntity(transGuid, ptListOfBlockRecords, maxBlockEntitySize);
 	BOOST_CHECK(ptBlockEntity.size()>0);
 
@@ -1391,11 +1391,20 @@ BOOST_AUTO_TEST_CASE(listDataDictionaryAttributsWithOneLarge)
 			{
 				if(vt2.first == "chunk_data")
 				{
-					cout << " - chunk_data : " << vt2.first << endl; 
+					cout << " - " << vt2.first << " : "; 
+					std::string attributName="";
+					std::string prevattributName="";
 					BOOST_FOREACH(ptree::value_type &vt3, vt2.second)
 					{
 						if(vt3.first == "chunk_record") {
-							cout << " -- chunk_record : " << vt3.second.get_child("chunk_ddid").data() << endl; 
+							attributName = vt3.second.get_child("chunk_ddid").data();
+							if(prevattributName!=attributName) {
+								cout << endl;
+								cout << " -- chunk_record : " << vt3.second.get_child("chunk_ddid").data() << " "; 
+								prevattributName=attributName;
+							}
+							else
+								cout << ".";
 							amountOfchunk_records++;
 							if(amountOfchunk_records==1) {
 								hexdata_attribut1 = vt3.second.get_child("Data").data();
@@ -1411,7 +1420,8 @@ BOOST_AUTO_TEST_CASE(listDataDictionaryAttributsWithOneLarge)
 	}
 
 	BOOST_CHECK(amountOfBlockRecords == 1); // Only one BlockRecord - the attributs should be added to BlockRecord until it is full, then new BlockRecord will be added
-	BOOST_CHECK(amountOfchunk_records == 2); // There should be two chunk_records - one for attribut1 and one for attribut2
+	cout << endl << "- amount of chunk records : " << amountOfchunk_records << endl;
+	BOOST_CHECK(amountOfchunk_records == 37); 
 	cout << "________________________________________" << endl;
 
 
@@ -1419,6 +1429,7 @@ BOOST_AUTO_TEST_CASE(listDataDictionaryAttributsWithOneLarge)
 	//expected : reads like this: <GUID> has a profile folder with attribut name and mobil
 	std::string expected1 =  "F4C23762ED2823A27E62A64B95C024EF./profile/name";
 	std::string expected2 =  "F4C23762ED2823A27E62A64B95C024EF./profile/mobil";
+	std::string expected3 =  "F4C23762ED2823A27E62A64B95C024EF./profile/foto";
 
 	BOOST_CHECK(listResult.size() > 0);
 
@@ -1429,6 +1440,7 @@ BOOST_AUTO_TEST_CASE(listDataDictionaryAttributsWithOneLarge)
 		cout << "- OK attribut : " << attribut << endl;
 		if(c==1) BOOST_CHECK(expected1 == attribut);
 		if(c==2) BOOST_CHECK(expected2 == attribut);
+		if(c==3) BOOST_CHECK(expected3 == attribut);
 	}
 
 

@@ -588,12 +588,12 @@ std::list<std::string> CDataDictionaryControl::cmdline(std::string command)
 					if (str == "TransGUID") transGuid = child.second.data();
 
 					attribut = transGuid + "./" + id + "/";
+					prevAtt="";
 					BOOST_FOREACH(const boost::property_tree::ptree::value_type &vt2 , child.second)
 					{
 						if(vt2.first == "chunk_record")
 						{
 							prev=attribut;
-							prevAtt="";
 							BOOST_FOREACH(const boost::property_tree::ptree::value_type &vt3, vt2.second)
 							{
 								if(vt3.first == "chunk_ddid") {
