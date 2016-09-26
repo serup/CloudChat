@@ -1253,6 +1253,8 @@ BOOST_AUTO_TEST_CASE(listDataDictionaryAttributs)
 	std::string expected1 =  "F4C23762ED2823A27E62A64B95C024EF./profile/name";
 	std::string expected2 =  "F4C23762ED2823A27E62A64B95C024EF./profile/mobil";
 
+	BOOST_CHECK(listResult.size() > 0);
+
 	int c=0;
 	BOOST_FOREACH(std::string attribut, listResult)
 	{

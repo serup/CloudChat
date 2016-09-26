@@ -597,13 +597,16 @@ std::list<std::string> CDataDictionaryControl::cmdline(std::string command)
 						if(vt2.first == "chunk_record")
 						{
 							std::string prev=attribut;
+							std::string prevAtt="";
 							BOOST_FOREACH(const boost::property_tree::ptree::value_type &vt3, vt2.second)
 							{
 								if(vt3.first == "chunk_ddid") {
-									attribut += vt3.second.data();
-									if(prev!=attribut)
+									if(prevAtt!=vt3.second.data()) {
+										prevAtt=vt3.second.data();
+										attribut += vt3.second.data();
 										listBFiAttributes.push_back(attribut); // disregard chunks of attribut, only list unique attributs
-									attribut=prev;
+										attribut=prev;
+									}
 								}
 							}
 						}
