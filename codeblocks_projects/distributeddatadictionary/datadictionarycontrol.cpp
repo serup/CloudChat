@@ -571,7 +571,7 @@ std::list<std::string> CDataDictionaryControl::cmdline(std::string command)
 	{
 		if (is_regular_file(i)){
 			if(boost::filesystem::extension(i.string()) == ".BFi") {
-				cout << i.string() << endl;
+				//cout << i.string() << endl;
 				std::ifstream is (i.string());
 				ptree pt;
 				read_xml(is, pt);
@@ -596,12 +596,13 @@ std::list<std::string> CDataDictionaryControl::cmdline(std::string command)
 					{
 						if(vt2.first == "chunk_record")
 						{
+							std::string prev=attribut;
 							BOOST_FOREACH(const boost::property_tree::ptree::value_type &vt3, vt2.second)
 							{
 								if(vt3.first == "chunk_ddid") {
-									std::string prev=attribut;
 									attribut += vt3.second.data();
-									listBFiAttributes.push_back(attribut);
+									if(prev!=attribut)
+										listBFiAttributes.push_back(attribut); // disregard chunks of attribut, only list unique attributs
 									attribut=prev;
 								}
 							}
