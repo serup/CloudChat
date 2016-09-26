@@ -1143,10 +1143,8 @@ BOOST_AUTO_TEST_CASE(listDataDictionaryAttributs)
 	using boost::property_tree::ptree;
 
 	CDataDictionaryControl *pDDC = new CDataDictionaryControl();
-	std::string strResult = pDDC->cmdline("ls");	
-	std::string expected = "";
-
-	BOOST_CHECK(expected == strResult);
+	std::list<std::string> listResult = pDDC->cmdline("ls");	
+	BOOST_CHECK(listResult.size() <= 0);
 
 	// create BFi files
 	CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
@@ -1250,15 +1248,29 @@ BOOST_AUTO_TEST_CASE(listDataDictionaryAttributs)
 	cout << "________________________________________" << endl;
 
 
-	strResult = pDDC->cmdline("ls");	
-	expected = "";
+	listResult = pDDC->cmdline("ls");	
+	//expected : reads like this: <GUID> has a profile folder with attribut name and mobil
+	std::string expected1 =  "F4C23762ED2823A27E62A64B95C024EF./profile/name";
+	std::string expected2 =  "F4C23762ED2823A27E62A64B95C024EF./profile/mobil";
+
+	int c=0;
+	BOOST_FOREACH(std::string attribut, listResult)
+	{
+		c++;
+		cout << "- OK attribut : " << attribut << endl;
+		if(c==1) BOOST_CHECK(expected1 == attribut);
+		if(c==2) BOOST_CHECK(expected2 == attribut);
+	}
 
 
-
+	cout << "________________________________________" << endl;
 	// Clean up section - must be in bottom
 	BOOST_FOREACH(std::string filename, listBFiFiles)
 	{
 		cout << "- OK Cleanup file : " << filename << endl;
+		boost::filesystem::path p = boost::filesystem::path(filename);
+//		std::cout << "filename and extension : " << p.filename().string() << std::endl; // file.ext
+//		std::cout << "filename only          : " << p.stem().string() << std::endl;     // file
 		boost::filesystem::remove(filename);
 	}
 

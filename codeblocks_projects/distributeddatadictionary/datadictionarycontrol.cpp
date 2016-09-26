@@ -559,20 +559,58 @@ long CDataDictionaryControl::getMaxDEDchunkSize()
 }
 
 
-std::string CDataDictionaryControl::cmdline(std::string command)
+std::list<std::string> CDataDictionaryControl::cmdline(std::string command)
 {
-	std::string strResult="";
-	boost::filesystem::path targetDir( boost::filesystem::current_path() );
+	using boost::property_tree::ptree;
+	std::list<std::string> listBFiAttributes;
 
+	boost::filesystem::path targetDir( boost::filesystem::current_path() );
 	boost::filesystem::recursive_directory_iterator iter(targetDir), eod;
 
 	BOOST_FOREACH(boost::filesystem::path const& i, make_pair(iter, eod))
 	{
-			if (is_regular_file(i)){
-					if(boost::filesystem::extension(i.string()) == ".BFi")
-						cout << i.string() << endl;
+		if (is_regular_file(i)){
+			if(boost::filesystem::extension(i.string()) == ".BFi") {
+				cout << i.string() << endl;
+				std::ifstream is (i.string());
+				ptree pt;
+				read_xml(is, pt);
+				std::string transGuid="";
+				std::string id="";
+
+				BOOST_FOREACH(const boost::property_tree::ptree::value_type & child, pt.get_child("BFi.BlockEntity.BlockRecord")) 
+				{
+					std::string str;
+					str = child.first.data();
+					if (str == "chunk_id") 
+					{
+						id = child.second.data();
+					}
+					if (str == "TransGUID") 
+					{
+						transGuid = child.second.data();
+					}
+
+					std::string attribut = transGuid + "./" + id + "/";
+					BOOST_FOREACH(const boost::property_tree::ptree::value_type &vt2 , child.second)
+					{
+						if(vt2.first == "chunk_record")
+						{
+							BOOST_FOREACH(const boost::property_tree::ptree::value_type &vt3, vt2.second)
+							{
+								if(vt3.first == "chunk_ddid") {
+									std::string prev=attribut;
+									attribut += vt3.second.data();
+									listBFiAttributes.push_back(attribut);
+									attribut=prev;
+								}
+							}
+						}
+					}
+				}
 			}
+		}
 	}
 
-	return strResult;
+	return listBFiAttributes;
 }
