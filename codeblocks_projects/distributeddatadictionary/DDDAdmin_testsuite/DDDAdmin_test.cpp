@@ -1280,9 +1280,10 @@ BOOST_AUTO_TEST_CASE(listDataDictionaryAttributs)
 
 	cout<<"}"<<endl;
 }
+
 BOOST_AUTO_TEST_CASE(listDataDictionaryAttributsWithOneLarge)
 {
-	cout<<"BOOS_AUTO_TEST(listDataDictionaryAttributs)\n{"<<endl;
+	cout<<"BOOS_AUTO_TEST(listDataDictionaryAttributsWithOneLarge)\n{"<<endl;
 
 	using boost::optional;
 	using boost::property_tree::ptree;
@@ -1450,11 +1451,8 @@ BOOST_AUTO_TEST_CASE(listDataDictionaryAttributsWithOneLarge)
 	{
 		cout << "- OK Cleanup file : " << filename << endl;
 		boost::filesystem::path p = boost::filesystem::path(filename);
-//		std::cout << "filename and extension : " << p.filename().string() << std::endl; // file.ext
-//		std::cout << "filename only          : " << p.stem().string() << std::endl;     // file
 		boost::filesystem::remove(filename);
 	}
-
 
 	cout<<"}"<<endl;
 }
