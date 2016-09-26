@@ -563,6 +563,12 @@ std::list<std::string> CDataDictionaryControl::cmdline(std::string command)
 {
 	using boost::property_tree::ptree;
 	std::list<std::string> listBFiAttributes;
+	std::string transGuid="";
+	std::string id="";
+	std::string str;
+	std::string attribut = "";
+	std::string prev = "";
+	std::string prevAtt = "";
 
 	boost::filesystem::path targetDir( boost::filesystem::current_path() );
 	boost::filesystem::recursive_directory_iterator iter(targetDir), eod;
@@ -571,33 +577,23 @@ std::list<std::string> CDataDictionaryControl::cmdline(std::string command)
 	{
 		if (is_regular_file(i)){
 			if(boost::filesystem::extension(i.string()) == ".BFi") {
-				//cout << i.string() << endl;
 				std::ifstream is (i.string());
 				ptree pt;
 				read_xml(is, pt);
-				std::string transGuid="";
-				std::string id="";
 
 				BOOST_FOREACH(const boost::property_tree::ptree::value_type & child, pt.get_child("BFi.BlockEntity.BlockRecord")) 
 				{
-					std::string str;
 					str = child.first.data();
-					if (str == "chunk_id") 
-					{
-						id = child.second.data();
-					}
-					if (str == "TransGUID") 
-					{
-						transGuid = child.second.data();
-					}
+					if (str == "chunk_id") id = child.second.data();
+					if (str == "TransGUID") transGuid = child.second.data();
 
-					std::string attribut = transGuid + "./" + id + "/";
+					attribut = transGuid + "./" + id + "/";
 					BOOST_FOREACH(const boost::property_tree::ptree::value_type &vt2 , child.second)
 					{
 						if(vt2.first == "chunk_record")
 						{
-							std::string prev=attribut;
-							std::string prevAtt="";
+							prev=attribut;
+							prevAtt="";
 							BOOST_FOREACH(const boost::property_tree::ptree::value_type &vt3, vt2.second)
 							{
 								if(vt3.first == "chunk_ddid") {
