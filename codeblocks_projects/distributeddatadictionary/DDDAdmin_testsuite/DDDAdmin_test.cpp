@@ -1135,6 +1135,7 @@ BOOST_AUTO_TEST_CASE(add2AttributsOneLargeOneSmallToBlockRecord)
 	cout<<"}"<<endl;
 }
 
+
 BOOST_AUTO_TEST_CASE(listDataDictionaryAttributs)
 {
 	cout<<"BOOS_AUTO_TEST(listDataDictionaryAttributs)\n{"<<endl;
@@ -1171,6 +1172,172 @@ BOOST_AUTO_TEST_CASE(listDataDictionaryAttributs)
 	BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName2, attributValue2)); 
 	cout << "BlockRecord size after 2 atrribut add : " << maxBlockRecordSize << endl;
  
+	long maxBlockEntitySize=27000; // should result in 1 BlockEntity 
+	boost::property_tree::ptree ptBlockEntity = ptestDataDictionaryControl->addBlockRecordToBlockEntity(transGuid, ptListOfBlockRecords, maxBlockEntitySize);
+	BOOST_CHECK(ptBlockEntity.size()>0);
+
+	cout << "*{{{" << endl;
+	write_xml(std::cout, ptBlockEntity, boost::property_tree::xml_writer_make_settings<std::string>('\t', 1) );
+	cout << "*}}}" << endl;
+
+	std::vector< pair<std::string ,int> > listOfBlockEntityFiles = ptestDataDictionaryControl->writeBlockEntityToBFiFile(ptBlockEntity);
+	BOOST_CHECK(listOfBlockEntityFiles.size()==1);
+
+	pair <std::string,int> block;
+	std::list<std::string> listBFiFiles;
+	BOOST_FOREACH(block, listOfBlockEntityFiles)
+	{
+		cout << "- OK Created file : " << block.first << " size : " << block.second << endl;
+		listBFiFiles.push_back(block.first);
+	}
+
+
+	// check that list now contain basic 'listOfBlockRecords' - which is necessary	
+	optional< ptree& > child = ptListOfBlockRecords.get_child_optional( "listOfBlockRecords" );
+	BOOST_CHECK(child);
+
+	// verify that BlockRecord has been added
+	child = ptListOfBlockRecords.get_child_optional( "BlockRecord.chunk_data" );
+	BOOST_CHECK(child);
+
+	child = ptListOfBlockRecords.get_child_optional( "BlockRecord.chunk_data.chunk_record" );
+	BOOST_CHECK(child);
+
+	child = ptListOfBlockRecords.get_child_optional( "BlockRecord.chunk_data.chunk_record.chunk_ddid" );
+	BOOST_CHECK(child);
+
+	cout << "________________________________________" << endl;
+	cout << "attributs added : " << endl;
+		
+	int amountOfBlockRecords = 0;
+	int amountOfchunk_records = 0;
+	std::string hexdata_attribut1="";
+	std::string hexdata_attribut2="";
+
+
+	BOOST_FOREACH(ptree::value_type &vt, ptListOfBlockRecords.get_child("listOfBlockRecords"))
+	{
+		cout << " - attribut name : " << vt.first << endl;
+		if(vt.first == "BlockRecord")
+		{
+			amountOfBlockRecords++;
+			BOOST_FOREACH(ptree::value_type &vt2 , vt.second)
+			{
+				if(vt2.first == "chunk_data")
+				{
+					cout << " - chunk_data : " << vt2.first << endl; 
+					BOOST_FOREACH(ptree::value_type &vt3, vt2.second)
+					{
+						if(vt3.first == "chunk_record") {
+							cout << " -- chunk_record : " << vt3.second.get_child("chunk_ddid").data() << endl; 
+							amountOfchunk_records++;
+							if(amountOfchunk_records==1) {
+								hexdata_attribut1 = vt3.second.get_child("Data").data();
+							}
+							if(amountOfchunk_records==2) {
+								hexdata_attribut2 = vt3.second.get_child("Data").data();
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	BOOST_CHECK(amountOfBlockRecords == 1); // Only one BlockRecord - the attributs should be added to BlockRecord until it is full, then new BlockRecord will be added
+	BOOST_CHECK(amountOfchunk_records == 2); // There should be two chunk_records - one for attribut1 and one for attribut2
+	cout << "________________________________________" << endl;
+
+
+	listResult = pDDC->cmdline("ls");	
+	//expected : reads like this: <GUID> has a profile folder with attribut name and mobil
+	std::string expected1 =  "F4C23762ED2823A27E62A64B95C024EF./profile/name";
+	std::string expected2 =  "F4C23762ED2823A27E62A64B95C024EF./profile/mobil";
+
+	BOOST_CHECK(listResult.size() > 0);
+
+	int c=0;
+	BOOST_FOREACH(std::string attribut, listResult)
+	{
+		c++;
+		cout << "- OK attribut : " << attribut << endl;
+		if(c==1) BOOST_CHECK(expected1 == attribut);
+		if(c==2) BOOST_CHECK(expected2 == attribut);
+	}
+
+
+	cout << "________________________________________" << endl;
+	// Clean up section - must be in bottom
+	BOOST_FOREACH(std::string filename, listBFiFiles)
+	{
+		cout << "- OK Cleanup file : " << filename << endl;
+		boost::filesystem::path p = boost::filesystem::path(filename);
+//		std::cout << "filename and extension : " << p.filename().string() << std::endl; // file.ext
+//		std::cout << "filename only          : " << p.stem().string() << std::endl;     // file
+		boost::filesystem::remove(filename);
+	}
+
+
+	cout<<"}"<<endl;
+}
+BOOST_AUTO_TEST_CASE(listDataDictionaryAttributsWithOneLarge)
+{
+	cout<<"BOOS_AUTO_TEST(listDataDictionaryAttributs)\n{"<<endl;
+
+	using boost::optional;
+	using boost::property_tree::ptree;
+
+	CDataDictionaryControl *pDDC = new CDataDictionaryControl();
+	std::list<std::string> listResult = pDDC->cmdline("ls");	
+	BOOST_CHECK(listResult.size() <= 0);
+
+	// create BFi files
+	CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
+	ptree ptListOfBlockRecords;
+
+	// attribut 1
+	std::string attributName = "name";
+	std::string name = "Johnny Serup";	
+	std::vector<unsigned char> attributValue(name.begin(), name.end());
+
+	// attribut 2
+	std::string attributName2 = "mobil";
+	std::string mobil = "555 - 332 211 900";	
+	std::vector<unsigned char> attributValue2(mobil.begin(), mobil.end());
+
+	// attribut 3 - large
+	std::string attributName3= "foto"; // it should be ddid -- datadictionary id which refers to attribut description
+	std::vector<unsigned char> attributValue3;
+	std::string fn = "testImage.png"; // should be of size 10.5 Kb
+	std::ifstream is (fn, ios::binary);
+	if (is)
+	{
+		long length = boost::filesystem::file_size(fn);
+		std::cout << "[readFile] Reading file: " << fn << " ; amount " << length << " characters... \n";
+		// Make sure receipient has room
+		attributValue3.resize(length,0);
+		//read content of infile
+		is.read ((char*)&attributValue3[0],length);
+		std::cout << "[readFile] size: " << (int) attributValue3.size() << '\n';
+		std::cout << "[readFile] capacity: " << (int) attributValue3.capacity() << '\n';
+		std::cout << "[readFile] max_size: " << (int) attributValue3.max_size() << '\n';
+		is.close();
+	}
+	BOOST_CHECK(attributValue3.size() > 0);
+
+	std::string realmName = "profile";
+	long maxBlockRecordSize=64000;	
+
+
+	cout << "BlockRecord size before: " << maxBlockRecordSize << endl;
+	std::string transGuid = "F4C23762ED2823A27E62A64B95C024EF";
+	BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName, attributValue)); 
+	cout << "BlockRecord size after 1 attribut add : " << maxBlockRecordSize << endl;
+	BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName2, attributValue2)); 
+	cout << "BlockRecord size after 2 atrribut add : " << maxBlockRecordSize << endl;
+	BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName3, attributValue3)); 
+	cout << "BlockRecord size after 3 atrribut add : " << maxBlockRecordSize << endl;
+	 
 	long maxBlockEntitySize=27000; // should result in 1 BlockEntity 
 	boost::property_tree::ptree ptBlockEntity = ptestDataDictionaryControl->addBlockRecordToBlockEntity(transGuid, ptListOfBlockRecords, maxBlockEntitySize);
 	BOOST_CHECK(ptBlockEntity.size()>0);
