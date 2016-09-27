@@ -3,9 +3,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <tclap/CmdLine.h>
+#include <curses.h>
+#include <unistd.h>
 
 using namespace TCLAP;
 using namespace std;
+
+
+void spinner(int spin_seconds, int y, int x) 
+{
+	static char const spin_chars[] = "/-\\|";
+	unsigned long i, num_iterations = (spin_seconds * 10);
+	for (i=0; i<num_iterations; ++i) {
+		mvaddch(y, x, spin_chars[i & 3]);
+		refresh();
+		usleep(100000);
+	}
+}
 
 /**
  *
@@ -14,8 +28,31 @@ using namespace std;
  */
 int main(int argc, char* argv[])
 {
-	system("cat DDD_outline ");
-	system("echo -n '- Current Directory is '; pwd");
+
+   	initscr();				/* start the curses mode */
+
+	mvprintw(0 ,0, "%s","                                                                     " );
+	mvprintw(1 ,0, "%s","   DDDDDDDDDDDDD        DDDDDDDDDDDDD         DDDDDDDDDDDDD          " );
+	mvprintw(2 ,0, "%s","   D::::::::::::DDD     D::::::::::::DDD      D::::::::::::DDD       " );
+	mvprintw(3 ,0, "%s","   D:::::::::::::::DD   D:::::::::::::::DD    D:::::::::::::::DD     " );
+	mvprintw(4 ,0, "%s","   DDD:::::DDDDD:::::D  DDD:::::DDDDD:::::D   DDD:::::DDDDD:::::D    " );
+	mvprintw(5 ,0, "%s","     D:::::D    D:::::D   D:::::D    D:::::D    D:::::D    D:::::D   " );
+	mvprintw(6 ,0, "%s","     D:::::D     D:::::D  D:::::D     D:::::D   D:::::D     D:::::D  " );
+	mvprintw(7 ,0, "%s","     D:::::D     D:::::D  D:::::D     D:::::D   D:::::D     D:::::D  " );
+	mvprintw(8 ,0, "%s","     D:::::D     D:::::D  D:::::D     D:::::D   D:::::D     D:::::D  " );
+	mvprintw(9 ,0, "%s","     D:::::D     D:::::D  D:::::D     D:::::D   D:::::D     D:::::D  " );
+	mvprintw(10,0, "%s","     D:::::D     D:::::D  D:::::D     D:::::D   D:::::D     D:::::D  " );
+	mvprintw(11,0, "%s","     D:::::D     D:::::D  D:::::D     D:::::D   D:::::D     D:::::D  " );
+	mvprintw(12,0, "%s","     D:::::D    D:::::D   D:::::D    D:::::D    D:::::D    D:::::D   " );
+	mvprintw(13,0, "%s","   DDD:::::DDDDD:::::D  DDD:::::DDDDD:::::D   DDD:::::DDDDD:::::D    " );
+	mvprintw(14,0, "%s","   D:::::::::::::::DD   D:::::::::::::::DD    D:::::::::::::::DD     " );
+	mvprintw(15,0, "%s","   D::::::::::::DDD     D::::::::::::DDD      D::::::::::::DDD       " );
+	mvprintw(16,0, "%s","   DDDDDDDDDDDDD        DDDDDDDDDDDDD         DDDDDDDDDDDDD          " );
+	mvprintw(17,0, "%s","   Distributed Data Dictionary" );
+	mvprintw(18,0, "%s","   Copyright @ Johnny Serup" );
+	mvprintw(19,0, "%s","" );
+	mvprintw(20,0, "%s","" );
+	refresh();
 
 
 	// Wrap everything in a try block.  Do this every time, 
@@ -25,34 +62,30 @@ int main(int argc, char* argv[])
 		// Define the command line object.
 		CmdLine cmd("Command description message", ' ', "0.9");
 
-		// Define a value argument and add it to the command line.
-		ValueArg<string> nameArg("n","name","Name to print",true,"homer","string");
-		cmd.add( nameArg );
-
 		// Define a switch and add it to the command line.
-		SwitchArg reverseSwitch("r","reverse","Print name backwards", false);
-		cmd.add( reverseSwitch );
+		TCLAP::SwitchArg filesystemSwitch("f","filesystem","Starts filesystem command line", cmd, false);
+		
 
 		// Parse the args.
 		cmd.parse( argc, argv );
+		bool startFs = filesystemSwitch.getValue();
+		if( startFs ) {
 
-		// Get the value parsed by each arg. 
-		string name = nameArg.getValue();
-		bool reverseName = reverseSwitch.getValue();
+			char incmd[80];
+			
+			cout << endl;
+	
+			spinner(3, 20, 1); // spin
 
-		// Do what you intend too...
-		if ( reverseName )
-		{
-			reverse(name.begin(),name.end());
-			cout << "My name (spelled backwards) is: " << name << endl;
+			cout << "\r" << "FS> " << std::flush;
+	                
+			getstr(incmd);
 		}
-		else
-			cout << "My name is: " << name << endl;
-
 
 	} catch (ArgException &e)  // catch any exceptions
 	{ cerr << "error: " << e.error() << " for arg " << e.argId() << endl; }
 
+	endwin();  // cleanup curses
+
 	return 0;
 }
-

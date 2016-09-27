@@ -128,6 +128,14 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- xmllint already installed"
 fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 *libncurses* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install  libcurses on ubuntu, to use for screen handling in terminals "
+  sudo apt-fast install -yq libncurses5-dev
+  echo " - done."
+else
+  echo "- curses already installed"
+fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 gitk* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install gitk on ubuntu, to use for visualizing git repos "
