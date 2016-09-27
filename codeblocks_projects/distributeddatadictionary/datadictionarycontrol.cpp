@@ -614,3 +614,7 @@ std::list<std::string> CDataDictionaryControl::cmdline(std::string command)
 
 	return listBFiAttributes;
 }
+
+
+
+

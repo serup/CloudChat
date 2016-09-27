@@ -1427,7 +1427,7 @@ BOOST_AUTO_TEST_CASE(listDataDictionaryAttributsWithOneLarge)
 
 
 	listResult = pDDC->cmdline("ls");	
-	//expected : reads like this: <GUID> has a profile folder with attribut name and mobil
+	//expected : reads like this: <GUID> has a profile folder with attribut name, mobil and foto
 	std::string expected1 =  "F4C23762ED2823A27E62A64B95C024EF./profile/name";
 	std::string expected2 =  "F4C23762ED2823A27E62A64B95C024EF./profile/mobil";
 	std::string expected3 =  "F4C23762ED2823A27E62A64B95C024EF./profile/foto";
