@@ -14,31 +14,44 @@ using namespace std;
  */
 int main(int argc, char* argv[])
 {
-	try
-	{
-		system("echo -n '1. Current Directory is '; pwd");
-		system("cat DOPS_outline.txt ");
+	system("cat DDD_outline ");
+	system("echo -n '- Current Directory is '; pwd");
 
-		// Check command line arguments.
-		if (argc != 2)
+
+	// Wrap everything in a try block.  Do this every time, 
+	// because exceptions will be thrown for problems. 
+	try {  
+
+		// Define the command line object.
+		CmdLine cmd("Command description message", ' ', "0.9");
+
+		// Define a value argument and add it to the command line.
+		ValueArg<string> nameArg("n","name","Name to print",true,"homer","string");
+		cmd.add( nameArg );
+
+		// Define a switch and add it to the command line.
+		SwitchArg reverseSwitch("r","reverse","Print name backwards", false);
+		cmd.add( reverseSwitch );
+
+		// Parse the args.
+		cmd.parse( argc, argv );
+
+		// Get the value parsed by each arg. 
+		string name = nameArg.getValue();
+		bool reverseName = reverseSwitch.getValue();
+
+		// Do what you intend too...
+		if ( reverseName )
 		{
-			std::cerr << "Usage:  DDDAdmin <command>\n";
-			return 1;
+			reverse(name.begin(),name.end());
+			cout << "My name (spelled backwards) is: " << name << endl;
 		}
+		else
+			cout << "My name is: " << name << endl;
 
-//		std::cout << "command: " << argv[1] << std::endl;
 
-		// Initialise 
-		CDataDictionaryControl *pDDDControl = new CDataDictionaryControl();
-	
-		// Run the until stopped by user.
-		
-
-	}
-	catch (std::exception& e)
-	{
-		std::cerr << "exception: " << e.what() << "\n";
-	}
+	} catch (ArgException &e)  // catch any exceptions
+	{ cerr << "error: " << e.error() << " for arg " << e.argId() << endl; }
 
 	return 0;
 }
