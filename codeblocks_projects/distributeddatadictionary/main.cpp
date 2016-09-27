@@ -1,5 +1,12 @@
 #include "datadictionarycontrol.hpp"
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <tclap/CmdLine.h>
+
+using namespace TCLAP;
+using namespace std;
+
 /**
  *
  * MAIN
@@ -9,14 +16,17 @@ int main(int argc, char* argv[])
 {
 	try
 	{
+		system("echo -n '1. Current Directory is '; pwd");
+		system("cat DOPS_outline.txt ");
+
 		// Check command line arguments.
-		if (argc != 3)
+		if (argc != 2)
 		{
 			std::cerr << "Usage:  DDDAdmin <command>\n";
 			return 1;
 		}
 
-		std::cout << "command: " << argv[1] << std::endl;
+//		std::cout << "command: " << argv[1] << std::endl;
 
 		// Initialise 
 		CDataDictionaryControl *pDDDControl = new CDataDictionaryControl();

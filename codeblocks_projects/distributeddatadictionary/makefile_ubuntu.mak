@@ -3,18 +3,33 @@
 # Make file for DDDAdmin - Distributed Data Dictionary Administrator #
 #                                                                    #
 ######################################################################
-CC=g++ -g -o bin/Debug/DDDAdmin main.cpp datadictionarycontrol.hpp datadictionarycontrol.cpp md5.h ../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.h ../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.cpp ../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.h ../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.cpp -L"/usr/local/lib/" -D__DEBUG__ -D__MSABI_LONG=long -DBOOST_LOG_DYN_LINK -lboost_system -lboost_log -lboost_signals -lboost_thread -lboost_filesystem -lpthread -lrt -std=gnu++11
+CC=g++ -g -o bin/Debug/DDDAdmin main.cpp datadictionarycontrol.hpp datadictionarycontrol.cpp md5.h ../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.h ../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.cpp ../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.h ../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.cpp -L"/usr/local/lib/" -D__DEBUG__ -D__MSABI_LONG=long -DBOOST_LOG_DYN_LINK -lboost_system -lboost_log -lboost_signals -lboost_thread -lboost_filesystem -lpthread -lrt -std=gnu++11 -I /tclap-1.2.1/include
 
 info:
 	@ echo "------------------------------"
 	@ echo " DDDAdmin build "
 	@ echo "------------------------------"
 	@ echo "to build all : make -f makefile_ubuntu.mak total"
+	@ echo "to fetch and build TCLAP : make -f makefile_ubuntu.mak dep"
 	@ echo " "
 
 all: compile 
 total: compile 
 _total: nooutputcompile
+dep: depend
+
+
+depend:
+	@ echo "- remove old version of TCLAP"
+	@ rm -rf tclap*
+	@ echo "- Download TCLAP for handling commandline commands"
+	@ wget https://sourceforge.net/projects/tclap/files/tclap-1.2.1.tar.gz/download -O tclap-1.2.1.tar.gz
+	@ echo "- extract "
+	@ tar -xvf tclap-1.2.1.tar.gz
+	@ echo "- configure, make and install "
+	@ ./tclap-1.2.1/configure; make ; sudo make install
+	@ echo "- DONE. "
+
 
 nooutputcompile:
 	@ $(CC)
