@@ -142,25 +142,61 @@ void show_cmd_options()
 	refresh();
 }
 
-void handle_cmd_input()
+//TODO: consider using a state-machine for handling multiple command inputs -
+/**
+ * State-machine for handling input commands
+ */
+constexpr int COMBINATION(bool a,bool b,bool c,bool d)
+{
+	return ((int)a<<3) | ((int)b<<2) | ((int)c<<1) | ((int)d<<0);
+}
+
+void cmdStateMachine(bool conditionX,bool conditionY,bool condition1,bool condition2)
+{
+	switch (COMBINATION(conditionX,conditionY,condition1,condition2))
+	{
+		case COMBINATION(0,0,0,0):           break;
+		case COMBINATION(0,0,0,1):           break;
+		case COMBINATION(0,0,1,0):           break;
+		case COMBINATION(0,0,1,1):           break;
+		case COMBINATION(0,1,0,0):           break;
+//		case COMBINATION(0,1,0,1): CodeY2(); break;
+//		case COMBINATION(0,1,1,0): CodeY1(); break;
+//		case COMBINATION(0,1,1,1): CodeY1(); break;
+		case COMBINATION(1,0,0,0):           break;
+//		case COMBINATION(1,0,0,1): CodeX2(); break;
+//		case COMBINATION(1,0,1,0): CodeX1(); break;
+//		case COMBINATION(1,0,1,1): CodeX1(); break;
+		case COMBINATION(1,1,0,0):           break;
+//		case COMBINATION(1,1,0,1): CodeX2(); break;
+//		case COMBINATION(1,1,1,0): CodeX1(); break;
+//		case COMBINATION(1,1,1,1): CodeX1(); break;
+	}
+
+}
+
+std::string getInput()
 {
 	char incmd[80];
+	getstr(incmd);
+	std::string tmp(incmd);
+	return tmp;
+}
+
+void handle_cmd_input()
+{
+	boost::smatch matches;
 	boost::regex pat( "^Subject: (Re: |Aw: )*(.*)" );
+	boost::regex pat_ls( "^ls *(.*)" );
 
 	show_prompt();
 
 	std::string input="";
 	while (input!="quit")
 	{
-		getstr(incmd);
-		std::string tmp(incmd);
-		input=tmp;
-		
+		input = getInput();
 		reset_cmd_prompt();
-
-		std::string line(input);
-		boost::smatch matches;
-		if (boost::regex_match(line, matches, pat))
+		if (boost::regex_match(input, matches, pat))
 		{
 			perform_cmd_action(1);
 			show_cmd_result(matches);
