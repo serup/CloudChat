@@ -563,6 +563,9 @@ std::list<std::string> CDataDictionaryControl::cmdline(std::string command)
 {
 	using boost::property_tree::ptree;
 	std::list<std::string> listBFiAttributes;
+	
+	try
+	{
 	std::string transGuid="";
 	std::string id="";
 	std::string str;
@@ -611,7 +614,12 @@ std::list<std::string> CDataDictionaryControl::cmdline(std::string command)
 			}
 		}
 	}
-
+	}
+	catch(...)
+	{
+		cout << endl;
+		BOOST_LOG_TRIVIAL(error) << "[CDataDictionaryControl::cmdline] did NOT yield successfull result, exception happened " << endl;
+	}
 	return listBFiAttributes;
 }
 

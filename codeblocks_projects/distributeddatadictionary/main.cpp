@@ -1,4 +1,5 @@
 #include "datadictionarycontrol.hpp"
+#include "md5.h"                                  
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,6 +10,11 @@
 #include <boost/regex.hpp>
 #include <iostream>
 #include <string>
+#include <boost/algorithm/string.hpp>                
+#include <boost/filesystem.hpp>                      
+#include <boost/filesystem/operations.hpp>           
+#include <iostream>                                  
+#include <fstream>      // std::ifstream             
 
 static void finish(int sig);
 
@@ -20,6 +26,7 @@ using namespace std;
 #define promptdisplacement 4
 #define yinfoposStart 27
 #define xinfoposStart 0
+#define yresultpos 25
 
 void spinner(int spin_seconds, int y, int x) 
 {
@@ -115,6 +122,12 @@ void show_cmd_result(boost::smatch matches)
 	refresh();
 }
 
+void show_cmd_ls_result(std::list<std::string> listResult)
+{
+	mvprintw(yresultpos,0, "%s", "- No Data Dictionary files found, hence nothing to show ");
+	move(yprompt, xprompt+promptdisplacement);
+}
+
 void show_prompt()
 {
 	mvprintw(yprompt,xprompt, "%s", "FS> ");
@@ -201,8 +214,17 @@ void handle_cmd_input()
 			perform_cmd_action(1);
 			show_cmd_result(matches);
 		}
-		else
-			show_cmd_options();
+		else {
+			if (boost::regex_match(input, matches, pat_ls))
+			{
+				CDataDictionaryControl *pDDC = new CDataDictionaryControl();
+				perform_cmd_action(2); //TODO: consider using state-machine handling for deciding whith action to perform
+				std::list<std::string> listResult = pDDC->cmdline("ls");    
+				show_cmd_ls_result(listResult);
+			}
+			else 
+				show_cmd_options();
+		}
 	}
 }
 
