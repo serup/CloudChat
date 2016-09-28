@@ -29,8 +29,28 @@ void spinner(int spin_seconds, int y, int x)
 int main(int argc, char* argv[])
 {
 
-   	initscr();				/* start the curses mode */
+	if ( (argc <= 1) || (argv[argc-1] == NULL) ) {  // there is NO input...
+		cerr << "No argument provided - Try -h for detailed info " << endl;
+	}
 
+	// Wrap everything in a try block.  Do this every time, 
+	// because exceptions will be thrown for problems. 
+	try {  
+
+		// Define the command line object.
+		CmdLine cmd("Command description message", ' ', "0.9");
+
+		// Define a switch and add it to the command line.
+		TCLAP::SwitchArg filesystemSwitch("f","filesystem","Starts filesystem command line", cmd, false);
+	
+		// Parse the args.
+		cmd.parse( argc, argv );
+		bool startFs = filesystemSwitch.getValue();
+		if( startFs ) {
+
+			char incmd[80];
+			
+   	initscr();				/* start the curses mode */
 	mvprintw(0 ,0, "%s","                                                                     " );
 	mvprintw(1 ,0, "%s","   DDDDDDDDDDDDD        DDDDDDDDDDDDD         DDDDDDDDDDDDD          " );
 	mvprintw(2 ,0, "%s","   D::::::::::::DDD     D::::::::::::DDD      D::::::::::::DDD       " );
@@ -54,25 +74,6 @@ int main(int argc, char* argv[])
 	mvprintw(20,0, "%s","" );
 	refresh();
 
-
-	// Wrap everything in a try block.  Do this every time, 
-	// because exceptions will be thrown for problems. 
-	try {  
-
-		// Define the command line object.
-		CmdLine cmd("Command description message", ' ', "0.9");
-
-		// Define a switch and add it to the command line.
-		TCLAP::SwitchArg filesystemSwitch("f","filesystem","Starts filesystem command line", cmd, false);
-		
-
-		// Parse the args.
-		cmd.parse( argc, argv );
-		bool startFs = filesystemSwitch.getValue();
-		if( startFs ) {
-
-			char incmd[80];
-			
 			cout << endl;
 	
 			spinner(3, 20, 1); // spin
@@ -80,12 +81,12 @@ int main(int argc, char* argv[])
 			cout << "\r" << "FS> " << std::flush;
 	                
 			getstr(incmd);
+	endwin();  // cleanup curses
 		}
 
 	} catch (ArgException &e)  // catch any exceptions
 	{ cerr << "error: " << e.error() << " for arg " << e.argId() << endl; }
 
-	endwin();  // cleanup curses
 
 	return 0;
 }
