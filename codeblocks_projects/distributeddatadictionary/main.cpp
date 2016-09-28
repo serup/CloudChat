@@ -15,6 +15,11 @@ static void finish(int sig);
 using namespace TCLAP;
 using namespace std;
 
+#define yprompt 20
+#define xprompt 0
+#define promptdisplacement 4
+#define yinfoposStart 27
+#define xinfoposStart 0
 
 void spinner(int spin_seconds, int y, int x) 
 {
@@ -59,6 +64,7 @@ void init_curses()
 
 void show_logo()
 {
+	clear();
 	mvprintw(0 ,0, "%s","                                                                     " );
 	mvprintw(1 ,0, "%s","   DDDDDDDDDDDDD        DDDDDDDDDDDDD         DDDDDDDDDDDDD          " );
 	mvprintw(2 ,0, "%s","   D::::::::::::DDD     D::::::::::::DDD      D::::::::::::DDD       " );
@@ -92,12 +98,56 @@ static void finish(int sig)
 	exit(0);
 }
 
+void perform_cmd_action(int actionId)
+{
+	spinner(1, 20, 2); //TODO: spin should run in its own thread for the duration of this action, or stepwise turn spinner
+	//TODO: case/swith action commands
+}
+
+void show_cmd_result(boost::smatch matches)
+{
+	std::string tmp(matches[2]);
+	mvprintw(25,0, "%s %s", "result ",tmp.c_str());
+	clrtoeol();
+	mvprintw(yprompt,xprompt, "%s", " ");
+	clrtoeol();
+	mvprintw(yprompt,xprompt, "%s", "FS> ");
+	refresh();
+}
+
+void show_prompt()
+{
+	mvprintw(yprompt,xprompt, "%s", "FS> ");
+}
+
+void reset_cmd_prompt()
+{
+	show_logo();
+	mvprintw(yprompt,xprompt, "%s", " ");
+	clrtoeol();
+	show_prompt();
+}
+
+void show_cmd_options()
+{
+//	 info place holder
+    int ypos = yinfoposStart; 
+	mvprintw(ypos++,0, "%s", "commands: ");
+	mvprintw(ypos++,0, "%s", "-------------------------- ");
+	mvprintw(ypos++,0, "%s", "wrong input shows this screen ");
+	mvprintw(ypos++,0, "%s", "quit 	- exit application ");
+	mvprintw(ypos++,0, "%s", "ls 	- list attributs ");
+	mvprintw(ypos++,0, "%s", "-------------------------- ");
+	move(yprompt, xprompt+promptdisplacement);
+	refresh();
+}
+
 void handle_cmd_input()
 {
 	char incmd[80];
 	boost::regex pat( "^Subject: (Re: |Aw: )*(.*)" );
 
-	mvprintw(20,0, "%s", "FS> ");
+	show_prompt();
 
 	std::string input="";
 	while (input!="quit")
@@ -105,23 +155,18 @@ void handle_cmd_input()
 		getstr(incmd);
 		std::string tmp(incmd);
 		input=tmp;
+		
+		reset_cmd_prompt();
 
 		std::string line(input);
-		mvprintw(20,0, "%s", " ");
-		clrtoeol();
-		mvprintw(20,0, "%s", "FS> ");
-
 		boost::smatch matches;
 		if (boost::regex_match(line, matches, pat))
 		{
-			spinner(1, 20, 2); // spin
-			std::string tmp(matches[2]);
-			mvprintw(25,0, "%s %s", "result ",tmp.c_str());
-			clrtoeol();
-			mvprintw(20,0, "%s", " ");
-			clrtoeol();
-			mvprintw(20,0, "%s", "FS> ");
+			perform_cmd_action(1);
+			show_cmd_result(matches);
 		}
+		else
+			show_cmd_options();
 	}
 }
 
@@ -156,7 +201,7 @@ int main(int argc, char* argv[])
 			init_curses();			
 			show_logo();
 
-			spinner(3, 20, 2); // spin
+			spinner(3, yprompt, 2); // spin
 			handle_cmd_input();
 		}
 
