@@ -5,6 +5,9 @@
 #include <tclap/CmdLine.h>
 #include <curses.h>
 #include <unistd.h>
+#include <signal.h>
+
+static void finish(int sig);
 
 using namespace TCLAP;
 using namespace std;
@@ -49,44 +52,77 @@ int main(int argc, char* argv[])
 		if( startFs ) {
 
 			char incmd[80];
+
+
+			(void) signal(SIGINT, finish);      /* arrange interrupts to terminate */
+
+			(void) initscr();      /* initialize the curses library */
+			keypad(stdscr, TRUE);  /* enable keyboard mapping */
+			(void) nonl();         /* tell curses not to do NL->CR/NL on output */
+			(void) cbreak();       /* take input chars one at a time, no wait for \n */
+			(void) echo();         /* echo input - in color */
+
+			if (has_colors())
+			{
+				start_color();
+
+				/*
+				 * Simple color assignment, often all we need.  Color pair 0 cannot
+				 * be redefined.  This example uses the same value for the color
+				 * pair as for the foreground color, though of course that is not
+				 * necessary:
+				 */
+				init_pair(1, COLOR_RED,     COLOR_BLACK);
+				init_pair(2, COLOR_GREEN,   COLOR_BLACK);
+				init_pair(3, COLOR_YELLOW,  COLOR_BLACK);
+				init_pair(4, COLOR_BLUE,    COLOR_BLACK);
+				init_pair(5, COLOR_CYAN,    COLOR_BLACK);
+				init_pair(6, COLOR_MAGENTA, COLOR_BLACK);
+				init_pair(7, COLOR_WHITE,   COLOR_BLACK);
+			}
+
 			
-   	initscr();				/* start the curses mode */
-	mvprintw(0 ,0, "%s","                                                                     " );
-	mvprintw(1 ,0, "%s","   DDDDDDDDDDDDD        DDDDDDDDDDDDD         DDDDDDDDDDDDD          " );
-	mvprintw(2 ,0, "%s","   D::::::::::::DDD     D::::::::::::DDD      D::::::::::::DDD       " );
-	mvprintw(3 ,0, "%s","   D:::::::::::::::DD   D:::::::::::::::DD    D:::::::::::::::DD     " );
-	mvprintw(4 ,0, "%s","   DDD:::::DDDDD:::::D  DDD:::::DDDDD:::::D   DDD:::::DDDDD:::::D    " );
-	mvprintw(5 ,0, "%s","     D:::::D    D:::::D   D:::::D    D:::::D    D:::::D    D:::::D   " );
-	mvprintw(6 ,0, "%s","     D:::::D     D:::::D  D:::::D     D:::::D   D:::::D     D:::::D  " );
-	mvprintw(7 ,0, "%s","     D:::::D     D:::::D  D:::::D     D:::::D   D:::::D     D:::::D  " );
-	mvprintw(8 ,0, "%s","     D:::::D     D:::::D  D:::::D     D:::::D   D:::::D     D:::::D  " );
-	mvprintw(9 ,0, "%s","     D:::::D     D:::::D  D:::::D     D:::::D   D:::::D     D:::::D  " );
-	mvprintw(10,0, "%s","     D:::::D     D:::::D  D:::::D     D:::::D   D:::::D     D:::::D  " );
-	mvprintw(11,0, "%s","     D:::::D     D:::::D  D:::::D     D:::::D   D:::::D     D:::::D  " );
-	mvprintw(12,0, "%s","     D:::::D    D:::::D   D:::::D    D:::::D    D:::::D    D:::::D   " );
-	mvprintw(13,0, "%s","   DDD:::::DDDDD:::::D  DDD:::::DDDDD:::::D   DDD:::::DDDDD:::::D    " );
-	mvprintw(14,0, "%s","   D:::::::::::::::DD   D:::::::::::::::DD    D:::::::::::::::DD     " );
-	mvprintw(15,0, "%s","   D::::::::::::DDD     D::::::::::::DDD      D::::::::::::DDD       " );
-	mvprintw(16,0, "%s","   DDDDDDDDDDDDD        DDDDDDDDDDDDD         DDDDDDDDDDDDD          " );
-	mvprintw(17,0, "%s","   Distributed Data Dictionary" );
-	mvprintw(18,0, "%s","   Copyright @ Johnny Serup" );
-	mvprintw(19,0, "%s","" );
-	mvprintw(20,0, "%s","" );
-	refresh();
+			
+			mvprintw(0 ,0, "%s","                                                                     " );
+			mvprintw(1 ,0, "%s","   DDDDDDDDDDDDD        DDDDDDDDDDDDD         DDDDDDDDDDDDD          " );
+			mvprintw(2 ,0, "%s","   D::::::::::::DDD     D::::::::::::DDD      D::::::::::::DDD       " );
+			mvprintw(3 ,0, "%s","   D:::::::::::::::DD   D:::::::::::::::DD    D:::::::::::::::DD     " );
+			mvprintw(4 ,0, "%s","   DDD:::::DDDDD:::::D  DDD:::::DDDDD:::::D   DDD:::::DDDDD:::::D    " );
+			mvprintw(5 ,0, "%s","     D:::::D    D:::::D   D:::::D    D:::::D    D:::::D    D:::::D   " );
+			mvprintw(6 ,0, "%s","     D:::::D     D:::::D  D:::::D     D:::::D   D:::::D     D:::::D  " );
+			mvprintw(7 ,0, "%s","     D:::::D     D:::::D  D:::::D     D:::::D   D:::::D     D:::::D  " );
+			mvprintw(8 ,0, "%s","     D:::::D     D:::::D  D:::::D     D:::::D   D:::::D     D:::::D  " );
+			mvprintw(9 ,0, "%s","     D:::::D     D:::::D  D:::::D     D:::::D   D:::::D     D:::::D  " );
+			mvprintw(10,0, "%s","     D:::::D     D:::::D  D:::::D     D:::::D   D:::::D     D:::::D  " );
+			mvprintw(11,0, "%s","     D:::::D     D:::::D  D:::::D     D:::::D   D:::::D     D:::::D  " );
+			mvprintw(12,0, "%s","     D:::::D    D:::::D   D:::::D    D:::::D    D:::::D    D:::::D   " );
+			mvprintw(13,0, "%s","   DDD:::::DDDDD:::::D  DDD:::::DDDDD:::::D   DDD:::::DDDDD:::::D    " );
+			mvprintw(14,0, "%s","   D:::::::::::::::DD   D:::::::::::::::DD    D:::::::::::::::DD     " );
+			mvprintw(15,0, "%s","   D::::::::::::DDD     D::::::::::::DDD      D::::::::::::DDD       " );
+			mvprintw(16,0, "%s","   DDDDDDDDDDDDD        DDDDDDDDDDDDD         DDDDDDDDDDDDD          " );
+			mvprintw(17,0, "%s","   Distributed Data Dictionary" );
+			mvprintw(18,0, "%s","   Copyright @ Johnny Serup" );
+			mvprintw(19,0, "%s","" );
+			mvprintw(20,0, "%s","" );
+			refresh();
 
-			cout << endl;
-	
 			spinner(3, 20, 1); // spin
-
 			cout << "\r" << "FS> " << std::flush;
-	                
 			getstr(incmd);
-	endwin();  // cleanup curses
 		}
 
 	} catch (ArgException &e)  // catch any exceptions
 	{ cerr << "error: " << e.error() << " for arg " << e.argId() << endl; }
 
-
-	return 0;
+	finish(0);
 }
+
+static void finish(int sig)
+{
+	endwin();
+
+	/* do your non-curses wrapup here */
+
+	exit(0);
+}
+
