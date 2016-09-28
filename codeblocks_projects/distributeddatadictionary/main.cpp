@@ -32,6 +32,8 @@ void spinner(int spin_seconds, int y, int x)
 {
 	static char const spin_chars[] = "/-\\|";
 	unsigned long i, num_iterations = (spin_seconds * 10);
+	mvprintw(y,1, "%s", "[ ]");
+
 	for (i=0; i<num_iterations; ++i) {
 		mvaddch(y, x, spin_chars[i & 3]);
 		refresh();
@@ -107,7 +109,7 @@ static void finish(int sig)
 
 void perform_cmd_action(int actionId)
 {
-	spinner(1, 20, 2); //TODO: spin should run in its own thread for the duration of this action, or stepwise turn spinner
+	spinner(1, yprompt+1, 2); //TODO: spin should run in its own thread for the duration of this action, or stepwise turn spinner
 	//TODO: case/swith action commands
 }
 
@@ -132,6 +134,7 @@ void show_prompt()
 {
 	mvprintw(yprompt,xprompt, "%s", "FS> ");
 }
+
 
 void reset_cmd_prompt()
 {
@@ -259,7 +262,7 @@ int main(int argc, char* argv[])
 			init_curses();			
 			show_logo();
 
-			spinner(3, yprompt, 2); // spin
+			spinner(3, yprompt+1, 2); // spin
 			handle_cmd_input();
 		}
 
