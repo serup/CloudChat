@@ -3,7 +3,7 @@
 # Make file for DDDAdmin - Distributed Data Dictionary Administrator #
 #                                                                    #
 ######################################################################
-CC=g++ -g -o bin/Debug/DDDAdmin main.cpp datadictionarycontrol.hpp datadictionarycontrol.cpp md5.h ../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.h ../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.cpp ../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.h ../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.cpp -L"/usr/local/lib/" -D__DEBUG__ -D__MSABI_LONG=long -DBOOST_LOG_DYN_LINK -lboost_system -lboost_log -lboost_signals -lboost_thread -lboost_filesystem -lpthread -lrt -std=gnu++11 -lcurses -I /tclap-1.2.1/include
+CC=g++ -g -o bin/Debug/DDDAdmin main.cpp datadictionarycontrol.hpp datadictionarycontrol.cpp md5.h ../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.h ../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.cpp ../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.h ../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.cpp -L"/usr/local/lib/" -lboost_regex -D__DEBUG__ -D__MSABI_LONG=long -DBOOST_LOG_DYN_LINK -lboost_system -lboost_log -lboost_signals -lboost_thread -lboost_filesystem -lpthread -lrt -std=gnu++11 -lcurses -I /tclap-1.2.1/include
 
 info:
 	@ echo "------------------------------"

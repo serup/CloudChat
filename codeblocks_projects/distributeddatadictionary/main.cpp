@@ -6,6 +6,9 @@
 #include <curses.h>
 #include <unistd.h>
 #include <signal.h>
+#include <boost/regex.hpp>
+#include <iostream>
+#include <string>
 
 static void finish(int sig);
 
@@ -89,6 +92,39 @@ static void finish(int sig)
 	exit(0);
 }
 
+void handle_cmd_input()
+{
+	char incmd[80];
+	boost::regex pat( "^Subject: (Re: |Aw: )*(.*)" );
+
+	mvprintw(20,0, "%s", "FS> ");
+
+	std::string input="";
+	while (input!="quit")
+	{
+		getstr(incmd);
+		std::string tmp(incmd);
+		input=tmp;
+
+		std::string line(input);
+		mvprintw(20,0, "%s", " ");
+		clrtoeol();
+		mvprintw(20,0, "%s", "FS> ");
+
+		boost::smatch matches;
+		if (boost::regex_match(line, matches, pat))
+		{
+			spinner(1, 20, 2); // spin
+			std::string tmp(matches[2]);
+			mvprintw(25,0, "%s %s", "result ",tmp.c_str());
+			clrtoeol();
+			mvprintw(20,0, "%s", " ");
+			clrtoeol();
+			mvprintw(20,0, "%s", "FS> ");
+		}
+	}
+}
+
 /**
  *
  * MAIN
@@ -116,14 +152,12 @@ int main(int argc, char* argv[])
 		bool startFs = filesystemSwitch.getValue();
 		if( startFs ) {
 
-			char incmd[80];
 
 			init_curses();			
 			show_logo();
 
-			spinner(3, 20, 1); // spin
-			cout << "\r" << "FS> " << std::flush;
-			getstr(incmd);
+			spinner(3, 20, 2); // spin
+			handle_cmd_input();
 		}
 
 	} catch (ArgException &e)  // catch any exceptions
