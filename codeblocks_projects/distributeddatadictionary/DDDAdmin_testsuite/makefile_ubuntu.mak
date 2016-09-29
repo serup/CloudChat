@@ -24,7 +24,7 @@ info:
 	@ echo " "
 	@ echo '**************************';echo 'UNIT TESTCASES :';echo '**************************';echo; fgrep BOOST_AUTO_TEST_CASE *.cpp | sed -e 's/BOOST_AUTO_TEST_CASE(//g' | sed -e 's/)//g'; echo '**************************';
 
-all: compile test
+all: compile test_without_detail
 total: compile display_waitfortest test
 _total: nooutputcompile test
 list:
@@ -35,6 +35,7 @@ nooutputcompile:
 compile:
 	@ echo "------------------------"
 	@ echo "Build started -- please wait..."	
+	@ mkdir -p bin/Debug
 	@ $(CC)
 	@ echo "Build ended --"
 	@ echo "------------------------"
@@ -46,8 +47,28 @@ testbasictxt:
 display_waitfortest:
 	@ echo " Test of DDDAdmin is started - please wait... " 
 	@ echo "-----------------------------------------------" 
-test:
+test_without_detail:
 	@ $(TEST) $(TESTFLAGS) > error.txt;$(CONVERT) 
+	@ $(TEST) $(TESTFLAGS3) > error2.txt;$(CONVERT2) 
+	@ echo "-----------------------------------------------" > test_txt_result.txt 
+	@ echo " Test of DDDAdmin  " >> test_txt_result.txt  
+	@ echo "-----------------------------------------------" >> test_txt_result.txt 
+	@ cat test_results.txt | grep 'OK\|FAIL' >> test_txt_result.txt
+	@ echo "--------------" >> test_txt_result.txt
+	@ echo "Tests Complete" >> test_txt_result.txt
+	@ echo "--------------" >> test_txt_result.txt
+	@ printf "Passed: " >> test_txt_result.txt;(cat test_results.txt | grep -c 'OK'; printf "") >> test_txt_result.txt
+	@ printf "Failed: " >> test_txt_result.txt;(cat test_results.txt | grep -c 'FAIL'; printf "") >> test_txt_result.txt
+	@ echo "--------------" >> test_txt_result.txt
+	@ cat test_txt_result.txt > test_results.txt
+	@ ./result.sh
+	@ rm test_txt_result.txt
+	@ rm error2.txt
+result:
+	@ echo "-----------------------------------------------" 
+	@ ./result.sh|tail -n +2
+test:
+
 	@ $(TEST) $(TESTFLAGS3) > error2.txt;$(CONVERT2) 
 	@ echo "-----------------------------------------------" > test_txt_result.txt 
 	@ echo " Test of DDDAdmin  " >> test_txt_result.txt  
