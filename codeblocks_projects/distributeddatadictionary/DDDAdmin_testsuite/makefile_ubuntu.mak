@@ -18,11 +18,14 @@ info:
 	@ echo "------------------------------"
 	@ echo " DDDAdmin test info "
 	@ echo "------------------------------"
-	@ echo "to build all : make -f makefile_ubuntu.mak total"
+	@ echo "to build all (show result without detail) : make -f makefile_ubuntu.mak all"
+	@ echo "to build all (show detailed result): make -f makefile_ubuntu.mak total"
+	@ echo "to show result : make -f makefile_ubuntu.mak result"
+	@ echo ""
 	@ echo "to test one unittest use following format: make -f makefile_ubuntu.mak unittest unittest=<name of unittest>"
 	@ echo "to show BFi xml test result in color format in VIM use following: make -f makefile_ubuntu.mak xml"
 	@ echo " "
-	@ echo '**************************';echo 'UNIT TESTCASES :';echo '**************************';echo; fgrep BOOST_AUTO_TEST_CASE *.cpp | sed -e 's/BOOST_AUTO_TEST_CASE(//g' | sed -e 's/)//g'; echo '**************************';
+	@ echo '**************************';echo 'UNIT TESTCASES :';echo '**************************';echo; fgrep BOOST_AUTO_TEST_CASE *.cpp | sed -e 's/BOOST_AUTO_TEST_CASE(//g' | sed -e 's/)//g'; echo ''; echo '**************************';
 
 all: compile test_without_detail
 total: compile display_waitfortest test
@@ -47,6 +50,7 @@ testbasictxt:
 display_waitfortest:
 	@ echo " Test of DDDAdmin is started - please wait... " 
 	@ echo "-----------------------------------------------" 
+
 test_without_detail:
 	@ $(TEST) $(TESTFLAGS) > error.txt;$(CONVERT) 
 	@ $(TEST) $(TESTFLAGS3) > error2.txt;$(CONVERT2) 
@@ -61,7 +65,8 @@ test_without_detail:
 	@ printf "Failed: " >> test_txt_result.txt;(cat test_results.txt | grep -c 'FAIL'; printf "") >> test_txt_result.txt
 	@ echo "--------------" >> test_txt_result.txt
 	@ cat test_txt_result.txt > test_results.txt
-	@ ./result.sh
+	@ echo "-----------------------------------------------" 
+	@ ./result.sh|tail -n +2
 	@ rm test_txt_result.txt
 	@ rm error2.txt
 result:
