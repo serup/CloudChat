@@ -11,6 +11,7 @@
 #include <fstream>
 #include <boost/filesystem.hpp>
 #include <boost/foreach.hpp>
+#include <exception>
 #include <stdexcept>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>

@@ -28,7 +28,8 @@ using namespace std;
 #define xinfoposStart 0
 #define yresultpos yprompt +1 
 #define xresultpos xprompt +5 
-#define errInfoWaitSeconds 5
+#define errInfoWaitSeconds 8
+#define spinnerpos 2
 
 void spinner(int spin_seconds, int y, int x) 
 {
@@ -113,7 +114,7 @@ static void finish(int sig)
 
 void perform_cmd_action(int actionId)
 {
-	spinner(actionId, yprompt+1, 2); //TODO: spin should run in its own thread for the duration of this action, or stepwise turn spinner
+	spinner(actionId, yprompt+1, spinnerpos); //TODO: spin should run in its own thread for the duration of this action, or stepwise turn spinner
 	//TODO: case/swith action commands
 }
 
@@ -154,9 +155,9 @@ void show_cmd_ls_result(std::list<std::string> listResult)
 	}                                                                               
 
 	if(c<=0) {
-		mvprintw(yprompt+1,0, "%s", "- No Data Dictionary files found, hence nothing to show ");
+		mvprintw(yprompt+1,0, "%s", "------ No Data Dictionary files found, hence nothing to show ");
 		refresh();
-		spinner(errInfoWaitSeconds, yprompt+1, 2); // spin
+		spinner(errInfoWaitSeconds, yprompt+1, spinnerpos); // spin
 		reset_cmd_prompt();
 	}
 	else
@@ -277,11 +278,10 @@ int main(int argc, char* argv[])
 		bool startFs = filesystemSwitch.getValue();
 		if( startFs ) {
 
-
 			init_curses();			
 			show_logo();
 
-			spinner(2, yprompt+1, 2); // spin
+			spinner(2, yprompt+1, spinnerpos); // spin
 			reset_cmd_prompt();
 			handle_cmd_input();
 		}

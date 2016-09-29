@@ -615,11 +615,10 @@ std::list<std::string> CDataDictionaryControl::cmdline(std::string command)
 		}
 	}
 	}
-	catch(...)
-	{
-		cout << endl;
-		BOOST_LOG_TRIVIAL(error) << "[CDataDictionaryControl::cmdline] did NOT yield successfull result, exception happened " << endl;
-	}
+	 catch (const std::exception& e)  // catch any exceptions
+	{ cerr << endl << "Exception: " << e.what() << endl; }
+
+
 	return listBFiAttributes;
 }
 
