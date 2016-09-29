@@ -1444,6 +1444,7 @@ BOOST_AUTO_TEST_CASE(listDataDictionaryAttributsWithOneLarge)
 		if(c==3) BOOST_CHECK(expected3 == attribut);
 	}
 
+
 	cout << "________________________________________" << endl;
 
 	// Clean up section - must be in bottom

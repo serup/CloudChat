@@ -561,6 +561,7 @@ long CDataDictionaryControl::getMaxDEDchunkSize()
 
 std::list<std::string> CDataDictionaryControl::cmdline(std::string command)
 {
+	using boost::optional;
 	using boost::property_tree::ptree;
 	std::list<std::string> listBFiAttributes;
 	
@@ -572,46 +573,56 @@ std::list<std::string> CDataDictionaryControl::cmdline(std::string command)
 	std::string attribut = "";
 	std::string prev = "";
 	std::string prevAtt = "";
+	boost::property_tree::ptree _empty_tree;
 
 	boost::filesystem::path targetDir( boost::filesystem::current_path() );
 	boost::filesystem::recursive_directory_iterator iter(targetDir), eod;
 
 	BOOST_FOREACH(boost::filesystem::path const& i, make_pair(iter, eod))
 	{
-		if (is_regular_file(i)){
-			if(boost::filesystem::extension(i.string()) == ".BFi") {
-				std::ifstream is (i.string());
-				ptree pt;
-				read_xml(is, pt);
+			if (is_regular_file(i)){
 
-				BOOST_FOREACH(const boost::property_tree::ptree::value_type & child, pt.get_child("BFi.BlockEntity.BlockRecord")) 
-				{
-					str = child.first.data();
-					if (str == "chunk_id") id = child.second.data();
-					if (str == "TransGUID") transGuid = child.second.data();
+					bool bExtBFi=false;
+					bExtBFi = (boost::filesystem::extension(i.string()) == ".BFi");
+					if(bExtBFi) {
+							std::ifstream is (i.string());
+							ptree pt;
+							try{
+									read_xml(is, pt);
+							}catch(...) {}
 
-					attribut = transGuid + "./" + id + "/";
-					prevAtt="";
-					BOOST_FOREACH(const boost::property_tree::ptree::value_type &vt2 , child.second)
-					{
-						if(vt2.first == "chunk_record")
-						{
-							prev=attribut;
-							BOOST_FOREACH(const boost::property_tree::ptree::value_type &vt3, vt2.second)
+							optional< ptree& > child = pt.get_child_optional("BFi");
+							if(child) 
 							{
-								if(vt3.first == "chunk_ddid") {
-									if(prevAtt!=vt3.second.data()) {
-										prevAtt=vt3.second.data();
-										attribut += vt3.second.data();
-										listBFiAttributes.push_back(attribut); // disregard chunks of attribut, only list unique attributs
-										attribut=prev;
+									BOOST_FOREACH(const boost::property_tree::ptree::value_type & child, pt.get_child("BFi.BlockEntity.BlockRecord", _empty_tree)) 
+									{
+											str = child.first.data();
+											if (str == "chunk_id") id = child.second.data();
+											if (str == "TransGUID") transGuid = child.second.data();
+
+											attribut = transGuid + "./" + id + "/";
+											prevAtt="";
+											BOOST_FOREACH(const boost::property_tree::ptree::value_type &vt2 , child.second)
+											{
+													if(vt2.first == "chunk_record")
+													{
+															prev=attribut;
+															BOOST_FOREACH(const boost::property_tree::ptree::value_type &vt3, vt2.second)
+															{
+																	if(vt3.first == "chunk_ddid") {
+																			if(prevAtt!=vt3.second.data()) {
+																					prevAtt=vt3.second.data();
+																					attribut += vt3.second.data();
+																					listBFiAttributes.push_back(attribut); // disregard chunks of attribut, only list unique attributs
+																					attribut=prev;
+																			}
+																	}
+															}
+													}
+											}
 									}
-								}
 							}
-						}
 					}
-				}
-			}
 		}
 	}
 	}
