@@ -1446,13 +1446,13 @@ BOOST_AUTO_TEST_CASE(listDataDictionaryAttributsWithOneLarge)
 
 
 	cout << "________________________________________" << endl;
-	// Clean up section - must be in bottom
+/*	// Clean up section - must be in bottom
 	BOOST_FOREACH(std::string filename, listBFiFiles)
 	{
 		cout << "- OK Cleanup file : " << filename << endl;
 		boost::filesystem::path p = boost::filesystem::path(filename);
 		boost::filesystem::remove(filename);
 	}
-
+*/
 	cout<<"}"<<endl;
 }

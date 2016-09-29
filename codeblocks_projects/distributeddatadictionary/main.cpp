@@ -26,7 +26,9 @@ using namespace std;
 #define promptdisplacement 4
 #define yinfoposStart 27
 #define xinfoposStart 0
-#define yresultpos 25
+#define yresultpos yprompt +1 
+#define xresultpos xprompt +5 
+#define errInfoWaitSeconds 5
 
 void spinner(int spin_seconds, int y, int x) 
 {
@@ -34,11 +36,13 @@ void spinner(int spin_seconds, int y, int x)
 	unsigned long i, num_iterations = (spin_seconds * 10);
 	mvprintw(y,1, "%s", "[ ]");
 
+	curs_set(0);
 	for (i=0; i<num_iterations; ++i) {
 		mvaddch(y, x, spin_chars[i & 3]);
 		refresh();
 		usleep(100000);
 	}
+	curs_set(1);
 }
 
 void init_curses()
@@ -109,25 +113,19 @@ static void finish(int sig)
 
 void perform_cmd_action(int actionId)
 {
-	spinner(1, yprompt+1, 2); //TODO: spin should run in its own thread for the duration of this action, or stepwise turn spinner
+	spinner(actionId, yprompt+1, 2); //TODO: spin should run in its own thread for the duration of this action, or stepwise turn spinner
 	//TODO: case/swith action commands
 }
 
 void show_cmd_result(boost::smatch matches)
 {
 	std::string tmp(matches[2]);
-	mvprintw(25,0, "%s %s", "result ",tmp.c_str());
+	mvprintw(yresultpos,0, "%s %s", "result ",tmp.c_str());
 	clrtoeol();
 	mvprintw(yprompt,xprompt, "%s", " ");
 	clrtoeol();
 	mvprintw(yprompt,xprompt, "%s", "FS> ");
 	refresh();
-}
-
-void show_cmd_ls_result(std::list<std::string> listResult)
-{
-	mvprintw(yresultpos,0, "%s", "- No Data Dictionary files found, hence nothing to show ");
-	move(yprompt, xprompt+promptdisplacement);
 }
 
 void show_prompt()
@@ -142,6 +140,27 @@ void reset_cmd_prompt()
 	mvprintw(yprompt,xprompt, "%s", " ");
 	clrtoeol();
 	show_prompt();
+}
+
+void show_cmd_ls_result(std::list<std::string> listResult)
+{
+	// example of output : F4C23762ED2823A27E62A64B95C024EF./profile/mobil     
+
+	int c=0;                                                                        
+	BOOST_FOREACH(std::string attribut, listResult)                                 
+	{                                                                               
+		mvprintw(yresultpos+c,xresultpos, "%s", attribut.c_str());
+		c++;                                                                    
+	}                                                                               
+
+	if(c<=0) {
+		mvprintw(yprompt+1,0, "%s", "- No Data Dictionary files found, hence nothing to show ");
+		refresh();
+		spinner(errInfoWaitSeconds, yprompt+1, 2); // spin
+		reset_cmd_prompt();
+	}
+	else
+		show_prompt();
 }
 
 void show_cmd_options()
@@ -221,7 +240,7 @@ void handle_cmd_input()
 			if (boost::regex_match(input, matches, pat_ls))
 			{
 				CDataDictionaryControl *pDDC = new CDataDictionaryControl();
-				perform_cmd_action(2); //TODO: consider using state-machine handling for deciding whith action to perform
+				perform_cmd_action(1); //TODO: consider using state-machine handling for deciding whith action to perform
 				std::list<std::string> listResult = pDDC->cmdline("ls");    
 				show_cmd_ls_result(listResult);
 			}
@@ -262,7 +281,8 @@ int main(int argc, char* argv[])
 			init_curses();			
 			show_logo();
 
-			spinner(3, yprompt+1, 2); // spin
+			spinner(2, yprompt+1, 2); // spin
+			reset_cmd_prompt();
 			handle_cmd_input();
 		}
 
