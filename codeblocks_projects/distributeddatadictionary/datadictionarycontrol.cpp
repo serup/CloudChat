@@ -559,7 +559,7 @@ long CDataDictionaryControl::getMaxDEDchunkSize()
 }
 
 
-std::list<std::string> CDataDictionaryControl::cmdline(std::string command)
+std::list<std::string> CDataDictionaryControl::ls()
 {
 	using boost::optional;
 	using boost::property_tree::ptree;

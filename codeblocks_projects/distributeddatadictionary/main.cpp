@@ -245,7 +245,7 @@ void handle_cmd_input()
 			{
 				CDataDictionaryControl *pDDC = new CDataDictionaryControl();
 				perform_cmd_action(1); //TODO: consider using state-machine handling for deciding whith action to perform
-				std::list<std::string> listResult = pDDC->cmdline("ls");    
+				std::list<std::string> listResult = pDDC->ls();    
 				show_cmd_ls_result(listResult);
 			}
 			else 

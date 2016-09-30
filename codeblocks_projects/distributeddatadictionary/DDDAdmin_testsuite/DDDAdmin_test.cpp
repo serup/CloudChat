@@ -1144,7 +1144,7 @@ BOOST_AUTO_TEST_CASE(listDataDictionaryAttributs)
 	using boost::property_tree::ptree;
 
 	CDataDictionaryControl *pDDC = new CDataDictionaryControl();
-	std::list<std::string> listResult = pDDC->cmdline("ls");	
+	std::list<std::string> listResult = pDDC->ls();	
 	BOOST_CHECK(listResult.size() <= 0);
 
 	// create BFi files
@@ -1249,7 +1249,7 @@ BOOST_AUTO_TEST_CASE(listDataDictionaryAttributs)
 	cout << "________________________________________" << endl;
 
 
-	listResult = pDDC->cmdline("ls");	
+	listResult = pDDC->ls();	
 	//expected : reads like this: <GUID> has a profile folder with attribut name and mobil
 	std::string expected1 =  "F4C23762ED2823A27E62A64B95C024EF./profile/name";
 	std::string expected2 =  "F4C23762ED2823A27E62A64B95C024EF./profile/mobil";
@@ -1289,7 +1289,7 @@ BOOST_AUTO_TEST_CASE(listDataDictionaryAttributsWithOneLarge)
 	using boost::property_tree::ptree;
 
 	CDataDictionaryControl *pDDC = new CDataDictionaryControl();
-	std::list<std::string> listResult = pDDC->cmdline("ls");	
+	std::list<std::string> listResult = pDDC->ls();	
 	BOOST_CHECK(listResult.size() <= 0);
 
 	// create BFi files
@@ -1426,7 +1426,7 @@ BOOST_AUTO_TEST_CASE(listDataDictionaryAttributsWithOneLarge)
 	cout << "________________________________________" << endl;
 
 
-	listResult = pDDC->cmdline("ls");	
+	listResult = pDDC->ls();	
 	//expected : reads like this: <GUID> has a profile folder with attribut name, mobil and foto
 	std::string expected1 =  "F4C23762ED2823A27E62A64B95C024EF./profile/name";
 	std::string expected2 =  "F4C23762ED2823A27E62A64B95C024EF./profile/mobil";

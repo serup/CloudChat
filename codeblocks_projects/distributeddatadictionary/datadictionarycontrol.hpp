@@ -53,7 +53,7 @@ class CDataDictionaryControl
 	  	std::vector< pair<std::string ,int> > writeBlockEntityToBFiFile(boost::property_tree::ptree &ptBlockEntities);
 	  	bool addAttributToBlockRecord(std::string transGuid, boost::property_tree::ptree &ptListOfBlockRecords, long &maxBlockRecordSize, std::string realmName, std::string attributName, std::vector<unsigned char> attributValue);
 	  
-	  	std::list<std::string> cmdline(std::string command);
+	  	std::list<std::string> ls();
 	
     protected:
 		long _maxDEDchunkSize;
