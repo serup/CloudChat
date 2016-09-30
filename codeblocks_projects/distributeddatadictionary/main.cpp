@@ -15,6 +15,7 @@
 #include <boost/filesystem/operations.hpp>           
 #include <iostream>                                  
 #include <fstream>      // std::ifstream             
+#include "utils.hpp"
 
 static void finish(int sig);
 
@@ -222,6 +223,8 @@ std::string getInput()
 	return tmp;
 }
 
+
+
 void handle_cmd_input()
 {
 	boost::smatch matches;
@@ -274,8 +277,11 @@ int main(int argc, char* argv[])
 		CmdLine cmd("Command description message", ' ', "0.9");
 
 		// Define a switch and add it to the command line.
-		TCLAP::SwitchArg filesystemSwitch("f","filesystem","Starts filesystem command line", cmd, false);
-	
+		TCLAP::SwitchArg filesystemSwitch("f","filesystem","Starts interactiv app for filesystem command line", cmd, false);
+
+		TCLAP::ValueArg<std::string> cmdArg("c","command","Give commands to filesystem",true,"default","string");
+		cmd.add( cmdArg );
+
 		// Parse the args.
 		cmd.parse( argc, argv );
 		bool startFs = filesystemSwitch.getValue();
@@ -287,6 +293,11 @@ int main(int argc, char* argv[])
 			spinner(2, yprompt+1, spinnerpos); // spin
 			reset_cmd_prompt();
 			handle_cmd_input();
+		}
+		else {
+			std::string cmd = cmdArg.getValue();
+			CUtils utils;
+			utils.handle_cmdline_input(cmd);	
 		}
 
 	} catch (ArgException &e)  // catch any exceptions

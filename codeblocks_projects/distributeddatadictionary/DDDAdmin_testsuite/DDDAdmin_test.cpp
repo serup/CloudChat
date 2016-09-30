@@ -9,6 +9,7 @@
 #include <fstream>      // std::ifstream
 #include "../datadictionarycontrol.hpp"
 #include "../md5.h"
+#include "../utils.hpp"
 
 using namespace std;
 using namespace boost::unit_test;
@@ -70,14 +71,11 @@ BOOST_GLOBAL_FIXTURE(ReportRedirector)
 #endif
 
 boost::shared_ptr< std::vector<pair<std::vector<unsigned char>,int>> > getV(){
-//Note the 'new' on the next line, as it is what actually creates the vector
 	boost::shared_ptr< std::vector<pair<std::vector<unsigned char>,int>> > v( new std::vector<pair<std::vector<unsigned char>,int>>() );
 	std::string name1 = "Johnny Serup";	
 	std::vector<unsigned char> attributValue1(name1.begin(), name1.end());
-
 	std::string name2 = "Lee Xiao Long";	
 	std::vector<unsigned char> attributValue2(name2.begin(), name2.end());
-
 	v->push_back(make_pair(attributValue1,attributValue1.size()));
 	v->push_back(make_pair(attributValue2,attributValue2.size()));
 	return v;
@@ -117,7 +115,7 @@ BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_CASE(returnstdvectorpair)
 {
-	cout<<"BOOS_AUTO_TEST(returnstdvector)\n{"<<endl;
+	cout<<"BOOST_AUTO_TEST(returnstdvector)\n{"<<endl;
 	boost::shared_ptr< std::vector<pair<std::vector<unsigned char>,int>> > v = getV();
 	cout << " returning std::vector from function " << endl;
 	std::string strtmp(v->at(0).first.begin(),v->at(0).first.end()); 
@@ -129,7 +127,7 @@ BOOST_AUTO_TEST_CASE(returnstdvectorpair)
 
 BOOST_AUTO_TEST_CASE(return_shared_ptr_stdvectorpairWithUnique_ptrToBlob)
 {
-	cout<<"BOOS_AUTO_TEST(return_shared_ptr_stdvectorpairWithUnique_ptrToBlob)\n{"<<endl;
+	cout<<"BOOST_AUTO_TEST(return_shared_ptr_stdvectorpairWithUnique_ptrToBlob)\n{"<<endl;
 	boost::shared_ptr< std::vector< pair<std::unique_ptr<unsigned char>,int>> > v = getVblob();
 	cout << " returning shared_ptr std::vector from function " << endl;
 
@@ -147,7 +145,7 @@ BOOST_AUTO_TEST_CASE(return_shared_ptr_stdvectorpairWithUnique_ptrToBlob)
 
 BOOST_AUTO_TEST_CASE(returnstdvectorpairWithUnique_ptrToBlob)
 {
-	cout<<"BOOS_AUTO_TEST(returnstdvectorpairWithUnique_ptrToBlob)\n{"<<endl;
+	cout<<"BOOST_AUTO_TEST(returnstdvectorpairWithUnique_ptrToBlob)\n{"<<endl;
 	std::vector< pair<std::unique_ptr<unsigned char>,int>> v = getVVblob();
 	cout << " returning std::vector from function " << endl;
 
@@ -182,7 +180,7 @@ BOOST_AUTO_TEST_CASE(returnstdvectorpairWithUnique_ptrToBlob)
 
 BOOST_AUTO_TEST_CASE(datadictionarycontrol_instantiated)
 {
-	cout<<"BOOS_AUTO_TEST(datadictionarycontrol_instantiated)\n{"<<endl;
+	cout<<"BOOST_AUTO_TEST(datadictionarycontrol_instantiated)\n{"<<endl;
     CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
     BOOST_CHECK(ptestDataDictionaryControl != 0);
     delete ptestDataDictionaryControl;
@@ -191,7 +189,7 @@ BOOST_AUTO_TEST_CASE(datadictionarycontrol_instantiated)
 
 BOOST_AUTO_TEST_CASE(create_BFi_blockfile)
 {
-	cout<<"BOOS_AUTO_TEST(create_BFi_blockfile)\n{"<<endl;
+	cout<<"BOOST_AUTO_TEST(create_BFi_blockfile)\n{"<<endl;
 
     CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
     bool bFileCreated = ptestDataDictionaryControl->CreateBlockFile("test.BFi");
@@ -209,7 +207,7 @@ BOOST_AUTO_TEST_CASE(create_BFi_blockfile)
 //DEPRECATED - a file should be an attribut in a realm
 BOOST_AUTO_TEST_CASE(create3Blockfiles)
 {
-	cout<<"BOOS_AUTO_TEST(create3Blockfiles)\n{"<<endl;
+	cout<<"BOOST_AUTO_TEST(create3Blockfiles)\n{"<<endl;
 	// Create testfile to be put into .BFi file
     std::ofstream filestr;
 	std::string testfilename("testfile.txt");
@@ -271,7 +269,7 @@ BOOST_AUTO_TEST_CASE(create3Blockfiles)
 
 BOOST_AUTO_TEST_CASE(writeBlockIntoBFiStructure)
 {
-	cout<<"BOOS_AUTO_TEST(writeBlockIntoBFiStructure)\n{"<<endl;
+	cout<<"BOOST_AUTO_TEST(writeBlockIntoBFiStructure)\n{"<<endl;
 	std::string strTransGUID = "<empty>";
 
 	// Create testfile to be put into .BFi file
@@ -405,7 +403,7 @@ BOOST_AUTO_TEST_CASE(writeBlockIntoBFiStructure)
 
 BOOST_AUTO_TEST_CASE(DecodeAftersplitAttributIntoDEDchunks_small)
 {
-	cout<<"BOOS_AUTO_TEST(DecodeAftersplitAttributIntoDEDchunks_small)\n{"<<endl;
+	cout<<"BOOST_AUTO_TEST(DecodeAftersplitAttributIntoDEDchunks_small)\n{"<<endl;
 
 	std::string attributName = "name";
 	std::string name = "Johnny Serup";	
@@ -451,13 +449,9 @@ BOOST_AUTO_TEST_CASE(DecodeAftersplitAttributIntoDEDchunks_small)
 	cout<<"}"<<endl;
 }
 
-
-
-
-
 BOOST_AUTO_TEST_CASE(splitAttributIntoDEDchunks)
 {
-	cout<<"BOOS_AUTO_TEST(splitAttributIntoDEDchunks)\n{"<<endl;
+	cout<<"BOOST_AUTO_TEST(splitAttributIntoDEDchunks)\n{"<<endl;
 
 	// use an image file as attribut value
 	CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
@@ -518,7 +512,7 @@ BOOST_AUTO_TEST_CASE(splitAttributIntoDEDchunks)
 
 BOOST_AUTO_TEST_CASE(addChunkDataToBlockRecord)
 {
-	cout<<"BOOS_AUTO_TEST(addChunkDataToBlockRecord)\n{"<<endl;
+	cout<<"BOOST_AUTO_TEST(addChunkDataToBlockRecord)\n{"<<endl;
 
 	CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
 	std::string attributName = "foto";
@@ -561,7 +555,7 @@ BOOST_AUTO_TEST_CASE(addChunkDataToBlockRecord)
 
 BOOST_AUTO_TEST_CASE(addBlockRecordToBlockEntity)
 {
-	cout<<"BOOS_AUTO_TEST(addBlockRecordToBlockEntity)\n{"<<endl;
+	cout<<"BOOST_AUTO_TEST(addBlockRecordToBlockEntity)\n{"<<endl;
 
 	CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
 	std::string attributName = "foto"; // it should be ddid -- datadictionary id which refers to attribut description
@@ -611,7 +605,7 @@ BOOST_AUTO_TEST_CASE(addBlockRecordToBlockEntity)
 
 BOOST_AUTO_TEST_CASE(writeBlockEntitiesToBFiFiles)
 {
-	cout<<"BOOS_AUTO_TEST(writeBlockEntitiesToBFiFiles)\n{"<<endl;
+	cout<<"BOOST_AUTO_TEST(writeBlockEntitiesToBFiFiles)\n{"<<endl;
 
 	CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
 	std::string attributName = "foto"; // it should be ddid -- datadictionary id which refers to attribut description
@@ -706,7 +700,7 @@ BOOST_AUTO_TEST_CASE(addAttributToBlockRecord)
 	using boost::optional;
 	using boost::property_tree::ptree;
 
-	cout<<"BOOS_AUTO_TEST(addAttributToBlockRecord)\n{"<<endl;
+	cout<<"BOOST_AUTO_TEST(addAttributToBlockRecord)\n{"<<endl;
 
 	CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
 	ptree ptListOfBlockRecords;
@@ -779,7 +773,7 @@ BOOST_AUTO_TEST_CASE(add2AttributsToBlockRecord)
 	using boost::optional;
 	using boost::property_tree::ptree;
 
-	cout<<"BOOS_AUTO_TEST(add2AttributsToBlockRecord)\n{"<<endl;
+	cout<<"BOOST_AUTO_TEST(add2AttributsToBlockRecord)\n{"<<endl;
 
 	CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
 	ptree ptListOfBlockRecords;
@@ -956,7 +950,7 @@ BOOST_AUTO_TEST_CASE(add2AttributsOneLargeOneSmallToBlockRecord)
 	using boost::optional;
 	using boost::property_tree::ptree;
 
-	cout<<"BOOS_AUTO_TEST(add2AttributsOneLargeOneSmallToBlockRecord)\n{"<<endl;
+	cout<<"BOOST_AUTO_TEST(add2AttributsOneLargeOneSmallToBlockRecord)\n{"<<endl;
 
 	CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
 	ptree ptListOfBlockRecords;
@@ -1138,7 +1132,7 @@ BOOST_AUTO_TEST_CASE(add2AttributsOneLargeOneSmallToBlockRecord)
 
 BOOST_AUTO_TEST_CASE(listDataDictionaryAttributs)
 {
-	cout<<"BOOS_AUTO_TEST(listDataDictionaryAttributs)\n{"<<endl;
+	cout<<"BOOST_AUTO_TEST(listDataDictionaryAttributs)\n{"<<endl;
 
 	using boost::optional;
 	using boost::property_tree::ptree;
@@ -1283,7 +1277,7 @@ BOOST_AUTO_TEST_CASE(listDataDictionaryAttributs)
 
 BOOST_AUTO_TEST_CASE(listDataDictionaryAttributsWithOneLarge)
 {
-	cout<<"BOOS_AUTO_TEST(listDataDictionaryAttributsWithOneLarge)\n{"<<endl;
+	cout<<"BOOST_AUTO_TEST(listDataDictionaryAttributsWithOneLarge)\n{"<<endl;
 
 	using boost::optional;
 	using boost::property_tree::ptree;
@@ -1457,3 +1451,15 @@ BOOST_AUTO_TEST_CASE(listDataDictionaryAttributsWithOneLarge)
 
 	cout<<"}"<<endl;
 }
+
+BOOST_AUTO_TEST_CASE(handle_cmd_line)
+{
+	cout<<"BOOST_AUTO_TEST(handle_cmd_line)\n{"<<endl;
+
+	CUtils utils;
+	std::string cmd = "ls";
+	utils.handle_cmdline_input(cmd); 
+
+	cout<<"}"<<endl;
+}
+

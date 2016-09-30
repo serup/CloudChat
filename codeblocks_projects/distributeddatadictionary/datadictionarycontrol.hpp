@@ -69,4 +69,5 @@ class CDataDictionaryControl
 
 };
 
+
 #endif // CDATADICTIONARYCONTROL_H
