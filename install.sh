@@ -104,6 +104,16 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- oracle-java already installed"
 fi
+
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 idle* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install idle - python editor "
+  sudo apt-fast install -yq idle 
+  echo " - done."
+else
+  echo "- idle python editor already installed"
+fi
+
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 gpointing* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install gpointing-device-settings on ubuntu, to enable middlemouse button copy / past "
