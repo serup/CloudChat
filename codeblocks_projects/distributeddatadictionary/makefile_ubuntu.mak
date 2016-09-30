@@ -11,6 +11,7 @@ info:
 	@ echo "------------------------------"
 	@ echo "to build all : make -f makefile_ubuntu.mak total"
 	@ echo "to fetch and build TCLAP : make -f makefile_ubuntu.mak dep"
+	@ echo "to install : make -f makefile_ubuntu.mak install"
 	@ echo " "
 
 all: compile 
@@ -41,5 +42,9 @@ compile:
 	@ $(CC)
 	@ echo "Build ended --"
 	@ echo "------------------------"
+
+install:
+	@ echo "- installing DDDAdmin in /usr/local/bin"
+	@ sudo cp bin/Debug/DDDAdmin /usr/local/bin/DDDAdmin
 
 .PHONY: info

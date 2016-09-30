@@ -169,11 +169,14 @@ void show_cmd_options()
 //	 info place holder
     int ypos = yinfoposStart; 
 	mvprintw(ypos++,0, "%s", "commands: ");
-	mvprintw(ypos++,0, "%s", "-------------------------- ");
+	mvprintw(ypos++,0, "%s", "---------------------------------------------------------------- ");
 	mvprintw(ypos++,0, "%s", "wrong input shows this screen ");
 	mvprintw(ypos++,0, "%s", "quit 	- exit application ");
 	mvprintw(ypos++,0, "%s", "ls 	- list attributs ");
-	mvprintw(ypos++,0, "%s", "-------------------------- ");
+	mvprintw(ypos++,0, "%s", " ");
+	mvprintw(ypos++,0, "%s", "- if this administrator is started far away from .BFi files, ");
+	mvprintw(ypos++,0, "%s", "- then the search may take some time ");
+	mvprintw(ypos++,0, "%s", "---------------------------------------------------------------- ");
 	move(yprompt, xprompt+promptdisplacement);
 	refresh();
 }
