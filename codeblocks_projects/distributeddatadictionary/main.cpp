@@ -279,7 +279,7 @@ int main(int argc, char* argv[])
 		// Define a switch and add it to the command line.
 		TCLAP::SwitchArg filesystemSwitch("f","filesystem","Starts interactiv app for filesystem command line", cmd, false);
 
-		TCLAP::ValueArg<std::string> cmdArg("c","command","Give commands to filesystem",true,"default","string");
+		TCLAP::ValueArg<std::string> cmdArg("c","command","Give commands to filesystem",false,"default","string");
 		cmd.add( cmdArg );
 
 		// Parse the args.
