@@ -28,6 +28,10 @@ DDD - Distributed Data Dictionary
 		           |                                      |
 		           + etc...........................       + etc...........................
 
+The DDDAdmin is communicating with a DDNode via RPC and SCP, there is NO websocket communication between them and each DDNode is autonomous, meaning
+it is masterless, so in fact you could access DataDictionary from any DDNode and use DDDAdmin commands
+There is however one WebSocket connection possibility from user of DDD - if DDDAdmin has setup a listener, then users can connect to this listener
+and give commands thru that interface - communication done using DED packets.
 
 [BFi] - Block File; several block files assembled together forms a database realm file consisting of attributes
 <?xml version="1.0" encoding="utf-8"?>

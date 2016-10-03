@@ -1613,6 +1613,8 @@ BOOST_AUTO_TEST_CASE(handle_cmd_line)
 		if(c==3) BOOST_CHECK(expected3 == attribut);
 	}
 
+	cout << "________________________________________" << endl;
+
 	cout<<"}"<<endl;
 }
 
