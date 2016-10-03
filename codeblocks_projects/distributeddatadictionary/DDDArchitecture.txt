@@ -51,7 +51,7 @@ DDD - Distributed Data Dictionary
 		     		<attribut_chunk_id></attribut_chunk_id> 		-- name of attribut described in data dictionary realm entity
 		     		<attribut_aiid></attribut_aiid> 			-- automatic increased id - a continues number for all records 
 		     		<attribut_chunk_seq></attribut_chunk_seq> 		-- sequence number for this chunk of the attribut
-		     		<attribut_chunk_data></attribut_chunk_data> 	-- chunk data of attribut
+		     		<attribut_chunk_data></attribut_chunk_data> 		-- chunk data of attribut
 -- DED binary end 
 		 	</Data> -- here is the pCompressedData from above protocol encoding, compression, encrypting algoritm -- currently DED (dataencoderdecoder)
 	        	<DataMD5><DataMD5> -- this md5 checksum is used as an extra verification -- Data must be verified with this value before being used.
@@ -75,7 +75,7 @@ DDD - Distributed Data Dictionary
 		     		<attribut_chunk_id></attribut_chunk_id> 		-- name of attribut described in data dictionary realm entity
 		     		<attribut_aiid></attribut_aiid> 			-- automatic increased id - a continues number for all records 
 		     		<attribut_chunk_seq></attribut_chunk_seq> 		-- sequence number for this chunk of the attribut
-		     		<attribut_chunk_data></attribut_chunk_data> 	-- chunk data of attribut
+		     		<attribut_chunk_data></attribut_chunk_data> 		-- chunk data of attribut
 -- DED binary end
 			</Data> 
 	       	    	<DataMD5><DataMD5> -- this md5 checksum is used as an extra verification -- Data must be verified with this value before being used.
@@ -88,7 +88,7 @@ DDD - Distributed Data Dictionary
 			     	<attribut_chunk_id></attribut_chunk_id> 		-- name of attribut described in data dictionary realm entity
 		     		<attribut_aiid></attribut_aiid> 			-- automatic increased id - a continues number for all records 
 		     		<attribut_chunk_seq></attribut_chunk_seq> 		-- sequence number for this chunk of the attribut
-		     		<attribut_chunk_data></attribut_chunk_data> 	-- chunk data of attribut
+		     		<attribut_chunk_data></attribut_chunk_data> 		-- chunk data of attribut
 -- DED binary end 
 			</Data> 
 	       	    	<DataMD5><DataMD5> -- this md5 checksum is used as an extra verification -- Data must be verified with this value before being used.
@@ -110,6 +110,10 @@ definitions are in following dictionary files
 
 DD_<realmname>.xml     	-- this is a total description of all attributes belonging to a specific realm
 DD_ATTRIBUT_TOAST.xml	-- this is a description of nodes belonging to a TOAST record [chunk_record] - used for assembling attributes over several records or blockrecords
-
+  attribut_chunk_id 		-- name of attribut described in data dictionary realm entity
+  attribut_aiid			-- automatic increased id - a continues number for all records 
+  attribut_chunk_seq		-- sequence number for this chunk of the attribut
+  attribut_chunk_data 		-- chunk data of attribut
+	
 
 

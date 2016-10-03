@@ -15,7 +15,7 @@ using namespace std;
 class CUtils
 {
 	public:
-		void handle_cmdline_input(std::string cmd);
+		std::list<std::string> handle_cmdline_input(std::string cmd);
 
 };
 
