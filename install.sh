@@ -105,6 +105,15 @@ else
   echo "- oracle-java already installed"
 fi
 
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 rpcbind* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install RPC - remote procedure call  "
+  sudo apt-fast install -yq rpcbind 
+  echo " - done."
+else
+  echo "- RPC already installed"
+fi
+
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 idle* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install idle - python editor "
@@ -114,14 +123,19 @@ else
   echo "- idle python editor already installed"
 fi
 
-PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 gpointing* |grep "install ok installed")
-if [ "" == "$PKG_OK" ]; then
-  echo -n "- install gpointing-device-settings on ubuntu, to enable middlemouse button copy / past "
-  sudo apt-fast install -yq gpointing-device-settings
-  echo " - done."
-else
-  echo "- gpointing already installed"
-fi
+# could not get this to work ---
+#PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 gpointing* |grep "install ok installed")
+#if [ "" == "$PKG_OK" ]; then
+#  echo -n "- install gpointing-device-settings on ubuntu, to enable middlemouse button copy / past "
+##  sudo add-apt-repository ppa:gpointing-device-settings
+##  sudo apt-get update
+##  sudo apt-fast install -yq gpointing-device-settings
+#  sudo dpkg -i gpointing-device-settings_1.5.1-6ubuntu2_amd64.deb
+#  echo " - done."
+#else
+#  echo "- gpointing already installed"
+#fi
+
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 *stdc* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install lib32stdc on ubuntu, to use for mksdcard SDK tool in android-studio "
@@ -170,7 +184,7 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- wireshark already installed"
 fi
-PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 vim* |grep "install ok installed")
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 vim |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo "install pathogen.vim"
   mkdir -p ~/.vim/autoload ~/.vim/bundle && \
