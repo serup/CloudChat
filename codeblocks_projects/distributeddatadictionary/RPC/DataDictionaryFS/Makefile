@@ -18,7 +18,7 @@ prereq:
 	rename "s/\.c/\.cpp/" *.c 
 	@echo "- then rename all .c to .cpp in Makefile.DDDfs"
 	sed -i 's/\.c/\.cpp/g' Makefile.DDDfs
-	@echo "- and you can then compile and link using"
+	@echo "- and you can now compile and link using :  make all"
 
 all:
 	make -f Makefile.DDDfs 
