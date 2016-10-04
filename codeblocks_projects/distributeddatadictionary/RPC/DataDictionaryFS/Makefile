@@ -7,31 +7,23 @@ init:
 	@echo " - clean : make clean "
 	@echo "----------------------------------------------"
 
+setup:	generate prereq
+
 generate:
 	rpcgen -Na DDDfs.x
 
-#all: client server
-all:	
+prereq:
+	@echo "- then rename all .c to .cpp"
+	rename "s/\.c/\.cpp/" *.c 
+	@echo "- then rename all .c to .cpp in Makefile.DDDfs"
+	sed -i 's/\.c/\.cpp/g' Makefile.DDDfs
+	@echo "- and you can then compile and link using"
+
+all:
 	make -f Makefile.DDDfs 
 
-DDDfs.h: DDDfs.x
-	rpcgen -Na DDDfs.x
-#	rpcgen -C DDDfs.x
-
-DDDfs_svc.c DDDfs_clnt.c DDDfs.cpp: DDDfs.h
-
-client: DDDfs.o DDDfs_clnt.o
-	g++ -g -o DDDfsclient DDDfs.o DDDfs_clnt.o  
-
-server: DDDfs_server.o DDDfs_svc.o
-	g++ -g -o DDDfsserver DDDfs_server.o DDDfs_svc.o 
-
-.PHONY: clean
+.PHONY: init 
 
 clean:
-	-rm *.o
-	-rm *client
-	-rm *server
-	-rm *fs.h
-	-rm *fs_clnt.c
-	-rm *fs_svc.c
+	make -f Makefile.DDDfs clean
+	rm Makefile.DDDfs
