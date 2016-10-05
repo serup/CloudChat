@@ -1,4 +1,6 @@
-#include "DDDfs_server.h"
+#include "DDDfs.h"
+#include "DDNode.h"
+
 using namespace DDDfsRPC;
 
 DEDBlock * dddfsServer::handleRequest(struct svc_req *rqstp)  

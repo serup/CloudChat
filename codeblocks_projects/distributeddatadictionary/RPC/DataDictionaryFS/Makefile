@@ -23,14 +23,14 @@ prereq:
 #	sed -i 's/ -o / \$$\(CFLAGS\) -o /g' Makefile.DDDfs
 	sed -i 's/RPCGENFLAGS =/CC = g++ -g \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/DataEncoder.h \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/DataEncoder.cpp \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/compression-lib\/compression.h \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/compression-lib\/compression.cpp -L\"\/usr\/local\/lib\/\" -D__DEBUG__ -D__MSABI_LONG=long -lboost_system -lboost_signals -lboost_thread -lboost_filesystem -lpthread -lrt -std=gnu++11 \
 	\
-	CCSERVER = g++ -g dddfsServer.cpp DDDfs_svc.cpp DDDfs_server.cpp DDDfs_xdr.cpp \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/DataEncoder.h \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/DataEncoder.cpp \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/compression-lib\/compression.h \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/compression-lib\/compression.cpp -L\"\/usr\/local\/lib\/\" -D__DEBUG__ -D__MSABI_LONG=long -lboost_system -lboost_signals -lboost_thread -lboost_filesystem -lpthread -lrt -std=gnu++11 /g' Makefile.DDDfs
+	CCSERVER = g++ -g DDNode.cpp DDDfs_svc.cpp DDDfs_server.cpp DDDfs_xdr.cpp \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/DataEncoder.h \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/DataEncoder.cpp \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/compression-lib\/compression.h \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/compression-lib\/compression.cpp -L\"\/usr\/local\/lib\/\" -D__DEBUG__ -D__MSABI_LONG=long -lboost_system -lboost_signals -lboost_thread -lboost_filesystem -lpthread -lrt -std=gnu++11 /g' Makefile.DDDfs
 #	sed -i 's/$$(SERVER) :/# /g' Makefile.DDDfs
 #	sed -i 's/$$(LINK.cpp) -o $$(SERVER)/# /g' Makefile.DDDfs
 	sed -i '/$$(SERVER) :/d' Makefile.DDDfs
 	sed -i '/$$(LINK.cpp) -o $$(SERVER)/d' Makefile.DDDfs
 	sed -i '/$$(LINK.cpp) -o/a $$(SERVER) : \
 		$$(CCSERVER) -o $$(SERVER)' Makefile.DDDfs
-	sed -i '/#include/a\#include \"DDDfs_server.h\"\
+	sed -i '/#include/a\#include \"DDNode.h\"\
 		\
 		using namespace DDDfsRPC;\
 		' DDDfs_server.cpp
