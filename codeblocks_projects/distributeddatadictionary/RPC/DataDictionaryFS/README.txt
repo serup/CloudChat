@@ -33,3 +33,9 @@ make all
 make destroy
 then setup will go back to default from git pull, you can then call make setup again
 ----
+
+NB! To develop on the server, then make changes ONLY to DDNode.cpp
+    server here means server on node
+----
+
+
