@@ -30,6 +30,8 @@ prereq:
 	sed -i '/$$(LINK.cpp) -o $$(SERVER)/d' Makefile.DDDfs
 	sed -i '/$$(LINK.cpp) -o/a $$(SERVER) : \
 		$$(CCSERVER) -o $$(SERVER)' Makefile.DDDfs
+	sed -i '/#include/a\#include \"DDDfs_server.h\"\
+		' DDDfs_server.cpp
 	@echo "- and you can now compile and link using :  make all"
 
 all:
@@ -39,6 +41,7 @@ all:
 
 clean:
 	rm *.o
+	rm DDDfs_server DDDfs_client
 
 destroy:
 	make -f Makefile.DDDfs clean

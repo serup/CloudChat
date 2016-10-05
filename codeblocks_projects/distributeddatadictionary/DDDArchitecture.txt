@@ -32,6 +32,7 @@ The DDDAdmin is communicating with a DDNode via RPC and SCP, there is NO websock
 it is masterless, so in fact you could access DataDictionary from any DDNode and use DDDAdmin commands
 There is however one WebSocket connection possibility from user of DDD - if DDDAdmin has setup a listener, then users can connect to this listener
 and give commands thru that interface - communication done using DED packets.
+The DDDAdmin will communicate with DDNode's using small DDDfs servers listening on each node. RPC will be used to perform actions on each node
 
 [BFi] - Block File; several block files assembled together forms a database realm file consisting of attributes
 <?xml version="1.0" encoding="utf-8"?>
