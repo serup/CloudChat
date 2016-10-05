@@ -18,6 +18,18 @@ prereq:
 	rename "s/\.c/\.cpp/" *.c 
 	@echo "- then rename all .c to .cpp in Makefile.DDDfs"
 	sed -i 's/\.c/\.cpp/g' Makefile.DDDfs
+#	sed -i 's/SOURCES_CLNT.cpp = /SOURCES_CLNT.cpp = \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/compression-lib\/compression.cpp \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/DataEncoder.cpp/g' Makefile.DDDfs
+#	sed -i 's/CFLAGS += -g/CFLAGS += -c -lboost_system -std=c++11 -Wno-unused-but-set-variable /g' Makefile.DDDfs
+#	sed -i 's/ -o / \$$\(CFLAGS\) -o /g' Makefile.DDDfs
+	sed -i 's/RPCGENFLAGS =/CC = g++ -g \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/DataEncoder.h \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/DataEncoder.cpp \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/compression-lib\/compression.h \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/compression-lib\/compression.cpp -L\"\/usr\/local\/lib\/\" -D__DEBUG__ -D__MSABI_LONG=long -lboost_system -lboost_signals -lboost_thread -lboost_filesystem -lpthread -lrt -std=gnu++11 \
+	\
+	CCSERVER = g++ -g DDDfs_svc.cpp DDDfs_server.cpp DDDfs_xdr.cpp \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/DataEncoder.h \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/DataEncoder.cpp \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/compression-lib\/compression.h \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/compression-lib\/compression.cpp -L\"\/usr\/local\/lib\/\" -D__DEBUG__ -D__MSABI_LONG=long -lboost_system -lboost_signals -lboost_thread -lboost_filesystem -lpthread -lrt -std=gnu++11 /g' Makefile.DDDfs
+#	sed -i 's/$$(SERVER) :/# /g' Makefile.DDDfs
+#	sed -i 's/$$(LINK.cpp) -o $$(SERVER)/# /g' Makefile.DDDfs
+	sed -i '/$$(SERVER) :/d' Makefile.DDDfs
+	sed -i '/$$(LINK.cpp) -o $$(SERVER)/d' Makefile.DDDfs
+	sed -i '/$$(LINK.cpp) -o/a $$(SERVER) : \
+		$$(CCSERVER) -o $$(SERVER)' Makefile.DDDfs
 	@echo "- and you can now compile and link using :  make all"
 
 all:
