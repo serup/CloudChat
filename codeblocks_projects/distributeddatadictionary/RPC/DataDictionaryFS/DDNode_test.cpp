@@ -47,6 +47,24 @@ BOOST_AUTO_TEST_CASE(handleRequest_helloworld)
 	dddfsServer* pddfsServer = new dddfsServer();
 	BOOST_CHECK(pddfsServer!=NULL);
 
+	/*
+	 * Service request
+	 * - defined in svc.h
+	 **/
+	//	
+	//struct svc_req {
+	//		rpcprog_t rq_prog;            /* service program number */
+	//		rpcvers_t rq_vers;            /* service protocol version */
+	//		rpcproc_t rq_proc;            /* the desired procedure */
+	//		struct opaque_auth rq_cred;   /* raw creds from the wire */
+	//		caddr_t rq_clntcred;          /* read only cooked cred */
+	//		SVCXPRT *rq_xprt;             /* associated transport */
+	//};
+
+	svc_req Request;
+	DEDBlock* pDEDBlock = pddfsServer->handleRequest(&Request);
+	BOOST_CHECK(pDEDBlock!=NULL);
+
 }
 
 
