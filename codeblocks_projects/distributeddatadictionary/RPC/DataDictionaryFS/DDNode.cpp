@@ -4,7 +4,7 @@ using namespace DDDfsRPC;
 
 DEDBlock * dddfsServer::handleRequest(struct svc_req *rqstp)  
 {
-	DEDBlock*  presult = new DEDBlock();
+	static DEDBlock  result;
 
 	DED_START_ENCODER(encoder_ptr);
 	DED_PUT_STRUCT_START( encoder_ptr, "DDNodeResponse" );
@@ -15,10 +15,10 @@ DEDBlock * dddfsServer::handleRequest(struct svc_req *rqstp)
 	if(sizeofCompressedData==0) // if sizeofcompresseddata is 0 then compression was not possible and size is the same as for uncompressed
 		sizeofCompressedData = iLengthOfTotalData;
 
-	presult->data.data_len = sizeofCompressedData;
-	presult->data.data_val = (char*)malloc(sizeofCompressedData);
-	memcpy(presult->data.data_val, pCompressedData, sizeofCompressedData);
+	result.data.data_len = sizeofCompressedData;
+	result.data.data_val = (char*)malloc(sizeofCompressedData);
+	memcpy(result.data.data_val, pCompressedData, sizeofCompressedData);
 
-	presult->transID = 1;
-	return presult;
+	result.transID = 1;
+	return &result;
 }
