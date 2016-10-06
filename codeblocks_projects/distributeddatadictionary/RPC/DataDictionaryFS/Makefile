@@ -73,8 +73,9 @@ test:
 
 clean:
 	@echo "- Removing obj and exe files"
-	@rm *.o
-	@rm DDDfs_server DDDfs_client
+	-@rm *.o > tmp
+	-@rm DDDfs_server DDDfs_client > tmp
+	-@rm tmp
 
 destroy:
 	@echo "destroy setup - go back to default"
