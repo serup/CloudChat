@@ -93,9 +93,14 @@ BOOST_AUTO_TEST_CASE(handleRequest_helloworld)
 			{
 					if( DED_GET_STRUCT_END( decoder_ptr, "DDNodeResponse" ) == true )
 					{
-							printf("Response: OK\n");                                                                               
-							printf("Response: Datasize: %d\n",pDEDBlock->data.data_len);                                              
-							bDecoded=true;
+							if(strValue == "Hello World") {
+									printf("Response: OK\n"); 
+									printf("Response: Datasize: %d\n",pDEDBlock->data.data_len); 
+									bDecoded=true;
+							}
+							else {
+									printf("Response: FAIL\n");                                 
+							}
 					}
 					else
 					{
