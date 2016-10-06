@@ -6,8 +6,8 @@ struct DEDBlock {
 };
 
  
-program HELLO_WOLRD_PROG {
-	version HELLO_WORLD_VERS {
+program DDD_FS_PROG {
+	version DDD_FS_VERS {
 		DEDBlock DDDfs(void) = 0;
 	} = 1;
 } = 0x30000824;

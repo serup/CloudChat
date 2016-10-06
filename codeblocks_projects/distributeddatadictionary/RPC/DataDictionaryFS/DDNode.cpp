@@ -6,6 +6,8 @@ DEDBlock * dddfsServer::handleRequest(struct svc_req *rqstp)
 {
 	static DEDBlock  result;
 
+	printf("DDNode[handleRequest] called; Hello World\n");
+
 	DED_START_ENCODER(encoder_ptr);
 	DED_PUT_STRUCT_START( encoder_ptr, "DDNodeResponse" );
 		DED_PUT_STDSTRING	( encoder_ptr, "message", (std::string)"Hello World" );
