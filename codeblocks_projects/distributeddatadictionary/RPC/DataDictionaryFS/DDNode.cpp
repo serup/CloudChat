@@ -10,5 +10,6 @@ DEDBlock * dddfsServer::handleRequest(struct svc_req *rqstp)
 
 	printf("Hello World\n");
 
+	result.transID = 1;
 	return &result;
 }

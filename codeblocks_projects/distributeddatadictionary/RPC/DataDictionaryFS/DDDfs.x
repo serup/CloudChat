@@ -1,7 +1,7 @@
 const MAXLEN = 65535;
 
 struct DEDBlock {
-	long sizeofBlock;
+	long transID;
 	opaque data<MAXLEN>;
 };
 

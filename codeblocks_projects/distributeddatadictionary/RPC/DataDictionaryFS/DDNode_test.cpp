@@ -67,6 +67,17 @@ BOOST_AUTO_TEST_CASE(handleRequest_helloworld)
 	DEDBlock* pDEDBlock = pddfsServer->handleRequest(&Request);
 	BOOST_CHECK(pDEDBlock!=NULL);
 
+	/* defined in DDDfs.x
+	struct DEDBlock {
+		long transID;
+		struct {
+			u_int data_len;
+			char *data_val;
+		} data;
+	}; */
+
+	BOOST_CHECK(pDEDBlock->transID>0);
+
 	cout<<"}"<<endl;   
 }
 
