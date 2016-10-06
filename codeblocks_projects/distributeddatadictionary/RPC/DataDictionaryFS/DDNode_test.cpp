@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE(handleRequest_helloworld)
 	DEDBlock* pDEDBlock = pddfsServer->handleRequest(&Request);
 	BOOST_CHECK(pDEDBlock!=NULL);
 
-	/* defined in DDDfs.x
+	/* defined in DDDfs.x --> rpcgen --> DDDfs.h
 	struct DEDBlock {
 		long transID;
 		struct {
@@ -77,6 +77,38 @@ BOOST_AUTO_TEST_CASE(handleRequest_helloworld)
 	}; */
 
 	BOOST_CHECK(pDEDBlock->transID>0);
+	BOOST_CHECK(pDEDBlock->data.data_len>0);
+	BOOST_CHECK(pDEDBlock->data.data_val!=NULL);
+
+	DED_PUT_DATA_IN_DECODER(decoder_ptr,(unsigned char*)pDEDBlock->data.data_val,pDEDBlock->data.data_len);
+	BOOST_CHECK(decoder_ptr != 0);
+
+	bool bDecoded=false;
+	std::string strValue;
+
+	// decode data ...
+	if( DED_GET_STRUCT_START( decoder_ptr, "DDNodeResponse" ) == true )
+	{
+			if(	DED_GET_STDSTRING	( decoder_ptr, "message", strValue ) == true )
+			{
+					if( DED_GET_STRUCT_END( decoder_ptr, "DDNodeResponse" ) == true )
+					{
+							printf("Response: OK\n");                                                                               
+							printf("Response: Datasize: %d\n",pDEDBlock->data.data_len);                                              
+							bDecoded=true;
+					}
+					else
+					{
+							bDecoded=false;
+							printf("Response: FAIL\n");                                                                             
+					}
+					cout << "message : " << strValue << endl;
+			}
+	}
+	else
+			cout << "FAIL: did NOT decode DDNodeResponse" << endl;
+
+	BOOST_CHECK(bDecoded == true);
 
 	cout<<"}"<<endl;   
 }
