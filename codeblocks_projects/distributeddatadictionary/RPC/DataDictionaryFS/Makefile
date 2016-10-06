@@ -1,3 +1,10 @@
+TEST=./DDNode_test
+TESTFLAGS= --report_format=XML --report_level=detailed
+TESTFLAGS2= --report_level=detailed
+TESTFLAGS3= --report_format=XML --report_level=detailed
+CONVERT=xsltproc -o test_results.html test_results.xslt test_results.xml
+CONVERT2=xsltproc -o test_results.txt test_results_text.xslt test_results.xml
+CCTEST=g++ -g -o DDNode_test DDNode_test.cpp DDNode.cpp  ../../../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.h ../../../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.cpp ../../../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.h ../../../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.cpp -L"/usr/local/lib/" -D__DEBUG__ -D__MSABI_LONG=long -lboost_system -lboost_signals -lboost_thread -lboost_filesystem -lpthread -lrt -std=gnu++11
 init:
 	@echo "------------------------------------------------------"
 	@echo " Build RPC server/client for DDD file system "
@@ -18,14 +25,9 @@ prereq:
 	rename "s/\.c/\.cpp/" *.c 
 	@echo "- then rename all .c to .cpp in Makefile.DDDfs"
 	sed -i 's/\.c/\.cpp/g' Makefile.DDDfs
-#	sed -i 's/SOURCES_CLNT.cpp = /SOURCES_CLNT.cpp = \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/compression-lib\/compression.cpp \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/DataEncoder.cpp/g' Makefile.DDDfs
-#	sed -i 's/CFLAGS += -g/CFLAGS += -c -lboost_system -std=c++11 -Wno-unused-but-set-variable /g' Makefile.DDDfs
-#	sed -i 's/ -o / \$$\(CFLAGS\) -o /g' Makefile.DDDfs
 	sed -i 's/RPCGENFLAGS =/CC = g++ -g \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/DataEncoder.h \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/DataEncoder.cpp \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/compression-lib\/compression.h \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/compression-lib\/compression.cpp -L\"\/usr\/local\/lib\/\" -D__DEBUG__ -D__MSABI_LONG=long -lboost_system -lboost_signals -lboost_thread -lboost_filesystem -lpthread -lrt -std=gnu++11 \
 	\
 	CCSERVER = g++ -g DDNode.cpp DDDfs_svc.cpp DDDfs_server.cpp DDDfs_xdr.cpp \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/DataEncoder.h \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/DataEncoder.cpp \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/compression-lib\/compression.h \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/compression-lib\/compression.cpp -L\"\/usr\/local\/lib\/\" -D__DEBUG__ -D__MSABI_LONG=long -lboost_system -lboost_signals -lboost_thread -lboost_filesystem -lpthread -lrt -std=gnu++11 /g' Makefile.DDDfs
-#	sed -i 's/$$(SERVER) :/# /g' Makefile.DDDfs
-#	sed -i 's/$$(LINK.cpp) -o $$(SERVER)/# /g' Makefile.DDDfs
 	sed -i '/$$(SERVER) :/d' Makefile.DDDfs
 	sed -i '/$$(LINK.cpp) -o $$(SERVER)/d' Makefile.DDDfs
 	sed -i '/$$(LINK.cpp) -o/a $$(SERVER) : \
@@ -40,6 +42,32 @@ prereq:
 
 all:
 	make -f Makefile.DDDfs 
+
+test:
+	@ echo "***********************************************"
+	@ echo "- Compile test"
+	@ echo "***********************************************"
+	@ $(CCTEST)
+	@ echo "***********************************************"
+	@ echo " Test is started - please wait... " 
+	@ echo "***********************************************"
+	@ $(TEST) $(TESTFLAGS) > error.txt;$(CONVERT) 
+	@ $(TEST) $(TESTFLAGS3) > error2.txt;$(CONVERT2) 
+	@ echo "-----------------------------------------------" > test_txt_result.txt 
+	@ echo " Test of DDNode  " >> test_txt_result.txt  
+	@ echo "-----------------------------------------------" >> test_txt_result.txt 
+	@ cat test_results.txt | grep 'OK\|FAIL' >> test_txt_result.txt
+	@ echo "--------------" >> test_txt_result.txt
+	@ echo "Tests Complete" >> test_txt_result.txt
+	@ echo "--------------" >> test_txt_result.txt
+	@ printf "Passed: " >> test_txt_result.txt;(cat test_results.txt | grep -c 'OK'; printf "") >> test_txt_result.txt
+	@ printf "Failed: " >> test_txt_result.txt;(cat test_results.txt | grep -c 'FAIL'; printf "") >> test_txt_result.txt
+	@ echo "--------------" >> test_txt_result.txt
+	@ cat test_txt_result.txt
+	@ cat test_txt_result.txt > test_results.txt
+	@ rm test_txt_result.txt
+	@ rm error2.txt
+
 
 .PHONY: init 
 
