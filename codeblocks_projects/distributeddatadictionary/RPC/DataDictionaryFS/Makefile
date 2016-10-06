@@ -41,8 +41,10 @@ prereq:
 	@sed -i '/dddfsServer();/a\ 	pserver->handleRequest(rqstp);\' DDDfs_server.cpp
 	@echo "- and you can now compile and link using :  make all"
 
-all:
-	@make -f Makefile.DDDfs 
+all:	clean
+	@echo "Building..."
+	@make -f Makefile.DDDfs > build.log 
+	@echo "Done. - see detailed info in build.log"
 
 test:
 	@ $(CCTEST)
@@ -70,9 +72,12 @@ test:
 .PHONY: init 
 
 clean:
-	rm *.o
-	rm DDDfs_server DDDfs_client
+	@echo "- Removing obj and exe files"
+	@rm *.o
+	@rm DDDfs_server DDDfs_client
 
 destroy:
-	make -f Makefile.DDDfs clean
-	rm Makefile.DDDfs
+	@echo "destroy setup - go back to default"
+	@make -f Makefile.DDDfs clean > tmp
+	@rm Makefile.DDDfs > tmp
+	@rm tmp
