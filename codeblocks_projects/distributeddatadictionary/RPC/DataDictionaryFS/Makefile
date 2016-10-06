@@ -57,10 +57,13 @@ test:
 	@ printf "Passed: " >> test_txt_result.txt;(cat test_results.txt | grep -c 'OK'; printf "") >> test_txt_result.txt
 	@ printf "Failed: " >> test_txt_result.txt;(cat test_results.txt | grep -c 'FAIL'; printf "") >> test_txt_result.txt
 	@ echo "--------------" >> test_txt_result.txt
-	@ cat test_txt_result.txt
 	@ cat test_txt_result.txt > test_results.txt
-	@ rm test_txt_result.txt
-	@ rm error2.txt
+	@ echo " " >> test_results.txt                       
+	@ echo "- list of errors if any" >> test_results.txt 
+	@ cat error2.txt >> test_results.txt                 
+	@ cat test_results.txt                               
+	@ rm test_txt_result.txt                             
+	@ rm error2.txt                                      
 
 
 .PHONY: init 

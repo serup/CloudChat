@@ -44,6 +44,8 @@ BOOST_AUTO_TEST_SUITE_END( )
 
 BOOST_AUTO_TEST_CASE(handleRequest_helloworld)
 {
+	cout<<"BOOST_AUTO_TEST(handleRequest_helloworld)\n{"<<endl;    
+
 	dddfsServer* pddfsServer = new dddfsServer();
 	BOOST_CHECK(pddfsServer!=NULL);
 
@@ -65,6 +67,7 @@ BOOST_AUTO_TEST_CASE(handleRequest_helloworld)
 	DEDBlock* pDEDBlock = pddfsServer->handleRequest(&Request);
 	BOOST_CHECK(pDEDBlock!=NULL);
 
+	cout<<"}"<<endl;   
 }
 
 
