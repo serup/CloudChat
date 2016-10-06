@@ -44,13 +44,7 @@ all:
 	make -f Makefile.DDDfs 
 
 test:
-	@ echo "***********************************************"
-	@ echo "- Compile test"
-	@ echo "***********************************************"
 	@ $(CCTEST)
-	@ echo "***********************************************"
-	@ echo " Test is started - please wait... " 
-	@ echo "***********************************************"
 	@ $(TEST) $(TESTFLAGS) > error.txt;$(CONVERT) 
 	@ $(TEST) $(TESTFLAGS3) > error2.txt;$(CONVERT2) 
 	@ echo "-----------------------------------------------" > test_txt_result.txt 
