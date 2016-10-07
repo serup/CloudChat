@@ -28,11 +28,16 @@ prereq:
 	@sed -i 's/\.c/\.cpp/g' Makefile.DDDfs
 	@sed -i 's/RPCGENFLAGS =/CC = g++ -g \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/DataEncoder.h \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/DataEncoder.cpp \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/compression-lib\/compression.h \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/compression-lib\/compression.cpp -L\"\/usr\/local\/lib\/\" -D__DEBUG__ -D__MSABI_LONG=long -lboost_system -lboost_signals -lboost_thread -lboost_filesystem -lpthread -lrt -std=gnu++11 \
 	\
-	CCSERVER = g++ -g DDNode.cpp DDDfs_svc.cpp DDDfs_server.cpp DDDfs_xdr.cpp \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/DataEncoder.h \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/DataEncoder.cpp \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/compression-lib\/compression.h \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/compression-lib\/compression.cpp -L\"\/usr\/local\/lib\/\" -D__DEBUG__ -D__MSABI_LONG=long -lboost_system -lboost_signals -lboost_thread -lboost_filesystem -lpthread -lrt -std=gnu++11 /g' Makefile.DDDfs
+	CCSERVER = g++ -g DDNode.cpp DDDfs_svc.cpp DDDfs_server.cpp DDDfs_xdr.cpp \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/DataEncoder.h \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/DataEncoder.cpp \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/compression-lib\/compression.h \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/compression-lib\/compression.cpp -L\"\/usr\/local\/lib\/\" -D__DEBUG__ -D__MSABI_LONG=long -lboost_system -lboost_signals -lboost_thread -lboost_filesystem -lpthread -lrt -std=gnu++11 \
+       \ CCCLIENT = g++ -g DDDfs_clnt.cpp DDDfs_client.cpp DDDfs_xdr.cpp \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/DataEncoder.h \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/DataEncoder.cpp \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/compression-lib\/compression.h \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/compression-lib\/compression.cpp -L\"\/usr\/local\/lib\/\" -D__DEBUG__ -D__MSABI_LONG=long -lboost_system -lboost_signals -lboost_thread -lboost_filesystem -lpthread -lrt -std=gnu++11 /g' Makefile.DDDfs
 	@sed -i '/$$(SERVER) :/d' Makefile.DDDfs
 	@sed -i '/$$(LINK.cpp) -o $$(SERVER)/d' Makefile.DDDfs
 	@sed -i '/$$(LINK.cpp) -o/a $$(SERVER) : \
 		$$(CCSERVER) -o $$(SERVER)' Makefile.DDDfs
+	@sed -i '/$$(CLIENT) :/d' Makefile.DDDfs
+	@sed -i '/$$(LINK.cpp) -o $$(CLIENT)/d' Makefile.DDDfs
+	@sed -i '/$$(CCSERVER) -o $$(SERVER)/a $$(CLIENT) : \
+		$$(CCCLIENT) -o $$(CLIENT)' Makefile.DDDfs
 	@sed -i '/#include/a\#include \"DDNode.h\"\
 		\
 		using namespace DDDfsRPC;\
@@ -41,6 +46,7 @@ prereq:
 	@sed -i '/dddfsServer();/a\ 	presult = pserver->handleRequest(rqstp);\' DDDfs_server.cpp
 	@sed -i 's/static DEDBlock  result/DEDBlock* presult/g' DDDfs_server.cpp
 	@sed -i 's/return &result/return presult/g' DDDfs_server.cpp
+	@sed -i '/#include /a\#include \"DED.h\"' DDDfs_client.cpp
 	@echo "- and you can now compile and link using :  make all"
  
 all:	clean
@@ -82,6 +88,6 @@ clean:
 destroy:
 	@echo "destroy setup - go back to default"
 	@make -f Makefile.DDDfs clean > tmp
-	@rm Makefile.DDDfs > tmp
-	@rm tmp
-	@rm *.log
+	-@rm Makefile.DDDfs > tmp
+	-@rm tmp
+	-@rm *.log
