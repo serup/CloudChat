@@ -38,9 +38,11 @@ prereq:
 		using namespace DDDfsRPC;\
 		' DDDfs_server.cpp
 	@sed -i '/static DEDBlock /a\	dddfsServer* pserver = new dddfsServer();' DDDfs_server.cpp
-	@sed -i '/dddfsServer();/a\ 	pserver->handleRequest(rqstp);\' DDDfs_server.cpp
+	@sed -i '/dddfsServer();/a\ 	presult = pserver->handleRequest(rqstp);\' DDDfs_server.cpp
+	@sed -i 's/static DEDBlock  result/DEDBlock* presult/g' DDDfs_server.cpp
+	@sed -i 's/return &result/return presult/g' DDDfs_server.cpp
 	@echo "- and you can now compile and link using :  make all"
-
+ 
 all:	clean
 	@echo "Building..."
 	@make -f Makefile.DDDfs > build.log 
@@ -82,3 +84,4 @@ destroy:
 	@make -f Makefile.DDDfs clean > tmp
 	@rm Makefile.DDDfs > tmp
 	@rm tmp
+	@rm *.log
