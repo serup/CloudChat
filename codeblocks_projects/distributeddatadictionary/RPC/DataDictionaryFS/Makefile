@@ -88,7 +88,7 @@ test:
 clean:
 	@echo "- Removing obj and exe files"
 	-@rm *.o > tmp
-	-@rm DDDfs_server DDDfs_client > tmp
+	-@rm DDDfs_server DDDfs_client DDNode_test test_results.txt test_results.xml test_results.html > tmp
 	-@rm tmp
 
 destroy:
