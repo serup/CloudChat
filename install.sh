@@ -109,9 +109,13 @@ PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 rpcbind* |grep "install o
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install RPC - remote procedure call  "
   sudo apt-fast install -yq rpcbind 
+  echo " - make sure portmapper is running"
+  sudo systemctl add-wants multi-user.target rpcbind
   echo " - done."
 else
-  echo "- RPC already installed"
+  echo "- RPC already installed - if issues, then do following:"
+  echo "--  sudo systemctl add-wants multi-user.target rpcbind"
+  echo "--  this will restart portmapper and your server should then work"
 fi
 
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 idle* |grep "install ok installed")
