@@ -47,6 +47,12 @@ prereq:
 	@sed -i 's/static DEDBlock  result/DEDBlock* presult/g' DDDfs_server.cpp
 	@sed -i 's/return &result/return presult/g' DDDfs_server.cpp
 	@sed -i '/#include /a\#include \"DED.h\"' DDDfs_client.cpp
+	@sed -i '/exit (1);\	}/a\	DED_PUT_DATA_IN_DECODER(decoder_ptr,(unsigned char*)result_1->data.data_val,result_1->data.data_len);' DDDfs_client.cpp
+	@sed -i '/result_1 = dddfs_1(clnt);/a\
+		if (result_1 != (DEDBlock *) NULL) {\
+			DED_PUT_DATA_IN_DECODER(decoder_ptr,(unsigned char*)result_1->data.data_val,result_1->data.data_len); \
+			\/\/TODO: decode message\
+		}' DDDfs_client.cpp
 	@echo "- and you can now compile and link using :  make all"
  
 all:	clean
