@@ -11,6 +11,7 @@
 #include <iostream>
 #include <fstream>      // std::ifstream
 #include "DDNode.h"
+#include "DDDfs.h"
 
 using namespace std;
 using namespace boost::unit_test;
@@ -118,5 +119,36 @@ BOOST_AUTO_TEST_CASE(handleRequest_helloworld)
 	cout<<"}"<<endl;   
 }
 
+
+
+
+BOOST_AUTO_TEST_CASE(serverclient)
+{
+	cout<<"BOOST_AUTO_TEST(serverclient)\n{"<<endl;    
+	
+	// setup server
+	
+
+	// setup client
+	string str = "localhost" ;
+    char const* ca = str.c_str();
+	CLIENT *clnt;
+	DEDBlock  *result_1;
+
+	clnt = clnt_create (ca, DDD_FS_PROG, DDD_FS_VERS, "udp");
+	BOOST_CHECK(clnt != NULL);
+
+	if(clnt != NULL) {	
+		result_1 = dddfs_1(clnt);
+		if (result_1 != (DEDBlock *) NULL) {
+				DED_PUT_DATA_IN_DECODER(decoder_ptr,(unsigned char*)result_1->data.data_val,result_1->data.data_len);
+				//TODO: decode message
+		}
+		BOOST_CHECK(result_1 != NULL);
+
+		clnt_destroy (clnt);
+	}
+	cout<<"}"<<endl;   
+}
 
 
