@@ -22,7 +22,50 @@ using namespace DDDfsRPC;
 #ifndef NOTESTRESULTFILE
 #ifdef BOOST_AUTO_TEST_MAIN
 std::ofstream out;
+	
+static DEDBlock * _dddfs_1 (void  *argp, struct svc_req *rqstp)                                 
+{                                                                                            
+   return (dddfs_1_svc(rqstp));                                                         
+}  
 
+static void  ddd_fs_prog_1(struct svc_req *rqstp, register SVCXPRT *transp)                               
+{                                                                                            
+	union {                                                                              
+			int fill;                                                                    
+	} argument;                                                                          
+	char *result;                                                                        
+	xdrproc_t _xdr_argument, _xdr_result;                                                
+	char *(*local)(char *, struct svc_req *);                                            
+
+	switch (rqstp->rq_proc) {                                                            
+			case DDDfs:                                                                          
+					_xdr_argument = (xdrproc_t) xdr_void;                                        
+					_xdr_result = (xdrproc_t) xdr_DEDBlock;                                      
+					local = (char *(*)(char *, struct svc_req *)) _dddfs_1;                      
+					break;                                                                       
+
+			default:                                                                             
+					svcerr_noproc (transp);                                                      
+					return;                                                                      
+	}                                                                                    
+	memset ((char *)&argument, 0, sizeof (argument));                                    
+	if (!svc_getargs (transp, (xdrproc_t) _xdr_argument, (caddr_t) &argument)) {         
+			svcerr_decode (transp);                                                      
+			return;                                                                      
+	}                                                                                    
+	result = (*local)((char *)&argument, rqstp);                                         
+	if (result != NULL && !svc_sendreply(transp, (xdrproc_t) _xdr_result, result)) {     
+			svcerr_systemerr (transp);                                                   
+	}                                                                                    
+	if (!svc_freeargs (transp, (xdrproc_t) _xdr_argument, (caddr_t) &argument)) {        
+			fprintf (stderr, "%s", "unable to free arguments");                          
+			exit (1);                                                                    
+	}                                                                                    
+	return;                                                                              
+}                                                                                            
+
+
+	
 
 struct ReportRedirector
 {
@@ -90,44 +133,72 @@ BOOST_AUTO_TEST_CASE(handleRequest_helloworld)
 	// decode data ...
 	if( DED_GET_STRUCT_START( decoder_ptr, "DDNodeResponse" ) == true )
 	{
-			if(	DED_GET_STDSTRING	( decoder_ptr, "message", strValue ) == true )
+		if(	DED_GET_STDSTRING	( decoder_ptr, "message", strValue ) == true )
+		{
+			if( DED_GET_STRUCT_END( decoder_ptr, "DDNodeResponse" ) == true )
 			{
-					if( DED_GET_STRUCT_END( decoder_ptr, "DDNodeResponse" ) == true )
-					{
-							if(strValue == "Hello World") {
-									printf("Response: OK\n"); 
-									printf("Response: Datasize: %d\n",pDEDBlock->data.data_len); 
-									bDecoded=true;
-							}
-							else {
-									printf("Response: FAIL\n");                                 
-							}
-					}
-					else
-					{
-							bDecoded=false;
-							printf("Response: FAIL\n");                                                                             
-					}
-					cout << "message : " << strValue << endl;
+				if(strValue == "Hello World") {
+					printf("Response: OK\n"); 
+					printf("Response: Datasize: %d\n",pDEDBlock->data.data_len); 
+					bDecoded=true;
+				}
+				else {
+					printf("Response: FAIL\n");                                 
+				}
 			}
+			else
+			{
+				bDecoded=false;
+				printf("Response: FAIL\n");                                                                             
+			}	
+			cout << "message : " << strValue << endl;
+		}
 	}
 	else
-			cout << "FAIL: did NOT decode DDNodeResponse" << endl;
+		cout << "FAIL: did NOT decode DDNodeResponse" << endl;
 
 	BOOST_CHECK(bDecoded == true);
 
 	cout<<"}"<<endl;   
 }
 
-
-
+	
+	
 
 BOOST_AUTO_TEST_CASE(serverclient)
 {
 	cout<<"BOOST_AUTO_TEST(serverclient)\n{"<<endl;    
 	
 	// setup server
-	
+	register SVCXPRT *transp;                                                               
+ 
+	/* TODO: move to a thread class where server can be started.                                                                                        
+ pmap_unset (DDD_FS_PROG, DDD_FS_VERS);                                                  
+                                                                                         
+ transp = svcudp_create(RPC_ANYSOCK);                                                    
+ if (transp == NULL) {                                                                   
+		         fprintf (stderr, "%s", "cannot create udp service.");                           
+				         exit(1);                                                                        
+						 }                                                                                       
+ if (!svc_register(transp, DDD_FS_PROG, DDD_FS_VERS, ddd_fs_prog_1, IPPROTO_UDP)) {      
+		         fprintf (stderr, "%s", "unable to register (DDD_FS_PROG, DDD_FS_VERS, udp).");  
+				         exit(1);                                                                        
+						 }                                                                                       
+                                                                                         
+ transp = svctcp_create(RPC_ANYSOCK, 0, 0);                                              
+ if (transp == NULL) {                                                                   
+		         fprintf (stderr, "%s", "cannot create tcp service.");                           
+				         exit(1);                                                                        
+						 }                                                                                       
+ if (!svc_register(transp, DDD_FS_PROG, DDD_FS_VERS, ddd_fs_prog_1, IPPROTO_TCP)) {      
+		         fprintf (stderr, "%s", "unable to register (DDD_FS_PROG, DDD_FS_VERS, tcp).");  
+				         exit(1);                                                                        
+						 }                                                                                       
+                                                                                         
+ svc_run ();                                                                             
+ fprintf (stderr, "%s", "svc_run returned");                                             
+ exit (1);                                                                               
+*/
 
 	// setup client
 	string str = "localhost" ;

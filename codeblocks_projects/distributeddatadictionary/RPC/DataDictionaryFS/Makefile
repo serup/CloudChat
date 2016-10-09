@@ -4,7 +4,7 @@ TESTFLAGS2= --report_level=detailed
 TESTFLAGS3= --report_format=XML --report_level=detailed
 CONVERT=xsltproc -o test_results.html test_results.xslt test_results.xml
 CONVERT2=xsltproc -o test_results.txt test_results_text.xslt test_results.xml
-CCTEST=g++ -g -o DDNode_test DDNode_test.cpp DDNode.cpp DDDfs_clnt.cpp DDDfs_xdr.cpp ../../../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.h ../../../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.cpp ../../../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.h ../../../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.cpp -L"/usr/local/lib/" -D__DEBUG__ -D__MSABI_LONG=long -lboost_system -lboost_signals -lboost_thread -lboost_filesystem -lpthread -lrt -std=gnu++11
+CCTEST=g++ -g -o DDNode_test DDNode_test.cpp DDNode.cpp DDDfs_clnt.cpp DDDfs_xdr.cpp  DDDfs_server.cpp ../../../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.h ../../../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.cpp ../../../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.h ../../../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.cpp -L"/usr/local/lib/" -D__DEBUG__ -D__MSABI_LONG=long -lboost_system -lboost_signals -lboost_thread -lboost_filesystem -lpthread -lrt -std=gnu++11
 init:
 	@echo "------------------------------------------------------"
 	@echo " Build RPC server/client for DDD file system "
