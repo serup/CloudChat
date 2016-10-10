@@ -272,6 +272,7 @@ BOOST_AUTO_TEST_CASE(serverclient_udp)
 	CLIENT *clnt;
 	DEDBlock  *result_1;
 
+	cout << "create udp clnt" << endl;
 	clnt = clnt_create (ca, DDD_FS_PROG, DDD_FS_VERS, "udp");
 	BOOST_CHECK(clnt != NULL);
 
@@ -313,7 +314,7 @@ BOOST_AUTO_TEST_CASE(serverclient_udp)
 		}
 		BOOST_CHECK(result_1 != NULL);
 
-		cout << "RPCServer: destroy clnt" << endl;
+		cout << "destroy clnt" << endl;
 		clnt_destroy (clnt);
 	}
 
@@ -337,6 +338,7 @@ BOOST_AUTO_TEST_CASE(serverclient_tcp)
 	CLIENT *clnt;
 	DEDBlock  *result_1;
 
+	cout << "create tcp clnt" << endl;
 	clnt = clnt_create (ca, DDD_FS_PROG, DDD_FS_VERS, "tcp");
 	BOOST_CHECK(clnt != NULL);
 
@@ -378,7 +380,7 @@ BOOST_AUTO_TEST_CASE(serverclient_tcp)
 		}
 		BOOST_CHECK(result_1 != NULL);
 
-		cout << "RPCServer: destroy clnt" << endl;
+		cout << "destroy clnt" << endl;
 		clnt_destroy (clnt);
 	}
 
