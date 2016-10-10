@@ -2,8 +2,7 @@
 #define DDDFS_SERVER_H
 
 #include "DDDfs.h"
-#include "../../../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.h"
-#include "../../../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.h"
+#include "DED.h"
 
 namespace DDDfsRPC {
 

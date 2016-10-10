@@ -36,6 +36,8 @@ then setup will go back to default from git pull, you can then call make setup a
 
 NB! To develop on the server, then make changes ONLY to DDNode.cpp
     server here means server on node
+    To develop on the client, then make changes to general class RPCclient
+    this client should be used in DDDAdmin for handling DDNode's
 ----
 
 

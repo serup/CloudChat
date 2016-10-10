@@ -13,6 +13,7 @@
 #include <iostream>
 #include <fstream>      // std::ifstream
 #include "DDNode.h"
+#include "RPCclient.h"
 #include "DDDfs.h"
 
 using namespace std;
@@ -386,6 +387,29 @@ BOOST_AUTO_TEST_CASE(serverclient_tcp)
 		cout << "destroy clnt" << endl;
 		clnt_destroy (clnt);
 	}
+
+	delete pserver;
+	cout<<"}"<<endl;   
+}
+
+BOOST_AUTO_TEST_CASE(classRPCclient)
+{
+	cout<<"BOOST_AUTO_TEST(classRPCclient)\n{"<<endl;    
+	
+	// setup server
+	RPCServer *pserver = new RPCServer();
+    pserver->start();
+    pserver->wait();				
+		
+	// setup client
+	//
+	//
+	string str = "localhost" ;
+    char const* ca = str.c_str();
+		
+	RPCclient _rpcclient;
+	_rpcclient.connectTo(ca);
+
 
 	delete pserver;
 	cout<<"}"<<endl;   
