@@ -63,6 +63,7 @@ static void  ddd_fs_prog_1(struct svc_req *rqstp, register SVCXPRT *transp)
 			fprintf (stderr, "%s", "unable to free arguments");                          
 			exit (1);                                                                    
 	}                                                                                    
+	svc_exit(); // make sure test server is stopped
 	return;                                                                              
 }                                                                                            
 
@@ -89,11 +90,18 @@ class RPCServer
 
 				void stop()
 				{
+				
+					//TODO: find a way to force shutdown tmp server
+					svc_unregister (DDD_FS_PROG, DDD_FS_VERS);                                                  
+					pmap_unset (DDD_FS_PROG, DDD_FS_VERS);                                                  
+					
 					if(bServerInstantiated)
 						svc_exit();
-					else
-						m_Thread.interrupt();
+						
+					sleep(1);
+					m_Thread.interrupt();
 					bServerInstantiated=false;
+					cout << "RPCServer: stop called " << endl;
 				}
 
 				void wait()
@@ -139,11 +147,11 @@ class RPCServer
 					bServerInstantiated = true;
 					cout << "RPCServer: Started" << endl;
 
-					svc_run ();                                                                             
-					cout << "svc_run returned" << stderr << endl;                         
+					svc_run ();                   
 
-					std::cout << "RPCServer: stopped" << std::endl;
-					std::cout << "RPCServer thread: ended" << std::endl;
+					cout << "-- svc_run returned : " << stderr << endl;                         
+					cout << "-- RPCServer: stopped" << endl;
+					cout << "-- RPCServer thread: ended" << endl;
 				}
 
 		private:
@@ -308,8 +316,10 @@ BOOST_AUTO_TEST_CASE(serverclient)
 		}
 		BOOST_CHECK(result_1 != NULL);
 
+		cout << "RPCServer: destroy clnt" << endl;
 		clnt_destroy (clnt);
 	}
+
 	cout<<"}"<<endl;   
 }
 
