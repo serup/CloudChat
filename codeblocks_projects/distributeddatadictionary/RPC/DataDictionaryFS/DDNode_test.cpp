@@ -317,6 +317,7 @@ BOOST_AUTO_TEST_CASE(serverclient_udp)
 		clnt_destroy (clnt);
 	}
 
+	delete pserver;
 	cout<<"}"<<endl;   
 }
 
@@ -381,6 +382,7 @@ BOOST_AUTO_TEST_CASE(serverclient_tcp)
 		clnt_destroy (clnt);
 	}
 
+	delete pserver;
 	cout<<"}"<<endl;   
 }
 
