@@ -257,12 +257,9 @@ BOOST_AUTO_TEST_CASE(handleRequest_helloworld)
 	cout<<"}"<<endl;   
 }
 
-	
-	
-
-BOOST_AUTO_TEST_CASE(serverclient)
+BOOST_AUTO_TEST_CASE(serverclient_udp)
 {
-	cout<<"BOOST_AUTO_TEST(serverclient)\n{"<<endl;    
+	cout<<"BOOST_AUTO_TEST(serverclient_udp)\n{"<<endl;    
 	
 	// setup server
 	RPCServer *pserver = new RPCServer();
@@ -276,6 +273,70 @@ BOOST_AUTO_TEST_CASE(serverclient)
 	DEDBlock  *result_1;
 
 	clnt = clnt_create (ca, DDD_FS_PROG, DDD_FS_VERS, "udp");
+	BOOST_CHECK(clnt != NULL);
+
+	if(clnt != NULL) {	
+		result_1 = dddfs_1(clnt);
+		if (result_1 != (DEDBlock *) NULL) {
+				DED_PUT_DATA_IN_DECODER(decoder_ptr,(unsigned char*)result_1->data.data_val,result_1->data.data_len);
+				bool bDecoded=false;
+				std::string strValue;
+
+				// decode data ...
+				if( DED_GET_STRUCT_START( decoder_ptr, "DDNodeResponse" ) == true )
+				{
+						if(	DED_GET_STDSTRING	( decoder_ptr, "message", strValue ) == true )
+						{
+								if( DED_GET_STRUCT_END( decoder_ptr, "DDNodeResponse" ) == true )
+								{
+										if(strValue == "Hello World") {
+												printf("Response: OK\n"); 
+												printf("Response: Datasize: %d\n",result_1->data.data_len); 
+												bDecoded=true;
+										}
+										else {
+												printf("Response: FAIL\n");                                 
+										}
+								}
+								else
+								{
+										bDecoded=false;
+										printf("Response: FAIL\n");                                                                             
+								}	
+								cout << "message : " << strValue << endl;
+						}
+				}
+				else
+						cout << "FAIL: did NOT decode DDNodeResponse" << endl;
+
+				BOOST_CHECK(bDecoded == true);
+		}
+		BOOST_CHECK(result_1 != NULL);
+
+		cout << "RPCServer: destroy clnt" << endl;
+		clnt_destroy (clnt);
+	}
+
+	cout<<"}"<<endl;   
+}
+
+
+BOOST_AUTO_TEST_CASE(serverclient_tcp)
+{
+	cout<<"BOOST_AUTO_TEST(serverclient_tcp)\n{"<<endl;    
+	
+	// setup server
+	RPCServer *pserver = new RPCServer();
+    pserver->start();
+    pserver->wait();				
+		
+	// setup client
+	string str = "localhost" ;
+    char const* ca = str.c_str();
+	CLIENT *clnt;
+	DEDBlock  *result_1;
+
+	clnt = clnt_create (ca, DDD_FS_PROG, DDD_FS_VERS, "tcp");
 	BOOST_CHECK(clnt != NULL);
 
 	if(clnt != NULL) {	
