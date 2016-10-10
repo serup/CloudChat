@@ -8,6 +8,8 @@
 #include <boost/foreach.hpp>
 #define BOOST_FILESYSTEM_NO_DEPRECATED
 #include <boost/filesystem.hpp>
+#include <boost/thread.hpp>
+#include <rpc/pmap_clnt.h>
 #include <iostream>
 #include <fstream>      // std::ifstream
 #include "DDNode.h"
@@ -65,7 +67,92 @@ static void  ddd_fs_prog_1(struct svc_req *rqstp, register SVCXPRT *transp)
 }                                                                                            
 
 
-	
+class RPCServer
+{
+		public:
+				bool bServerInstantiated = false;
+
+				RPCServer()
+				{
+					// the thread is not-a-thread until we call start()
+				}
+
+				void start(std::string address, std::string port)
+				{
+					m_Thread = boost::thread(&RPCServer::processQueue, this, address,port);
+				}
+
+				void join()
+				{
+					m_Thread.join();
+				}
+
+				void stop()
+				{
+					if(bServerInstantiated)
+						svc_exit();
+					else
+						m_Thread.interrupt();
+					bServerInstantiated=false;
+				}
+
+				void wait()
+				{
+					while(bServerInstantiated==false) 
+							sleep(1);
+				}
+
+				void processQueue(std::string address, std::string port)
+				{
+					std::cout << "RPCServer: init" << std::endl;
+					std::cout << std::endl;
+					register SVCXPRT *transp;
+
+					pmap_unset (DDD_FS_PROG, DDD_FS_VERS);                                                  
+
+					std::cout << "RPCServer: Create udp" << std::endl;
+
+					transp = svcudp_create(RPC_ANYSOCK);                                                    
+					if (transp == NULL) {                                                                   
+							cout << "cannot create udp service. : " << stderr << endl;                         
+					}                                                                                       
+					else {
+							cout << "RPCServer: Register udp" << endl;
+							if (!svc_register(transp, DDD_FS_PROG, DDD_FS_VERS, ddd_fs_prog_1, IPPROTO_UDP)) {      
+									cout << "unable to register (DDD_FS_PROG, DDD_FS_VERS, udp)." << stderr << endl;                         
+							}
+							else {					
+									cout << "RPCServer: Create tcp" << endl;
+									transp = svctcp_create(RPC_ANYSOCK, 0, 0);                                              
+									if (transp == NULL) {                                                                   
+										cout << "cannot create tcp service." << stderr << endl;                         
+									}     
+									else {					
+											cout << "RPCServer: Register tcp" << endl;
+											if (!svc_register(transp, DDD_FS_PROG, DDD_FS_VERS, ddd_fs_prog_1, IPPROTO_TCP)) {      
+													cout << "unable to register (DDD_FS_PROG, DDD_FS_VERS, tcp)." << stderr << endl;
+											}                                                                                       
+									}
+							}
+					}
+
+					bServerInstantiated = true;
+					cout << "RPCServer: Started" << endl;
+
+					svc_run ();                                                                             
+					cout << "svc_run returned" << stderr << endl;                         
+
+					std::cout << "RPCServer: stopped" << std::endl;
+					std::cout << "RPCServer thread: ended" << std::endl;
+				}
+
+		private:
+
+				boost::thread m_Thread;
+};
+
+
+
 
 struct ReportRedirector
 {
@@ -170,36 +257,10 @@ BOOST_AUTO_TEST_CASE(serverclient)
 	cout<<"BOOST_AUTO_TEST(serverclient)\n{"<<endl;    
 	
 	// setup server
-	register SVCXPRT *transp;                                                               
- 
-	/* TODO: move to a thread class where server can be started.                                                                                        
- pmap_unset (DDD_FS_PROG, DDD_FS_VERS);                                                  
-                                                                                         
- transp = svcudp_create(RPC_ANYSOCK);                                                    
- if (transp == NULL) {                                                                   
-		         fprintf (stderr, "%s", "cannot create udp service.");                           
-				         exit(1);                                                                        
-						 }                                                                                       
- if (!svc_register(transp, DDD_FS_PROG, DDD_FS_VERS, ddd_fs_prog_1, IPPROTO_UDP)) {      
-		         fprintf (stderr, "%s", "unable to register (DDD_FS_PROG, DDD_FS_VERS, udp).");  
-				         exit(1);                                                                        
-						 }                                                                                       
-                                                                                         
- transp = svctcp_create(RPC_ANYSOCK, 0, 0);                                              
- if (transp == NULL) {                                                                   
-		         fprintf (stderr, "%s", "cannot create tcp service.");                           
-				         exit(1);                                                                        
-						 }                                                                                       
- if (!svc_register(transp, DDD_FS_PROG, DDD_FS_VERS, ddd_fs_prog_1, IPPROTO_TCP)) {      
-		         fprintf (stderr, "%s", "unable to register (DDD_FS_PROG, DDD_FS_VERS, tcp).");  
-				         exit(1);                                                                        
-						 }                                                                                       
-                                                                                         
- svc_run ();                                                                             
- fprintf (stderr, "%s", "svc_run returned");                                             
- exit (1);                                                                               
-*/
-
+	RPCServer *pserver = new RPCServer();
+    pserver->start("127.0.0.1", "8543");
+    pserver->wait();				
+		
 	// setup client
 	string str = "localhost" ;
     char const* ca = str.c_str();
@@ -213,7 +274,37 @@ BOOST_AUTO_TEST_CASE(serverclient)
 		result_1 = dddfs_1(clnt);
 		if (result_1 != (DEDBlock *) NULL) {
 				DED_PUT_DATA_IN_DECODER(decoder_ptr,(unsigned char*)result_1->data.data_val,result_1->data.data_len);
-				//TODO: decode message
+				bool bDecoded=false;
+				std::string strValue;
+
+				// decode data ...
+				if( DED_GET_STRUCT_START( decoder_ptr, "DDNodeResponse" ) == true )
+				{
+						if(	DED_GET_STDSTRING	( decoder_ptr, "message", strValue ) == true )
+						{
+								if( DED_GET_STRUCT_END( decoder_ptr, "DDNodeResponse" ) == true )
+								{
+										if(strValue == "Hello World") {
+												printf("Response: OK\n"); 
+												printf("Response: Datasize: %d\n",result_1->data.data_len); 
+												bDecoded=true;
+										}
+										else {
+												printf("Response: FAIL\n");                                 
+										}
+								}
+								else
+								{
+										bDecoded=false;
+										printf("Response: FAIL\n");                                                                             
+								}	
+								cout << "message : " << strValue << endl;
+						}
+				}
+				else
+						cout << "FAIL: did NOT decode DDNodeResponse" << endl;
+
+				BOOST_CHECK(bDecoded == true);
 		}
 		BOOST_CHECK(result_1 != NULL);
 
