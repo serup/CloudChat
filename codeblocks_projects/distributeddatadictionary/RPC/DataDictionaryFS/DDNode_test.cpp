@@ -78,9 +78,9 @@ class RPCServer
 					// the thread is not-a-thread until we call start()
 				}
 
-				void start(std::string address, std::string port)
+				void start()
 				{
-					m_Thread = boost::thread(&RPCServer::processQueue, this, address,port);
+					m_Thread = boost::thread(&RPCServer::processQueue, this);
 				}
 
 				void join()
@@ -110,7 +110,7 @@ class RPCServer
 							sleep(1);
 				}
 
-				void processQueue(std::string address, std::string port)
+				void processQueue()
 				{
 					std::cout << "RPCServer: init" << std::endl;
 					std::cout << std::endl;
@@ -266,7 +266,7 @@ BOOST_AUTO_TEST_CASE(serverclient)
 	
 	// setup server
 	RPCServer *pserver = new RPCServer();
-    pserver->start("127.0.0.1", "8543");
+    pserver->start();
     pserver->wait();				
 		
 	// setup client
