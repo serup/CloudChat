@@ -112,12 +112,11 @@ class RPCServer
 
 				void processQueue()
 				{
-					std::cout << "RPCServer: init" << std::endl;
 					std::cout << std::endl;
 					register SVCXPRT *transp;
 
 					pmap_unset (DDD_FS_PROG, DDD_FS_VERS);                                                  
-
+					std::cout << "RPCServer: init" << std::endl;
 					std::cout << "RPCServer: Create udp" << std::endl;
 
 					transp = svcudp_create(RPC_ANYSOCK);                                                    
@@ -277,8 +276,10 @@ BOOST_AUTO_TEST_CASE(serverclient_udp)
 	BOOST_CHECK(clnt != NULL);
 
 	if(clnt != NULL) {	
+		cout << "call via udp function in server" << endl;	
 		result_1 = dddfs_1(clnt);
 		if (result_1 != (DEDBlock *) NULL) {
+				cout << "received response from server via udp " << endl;
 				DED_PUT_DATA_IN_DECODER(decoder_ptr,(unsigned char*)result_1->data.data_val,result_1->data.data_len);
 				bool bDecoded=false;
 				std::string strValue;
@@ -342,9 +343,11 @@ BOOST_AUTO_TEST_CASE(serverclient_tcp)
 	clnt = clnt_create (ca, DDD_FS_PROG, DDD_FS_VERS, "tcp");
 	BOOST_CHECK(clnt != NULL);
 
-	if(clnt != NULL) {	
+	if(clnt != NULL) {
+		cout << "call via tcp function in server" << endl;	
 		result_1 = dddfs_1(clnt);
 		if (result_1 != (DEDBlock *) NULL) {
+				cout << "received response from server via tcp " << endl;
 				DED_PUT_DATA_IN_DECODER(decoder_ptr,(unsigned char*)result_1->data.data_val,result_1->data.data_len);
 				bool bDecoded=false;
 				std::string strValue;
