@@ -10,7 +10,7 @@ namespace DDDfsRPC {
 	{
 		public:
 		DEDBlock * handleRequest(struct svc_req *rqstp);
-
+		
 	};
 
 } // namespace DDDfsRPC

@@ -16,6 +16,7 @@ class RPCclient
 	public:
 		RPCclient() { };
 		~RPCclient() { };
+		DDRequest createDDRequest(std::unique_ptr<CDataEncoder> &encoder_ptr, int transID, enum requestType reqtype);
 		bool sendRequestTo(DDRequest req, const char *host);
 		void handleResponse(std::unique_ptr<CDataEncoder> &decoder_ptr);	
 };

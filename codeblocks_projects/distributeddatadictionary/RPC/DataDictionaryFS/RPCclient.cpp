@@ -2,6 +2,23 @@
 
 // based upon automatic generated DDDfs_client.cpp <-- generated from DDDfs.x
 
+DDRequest RPCclient::createDDRequest(std::unique_ptr<CDataEncoder> &encoder_ptr, int transID, enum requestType reqtype)
+{
+	DDRequest req;
+	req.reqType = reqtype; 
+	DED_GET_ENCODED_DATA(encoder_ptr,data_ptr,iLengthOfTotalData,pCompressedData,sizeofCompressedData);
+
+	if(sizeofCompressedData==0) // if sizeofcompresseddata is 0 then compression was not possible and size is the same as for uncompressed
+		sizeofCompressedData = iLengthOfTotalData;
+
+	req.ded.data.data_len = sizeofCompressedData;
+	req.ded.data.data_val = (char*)malloc(sizeofCompressedData);
+	memcpy(req.ded.data.data_val, pCompressedData, sizeofCompressedData);
+    req.ded.transID = transID;	
+	return req;
+}
+
+
 bool RPCclient::sendRequestTo(DDRequest req, const char *host)
 {
 	bool bResult=true;
