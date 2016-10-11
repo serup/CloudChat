@@ -97,3 +97,7 @@ destroy:
 	-@rm Makefile.DDDfs > tmp
 	-@rm tmp
 	-@rm *.log
+	-@rm test_results.txt
+	-@rm test_results.xml
+	-@rm test_results.html
+	-@rm error.txt

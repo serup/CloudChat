@@ -16,8 +16,7 @@ class RPCclient
 	public:
 		RPCclient() { };
 		~RPCclient() { };
-		void connectTo(const char *host);
-
+		bool sendRequestTo(DDRequest req, const char *host);
 		void handleResponse(std::unique_ptr<CDataEncoder> &decoder_ptr);	
 };
 

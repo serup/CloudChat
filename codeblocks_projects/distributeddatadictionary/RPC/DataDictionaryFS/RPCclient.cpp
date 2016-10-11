@@ -1,26 +1,31 @@
 #include "RPCclient.h"
 
-void RPCclient::connectTo(const char *host)
+// based upon automatic generated DDDfs_client.cpp <-- generated from DDDfs.x
+
+bool RPCclient::sendRequestTo(DDRequest req, const char *host)
 {
+	bool bResult=true;
 	CLIENT *clnt;
-	DEDBlock  *result_1;
+	DEDBlock  *result;
 
 	clnt = clnt_create (host, DDD_FS_PROG, DDD_FS_VERS, "udp");
 	if (clnt == NULL) {
 		clnt_pcreateerror (host);
-		exit (1);
+		bResult=false;
 	}
-
-	result_1 = dddfs_1(clnt);
-	if (result_1 != (DEDBlock *) NULL) {
-		DED_PUT_DATA_IN_DECODER(decoder_ptr,(unsigned char*)result_1->data.data_val,result_1->data.data_len); 
-	 	handleResponse(decoder_ptr);	
-	}
-	if (result_1 == (DEDBlock *) NULL) {
-		clnt_perror (clnt, "call failed");
-	}
-	clnt_destroy (clnt);
-	
+	else {
+		result = ddnode_1(req, clnt);
+		if (result != (DEDBlock *) NULL) {
+			DED_PUT_DATA_IN_DECODER(decoder_ptr,(unsigned char*)result->data.data_val,result->data.data_len); 
+			handleResponse(decoder_ptr);	
+		}
+		if (result == (DEDBlock *) NULL) {
+			clnt_perror (clnt, "call failed");
+			bResult=false;
+		}
+		clnt_destroy (clnt);
+	}	
+	return bResult;
 }
 
 
