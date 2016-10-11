@@ -9,7 +9,7 @@ namespace DDDfsRPC {
 	class dddfsServer 
 	{
 		public:
-		DEDBlock * handleRequest(struct svc_req *rqstp);
+		DEDBlock * handleRequest(DDRequest req, struct svc_req *rqstp);
 		
 	};
 

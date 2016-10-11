@@ -2,7 +2,7 @@
 
 using namespace DDDfsRPC;
 
-DEDBlock * dddfsServer::handleRequest(struct svc_req *rqstp)  
+DEDBlock * dddfsServer::handleRequest(DDRequest req, struct svc_req *rqstp)  
 {
 	static DEDBlock  result;
 

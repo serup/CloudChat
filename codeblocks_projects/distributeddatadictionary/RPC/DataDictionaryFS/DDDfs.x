@@ -15,7 +15,7 @@ struct DDRequest {
  
 program DDD_FS_PROG {
 	version DDD_FS_VERS {
-		DEDBlock DDDfs(void) = 0;
+		DEDBlock DDDfs(DDRequest) = 0;
 		DEDBlock DDNode(DDRequest) = 1;
 	} = 1;
 } = 0x30000824;
