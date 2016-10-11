@@ -8,10 +8,8 @@ struct DEDBlock {
 enum requestType {CREATE, UPDATE, DELETE, APPEND, SEARCH, MAPREDUCE};
 
 struct DDRequest {
-	/* string data<>; */
-	int key;
 	requestType reqType;
-	/*DDRequest *next;*/
+	DEDBlock ded;
 };
 
  

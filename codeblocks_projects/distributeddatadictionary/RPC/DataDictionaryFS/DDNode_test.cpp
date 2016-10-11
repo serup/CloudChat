@@ -416,6 +416,21 @@ BOOST_AUTO_TEST_CASE(classRPCclient)
 	RPCclient _rpcclient;
 	DDRequest req;
 	req.reqType = SEARCH;
+
+	DED_START_ENCODER(encoder_ptr);
+	DED_PUT_STRUCT_START( encoder_ptr, "DDNodeRequest" );
+		DED_PUT_STDSTRING	( encoder_ptr, "Request", (std::string)"hello request" );
+	DED_PUT_STRUCT_END( encoder_ptr, "DDNodeRequest" );
+	DED_GET_ENCODED_DATA(encoder_ptr,data_ptr,iLengthOfTotalData,pCompressedData,sizeofCompressedData);
+
+	if(sizeofCompressedData==0) // if sizeofcompresseddata is 0 then compression was not possible and size is the same as for uncompressed
+		sizeofCompressedData = iLengthOfTotalData;
+
+	req.ded.data.data_len = sizeofCompressedData;
+	req.ded.data.data_val = (char*)malloc(sizeofCompressedData);
+	memcpy(req.ded.data.data_val, pCompressedData, sizeofCompressedData);
+	req.ded.transID = 1;
+
 	BOOST_CHECK(_rpcclient.sendRequestTo(req, ca)==true);
 
 
