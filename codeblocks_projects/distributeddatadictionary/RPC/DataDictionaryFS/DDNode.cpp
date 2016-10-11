@@ -6,6 +6,9 @@ DEDBlock * dddfsServer::handleRequest(DDRequest req)
 {
 	static DEDBlock  result;
 
+	if(req.reqType == SEARCH)
+			printf("Request type : SEARCH received\n");
+
 	printf("DDNode[handleRequest] called; Hello World\n");
 
 	DED_START_ENCODER(encoder_ptr);
