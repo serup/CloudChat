@@ -410,20 +410,14 @@ BOOST_AUTO_TEST_CASE(classRPCclient)
 	// setup client
 	//
 	//
-	string str = "localhost" ;
-    char const* ca = str.c_str();
-		
-	RPCclient _rpcclient;
-	DDRequest req;
+	RPCclient client;
 
-	DED_START_ENCODER(encoder_ptr);
-	DED_PUT_STRUCT_START( encoder_ptr, "DDNodeRequest" );
-		DED_PUT_STDSTRING	( encoder_ptr, "Request", (std::string)"hello request" );
-	DED_PUT_STRUCT_END( encoder_ptr, "DDNodeRequest" );
+	DED_START_ENCODER(dedptr);
+	DED_PUT_STRUCT_START( dedptr, "DDNodeRequest" );
+		DED_PUT_STDSTRING	( dedptr, "Request", (std::string)"hello request" );
+	DED_PUT_STRUCT_END( dedptr, "DDNodeRequest" );
 
-	req = _rpcclient.createDDRequest(encoder_ptr, 1, SEARCH);
-
-	BOOST_CHECK(_rpcclient.sendRequestTo(req, ca)==true);
+	BOOST_CHECK( client.sendRequestTo("localhost", dedptr,1,SEARCH) == true );
 
 
 	delete pserver;

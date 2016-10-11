@@ -14,10 +14,30 @@ DDRequest RPCclient::createDDRequest(std::unique_ptr<CDataEncoder> &encoder_ptr,
 	req.ded.data.data_len = sizeofCompressedData;
 	req.ded.data.data_val = (char*)malloc(sizeofCompressedData);
 	memcpy(req.ded.data.data_val, pCompressedData, sizeofCompressedData);
-    req.ded.transID = transID;	
+    req.ded.transID = transID;
+
+	request=req;	
 	return req;
 }
 
+bool RPCclient::sendRequestTo(DDRequest req, string host)
+{
+	char const* ca = host.c_str();
+	return sendRequestTo(req, ca);		
+}
+
+bool RPCclient::sendRequestTo(string host, std::unique_ptr<CDataEncoder> &encoder_ptr, int transID, enum requestType reqtype)
+{
+	char const* ca = host.c_str();
+	request = createDDRequest(encoder_ptr, transID, reqtype);
+	return sendRequestTo(request, ca);		
+}
+
+bool RPCclient::sendRequestTo(string host)
+{
+	char const* ca = host.c_str();
+	return sendRequestTo(request, ca);		
+}
 
 bool RPCclient::sendRequestTo(DDRequest req, const char *host)
 {
