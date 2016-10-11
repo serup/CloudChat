@@ -80,20 +80,19 @@ static void ddd_fs_prog_1(struct svc_req *rqstp, register SVCXPRT *transp)
 	return;
 }
 
-
-class RPCServer
+class mockRPCServer
 {
 		public:
 				bool bServerInstantiated = false;
 
-				RPCServer()
+				mockRPCServer()
 				{
 					// the thread is not-a-thread until we call start()
 				}
 
 				void start()
 				{
-					m_Thread = boost::thread(&RPCServer::processQueue, this);
+					m_Thread = boost::thread(&mockRPCServer::processQueue, this);
 				}
 
 				void join()
@@ -114,7 +113,7 @@ class RPCServer
 					sleep(1);
 					m_Thread.interrupt();
 					bServerInstantiated=false;
-					cout << "RPCServer: stop called " << endl;
+					cout << "mockRPCServer: stop called " << endl;
 				}
 
 				void wait()
@@ -129,26 +128,26 @@ class RPCServer
 					register SVCXPRT *transp;
 
 					pmap_unset (DDD_FS_PROG, DDD_FS_VERS);                                                  
-					std::cout << "RPCServer: init" << std::endl;
-					std::cout << "RPCServer: Create udp" << std::endl;
+					std::cout << "mockRPCServer: init" << std::endl;
+					std::cout << "mockRPCServer: Create udp" << std::endl;
 
 					transp = svcudp_create(RPC_ANYSOCK);                                                    
 					if (transp == NULL) {                                                                   
 							cout << "cannot create udp service. : " << stderr << endl;                         
 					}                                                                                       
 					else {
-							cout << "RPCServer: Register udp" << endl;
+							cout << "mockRPCServer: Register udp" << endl;
 							if (!svc_register(transp, DDD_FS_PROG, DDD_FS_VERS, ddd_fs_prog_1, IPPROTO_UDP)) {      
 									cout << "unable to register (DDD_FS_PROG, DDD_FS_VERS, udp)." << stderr << endl;                         
 							}
 							else {					
-									cout << "RPCServer: Create tcp" << endl;
+									cout << "mockRPCServer: Create tcp" << endl;
 									transp = svctcp_create(RPC_ANYSOCK, 0, 0);                                              
 									if (transp == NULL) {                                                                   
 										cout << "cannot create tcp service." << stderr << endl;                         
 									}     
 									else {					
-											cout << "RPCServer: Register tcp" << endl;
+											cout << "mockRPCServer: Register tcp" << endl;
 											if (!svc_register(transp, DDD_FS_PROG, DDD_FS_VERS, ddd_fs_prog_1, IPPROTO_TCP)) {      
 													cout << "unable to register (DDD_FS_PROG, DDD_FS_VERS, tcp)." << stderr << endl;
 											}                                                                                       
@@ -157,22 +156,19 @@ class RPCServer
 					}
 
 					bServerInstantiated = true;
-					cout << "RPCServer: Started" << endl;
+					cout << "mockRPCServer: Started" << endl;
 
 					svc_run ();                   
 
 					cout << "-- svc_run returned : " << stderr << endl;                         
-					cout << "-- RPCServer: stopped" << endl;
-					cout << "-- RPCServer thread: ended" << endl;
+					cout << "-- mockRPCServer: stopped" << endl;
+					cout << "-- mockRPCServer thread: ended" << endl;
 				}
 
 		private:
 
 				boost::thread m_Thread;
 };
-
-
-
 
 struct ReportRedirector
 {
@@ -187,8 +183,6 @@ struct ReportRedirector
 BOOST_GLOBAL_FIXTURE(ReportRedirector)
 #endif
 #endif
-
-
 
 BOOST_AUTO_TEST_SUITE (DDNode_Test) // name of the test suite
 BOOST_AUTO_TEST_SUITE_END( )
@@ -274,7 +268,7 @@ BOOST_AUTO_TEST_CASE(serverclient_udp)
 	cout<<"BOOST_AUTO_TEST(serverclient_udp)\n{"<<endl;    
 	
 	// setup server
-	RPCServer *pserver = new RPCServer();
+	mockRPCServer *pserver = new mockRPCServer();
     pserver->start();
     pserver->wait();				
 		
@@ -342,7 +336,7 @@ BOOST_AUTO_TEST_CASE(serverclient_tcp)
 	cout<<"BOOST_AUTO_TEST(serverclient_tcp)\n{"<<endl;    
 	
 	// setup server
-	RPCServer *pserver = new RPCServer();
+	mockRPCServer *pserver = new mockRPCServer();
     pserver->start();
     pserver->wait();				
 		
@@ -408,8 +402,8 @@ BOOST_AUTO_TEST_CASE(classRPCclient)
 {
 	cout<<"BOOST_AUTO_TEST(classRPCclient)\n{"<<endl;    
 	
-	// setup server
-	RPCServer *pserver = new RPCServer();
+	// setup mock server
+	mockRPCServer *pserver = new mockRPCServer();
     pserver->start();
     pserver->wait();				
 		
