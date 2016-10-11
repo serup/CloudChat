@@ -10,7 +10,7 @@ enum requestType {CREATE, UPDATE, DELETE, APPEND, SEARCH, MAPREDUCE};
 struct DDRequest {
 	/* string data<>; */
 	int key;
-	requestType req;
+	requestType reqType;
 	/*DDRequest *next;*/
 };
 

@@ -415,6 +415,7 @@ BOOST_AUTO_TEST_CASE(classRPCclient)
 		
 	RPCclient _rpcclient;
 	DDRequest req;
+	req.reqType = SEARCH;
 	BOOST_CHECK(_rpcclient.sendRequestTo(req, ca)==true);
 
 
