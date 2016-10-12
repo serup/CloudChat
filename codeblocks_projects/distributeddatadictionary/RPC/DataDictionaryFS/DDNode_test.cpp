@@ -277,7 +277,7 @@ BOOST_AUTO_TEST_CASE(classRPCclient)
 		DED_PUT_STDSTRING	( dedptr, "Request", (std::string)"hello request" );
 	DED_PUT_STRUCT_END( dedptr, "DDNodeRequest" );
 
-	BOOST_CHECK( client.sendRequestTo("localhost", dedptr,1,SEARCH) == true );
+	BOOST_CHECK( client.sendRequestTo("localhost", dedptr,123,PINGPONG) == true );
 
 
 	delete pserver;

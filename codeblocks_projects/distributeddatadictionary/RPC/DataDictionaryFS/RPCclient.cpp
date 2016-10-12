@@ -60,6 +60,10 @@ bool RPCclient::sendRequestTo(DDRequest req, const char *host)
 			clnt_perror (clnt, "call failed");
 			bResult=false;
 		}
+		if(result->transID != req.ded.transID) {
+			cout << "FAIL: transaktion id differs; sending transid: " << req.ded.transID << " receiving transid: " << result->transID << endl;
+			bResult=false;
+		}
 		clnt_destroy (clnt);
 	}	
 	return bResult;
@@ -79,17 +83,17 @@ void RPCclient::handleResponse(std::unique_ptr<CDataEncoder> &decoder_ptr)
 					if( DED_GET_STRUCT_END( decoder_ptr, "DDNodeResponse" ) == true )
 					{
 							if(strValue == "Hello World") {
-									printf("Response: OK\n"); 
+									printf("\nResponse: OK\n"); 
 									bDecoded=true;
 							}
 							else {
-									printf("Response: FAIL\n");                                 
+									printf("\nResponse: FAIL\n");                                 
 							}
 					}
 					else
 					{
 							bDecoded=false;
-							printf("Response: FAIL\n");                                                                             
+							printf("\nResponse: FAIL\n");                                                                             
 					}	
 					cout << "message : " << strValue << endl;
 			}

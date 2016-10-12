@@ -2,6 +2,16 @@
 
 using namespace DDDfsRPC;
 
+void DED_GET_DATA(std::unique_ptr<CDataEncoder> &encoder_ptr, DEDBlock &result)
+{
+	DED_GET_ENCODED_DATA(encoder_ptr,data_ptr,iLengthOfTotalData,pCompressedData,sizeofCompressedData);
+
+	if(sizeofCompressedData==0) sizeofCompressedData = iLengthOfTotalData;
+	result.data.data_len = sizeofCompressedData;
+	result.data.data_val = (char*)malloc(sizeofCompressedData);
+	memcpy(result.data.data_val, pCompressedData, sizeofCompressedData);
+}
+
 DEDBlock * dddfsServer::handleRequest(DDRequest req)  
 {
 	static DEDBlock  result;
@@ -9,21 +19,27 @@ DEDBlock * dddfsServer::handleRequest(DDRequest req)
 	if(req.reqType == SEARCH)
 			printf("Request type : SEARCH received\n");
 
-	printf("DDNode[handleRequest] called; Hello World\n");
+	if(req.reqType == PINGPONG) {
+			printf("DDNode[handleRequest] called; Hello World\n");
 
-	DED_START_ENCODER(encoder_ptr);
-	DED_PUT_STRUCT_START( encoder_ptr, "DDNodeResponse" );
-		DED_PUT_STDSTRING	( encoder_ptr, "message", (std::string)"Hello World" );
-	DED_PUT_STRUCT_END( encoder_ptr, "DDNodeResponse" );
-	DED_GET_ENCODED_DATA(encoder_ptr,data_ptr,iLengthOfTotalData,pCompressedData,sizeofCompressedData);
+			DED_START_ENCODER(encoder_ptr);
+			DED_PUT_STRUCT_START( encoder_ptr, "DDNodeResponse" );
+			DED_PUT_STDSTRING	( encoder_ptr, "message", (std::string)"Hello World" );
+			DED_PUT_STRUCT_END( encoder_ptr, "DDNodeResponse" );
+			DED_GET_DATA(encoder_ptr,result);
 
-	if(sizeofCompressedData==0) // if sizeofcompresseddata is 0 then compression was not possible and size is the same as for uncompressed
-		sizeofCompressedData = iLengthOfTotalData;
+	}
+	else {
+			//TODO: handle various requests and make appropriate responses
+			
+			DED_START_ENCODER(encoder_ptr);
+			DED_PUT_STRUCT_START( encoder_ptr, "DDNodeResponse" );
+			DED_PUT_STDSTRING	( encoder_ptr, "Method", (std::string)"unknown" );
+			DED_PUT_STRUCT_END( encoder_ptr, "DDNodeResponse" );
+			DED_GET_DATA(encoder_ptr,result);
 
-	result.data.data_len = sizeofCompressedData;
-	result.data.data_val = (char*)malloc(sizeofCompressedData);
-	memcpy(result.data.data_val, pCompressedData, sizeofCompressedData);
-
-	result.transID = 1;
+	}
+	
+	result.transID = req.ded.transID;
 	return &result;
 }
