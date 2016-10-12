@@ -46,7 +46,10 @@ prereq:
 	@sed -i '/dddfsServer();/a\ 	presult = pserver->handleRequest(arg1);\' DDDfs_server.cpp
 	@sed -i 's/static DEDBlock  result/DEDBlock* presult/g' DDDfs_server.cpp
 	@sed -i 's/return &result/return presult/g' DDDfs_server.cpp
-	@sed -i '/#include /a\#include \"DED.h\"' DDDfs_client.cpp
+	@sed -i '/#include /a\#include \"DED.h\"\
+	#include \"dummyrequest.h\"' DDDfs_client.cpp
+	@sed -i 's/DDRequest dddfs_1_arg1;/DDRequest dddfs_1_arg1 = createDummyDDRequest();/' DDDfs_client.cpp
+	@sed -i 's/DDRequest ddnode_1_arg1;/DDRequest ddnode_1_arg1 = createDummyDDRequest();/' DDDfs_client.cpp
 	@sed -i '/exit (1);\	}/a\	DED_PUT_DATA_IN_DECODER(decoder_ptr,(unsigned char*)result_1->data.data_val,result_1->data.data_len);' DDDfs_client.cpp
 	@sed -i '/result_1 = dddfs_1(clnt);/a\
 		if (result_1 != (DEDBlock *) NULL) {\

@@ -62,8 +62,9 @@ static DEDBlock * _ddnode_1 (DDRequest  *argp, struct svc_req *rqstp)
 static void ddd_fs_prog_1(struct svc_req *rqstp, register SVCXPRT *transp)
 {
 	union {
+		DDRequest dddfs_1_arg;
 		DDRequest ddnode_1_arg;
-	} argument;
+		} argument;
 	char *result;
 	xdrproc_t _xdr_argument, _xdr_result;
 	char *(*local)(char *, struct svc_req *);
@@ -147,6 +148,7 @@ class mockRPCServer
 				void processQueue()
 				{
 					std::cout << std::endl;
+					
 					register SVCXPRT *transp;
 
 					pmap_unset (DDD_FS_PROG, DDD_FS_VERS);                                                  
@@ -171,20 +173,27 @@ class mockRPCServer
 									else {					
 											cout << "mockRPCServer: Register tcp" << endl;
 											if (!svc_register(transp, DDD_FS_PROG, DDD_FS_VERS, ddd_fs_prog_1, IPPROTO_TCP)) {      
-													cout << "unable to register (DDD_FS_PROG, DDD_FS_VERS, tcp)." << stderr << endl;
+												cout << "unable to register (DDD_FS_PROG, DDD_FS_VERS, tcp)." << stderr << endl;
 											}                                                                                       
+											else
+												bServerInstantiated = true;
 									}
 							}
 					}
 
-					bServerInstantiated = true;
-					cout << "mockRPCServer: Started" << endl;
+					if(bServerInstantiated) {
+						cout << "mockRPCServer: Started" << endl;
 
-					svc_run ();                   
+						svc_run ();                   
 
-					cout << "-- svc_run returned : " << stderr << endl;                         
-					cout << "-- mockRPCServer: stopped" << endl;
-					cout << "-- mockRPCServer thread: ended" << endl;
+						cout << "-- svc_run returned : " << stderr << endl;                         
+						cout << "-- mockRPCServer: stopped" << endl;
+						cout << "-- mockRPCServer thread: ended" << endl;
+					}
+					else {
+						cout << "mockRPCServer: ERROR not started" << endl;
+						bServerInstantiated = true;
+					}
 				}
 
 		private:
