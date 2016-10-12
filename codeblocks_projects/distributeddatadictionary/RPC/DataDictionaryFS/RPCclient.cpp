@@ -23,23 +23,30 @@ DDRequest RPCclient::createDDRequest(std::unique_ptr<CDataEncoder> &encoder_ptr,
 bool RPCclient::sendRequestTo(DDRequest req, string host)
 {
 	char const* ca = host.c_str();
-	return sendRequestTo(req, ca);		
+	return sendRequestTo(req, ca, NULL);		
+}
+
+bool RPCclient::sendRequestTo(string host, std::unique_ptr<CDataEncoder> &encoder_ptr, int transID, enum requestType reqtype,  void(*fptr)(std::unique_ptr<CDataEncoder> &decoder_ptr))
+{
+	char const* ca = host.c_str();
+	request = createDDRequest(encoder_ptr, transID, reqtype);
+	return sendRequestTo(request, ca, fptr);		
 }
 
 bool RPCclient::sendRequestTo(string host, std::unique_ptr<CDataEncoder> &encoder_ptr, int transID, enum requestType reqtype)
 {
 	char const* ca = host.c_str();
 	request = createDDRequest(encoder_ptr, transID, reqtype);
-	return sendRequestTo(request, ca);		
+	return sendRequestTo(request, ca, NULL);		
 }
 
 bool RPCclient::sendRequestTo(string host)
 {
 	char const* ca = host.c_str();
-	return sendRequestTo(request, ca);		
+	return sendRequestTo(request, ca, NULL);		
 }
 
-bool RPCclient::sendRequestTo(DDRequest req, const char *host)
+bool RPCclient::sendRequestTo(DDRequest req, const char *host, void(*fptr)(std::unique_ptr<CDataEncoder> &decoder_ptr))
 {
 	bool bResult=true;
 	CLIENT *clnt;
@@ -54,7 +61,12 @@ bool RPCclient::sendRequestTo(DDRequest req, const char *host)
 		result = ddnode_1(req, clnt);
 		if (result != (DEDBlock *) NULL) {
 			DED_PUT_DATA_IN_DECODER(decoder_ptr,(unsigned char*)result->data.data_val,result->data.data_len); 
-			handleResponse(decoder_ptr);	
+			if(fptr==NULL) {
+				cout << "WARNING: callback function was not provided, hence default is used" << endl;
+				handleResponse(decoder_ptr);	
+			}
+			else
+				fptr(decoder_ptr);
 		}
 		if (result == (DEDBlock *) NULL) {
 			clnt_perror (clnt, "call failed");

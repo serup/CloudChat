@@ -258,29 +258,95 @@ BOOST_AUTO_TEST_CASE(serverclient_tcp)
 	cout<<"}"<<endl;   
 }
 
+void dummycallbackfnct(std::unique_ptr<CDataEncoder> &decoder_ptr)
+{
+	cout << "WARNING: dummycallback was called " << endl;
+}
+
 BOOST_AUTO_TEST_CASE(classRPCclient)
 {
 	cout<<"BOOST_AUTO_TEST(classRPCclient)\n{"<<endl;    
 	
-	// setup mock server
-	mockRPCServer *pserver = new mockRPCServer();
-    pserver->start();
-    pserver->wait();				
-		
 	// setup client
 	//
 	//
 	RPCclient client;
 
+	// setup a request
 	DED_START_ENCODER(dedptr);
 	DED_PUT_STRUCT_START( dedptr, "DDNodeRequest" );
 		DED_PUT_STDSTRING	( dedptr, "Request", (std::string)"hello request" );
 	DED_PUT_STRUCT_END( dedptr, "DDNodeRequest" );
 
+	cout << "subtest 1; using internal callback " << endl;
+	cout<<"/*{{{*/"<<endl;   
+	// test with internal callback function - calls RPCclient::handleResponse
+	{
+	// setup mock server
+	mockRPCServer server;
+    server.start();
+    server.wait();				
+		
+	// test with dummy callback function
 	BOOST_CHECK( client.sendRequestTo("localhost", dedptr,123,PINGPONG) == true );
+    }
+	cout<<"/*}}}*/"<<endl;   
+
+	cout << "subtest 2; using internal callback, when provided callback is zero" << endl;
+	cout<<"/*{{{*/"<<endl;   
+	// test with internal callback function - calls RPCclient::handleResponse
+	{
+	// setup mock server
+	mockRPCServer server;
+    server.start();
+    server.wait();				
+		
+	// test with dummy callback function
+	BOOST_CHECK( client.sendRequestTo("localhost", dedptr,123,PINGPONG,NULL) == true );
+
+    }
+	cout<<"/*}}}*/"<<endl;   
 
 
-	delete pserver;
+	cout << "subtest 3; using dummy callback function " << endl;
+	cout<<"/*{{{*/"<<endl;   
+	{
+	// setup mock server
+	mockRPCServer server;
+    server.start();
+    server.wait();				
+		
+	// test with dummy callback function
+	BOOST_CHECK( client.sendRequestTo("localhost", dedptr,123,PINGPONG,
+					&dummycallbackfnct
+  		     	) == true );
+
+    }
+	cout<<"/*}}}*/"<<endl;   
+
+	cout << "subtest 4; using a lambda function as callback function " << endl;
+	cout<<"/*{{{*/"<<endl;   
+	// test with lambda function as callback
+	{
+	// setup mock server
+	mockRPCServer server;
+    server.start();
+    server.wait();				
+	
+	// test with lambda function
+	BOOST_CHECK( client.sendRequestTo("localhost", dedptr,321,PINGPONG,
+			[&](std::unique_ptr<CDataEncoder> &decoder_ptr) // lambda functionality
+				{
+				printf("************************************************\n");
+				printf("WARNING: lambda callback function called \n");
+				if (decoder_ptr == 0) { printf(">>> no data received\n"); }
+				printf("************************************************\n");
+				}
+  		     	) == true );
+
+	}
+	cout<<"/*}}}*/"<<endl;   
+
 	cout<<"}"<<endl;   
 }
 
