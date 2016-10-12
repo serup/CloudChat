@@ -1,3 +1,10 @@
+/*
+ * vim:noexpandtab:shiftwidth=4:tabstop=4:
+ *
+ * Copyright (C) Johnny Serup
+ *
+ * 
+ */
 #define BOOST_TEST_MODULE DDNode_test
 #define BOOST_TEST_DYN_LINK
 #include <boost/test/included/unit_test.hpp>
@@ -259,7 +266,7 @@ BOOST_AUTO_TEST_CASE(handleRequest_helloworld)
 			if( DED_GET_STRUCT_END( decoder_ptr, "DDNodeResponse" ) == true )
 			{
 				if(strValue == "Hello World") {
-					printf("Response: OK\n"); 
+					printf("\nResponse: OK\n"); 
 					printf("Response: Datasize: %d\n",pDEDBlock->data.data_len); 
 					bDecoded=true;
 				}
@@ -270,7 +277,7 @@ BOOST_AUTO_TEST_CASE(handleRequest_helloworld)
 			else
 			{
 				bDecoded=false;
-				printf("Response: FAIL\n");                                                                             
+				printf("\nResponse: FAIL\n");                                                                             
 			}	
 			cout << "message : " << strValue << endl;
 		}
@@ -308,6 +315,7 @@ BOOST_AUTO_TEST_CASE(serverclient_udp)
 		cout << "call via udp function in server" << endl;	
 		result_1 = dddfs_1(req, clnt);
 		if (result_1 != (DEDBlock *) NULL) {
+			    cout << endl;
 				cout << "received response from server via udp " << endl;
 				DED_PUT_DATA_IN_DECODER(decoder_ptr,(unsigned char*)result_1->data.data_val,result_1->data.data_len);
 				bool bDecoded=false;
@@ -321,18 +329,18 @@ BOOST_AUTO_TEST_CASE(serverclient_udp)
 								if( DED_GET_STRUCT_END( decoder_ptr, "DDNodeResponse" ) == true )
 								{
 										if(strValue == "Hello World") {
-												printf("Response: OK\n"); 
+												printf("\nResponse: OK\n"); 
 												printf("Response: Datasize: %d\n",result_1->data.data_len); 
 												bDecoded=true;
 										}
 										else {
-												printf("Response: FAIL\n");                                 
+												printf("\nResponse: FAIL\n");                                 
 										}
 								}
 								else
 								{
 										bDecoded=false;
-										printf("Response: FAIL\n");                                                                             
+										printf("\nResponse: FAIL\n");                                                                             
 								}	
 								cout << "message : " << strValue << endl;
 						}
@@ -378,6 +386,7 @@ BOOST_AUTO_TEST_CASE(serverclient_tcp)
 		cout << "call via tcp function in server" << endl;	
 		result_1 = dddfs_1(req, clnt);
 		if (result_1 != (DEDBlock *) NULL) {
+			    cout << endl;
 				cout << "received response from server via tcp " << endl;
 				DED_PUT_DATA_IN_DECODER(decoder_ptr,(unsigned char*)result_1->data.data_val,result_1->data.data_len);
 				bool bDecoded=false;
@@ -391,18 +400,18 @@ BOOST_AUTO_TEST_CASE(serverclient_tcp)
 								if( DED_GET_STRUCT_END( decoder_ptr, "DDNodeResponse" ) == true )
 								{
 										if(strValue == "Hello World") {
-												printf("Response: OK\n"); 
+												printf("\nResponse: OK\n"); 
 												printf("Response: Datasize: %d\n",result_1->data.data_len); 
 												bDecoded=true;
 										}
 										else {
-												printf("Response: FAIL\n");                                 
+												printf("\nResponse: FAIL\n");                                 
 										}
 								}
 								else
 								{
 										bDecoded=false;
-										printf("Response: FAIL\n");                                                                             
+										printf("\nResponse: FAIL\n");                                                                             
 								}	
 								cout << "message : " << strValue << endl;
 						}
