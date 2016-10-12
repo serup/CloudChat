@@ -5,7 +5,7 @@ DDRequest createDummyDDRequest()
 		DED_PUT_STRUCT_START( dedptr, "DDNodeRequest" );                                              
 		DED_PUT_STDSTRING   ( dedptr, "Request", (std::string)"hello request" );                  
 		DED_PUT_STRUCT_END( dedptr, "DDNodeRequest" );                                                
-		req.reqType = SEARCH;                                                                         
+		req.reqType = PINGPONG;                                                                         
 		DED_GET_ENCODED_DATA(dedptr,data_ptr,iLengthOfTotalData,pCompressedData,sizeofCompressedData);
 		if(sizeofCompressedData==0)                                                                   
 				sizeofCompressedData = iLengthOfTotalData;                                                

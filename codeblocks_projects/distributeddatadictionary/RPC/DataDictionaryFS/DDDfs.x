@@ -5,7 +5,7 @@ struct DEDBlock {
 	opaque data<MAXLEN>;
 };
 
-enum requestType {CREATE, UPDATE, DELETE, APPEND, SEARCH, MAPREDUCE};
+enum requestType {PINGPONG, CREATE, UPDATE, DELETE, APPEND, SEARCH, MAPREDUCE};
 
 struct DDRequest {
 	requestType reqType;
