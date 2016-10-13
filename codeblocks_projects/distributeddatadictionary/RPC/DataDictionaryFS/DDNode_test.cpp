@@ -363,10 +363,9 @@ BOOST_AUTO_TEST_CASE(RequestResponseMethod)
     server.wait();				
 		
 	// setup client
-	//
-	//
 	RPCclient client;
 
+	// send request to mock server
 	BOOST_CHECK( client.sendRequestTo("localhost", dedptr,123,SEARCH) == true );
  
 	cout<<"}"<<endl;   
