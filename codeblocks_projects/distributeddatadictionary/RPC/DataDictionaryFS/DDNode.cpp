@@ -48,7 +48,7 @@ DEDBlock * dddfsServer::handleRequest(DDRequest req)
 
 						default:
 						{
-							printf("FAIL: no request method found, hence no request handling\n");
+							printf("FAIL: no request method found for [ %s ] , hence no request handling\n",methodName.c_str());
 						}
 						break;
 					}
@@ -62,7 +62,7 @@ DEDBlock * dddfsServer::handleRequest(DDRequest req)
 			// send an appropriate response back	
 			DED_START_ENCODER(encoder_ptr);
 			DED_PUT_STRUCT_START( encoder_ptr, "DDNodeResponse" );
-			DED_PUT_METHOD 		( encoder_ptr, "name", (std::string)"unknown" );
+			DED_PUT_METHOD 		( encoder_ptr, "name", (std::string)"unknown_request" );
 			DED_PUT_STRUCT_END( encoder_ptr, "DDNodeResponse" );
 			DED_GET_DATA(encoder_ptr,result);
 
