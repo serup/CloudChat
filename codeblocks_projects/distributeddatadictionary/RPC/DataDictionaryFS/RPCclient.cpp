@@ -81,7 +81,9 @@ bool RPCclient::sendRequestTo(DDRequest req, const char *host, void(*fptr)(std::
 	return bResult;
 }
 
-
+/**
+ * this is the default response handler - it can be overridden with other callback functions
+ */
 void RPCclient::handleResponse(std::unique_ptr<CDataEncoder> &decoder_ptr)
 {
 	bool bDecoded=false;
@@ -110,8 +112,24 @@ void RPCclient::handleResponse(std::unique_ptr<CDataEncoder> &decoder_ptr)
 					cout << "message : " << strValue << endl;
 			}
 	}
-	else
-			cout << "FAIL: did NOT decode DDNodeResponse" << endl;
+
+	if(!bDecoded)
+   	{ // expect specific protocol communication
+		if( DED_GET_STRUCT_START( decoder_ptr, "DDNodeResponse" ) == true )
+		{
+			std::string methodName="";
+			if(	DED_GET_METHOD	( decoder_ptr, "name", methodName ) == true )
+			{
+				cout << "OK: Response was method: " << methodName << endl;
+				//TODO: handle various responses from various requests
+				//
+				
+				bDecoded=true;
+			}
+			else	
+				cout << "FAIL: did NOT decode DDNodeResponse" << endl;
+		}
+	}
 
 }
 

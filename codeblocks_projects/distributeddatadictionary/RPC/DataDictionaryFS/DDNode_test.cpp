@@ -287,7 +287,6 @@ BOOST_AUTO_TEST_CASE(classRPCclient)
     server.start();
     server.wait();				
 		
-	// test with dummy callback function
 	BOOST_CHECK( client.sendRequestTo("localhost", dedptr,123,PINGPONG) == true );
     }
 	cout<<"/*}}}*/"<<endl;   
@@ -301,7 +300,6 @@ BOOST_AUTO_TEST_CASE(classRPCclient)
     server.start();
     server.wait();				
 		
-	// test with dummy callback function
 	BOOST_CHECK( client.sendRequestTo("localhost", dedptr,123,PINGPONG,NULL) == true );
 
     }
@@ -316,7 +314,6 @@ BOOST_AUTO_TEST_CASE(classRPCclient)
     server.start();
     server.wait();				
 		
-	// test with dummy callback function
 	BOOST_CHECK( client.sendRequestTo("localhost", dedptr,123,PINGPONG,
 					&dummycallbackfnct
   		     	) == true );
@@ -337,10 +334,10 @@ BOOST_AUTO_TEST_CASE(classRPCclient)
 	BOOST_CHECK( client.sendRequestTo("localhost", dedptr,321,PINGPONG,
 			[&](std::unique_ptr<CDataEncoder> &decoder_ptr) // lambda functionality
 				{
-				printf("************************************************\n");
-				printf("WARNING: lambda callback function called \n");
-				if (decoder_ptr == 0) { printf(">>> no data received\n"); }
-				printf("************************************************\n");
+					printf("************************************************\n");
+					printf("WARNING: lambda callback function called \n");
+					if (decoder_ptr == 0) { printf(">>> no data received\n"); }
+					printf("************************************************\n");
 				}
   		     	) == true );
 
@@ -350,4 +347,27 @@ BOOST_AUTO_TEST_CASE(classRPCclient)
 	cout<<"}"<<endl;   
 }
 
+BOOST_AUTO_TEST_CASE(RequestResponseMethod)
+{
+	cout<<"BOOST_AUTO_TEST(RequestResponseMethod)\n{"<<endl;    
 
+	// setup a request
+	DED_START_ENCODER(dedptr);
+	DED_PUT_STRUCT_START( dedptr, "DDNodeRequest" );
+		DED_PUT_METHOD	( dedptr, "name", (std::string)"myNewRequest" );
+	DED_PUT_STRUCT_END( dedptr, "DDNodeRequest" );
+
+	// setup mock server
+	mockRPCServer server;
+    server.start();
+    server.wait();				
+		
+	// setup client
+	//
+	//
+	RPCclient client;
+
+	BOOST_CHECK( client.sendRequestTo("localhost", dedptr,123,SEARCH) == true );
+ 
+	cout<<"}"<<endl;   
+}

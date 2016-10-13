@@ -28,6 +28,7 @@ class RPCclient
 		void handleResponse(std::unique_ptr<CDataEncoder> &decoder_ptr);	
 
 
+
 };
 
 #endif
