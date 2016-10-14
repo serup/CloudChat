@@ -564,7 +564,7 @@ std::list<std::string> CDataDictionaryControl::ls()
 	using boost::optional;
 	using boost::property_tree::ptree;
 	std::list<std::string> listBFiAttributes;
-	
+
 	try
 	{
 	std::string transGuid="";
@@ -613,6 +613,13 @@ std::list<std::string> CDataDictionaryControl::ls()
 																			if(prevAtt!=vt3.second.data()) {
 																					prevAtt=vt3.second.data();
 																					attribut += vt3.second.data();
+// find if any existing attribut
+																					auto i = listBFiAttributes.begin(), end = listBFiAttributes.end();
+																					i = std::find(i, end, attribut);
+																					if(i != end)
+																						cout << "WARNING: duplicate : " << attribut << endl;
+																					
+
 																					listBFiAttributes.push_back(attribut); // disregard chunks of attribut, only list unique attributs
 																					attribut=prev;
 																			}

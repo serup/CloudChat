@@ -1139,6 +1139,10 @@ BOOST_AUTO_TEST_CASE(listDataDictionaryAttributs)
 
 	CDataDictionaryControl *pDDC = new CDataDictionaryControl();
 	std::list<std::string> listResult = pDDC->ls();	
+	BOOST_FOREACH(std::string attribut, listResult)
+	{
+		cout << "- OK attribut : " << attribut << endl;
+	}
 	BOOST_CHECK(listResult.size() <= 0);
 
 	// create BFi files
@@ -1284,6 +1288,10 @@ BOOST_AUTO_TEST_CASE(listDataDictionaryAttributsWithOneLarge)
 
 	CDataDictionaryControl *pDDC = new CDataDictionaryControl();
 	std::list<std::string> listResult = pDDC->ls();	
+	BOOST_FOREACH(std::string attribut, listResult)
+	{
+		cout << "- OK attribut : " << attribut << endl;
+	}
 	BOOST_CHECK(listResult.size() <= 0);
 
 	// create BFi files
