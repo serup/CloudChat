@@ -1831,7 +1831,7 @@ BOOST_AUTO_TEST_CASE(addLargeAttributOver2BFifiles)
 
 BOOST_AUTO_TEST_CASE(addLargeAttributOver3BFifiles)
 {
-	cout<<"BOOST_AUTO_TEST(addLargeAttributOver2BFifiles)\n{"<<endl;
+	cout<<"BOOST_AUTO_TEST(addLargeAttributOver3BFifiles)\n{"<<endl;
 
 	using boost::optional;
 	using boost::property_tree::ptree;
@@ -1992,10 +1992,8 @@ BOOST_AUTO_TEST_CASE(addLargeAttributOver3BFifiles)
 	listResult = pDDC->ls();	
 	//expected : reads like this: <GUID> has a profile folder with attribut name, mobil and foto
 	std::string expected1 =  "F9C23762ED2823A27E62A64B95C024EF./profile/foto";
-	std::string expected2 =  "F9C23762ED2823A27E62A64B95C024EF./profile/foto";
-	std::string expected3 =  "F9C23762ED2823A27E62A64B95C024EF./profile/name";
-	std::string expected4 =  "F9C23762ED2823A27E62A64B95C024EF./profile/mobil";
-	std::string expected5 =  "F9C23762ED2823A27E62A64B95C024EF./profile/foto";
+	std::string expected2 =  "F9C23762ED2823A27E62A64B95C024EF./profile/name";
+	std::string expected3 =  "F9C23762ED2823A27E62A64B95C024EF./profile/mobil";
 
 	BOOST_CHECK(listResult.size() > 0);
 
@@ -2007,8 +2005,6 @@ BOOST_AUTO_TEST_CASE(addLargeAttributOver3BFifiles)
 		if(c==1) BOOST_CHECK(expected1 == attribut);
 		if(c==2) BOOST_CHECK(expected2 == attribut);
 		if(c==3) BOOST_CHECK(expected3 == attribut);
-		if(c==4) BOOST_CHECK(expected4 == attribut);
-		if(c==5) BOOST_CHECK(expected5 == attribut);
 	}
 
 	cout << "TODO: ls should show attribut spanning over multiple .BFi files in a different way " << endl;

@@ -580,60 +580,59 @@ std::list<std::string> CDataDictionaryControl::ls()
 
 	BOOST_FOREACH(boost::filesystem::path const& i, make_pair(iter, eod))
 	{
-			if (is_regular_file(i)){
+		if (is_regular_file(i)){
 
-					bool bExtBFi=false;
-					bExtBFi = (boost::filesystem::extension(i.string()) == ".BFi");
-					if(bExtBFi) {
-							std::ifstream is (i.string());
-							ptree pt;
-							try{
-									read_xml(is, pt);
-							}catch(...) {}
+			bool bExtBFi=false;
+			bExtBFi = (boost::filesystem::extension(i.string()) == ".BFi");
+			if(bExtBFi) {
+				std::ifstream is (i.string());
+				ptree pt;
+				try{
+						read_xml(is, pt);
+				}catch(...) {}
 
-							optional< ptree& > child = pt.get_child_optional("BFi");
-							if(child) 
-							{
-									BOOST_FOREACH(const boost::property_tree::ptree::value_type & child, pt.get_child("BFi.BlockEntity.BlockRecord", _empty_tree)) 
-									{
-											str = child.first.data();
-											if (str == "chunk_id") id = child.second.data();
-											if (str == "TransGUID") transGuid = child.second.data();
+				optional< ptree& > child = pt.get_child_optional("BFi");
+				if(child) 
+				{
+					BOOST_FOREACH(const boost::property_tree::ptree::value_type & child, pt.get_child("BFi.BlockEntity.BlockRecord", _empty_tree)) 
+					{
+						str = child.first.data();
+						if (str == "chunk_id") id = child.second.data();
+						if (str == "TransGUID") transGuid = child.second.data();
 
-											attribut = transGuid + "./" + id + "/";
-											prevAtt="";
-											BOOST_FOREACH(const boost::property_tree::ptree::value_type &vt2 , child.second)
-											{
-													if(vt2.first == "chunk_record")
-													{
-															prev=attribut;
-															BOOST_FOREACH(const boost::property_tree::ptree::value_type &vt3, vt2.second)
-															{
-																	if(vt3.first == "chunk_ddid") {
-																			if(prevAtt!=vt3.second.data()) {
-																					prevAtt=vt3.second.data();
-																					attribut += vt3.second.data();
-// find if any existing attribut
-																					auto i = listBFiAttributes.begin(), end = listBFiAttributes.end();
-																					i = std::find(i, end, attribut);
-																					if(i != end)
-																						cout << "WARNING: duplicate : " << attribut << endl;
-																					
-
-																					listBFiAttributes.push_back(attribut); // disregard chunks of attribut, only list unique attributs
-																					attribut=prev;
-																			}
-																	}
-															}
+						attribut = transGuid + "./" + id + "/";
+						prevAtt="";
+						BOOST_FOREACH(const boost::property_tree::ptree::value_type &vt2 , child.second)
+						{
+								if(vt2.first == "chunk_record")
+								{
+										prev=attribut;
+										BOOST_FOREACH(const boost::property_tree::ptree::value_type &vt3, vt2.second)
+										{
+												if(vt3.first == "chunk_ddid") {
+													if(prevAtt!=vt3.second.data()) {
+														prevAtt=vt3.second.data();
+														attribut += vt3.second.data();
+														// find if any existing attribut
+														auto i = listBFiAttributes.begin(), end = listBFiAttributes.end();
+														i = std::find(i, end, attribut);
+														if(i != end)
+															cout << "WARNING: duplicate : " << attribut << endl;
+														else	
+															listBFiAttributes.push_back(attribut); // disregard chunks of attribut and duplicates, only list unique attributs
+														attribut=prev;
 													}
-											}
-									}
-							}
+												}
+										}
+								}
+						}
 					}
+				}
+			}
 		}
 	}
 	}
-	 catch (const std::exception& e)  // catch any exceptions
+	catch (const std::exception& e)  // catch any exceptions
 	{ cerr << endl << "Exception: " << e.what() << endl; }
 
 
