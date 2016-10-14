@@ -617,7 +617,7 @@ std::list<std::string> CDataDictionaryControl::ls()
 														auto i = listBFiAttributes.begin(), end = listBFiAttributes.end();
 														i = std::find(i, end, attribut);
 														if(i != end)
-															cout << "WARNING: duplicate : " << attribut << endl;
+															cout << "INFO: span over .BFi : " << attribut << endl;
 														else	
 															listBFiAttributes.push_back(attribut); // disregard chunks of attribut and duplicates, only list unique attributs
 														attribut=prev;
