@@ -440,7 +440,7 @@ boost::property_tree::ptree CDataDictionaryControl::addBlockRecordToBlockEntity(
 			if(iBytesLeftInBlockEntity <= 0)
 			{
 				if(iBytesLeftInBlockEntity < 0)
-					BOOST_LOG_TRIVIAL(warning) << "- WARNING: BlockRecord size exceeds BlockEntity size " << endl;
+					BOOST_LOG_TRIVIAL(warning) << "- WARNING: current BlockRecord size exceeds BlockEntity size, hence this BlockRecord will span over multiple .BFi files; this is Normal " << endl;
 				
 				if( !appendToLastBlockEntity(node, v2.second, transGuid) ) 
 					BOOST_LOG_TRIVIAL(error) << "[addBlockRecordToBlockEntity] - FAIL: could not append to last blockentity" << endl;
