@@ -4,29 +4,32 @@ DDD - Distributed Data Dictionary
  There are to folders on each node - 'data' and 'dictionary' - inside the dictionary folder lies blockfiles with datadictionary realm file definitions
  and inside data lies database realm files formatted in according to the dictionary definition files
 
-						     DDDAdmin
-							+
-							|
-			+-----+----+-----+------+-------+------+-------+-------+--------+
-			|          |            |              |               |        |
-	  	    [DDNode]	[DDNode]     [DDNode]	   [DDNode]	   [DDNode]  [DDNode]     ... 6 node example, it could be many more nodes
-                     |                                      |
-		     +-[BFi]                                +-[BFi]
-		        |                                      |
-		        +-[BlockEntity]                        +-[BlockEntity]
-		           |                                      |
-		           +-[BlockRecord]                        +-[BlockRecord]
-		           +-[BlockRecord]                        +-[BlockRecord]
-		           |  |                                   |  |
-		           |  +-[chunk record aka toast record]   |  +-[chunk record aka toast record]
-		           |     |                                |  |  |
-    	 	       |     +-[attribut_chunk_data]          |  |  +-[attribut_chunk_data] - first chunk of an attribut (fx. attribut 'foto')
-		           |                                      |  +-[chunk record aka toast record]
- 				   |                                      |     |
-			  	   |                                      |     +-[attribut_chunk_data] - second chunk of an attribut (fx. attribut 'foto') 
-		           +-[BlockRecord]                        +-[BlockRecord]
-		           |                                      |
-		           + etc...........................       + etc...........................
+ DDDAdmin
+ +
+ |
+ +-----+----+-----+------+-------+------+-------+-------+-------------------------------+
+ |          |            |              |               |        						|
+ [DDNode]	[DDNode]     [DDNode]	   [DDNode]	   [DDNode]  						[DDNode]     ... 6 node example, it could be many more nodes
+ |                                      |											|
+ +-[BFi]                                +-[BFi]										+-[BFi]
+	 |                                      |											|
+	 +-[BlockEntity]                        +-[BlockEntity]								+-[BlockEntity]
+ 		|                                      	|											|
+		+-[BlockRecord]                        	+-[BlockRecord]								+-[BlockRecord]
+ 		+-[BlockRecord]                        	+-[BlockRecord]									|
+ 		|  |                                   	|  |											+-[chunk record aka toast record]
+ 		|  +-[chunk record aka toast record]   	|  +-[chunk record aka toast record]				|	
+		|		|								|		|											+-[attribut_chunk_data] 
+		|		|								|		|												- third chunk of an attribut (fx. attribut 'foto')
+ 		|     	+-[attribut_chunk_data]			|  		+-[attribut_chunk_data] 
+		|										|			- first chunk of an attribut (fx. attribut 'foto')
+ 		|                                       +-[chunk record aka toast record]
+ 		|                                      	|     |
+ 		|                                      	|     +-[attribut_chunk_data] 
+		|										|			- second chunk of an attribut (fx. attribut 'foto') 
+ 		+-[BlockRecord]                        	+-[BlockRecord]
+ 		|                                      	|
+ 		+ etc...........................       	+ etc...........................
 
 The DDDAdmin is communicating with a DDNode via RPC and SCP, there is NO websocket communication between them and each DDNode is autonomous, meaning
 it is masterless, so in fact you could access DataDictionary from any DDNode and use DDDAdmin commands
@@ -67,8 +70,6 @@ The DDDAdmin will communicate with DDNode's using small DDDfs servers listening 
 	<TransGUID></TransGUID> -- each record has a unique transaction id to be used with security, when detecting inconsistencies
    	<chunk_id></chunk_id>	-- name of realm file
    	<aiid></aiid>		-- automatic increased id - a continues number for all of these records
-   	<chunk_seq></chunk_seq>	-- sequence number for this chunk of the database realm file
-	<chunk_data> 
 	       	<TransGUID></TransGUID> -- each record has a unique transaction id to be used with security, when detecting inconsistencies
 	       	<Protocol>DED</Protocol>
 	  	<ProtocolVersion>1.0.0.0</ProtocolVersion>
