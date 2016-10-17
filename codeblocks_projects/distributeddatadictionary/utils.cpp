@@ -13,14 +13,14 @@ std::list<std::string> CUtils::handle_cmdline_input(std::string cmd)
 		CDataDictionaryControl *pDDC = new CDataDictionaryControl();
 		listResult = pDDC->ls();
 
-		cout << "Result from ls - duplicates, indicate duplicate .BFi files : " << endl;
-
-		BOOST_FOREACH(std::string attribut, listResult)                                 
-		{                                                                               
-			cout << attribut << endl;
-		}                                                                               
-
-
+		if(listResult.size() <= 0)
+			cout << "NO .BFi files in current path" << endl;
+		else {
+			BOOST_FOREACH(std::string attribut, listResult)                                 
+			{                                                                               
+				cout << attribut << endl;
+			}                                                                               
+		}
 	}
 
 	return listResult;	
