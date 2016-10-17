@@ -54,6 +54,7 @@ class CDataDictionaryControl
 	  	bool addAttributToBlockRecord(std::string transGuid, boost::property_tree::ptree &ptListOfBlockRecords, long &maxBlockRecordSize, std::string realmName, std::string attributName, std::vector<unsigned char> attributValue);
 	  
 	  	std::list<std::string> ls();
+		pair<std::string, std::vector<unsigned char>> ftgt(std::string attributpath);
 	
     protected:
 		long _maxDEDchunkSize;

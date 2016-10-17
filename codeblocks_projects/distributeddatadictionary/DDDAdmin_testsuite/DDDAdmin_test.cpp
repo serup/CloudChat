@@ -2080,6 +2080,17 @@ BOOST_AUTO_TEST_CASE(fetchAttributFromBFi)
 
 	cout << "________________________________________" << endl;
 
+	cout << "Fetch attribut from .BFi file " << endl;
+
+	pair<std::string, std::vector<unsigned char>> pairAttribut = ptestDataDictionaryControl->ftgt("F9D23762ED2823A27E62A64B95C024EF./profile/name");
+	cout << "Attribut name : " << pairAttribut.first << endl;
+	std::string value(pairAttribut.second.begin(), pairAttribut.second.end());
+	cout << "Attribut value : " << value << endl;
+
+	BOOST_CHECK(name == value); // verify that retrieved value is same as stored
+
+	cout << "________________________________________" << endl;
+
 	// Clean up section - must be in bottom
 	BOOST_FOREACH(std::string filename, listBFiFiles)
 	{
@@ -2091,26 +2102,4 @@ BOOST_AUTO_TEST_CASE(fetchAttributFromBFi)
 	cout << "}" << endl;
 }
 
-BOOST_AUTO_TEST_CASE(fetchLargeAttributFromBFi)
-{
-	cout << "BOOST_AUTO_TEST_CASE(fetchLargeAttributFromBFi)\n{" << endl;
 
-	BOOST_CHECK(true == false);
-	cout << "}" << endl;
-}
-
-BOOST_AUTO_TEST_CASE(fetchLargeAttributFromOver2BFiFiles)
-{
-	cout << "BOOST_AUTO_TEST_CASE(fetchLargeAttributFromOver2BFiFiles)\n{" << endl;
-
-	BOOST_CHECK(true == false);
-	cout << "}" << endl;
-}
-
-BOOST_AUTO_TEST_CASE(fetchLargeAttributFromOver3BFiFiles)
-{
-	cout << "BOOST_AUTO_TEST_CASE(fetchLargeAttributFromOver3BFiFiles)\n{" << endl;
-
-	BOOST_CHECK(true == false);
-	cout << "}" << endl;
-}

@@ -649,5 +649,150 @@ std::list<std::string> CDataDictionaryControl::ls()
 	return listBFiAttributes;
 }
 
+struct chunk_record_entries
+{
+	std::string chunk_ddid;
+	unsigned int DataSize;
+	std::string Data;
+	std::string DataMD5;
+};
 
+struct EntityChunkDataInfo{
+	std::string entity_chunk_id;
+	unsigned long aiid;
+	unsigned long entity_chunk_seq;
+	std::vector<unsigned char> entity_chunk_data;
+};
+
+
+pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::string attributpath)
+{
+	using boost::optional;
+	using boost::property_tree::ptree;
+	std::list<std::string> listBFiAttributes;
+
+	pair<std::string, std::vector<unsigned char>> resultAttributPair;
+	
+	std::vector<unsigned char> ElementData;
+
+	try
+	{
+	std::string transGuid="";
+	std::string id="";
+	std::string str;
+	std::string attribut = "";
+	std::string prev = "";
+	std::string prevAtt = "";
+	boost::property_tree::ptree _empty_tree;
+
+	boost::filesystem::path targetDir( boost::filesystem::current_path() );
+	boost::filesystem::recursive_directory_iterator iter(targetDir), eod;
+
+	BOOST_FOREACH(boost::filesystem::path const& i, make_pair(iter, eod))
+	{
+		if (is_regular_file(i)){
+
+			bool bExtBFi=false;
+			bExtBFi = (boost::filesystem::extension(i.string()) == ".BFi");
+			if(bExtBFi) {
+				std::ifstream is (i.string());
+				ptree pt;
+				try{
+						read_xml(is, pt);
+				}catch(...) {}
+
+				optional< ptree& > child = pt.get_child_optional("BFi");
+				if(child) 
+				{
+					BOOST_FOREACH(const boost::property_tree::ptree::value_type & child, pt.get_child("BFi.BlockEntity.BlockRecord", _empty_tree)) 
+					{
+						str = child.first.data();
+						if (str == "chunk_id") id = child.second.data();
+						if (str == "TransGUID") transGuid = child.second.data();
+
+						attribut = transGuid + "./" + id + "/";
+						prevAtt="";
+						BOOST_FOREACH(const boost::property_tree::ptree::value_type &vt2 , child.second)
+						{
+								if(vt2.first == "chunk_record")
+								{
+										prev=attribut;
+										BOOST_FOREACH(const boost::property_tree::ptree::value_type &vt3, vt2.second)
+										{
+												if(vt3.first == "chunk_ddid") {
+													if(prevAtt!=vt3.second.data()) {
+														prevAtt=vt3.second.data();
+														attribut += vt3.second.data();
+														// find if any existing attribut
+														auto i = listBFiAttributes.begin(), end = listBFiAttributes.end();
+														i = std::find(i, end, attribut);
+														if(i != end)
+															cout << "INFO: span over .BFi : " << attribut << endl;
+														else 
+															listBFiAttributes.push_back(attribut); // disregard chunks of attribut and duplicates, only list unique attributs
+												
+														if(attribut == attributpath){
+															chunk_record_entries f;
+															f.DataSize = vt2.second.get<unsigned long>("DataSize");
+															f.Data = vt2.second.get<std::string>("Data");
+															f.DataMD5 = vt2.second.get<std::string>("DataMD5");
+
+															cout << "DataMD5 : "<< f.DataMD5 <<endl;
+															std::string strMD5(CMD5(f.Data.c_str()).GetMD5s());
+															if(f.DataMD5 != strMD5)
+																	cout << "FAIL: ERROR: data area for attribut have been corrupted " << endl;
+
+
+															// convert Data 
+															std::string hexdata = f.Data;
+															unsigned char* data_in_unhexed_buf = (unsigned char*) malloc (hexdata.size());
+															ZeroMemory(data_in_unhexed_buf,hexdata.size()); // make sure no garbage is inside the newly allocated space
+															boost::algorithm::unhex(hexdata.begin(),hexdata.end(), data_in_unhexed_buf);// convert the hex array to an array containing byte values
+
+															cout << "hexdata : < " << hexdata << " > " << endl; 
+															cout << "hexdata size: " << hexdata.size() << endl;
+															// initialize decoder with Data 
+															DED_PUT_DATA_IN_DECODER(decoder_ptr,data_in_unhexed_buf,hexdata.size());
+															if(decoder_ptr != 0) {
+
+																	EntityChunkDataInfo _chunk;
+																	// decode data ...
+																	DED_GET_STRUCT_START( decoder_ptr, "chunk_record" );
+																	DED_GET_STDSTRING	( decoder_ptr, "attribut_chunk_id", _chunk.entity_chunk_id ); // key of particular item
+																	DED_GET_ULONG   	( decoder_ptr, "attribut_aiid", _chunk.aiid ); // this number is continuesly increasing all thruout the entries in this table
+																	DED_GET_ULONG   	( decoder_ptr, "attribut_chunk_seq", _chunk.entity_chunk_seq ); // sequence number of particular item
+																	DED_GET_STDVECTOR	( decoder_ptr, "attribut_chunk_data", _chunk.entity_chunk_data ); //
+																	DED_GET_STRUCT_END( decoder_ptr, "chunk_record" );
+
+																	cout << "entity_chunk_id : " << _chunk.entity_chunk_id << endl;
+																	cout << "entity_aiid : " << _chunk.aiid << endl;
+																	cout << "entity_chunk_seq : " << _chunk.entity_chunk_seq << endl;
+														
+																    /// this will, chunk by chunk, assemble the elementfile data
+																    std::copy(_chunk.entity_chunk_data.begin(), _chunk.entity_chunk_data.end(), std::back_inserter(ElementData));	
+															}
+															else
+																	BOOST_LOG_TRIVIAL(error) << "[CDataDictionaryControl::ftgt] FAIL: ERROR:  when trying to put data into decoder " << endl;
+															
+														
+														}
+														attribut=prev;
+													}
+												}
+										}
+								}
+						}
+					}
+				}
+			}
+		}
+	}
+	}
+	catch (const std::exception& e)  // catch any exceptions
+	{ cerr << endl << "Exception: " << e.what() << endl; }
+
+	resultAttributPair = make_pair(attributpath,ElementData); // assemble data 
+
+	return resultAttributPair;
+}
 
