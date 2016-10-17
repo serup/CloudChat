@@ -2102,4 +2102,96 @@ BOOST_AUTO_TEST_CASE(fetchAttributFromBFi)
 	cout << "}" << endl;
 }
 
+BOOST_AUTO_TEST_CASE(fetchAttributFrom2BFi)
+{
+	cout << "BOOST_AUTO_TEST_CASE(fetchAttributFrom2BFi)\n{" << endl;
 
+	using boost::optional;
+	using boost::property_tree::ptree;
+
+	CDataDictionaryControl *pDDC = new CDataDictionaryControl();
+	std::list<std::string> listResult = pDDC->ls();	
+	BOOST_FOREACH(std::string attribut, listResult)
+	{
+		cout << "- OK attribut : " << attribut << endl;
+	}
+	BOOST_CHECK(listResult.size() <= 0);
+
+	CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
+	ptree ptListOfBlockRecords;
+
+	// attribut 1 - large
+	std::string attributName= "foto"; // it should be ddid -- datadictionary id which refers to attribut description
+	std::vector<unsigned char> attributValue;
+	std::string fn = "testImage.png"; // should be of size 10.5 Kb
+	std::ifstream is (fn, ios::binary);
+	if (is)
+	{
+		long length = boost::filesystem::file_size(fn);
+		std::cout << "[readFile] Reading file: " << fn << " ; amount " << length << " characters... \n";
+		// Make sure receipient has room
+		attributValue.resize(length,0);
+		//read content of infile
+		is.read ((char*)&attributValue[0],length);
+		std::cout << "[readFile] size: " << (int) attributValue.size() << '\n';
+		std::cout << "[readFile] capacity: " << (int) attributValue.capacity() << '\n';
+		std::cout << "[readFile] max_size: " << (int) attributValue.max_size() << '\n';
+		is.close();
+	}
+	BOOST_CHECK(attributValue.size() > 0);
+
+	std::string realmName = "profile";
+	long maxBlockRecordSize=10456; // should result in multiple BlockRecords inside a BlockEntity	
+
+
+	cout << "BlockRecord size before: " << maxBlockRecordSize << endl;
+	std::string transGuid = "F9D23762ED2823A27E62A64B95C024EF";
+	BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName, attributValue)); 
+	cout << "BlockRecord size after 1 attribut add : " << maxBlockRecordSize << endl;
+ 
+	long maxBlockEntitySize=15000; // should result in 2 BlockEntity 
+	boost::property_tree::ptree ptBlockEntity = ptestDataDictionaryControl->addBlockRecordToBlockEntity(transGuid, ptListOfBlockRecords, maxBlockEntitySize);
+	BOOST_CHECK(ptBlockEntity.size()>0);
+
+	cout << "XML output of ALL attributs : " << endl;
+	cout << "*{{{" << endl;
+	write_xml(std::cout, ptBlockEntity, boost::property_tree::xml_writer_make_settings<std::string>('\t', 1) );
+	cout << "*}}}" << endl;
+
+	// create BFi files
+	std::vector< pair<std::string ,int> > listOfBlockEntityFiles = ptestDataDictionaryControl->writeBlockEntityToBFiFile(ptBlockEntity);
+	cout << "Created : " << listOfBlockEntityFiles.size() << " .BFi files " << endl;
+	BOOST_CHECK(listOfBlockEntityFiles.size()==1);
+
+	pair <std::string,int> block;
+	std::list<std::string> listBFiFiles;
+	BOOST_FOREACH(block, listOfBlockEntityFiles)
+	{
+		cout << "- OK Created file : " << block.first << " size : " << block.second << endl;
+		listBFiFiles.push_back(block.first);
+	}
+
+
+	cout << "________________________________________" << endl;
+
+	cout << "Fetch attribut from .BFi file " << endl;
+
+	pair<std::string, std::vector<unsigned char>> pairAttribut = ptestDataDictionaryControl->ftgt("F9D23762ED2823A27E62A64B95C024EF./profile/foto");
+	cout << "Attribut name : " << pairAttribut.first << endl;
+//	std::string value(pairAttribut.second.begin(), pairAttribut.second.end());
+//	cout << "Attribut value : " << value << endl;
+
+	BOOST_CHECK(attributValue == pairAttribut.second); // verify that retrieved value is same as stored
+
+	cout << "________________________________________" << endl;
+
+	// Clean up section - must be in bottom
+	BOOST_FOREACH(std::string filename, listBFiFiles)
+	{
+		cout << "- OK Cleanup file : " << filename << endl;
+		boost::filesystem::path p = boost::filesystem::path(filename);
+		boost::filesystem::remove(filename);
+	}
+
+	cout << "}" << endl;
+}
