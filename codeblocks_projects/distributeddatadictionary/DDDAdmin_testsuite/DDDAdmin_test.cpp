@@ -2021,3 +2021,96 @@ BOOST_AUTO_TEST_CASE(addLargeAttributOver3BFifiles)
 
 	cout<<"}"<<endl;
 }
+
+
+BOOST_AUTO_TEST_CASE(fetchAttributFromBFi)
+{
+	cout << "BOOST_AUTO_TEST_CASE(fetchAttributFromBFi)\n{" << endl;
+
+	using boost::optional;
+	using boost::property_tree::ptree;
+
+	CDataDictionaryControl *pDDC = new CDataDictionaryControl();
+	std::list<std::string> listResult = pDDC->ls();	
+	BOOST_FOREACH(std::string attribut, listResult)
+	{
+		cout << "- OK attribut : " << attribut << endl;
+	}
+	BOOST_CHECK(listResult.size() <= 0);
+
+	CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
+	ptree ptListOfBlockRecords;
+
+	// attribut 1
+	std::string attributName = "name";
+	std::string name = "Johnny Serup";	
+	std::vector<unsigned char> attributValue(name.begin(), name.end());
+
+	std::string realmName = "profile";
+	long maxBlockRecordSize=5456; // should result in multiple BlockRecords inside a BlockEntity	
+
+
+	cout << "BlockRecord size before: " << maxBlockRecordSize << endl;
+	std::string transGuid = "F9D23762ED2823A27E62A64B95C024EF";
+	BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName, attributValue)); 
+	cout << "BlockRecord size after 1 attribut add : " << maxBlockRecordSize << endl;
+ 
+	long maxBlockEntitySize=15000; // should result in 1 BlockEntity 
+	boost::property_tree::ptree ptBlockEntity = ptestDataDictionaryControl->addBlockRecordToBlockEntity(transGuid, ptListOfBlockRecords, maxBlockEntitySize);
+	BOOST_CHECK(ptBlockEntity.size()>0);
+
+	cout << "XML output of ALL attributs : " << endl;
+	cout << "*{{{" << endl;
+	write_xml(std::cout, ptBlockEntity, boost::property_tree::xml_writer_make_settings<std::string>('\t', 1) );
+	cout << "*}}}" << endl;
+
+	// create BFi files
+	std::vector< pair<std::string ,int> > listOfBlockEntityFiles = ptestDataDictionaryControl->writeBlockEntityToBFiFile(ptBlockEntity);
+	cout << "Created : " << listOfBlockEntityFiles.size() << " .BFi files " << endl;
+	BOOST_CHECK(listOfBlockEntityFiles.size()==1);
+
+	pair <std::string,int> block;
+	std::list<std::string> listBFiFiles;
+	BOOST_FOREACH(block, listOfBlockEntityFiles)
+	{
+		cout << "- OK Created file : " << block.first << " size : " << block.second << endl;
+		listBFiFiles.push_back(block.first);
+	}
+
+
+	cout << "________________________________________" << endl;
+
+	// Clean up section - must be in bottom
+	BOOST_FOREACH(std::string filename, listBFiFiles)
+	{
+		cout << "- OK Cleanup file : " << filename << endl;
+		boost::filesystem::path p = boost::filesystem::path(filename);
+		boost::filesystem::remove(filename);
+	}
+
+	cout << "}" << endl;
+}
+
+BOOST_AUTO_TEST_CASE(fetchLargeAttributFromBFi)
+{
+	cout << "BOOST_AUTO_TEST_CASE(fetchLargeAttributFromBFi)\n{" << endl;
+
+	BOOST_CHECK(true == false);
+	cout << "}" << endl;
+}
+
+BOOST_AUTO_TEST_CASE(fetchLargeAttributFromOver2BFiFiles)
+{
+	cout << "BOOST_AUTO_TEST_CASE(fetchLargeAttributFromOver2BFiFiles)\n{" << endl;
+
+	BOOST_CHECK(true == false);
+	cout << "}" << endl;
+}
+
+BOOST_AUTO_TEST_CASE(fetchLargeAttributFromOver3BFiFiles)
+{
+	cout << "BOOST_AUTO_TEST_CASE(fetchLargeAttributFromOver3BFiFiles)\n{" << endl;
+
+	BOOST_CHECK(true == false);
+	cout << "}" << endl;
+}

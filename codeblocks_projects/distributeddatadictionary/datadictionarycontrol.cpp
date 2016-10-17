@@ -518,11 +518,21 @@ std::vector< pair<std::string ,int> > CDataDictionaryControl::writeBlockEntityTo
 		std::string filename =  v2.second.get_child("TransGUID").data();
 
 		std::string blockfilename = filename + "_" + std::to_string(filenumber) + ".BFi";
+		{
 		ofstream blockFile (blockfilename.c_str(), ios::out | ios::binary);
 		write_xml(blockFile, blkEntity);
-		
+		}
+
 		int filesize = (int)boost::filesystem::file_size(blockfilename);
-		listOfBlockEntityFiles.push_back(make_pair(blockfilename,filesize));
+		if(filesize<=0) {
+			BOOST_LOG_TRIVIAL(warning) << "WARNING: file created, was of size 0 according to boost::filesystem::file_size( " << blockfilename << " ) - will try to get size again... " << "\n"; 
+			// try again - perhaps flush was not finished
+			filesize = (int)boost::filesystem::file_size(blockfilename);
+			if(filesize<=0)
+				BOOST_LOG_TRIVIAL(error) << "ERROR: file created, was of size 0 according to boost::filesystem::file_size( " << blockfilename << " ) " << "\n"; 
+		}
+		if(filesize > 0) 
+			listOfBlockEntityFiles.push_back(make_pair(blockfilename,filesize));
 
 		blkEntity.clear();
 	}
