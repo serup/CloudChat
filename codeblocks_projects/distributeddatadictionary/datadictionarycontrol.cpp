@@ -720,17 +720,11 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::
 										BOOST_FOREACH(const boost::property_tree::ptree::value_type &vt3, vt2.second)
 										{
 												if(vt3.first == "chunk_ddid") {
-													if(prevAtt!=vt3.second.data()) {
-														prevAtt=vt3.second.data();
 														attribut += vt3.second.data();
+
+													  cout << "attribut : " << attribut << " == attributpath : " << attributpath << endl;
+
 														// find if any existing attribut
-														auto i = listBFiAttributes.begin(), end = listBFiAttributes.end();
-														i = std::find(i, end, attribut);
-														if(i != end)
-															cout << "INFO: span over .BFi : " << attribut << endl;
-														else 
-															listBFiAttributes.push_back(attribut); // disregard chunks of attribut and duplicates, only list unique attributs
-												
 														if(attribut == attributpath){
 															chunk_record_entries f;
 															f.DataSize = vt2.second.get<unsigned long>("DataSize");
@@ -777,7 +771,8 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::
 														
 														}
 														attribut=prev;
-													}
+
+												
 												}
 										}
 								}
