@@ -1278,6 +1278,7 @@ BOOST_AUTO_TEST_CASE(reassembleLargeAttribut)
 												  Element.strElementID = _chunk.entity_chunk_id;
 												  Element.ElementData.clear();
 												  prevchunkid = _chunk.entity_chunk_id;
+											    cout << endl; 
 										    }
 											  else
 											  {
@@ -1287,8 +1288,6 @@ BOOST_AUTO_TEST_CASE(reassembleLargeAttribut)
 												  Element.ElementData.clear();
 												  prevchunkid = _chunk.entity_chunk_id;
 											  }
-											   
-                        cout << endl;
 					              cout << "attribut : " << _chunk.entity_chunk_id << endl << "- entity_chunk_seq : ";
 											}
                        
