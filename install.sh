@@ -213,6 +213,8 @@ if [ "" == "$PKG_OK" ]; then
   echo "NO need to use linux-install-vim-intellisense.sh script"
   echo "- install window-swap plugin"
   git clone https://github.com/wesQ3/vim-windowswap ~/.vim/bundle/vim-windowswap
+  echo "- install :Linediff plugin"
+  git clone git://github.com/AndrewRadev/linediff.vim.git ~/.vim/bundle/linediff
   echo " - done."
 else
   echo "- vim already installed - consider adding set mouse=a   ;to enable mouse handling of splits"

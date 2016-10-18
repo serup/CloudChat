@@ -705,6 +705,9 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::
 			bool bExtBFi=false;
 			bExtBFi = (boost::filesystem::extension(i.string()) == ".BFi");
 			if(bExtBFi) {
+				cout << "file : " << i << endl;
+				cout << "*{{{" << endl;
+
 				std::ifstream is (i.string());
 				ptree pt;
 				try{
@@ -769,13 +772,13 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::
 																	DED_GET_STRUCT_END( decoder_ptr, "chunk_record" );
 
 																	//cout << "entity_chunk_id : " << _chunk.entity_chunk_id << endl;
-																	cout << "entity_aiid : " << _chunk.aiid << endl;
+																	//cout << "entity_aiid : " << _chunk.aiid << endl;
 																	cout << "entity_chunk_seq : " << _chunk.entity_chunk_seq << endl;
 													
 																	// add to list of received chunks
 																	listOfattributChunks.push_back(_chunk); 
 
-																	cout << "Elements in listOfattributChunks : " << listOfattributChunks.size() << endl;
+																	//cout << "Elements in listOfattributChunks : " << listOfattributChunks.size() << endl;
 
 																		//TODO: assemble after sort	of listOfattributChunks
 																    /// this will, chunk by chunk, assemble the element data
@@ -795,7 +798,10 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::
 						}
 					}
 				}
+
+				cout << "*}}}" << endl;
 			}
+			
 		}
 	}
 	}

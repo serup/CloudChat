@@ -2184,7 +2184,7 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom2BFi)
 	BOOST_CHECK(attributValue == pairAttribut.second); // verify that retrieved value is same as stored
 
 	cout << "________________________________________" << endl;
-/*
+
 	// Clean up section - must be in bottom
 	BOOST_FOREACH(std::string filename, listBFiFiles)
 	{
@@ -2192,6 +2192,6 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom2BFi)
 		boost::filesystem::path p = boost::filesystem::path(filename);
 		boost::filesystem::remove(filename);
 	}
-*/
+
 	cout << "}" << endl;
 }
