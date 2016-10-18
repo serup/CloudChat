@@ -58,14 +58,6 @@ struct ReportRedirector
 };
 
 
-struct EntityChunkDataInfo{
-	std::string entity_chunk_id;
-	unsigned long aiid;
-	unsigned long entity_chunk_seq;
-	std::vector<unsigned char> entity_chunk_data;
-};
-
-
 BOOST_GLOBAL_FIXTURE(ReportRedirector)
 #endif
 #endif
@@ -1135,7 +1127,7 @@ BOOST_AUTO_TEST_CASE(reassembleLargeAttribut)
 	using boost::optional;
 	using boost::property_tree::ptree;
 
-	cout<<"BOOST_AUTO_TEST_CASE(add2AttributsOneLargeOneSmallToBlockRecord)\n{"<<endl;
+	cout<<"BOOST_AUTO_TEST_CASE(reassembleLargeAttribut)\n{"<<endl;
 
 	CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
 	ptree ptListOfBlockRecords;
@@ -1220,6 +1212,8 @@ BOOST_AUTO_TEST_CASE(reassembleLargeAttribut)
 	std::string hexdata_attribut2="";
 	std::string chunk_ddid2="";
 
+  std::vector<assembledElements> records_elements; // contains assembled elements from tree
+
 	BOOST_FOREACH(ptree::value_type &vt, ptListOfBlockRecords.get_child("listOfBlockRecords"))
 	{
 		cout << " - record id : " << vt.second.get_child("chunk_id").data() << endl;
@@ -1232,24 +1226,81 @@ BOOST_AUTO_TEST_CASE(reassembleLargeAttribut)
 				{
 					cout << " - chunk_data : " << vt2.first; 
 					std::string strPrevId = "";
+
+//+ readtoastrecord - assembled in record_elements					
+					bool pushed=false;
+					std::string prevchunkid = (std::string)"nothing";
+					assembledElements Element;
 					BOOST_FOREACH(ptree::value_type &vt3, vt2.second)
 					{
-						if(vt3.first == "chunk_record") {
-							if(strPrevId != vt3.second.get_child("chunk_ddid").data()) {
-								strPrevId = vt3.second.get_child("chunk_ddid").data();
-								cout << endl;
-								cout << " -- chunk_record : " << vt3.second.get_child("chunk_ddid").data() << " "; 
-								amountOfAttributchunk_records++;
-								if(amountOfAttributchunk_records==2) { // fetch only 2nd attribut, since that only has one record - 1st attribut is foto and consists of many records
-									chunk_ddid2 = strPrevId;
-									cout << endl;	
-									hexdata_attribut2 = vt3.second.get_child("Data").data();
-								}
+						if(vt3.first == "chunk_record")
+						{
+							chunk_record_entries f;
+							f.DataSize = vt2.second.get<unsigned long>("DataSize");
+							f.Data = vt2.second.get<std::string>("Data");
+							f.DataMD5 = vt2.second.get<std::string>("DataMD5");
+
+							//cout << "DataMD5 : "<< f.DataMD5 <<endl;
+							std::string strMD5(CMD5(f.Data.c_str()).GetMD5s());
+							if(f.DataMD5 != strMD5)
+											cout << "FAIL: ERROR: data area for attribut have been corrupted " << endl;
+
+							// convert Data 
+							std::string hexdata = f.Data;
+							unsigned char* data_in_unhexed_buf = (unsigned char*) malloc (hexdata.size());
+							ZeroMemory(data_in_unhexed_buf,hexdata.size()); // make sure no garbage is inside the newly allocated space
+							boost::algorithm::unhex(hexdata.begin(),hexdata.end(), data_in_unhexed_buf);// convert the hex array to an array containing byte values
+
+							//cout << "hexdata : < " << hexdata << " > " << endl; 
+							//cout << "hexdata size: " << hexdata.size() << endl;
+							// initialize decoder with Data 
+							DED_PUT_DATA_IN_DECODER(decoder_ptr,data_in_unhexed_buf,hexdata.size());
+							if(decoder_ptr != 0) {
+
+											EntityChunkDataInfo _chunk;
+											// decode data ...
+											DED_GET_STRUCT_START( decoder_ptr, "chunk_record" );
+											DED_GET_STDSTRING	( decoder_ptr, "attribut_chunk_id", _chunk.entity_chunk_id ); // key of particular item
+											DED_GET_ULONG   	( decoder_ptr, "attribut_aiid", _chunk.aiid ); // this number is continuesly increasing all thruout the entries in this table
+											DED_GET_ULONG   	( decoder_ptr, "attribut_chunk_seq", _chunk.entity_chunk_seq ); // sequence number of particular item
+											DED_GET_STDVECTOR	( decoder_ptr, "attribut_chunk_data", _chunk.entity_chunk_data ); //
+											DED_GET_STRUCT_END( decoder_ptr, "chunk_record" );
+
+											//cout << "entity_chunk_id : " << _chunk.entity_chunk_id << endl;
+											//cout << "entity_aiid : " << _chunk.aiid << endl;
+											cout << "entity_chunk_seq : " << _chunk.entity_chunk_seq << endl;
+
+											if(prevchunkid=="nothing" || prevchunkid != _chunk.entity_chunk_id)
+											{
+											  if(prevchunkid!="nothing" && prevchunkid != _chunk.entity_chunk_id){
+											    records_elements.push_back(Element);
+												  pushed=true;
+												  /// new Element
+												  Element.strElementID = _chunk.entity_chunk_id;
+												  Element.ElementData.clear();
+												  prevchunkid = _chunk.entity_chunk_id;
+											  }
+											  else
+											  {
+												  pushed=false;
+												  /// new Element
+												  Element.strElementID = _chunk.entity_chunk_id;
+												  Element.ElementData.clear();
+												  prevchunkid = _chunk.entity_chunk_id;
+											  }
+											}
+											/// this will, chunk by chunk, assemble the data
+											std::copy(_chunk.entity_chunk_data.begin(), _chunk.entity_chunk_data.end(), std::back_inserter(Element.ElementData));
+											pushed=false;
 							}
-							else
-								cout << ".";
+							free(data_in_unhexed_buf);
+
 						}
-					}
+          }
+          if(pushed==false){
+            records_elements.push_back(Element);
+          }
+//- readtoastrecord
 				}
 			}
 		}

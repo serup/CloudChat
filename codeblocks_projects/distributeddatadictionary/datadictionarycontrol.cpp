@@ -658,22 +658,6 @@ std::list<std::string> CDataDictionaryControl::ls()
 	return listBFiAttributes;
 }
 
-struct chunk_record_entries
-{
-	std::string chunk_ddid;
-	unsigned int DataSize;
-	std::string Data;
-	std::string DataMD5;
-};
-
-struct EntityChunkDataInfo{
-	std::string entity_chunk_id;
-	unsigned long aiid;
-	unsigned long entity_chunk_seq;
-	std::vector<unsigned char> entity_chunk_data;
-};
-
-
 pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::string attributpath)
 {
 	using boost::optional;

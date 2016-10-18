@@ -36,6 +36,27 @@ struct BlockRecordEntry{
 };
 typedef std::vector<BlockRecordEntry> BlockRecord;
 
+struct chunk_record_entries
+{
+	std::string chunk_ddid;
+	unsigned int DataSize;
+	std::string Data;
+	std::string DataMD5;
+};
+
+struct EntityChunkDataInfo{
+	std::string entity_chunk_id;
+	unsigned long aiid;
+	unsigned long entity_chunk_seq;
+	std::vector<unsigned char> entity_chunk_data;
+};
+
+struct assembledElements {
+	std::string strElementID;
+	std::vector<unsigned char> ElementData;
+};
+
+
 class CDataDictionaryControl
 {
     public:
