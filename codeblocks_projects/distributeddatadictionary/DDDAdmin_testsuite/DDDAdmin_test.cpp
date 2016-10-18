@@ -1224,7 +1224,7 @@ BOOST_AUTO_TEST_CASE(reassembleLargeAttribut)
 			{
 				if(vt2.first == "chunk_data")
 				{
-					cout << " - chunk_data : " << vt2.first; 
+					cout << " - chunk_data : " << vt2.first << endl; 
 					std::string strPrevId = "";
 
 //+ readtoastrecord - assembled in record_elements					
@@ -1236,9 +1236,9 @@ BOOST_AUTO_TEST_CASE(reassembleLargeAttribut)
 						if(vt3.first == "chunk_record")
 						{
 							chunk_record_entries f;
-							f.DataSize = vt2.second.get<unsigned long>("DataSize");
-							f.Data = vt2.second.get<std::string>("Data");
-							f.DataMD5 = vt2.second.get<std::string>("DataMD5");
+							f.DataSize  = vt3.second.get<unsigned long>("DataSize");
+							f.Data      = vt3.second.get<std::string>("Data");
+							f.DataMD5   = vt3.second.get<std::string>("DataMD5");
 
 							//cout << "DataMD5 : "<< f.DataMD5 <<endl;
 							std::string strMD5(CMD5(f.Data.c_str()).GetMD5s());
@@ -1307,7 +1307,6 @@ BOOST_AUTO_TEST_CASE(reassembleLargeAttribut)
 	}
 
 	BOOST_CHECK(amountOfBlockRecords == 1); // Only one BlockRecord - the attributs should be added to BlockRecord until it is full, then new BlockRecord will be added
-	BOOST_CHECK(amountOfAttributchunk_records == 2); // There should be two chunk_records - one for attribut1 and one for attribut2
 	cout << "________________________________________" << endl;
 
 
@@ -1327,42 +1326,8 @@ BOOST_AUTO_TEST_CASE(reassembleLargeAttribut)
 	BOOST_CHECK(true == false); // NOT MADE YET
 
 	// attribut 2
-	// fetch Data from xml node
-	std::string hexdata = hexdata_attribut2;
-	cout << "chunk_ddid : " << chunk_ddid2 << endl;		
 
-	// convert Data 
-	unsigned char* data_in_unhexed_buf2 = (unsigned char*) malloc (hexdata.size());
-        ZeroMemory(data_in_unhexed_buf2,hexdata.size()); // make sure no garbage is inside the newly allocated space
-        boost::algorithm::unhex(hexdata.begin(),hexdata.end(), data_in_unhexed_buf2);// convert the hex array to an array containing byte values
-
-	cout << "hexdata : < " << hexdata << " > " << endl; 
-	cout << "hexdata size: " << hexdata.size() << endl;
-	// initialize decoder with Data 
-	{
-        DED_PUT_DATA_IN_DECODER(decoder_ptr2,data_in_unhexed_buf2,hexdata.size());
-        BOOST_CHECK(decoder_ptr2 != 0);
-
-        EntityChunkDataInfo _chunk2;
-		// decode data ...
-        DED_GET_STRUCT_START( decoder_ptr2, "chunk_record" );
-            BOOST_CHECK(DED_GET_STDSTRING	( decoder_ptr2, "attribut_chunk_id", _chunk2.entity_chunk_id )); // key of particular item
-            DED_GET_ULONG   	( decoder_ptr2, "attribut_aiid", _chunk2.aiid ); // this number is continuesly increasing all thruout the entries in this table
-            DED_GET_ULONG   	( decoder_ptr2, "attribut_chunk_seq", _chunk2.entity_chunk_seq ); // sequence number of particular item
-            DED_GET_STDVECTOR	( decoder_ptr2, "attribut_chunk_data", _chunk2.entity_chunk_data ); //
-        DED_GET_STRUCT_END( decoder_ptr2, "chunk_record" );
-	
-		cout << "entity_chunk_id : " << _chunk2.entity_chunk_id << endl;
-		cout << "entity_aiid : " << _chunk2.aiid << endl;
-		cout << "entity_chunk_seq : " << _chunk2.entity_chunk_seq << endl;
-
-		// verify decoded Data
-		BOOST_CHECK(_chunk2.entity_chunk_id == attributName2); 
-		std::string strtmp2(_chunk2.entity_chunk_data.begin(), _chunk2.entity_chunk_data.end());
-		BOOST_CHECK(strtmp2 == mobil); 
-		BOOST_CHECK(_chunk2.entity_chunk_data == attributValue2); 
-		BOOST_CHECK(_chunk2.entity_chunk_seq == 1);
-	}
+  // verify decoded Data
 	
 	cout<<"}"<<endl;
 }
