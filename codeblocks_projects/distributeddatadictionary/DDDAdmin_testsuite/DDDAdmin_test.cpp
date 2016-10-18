@@ -1224,7 +1224,7 @@ BOOST_AUTO_TEST_CASE(reassembleLargeAttribut)
 			{
 				if(vt2.first == "chunk_data")
 				{
-					cout << " - chunk_data : " << vt2.first << endl; 
+					cout << " - chunk_data : " << endl; 
 					std::string strPrevId = "";
 
 //+ readtoastrecord - assembled in record_elements					
@@ -1268,7 +1268,6 @@ BOOST_AUTO_TEST_CASE(reassembleLargeAttribut)
 
 											//cout << "entity_chunk_id : " << _chunk.entity_chunk_id << endl;
 											//cout << "entity_aiid : " << _chunk.aiid << endl;
-											cout << "entity_chunk_seq : " << _chunk.entity_chunk_seq << endl;
 
 											if(prevchunkid=="nothing" || prevchunkid != _chunk.entity_chunk_id)
 											{
@@ -1279,7 +1278,7 @@ BOOST_AUTO_TEST_CASE(reassembleLargeAttribut)
 												  Element.strElementID = _chunk.entity_chunk_id;
 												  Element.ElementData.clear();
 												  prevchunkid = _chunk.entity_chunk_id;
-											  }
+										    }
 											  else
 											  {
 												  pushed=false;
@@ -1288,9 +1287,16 @@ BOOST_AUTO_TEST_CASE(reassembleLargeAttribut)
 												  Element.ElementData.clear();
 												  prevchunkid = _chunk.entity_chunk_id;
 											  }
+											   
+                        cout << endl;
+					              cout << "attribut : " << _chunk.entity_chunk_id << endl << "- entity_chunk_seq : ";
 											}
+                       
+                      cout << "," << _chunk.entity_chunk_seq;
+
 											/// this will, chunk by chunk, assemble the data
 											std::copy(_chunk.entity_chunk_data.begin(), _chunk.entity_chunk_data.end(), std::back_inserter(Element.ElementData));
+
 											pushed=false;
 							}
 							free(data_in_unhexed_buf);
@@ -1300,6 +1306,7 @@ BOOST_AUTO_TEST_CASE(reassembleLargeAttribut)
           if(pushed==false){
             records_elements.push_back(Element);
           }
+          cout << endl;
 //- readtoastrecord
 				}
 			}
