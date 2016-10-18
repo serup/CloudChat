@@ -669,7 +669,8 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::
 {
 	using boost::optional;
 	using boost::property_tree::ptree;
-	std::list<std::string> listBFiAttributes;
+	
+	std::list<EntityChunkDataInfo> listOfattributChunks;
 
 	pair<std::string, std::vector<unsigned char>> resultAttributPair;
 	
@@ -722,7 +723,7 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::
 												if(vt3.first == "chunk_ddid") {
 														attribut += vt3.second.data();
 
-													  cout << "attribut : " << attribut << " == attributpath : " << attributpath << endl;
+													  //cout << "attribut : " << attribut << " == attributpath : " << attributpath << endl;
 
 														// find if any existing attribut
 														if(attribut == attributpath){
@@ -731,7 +732,7 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::
 															f.Data = vt2.second.get<std::string>("Data");
 															f.DataMD5 = vt2.second.get<std::string>("DataMD5");
 
-															cout << "DataMD5 : "<< f.DataMD5 <<endl;
+															//cout << "DataMD5 : "<< f.DataMD5 <<endl;
 															std::string strMD5(CMD5(f.Data.c_str()).GetMD5s());
 															if(f.DataMD5 != strMD5)
 																	cout << "FAIL: ERROR: data area for attribut have been corrupted " << endl;
@@ -743,8 +744,8 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::
 															ZeroMemory(data_in_unhexed_buf,hexdata.size()); // make sure no garbage is inside the newly allocated space
 															boost::algorithm::unhex(hexdata.begin(),hexdata.end(), data_in_unhexed_buf);// convert the hex array to an array containing byte values
 
-															cout << "hexdata : < " << hexdata << " > " << endl; 
-															cout << "hexdata size: " << hexdata.size() << endl;
+															//cout << "hexdata : < " << hexdata << " > " << endl; 
+															//cout << "hexdata size: " << hexdata.size() << endl;
 															// initialize decoder with Data 
 															DED_PUT_DATA_IN_DECODER(decoder_ptr,data_in_unhexed_buf,hexdata.size());
 															if(decoder_ptr != 0) {
@@ -758,12 +759,18 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::
 																	DED_GET_STDVECTOR	( decoder_ptr, "attribut_chunk_data", _chunk.entity_chunk_data ); //
 																	DED_GET_STRUCT_END( decoder_ptr, "chunk_record" );
 
-																	cout << "entity_chunk_id : " << _chunk.entity_chunk_id << endl;
+																	//cout << "entity_chunk_id : " << _chunk.entity_chunk_id << endl;
 																	cout << "entity_aiid : " << _chunk.aiid << endl;
-																	cout << "entity_chunk_seq : " << _chunk.entity_chunk_seq << endl;
-														
-																    /// this will, chunk by chunk, assemble the elementfile data
-																    std::copy(_chunk.entity_chunk_data.begin(), _chunk.entity_chunk_data.end(), std::back_inserter(ElementData));	
+																	//cout << "entity_chunk_seq : " << _chunk.entity_chunk_seq << endl;
+													
+																	// add to list of received chunks
+																	listOfattributChunks.push_back(_chunk); 
+
+																	cout << "Elements in listOfattributChunks : " << listOfattributChunks.size() << endl;
+
+																		//TODO: assemble after sort	of listOfattributChunks
+																    /// this will, chunk by chunk, assemble the element data
+																    //std::copy(_chunk.entity_chunk_data.begin(), _chunk.entity_chunk_data.end(), std::back_inserter(ElementData));	
 															}
 															else
 																	BOOST_LOG_TRIVIAL(error) << "[CDataDictionaryControl::ftgt] FAIL: ERROR:  when trying to put data into decoder " << endl;
