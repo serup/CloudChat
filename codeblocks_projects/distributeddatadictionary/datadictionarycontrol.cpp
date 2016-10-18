@@ -194,6 +194,9 @@ std::vector< pair<std::vector<unsigned char>, int> > CDataDictionaryControl::spl
 	int strangeCount=0;
 	bool bError=false;
 
+	cout << "*{{{" << endl;
+	cout << " DED entity_chunk_seq : ";
+
 	do
 	{
 		chunkdata.clear();  
@@ -225,6 +228,9 @@ std::vector< pair<std::vector<unsigned char>, int> > CDataDictionaryControl::spl
 		aiid++;
 		entity_chunk_seq++;
 	
+		cout << "," << entity_chunk_seq;
+    
+
 		{ /// defined in DD_ATTRIBUT_TOAST.xml in datadictionary
 			DED_START_ENCODER(encoder_ptr);
 			DED_PUT_STRUCT_START( encoder_ptr, "chunk_record" );
@@ -244,6 +250,9 @@ std::vector< pair<std::vector<unsigned char>, int> > CDataDictionaryControl::spl
 
 		}
 	}while(iBytesLeft>0 && !bError);
+
+	cout << "*}}}" << endl;
+
 
 	return listOfDEDchunks;
 }
@@ -761,7 +770,7 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::
 
 																	//cout << "entity_chunk_id : " << _chunk.entity_chunk_id << endl;
 																	cout << "entity_aiid : " << _chunk.aiid << endl;
-																	//cout << "entity_chunk_seq : " << _chunk.entity_chunk_seq << endl;
+																	cout << "entity_chunk_seq : " << _chunk.entity_chunk_seq << endl;
 													
 																	// add to list of received chunks
 																	listOfattributChunks.push_back(_chunk); 
