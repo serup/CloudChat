@@ -75,6 +75,9 @@ class CDataDictionaryControl
 	  	bool addAttributToBlockRecord(std::string transGuid, boost::property_tree::ptree &ptListOfBlockRecords, long &maxBlockRecordSize, std::string realmName, std::string attributName, std::vector<unsigned char> attributValue);
 	  
 	  	std::list<std::string> ls();
+		std::vector<assembledElements> readBlockRecordElements(boost::property_tree::ptree::value_type &vt2); 
+		bool findElement(std::vector<assembledElements>& _Elements, std::string strElementID);
+		std::vector<unsigned char> fetchElement(std::vector<assembledElements>& _Elements, std::string strElementID);
 		pair<std::string, std::vector<unsigned char>> ftgt(std::string attributpath);
 	
     protected:

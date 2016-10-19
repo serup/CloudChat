@@ -1225,115 +1225,44 @@ BOOST_AUTO_TEST_CASE(reassembleLargeAttribut)
 				if(vt2.first == "chunk_data")
 				{
 					cout << " - chunk_data : " << endl; 
-					std::string strPrevId = "";
-
-//+ readtoastrecord - assembled in record_elements					
-					bool pushed=false;
-					std::string prevchunkid = (std::string)"nothing";
-					assembledElements Element;
-					BOOST_FOREACH(ptree::value_type &vt3, vt2.second)
-					{
-						if(vt3.first == "chunk_record")
-						{
-							chunk_record_entries f;
-							f.DataSize  = vt3.second.get<unsigned long>("DataSize");
-							f.Data      = vt3.second.get<std::string>("Data");
-							f.DataMD5   = vt3.second.get<std::string>("DataMD5");
-
-							//cout << "DataMD5 : "<< f.DataMD5 <<endl;
-							std::string strMD5(CMD5(f.Data.c_str()).GetMD5s());
-							if(f.DataMD5 != strMD5)
-											cout << "FAIL: ERROR: data area for attribut have been corrupted " << endl;
-
-							// convert Data 
-							std::string hexdata = f.Data;
-							unsigned char* data_in_unhexed_buf = (unsigned char*) malloc (hexdata.size());
-							ZeroMemory(data_in_unhexed_buf,hexdata.size()); // make sure no garbage is inside the newly allocated space
-							boost::algorithm::unhex(hexdata.begin(),hexdata.end(), data_in_unhexed_buf);// convert the hex array to an array containing byte values
-
-							//cout << "hexdata : < " << hexdata << " > " << endl; 
-							//cout << "hexdata size: " << hexdata.size() << endl;
-							// initialize decoder with Data 
-							DED_PUT_DATA_IN_DECODER(decoder_ptr,data_in_unhexed_buf,hexdata.size());
-							if(decoder_ptr != 0) {
-
-											EntityChunkDataInfo _chunk;
-											// decode data ...
-											DED_GET_STRUCT_START( decoder_ptr, "chunk_record" );
-											DED_GET_STDSTRING	( decoder_ptr, "attribut_chunk_id", _chunk.entity_chunk_id ); // key of particular item
-											DED_GET_ULONG   	( decoder_ptr, "attribut_aiid", _chunk.aiid ); // this number is continuesly increasing all thruout the entries in this table
-											DED_GET_ULONG   	( decoder_ptr, "attribut_chunk_seq", _chunk.entity_chunk_seq ); // sequence number of particular item
-											DED_GET_STDVECTOR	( decoder_ptr, "attribut_chunk_data", _chunk.entity_chunk_data ); //
-											DED_GET_STRUCT_END( decoder_ptr, "chunk_record" );
-
-											//cout << "entity_chunk_id : " << _chunk.entity_chunk_id << endl;
-											//cout << "entity_aiid : " << _chunk.aiid << endl;
-
-											if(prevchunkid=="nothing" || prevchunkid != _chunk.entity_chunk_id)
-											{
-											  if(prevchunkid!="nothing" && prevchunkid != _chunk.entity_chunk_id){
-											    records_elements.push_back(Element);
-												  pushed=true;
-												  /// new Element
-												  Element.strElementID = _chunk.entity_chunk_id;
-												  Element.ElementData.clear();
-												  prevchunkid = _chunk.entity_chunk_id;
-											    cout << endl; 
-										    }
-											  else
-											  {
-												  pushed=false;
-												  /// new Element
-												  Element.strElementID = _chunk.entity_chunk_id;
-												  Element.ElementData.clear();
-												  prevchunkid = _chunk.entity_chunk_id;
-											  }
-					              cout << "attribut : " << _chunk.entity_chunk_id << endl << "- entity_chunk_seq : ";
-											}
-                       
-                      cout << "," << _chunk.entity_chunk_seq;
-
-											/// this will, chunk by chunk, assemble the data
-											std::copy(_chunk.entity_chunk_data.begin(), _chunk.entity_chunk_data.end(), std::back_inserter(Element.ElementData));
-
-											pushed=false;
-							}
-							free(data_in_unhexed_buf);
-
-						}
-          }
-          if(pushed==false){
-            records_elements.push_back(Element);
-          }
-          cout << endl;
-//- readtoastrecord
+          records_elements = ptestDataDictionaryControl->readBlockRecordElements(vt2);
 				}
 			}
 		}
 	}
 
 	BOOST_CHECK(amountOfBlockRecords == 1); // Only one BlockRecord - the attributs should be added to BlockRecord until it is full, then new BlockRecord will be added
+  BOOST_CHECK(records_elements.size() == 2); // should contain assembled attributs : foto, and mobil
+
 	cout << "________________________________________" << endl;
 
+  BOOST_CHECK(ptestDataDictionaryControl->findElement(records_elements, "foto"));
+  BOOST_CHECK(ptestDataDictionaryControl->findElement(records_elements, "mobil"));
 
 	cout << "verify if data is correctly stored - attributs 1 and 2" << endl;		
 
-	std::string chunk_ddid = ptListOfBlockRecords.get_child( "BlockRecord.chunk_data.chunk_record.chunk_ddid" ).data();
-	cout << "chunk_ddid : " << chunk_ddid << endl;		
-	BOOST_CHECK(chunk_ddid == attributName);	
+  // verify decoded Data
+	std::vector<unsigned char> rv;
+          
+  // attribut 1
+  rv = ptestDataDictionaryControl->fetchElement(records_elements, attributName);
+	BOOST_CHECK(rv.size() > 0);
+  BOOST_CHECK( rv == attributValue );
+  if( rv == attributValue )
+    cout << "OK: foto value was correct" << endl; 
+  else
+    cout << "FAIL: foto value was NOT correct" << endl; 
 
-
-	// attribut 1
-	// fetch Data from xml node
-	//TODO: assemble all chunks to a full attribut then compare with original
-	//
-	cout << "TODO:  assemble all chunks to a full attribut then compare with original" << endl;
-
-	BOOST_CHECK(true == false); // NOT MADE YET
 
 	// attribut 2
+  rv = ptestDataDictionaryControl->fetchElement(records_elements, attributName2);
+  std::string strFetchedValue(rv.begin(), rv.end());
+  BOOST_CHECK( strFetchedValue == mobil);
+  if( strFetchedValue == mobil )
+    cout << "OK: mobil value was correct" << endl; 
+  else
+    cout << "FAIL: mobil value was NOT correct" << endl; 
 
-  // verify decoded Data
 	
 	cout<<"}"<<endl;
 }

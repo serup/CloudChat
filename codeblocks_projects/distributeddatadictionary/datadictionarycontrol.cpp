@@ -658,6 +658,137 @@ std::list<std::string> CDataDictionaryControl::ls()
 	return listBFiAttributes;
 }
 
+std::vector<assembledElements> CDataDictionaryControl::readBlockRecordElements(boost::property_tree::ptree::value_type &vt2)
+{
+	std::vector<assembledElements> records_elements; // contains assembled elements from tree
+	bool pushed=false;
+	std::string prevchunkid = (std::string)"nothing";
+	assembledElements Element;
+	BOOST_FOREACH(boost::property_tree::ptree::value_type &vt3, vt2.second)
+	{
+		if(vt3.first == "chunk_record")
+		{
+			chunk_record_entries f;
+			f.DataSize  = vt3.second.get<unsigned long>("DataSize");
+			f.Data      = vt3.second.get<std::string>("Data");
+			f.DataMD5   = vt3.second.get<std::string>("DataMD5");
+
+			//cout << "DataMD5 : "<< f.DataMD5 <<endl;
+			std::string strMD5(CMD5(f.Data.c_str()).GetMD5s());
+			if(f.DataMD5 != strMD5)
+				cout << "FAIL: ERROR: data area for attribut have been corrupted " << endl;
+
+			// convert Data 
+			std::string hexdata = f.Data;
+			unsigned char* data_in_unhexed_buf = (unsigned char*) malloc (hexdata.size());
+			ZeroMemory(data_in_unhexed_buf,hexdata.size()); // make sure no garbage is inside the newly allocated space
+			boost::algorithm::unhex(hexdata.begin(),hexdata.end(), data_in_unhexed_buf);// convert the hex array to an array containing byte values
+
+			//cout << "hexdata : < " << hexdata << " > " << endl; 
+			//cout << "hexdata size: " << hexdata.size() << endl;
+			// initialize decoder with Data 
+			DED_PUT_DATA_IN_DECODER(decoder_ptr,data_in_unhexed_buf,hexdata.size());
+			if(decoder_ptr != 0) {
+				EntityChunkDataInfo _chunk;
+				// decode data ...
+				DED_GET_STRUCT_START( decoder_ptr, "chunk_record" );
+				DED_GET_STDSTRING	( decoder_ptr, "attribut_chunk_id", _chunk.entity_chunk_id ); // key of particular item
+				DED_GET_ULONG   	( decoder_ptr, "attribut_aiid", _chunk.aiid ); // this number is continuesly increasing all thruout the entries in this table
+				DED_GET_ULONG   	( decoder_ptr, "attribut_chunk_seq", _chunk.entity_chunk_seq ); // sequence number of particular item
+				DED_GET_STDVECTOR	( decoder_ptr, "attribut_chunk_data", _chunk.entity_chunk_data ); //
+				DED_GET_STRUCT_END( decoder_ptr, "chunk_record" );
+			
+				//cout << "entity_chunk_id : " << _chunk.entity_chunk_id << endl;
+				//cout << "entity_aiid : " << _chunk.aiid << endl;
+			
+				if(prevchunkid=="nothing" || prevchunkid != _chunk.entity_chunk_id)
+				{
+					if(prevchunkid!="nothing" && prevchunkid != _chunk.entity_chunk_id){
+						records_elements.push_back(Element);
+						pushed=true;
+						/// new Element
+						Element.strElementID = _chunk.entity_chunk_id;
+						Element.ElementData.clear();
+						prevchunkid = _chunk.entity_chunk_id;
+						cout << endl; 
+					}
+					else
+					{
+						pushed=false;
+						/// new Element
+						Element.strElementID = _chunk.entity_chunk_id;
+						Element.ElementData.clear();
+						prevchunkid = _chunk.entity_chunk_id;
+					}
+					cout << "attribut : " << _chunk.entity_chunk_id << endl << "- entity_chunk_seq : ";
+				}
+	
+				cout << "," << _chunk.entity_chunk_seq;
+
+				/// this will, chunk by chunk, assemble the data
+				std::copy(_chunk.entity_chunk_data.begin(), _chunk.entity_chunk_data.end(), std::back_inserter(Element.ElementData));
+
+				pushed=false;
+			}
+			free(data_in_unhexed_buf);
+		}
+	}
+	if(pushed==false){
+		records_elements.push_back(Element);
+	}
+	cout << endl;
+
+	return records_elements;
+}
+
+bool CDataDictionaryControl::findElement(std::vector<assembledElements>& _Elements, std::string strElementID)
+{
+	bool bResult=false;
+	/// finding the element
+	struct ElementIs {
+		ElementIs( string s ) : toFind(s) { }
+		bool operator() (const assembledElements &n)
+		{
+			return n.strElementID == toFind;
+		}
+		string toFind;
+	};
+	
+	std::vector<assembledElements>::iterator it = std::find_if(_Elements.begin(), _Elements.end(), ElementIs(strElementID));
+	if(it != _Elements.end())
+	{
+		// element was found 
+		bResult=true;
+	}
+	return bResult;
+}
+
+std::vector<unsigned char> CDataDictionaryControl::fetchElement(std::vector<assembledElements>& _Elements, std::string strElementID)
+{
+	std::vector<unsigned char> resultValue;
+
+	/// finding the element
+	struct ElementIs {
+		ElementIs( string s ) : toFind(s) { }
+		bool operator() (const assembledElements &n)
+		{
+			return n.strElementID == toFind;
+		}
+		string toFind;
+	};
+	
+	std::vector<assembledElements>::iterator it = std::find_if(_Elements.begin(), _Elements.end(), ElementIs(strElementID));
+	if(it != _Elements.end())
+	{
+		/// now fetch value
+		assembledElements e;
+		e = (*it);
+		std::vector<unsigned char> rValue(e.ElementData.begin(),e.ElementData.end());
+		resultValue = rValue;
+	}
+	return resultValue;
+}
+		
 pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::string attributpath)
 {
 	using boost::optional;
