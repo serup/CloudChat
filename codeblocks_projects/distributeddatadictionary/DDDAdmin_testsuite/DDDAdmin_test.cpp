@@ -1263,13 +1263,9 @@ BOOST_AUTO_TEST_CASE(reassembleLargeAttribut)
      * 6. to return to normal view write :q
      */
     cout << "FAIL: foto value was NOT correct" << endl; 
-    std::string strOriginal(attributValue.begin(), attributValue.end());
-    std::string strResult(rv.begin(), rv.end());
-	  
     cout << "-- foto original, size : " << attributValue.size() << endl;
     cout << "-- differences found, if any " << endl;
     cout << "/*{{{*/" << endl;
-
 
     for(int i=0;i<attributValue.size();i++)
     {
@@ -1283,10 +1279,19 @@ BOOST_AUTO_TEST_CASE(reassembleLargeAttribut)
       }
     }
 
-    //cout << strOriginal << endl; 
     cout << "/*}}}*/" << endl;
 
-    cout << "-- value of foto returned, size : " << rv.size() << endl;
+    cout << "-- value of original foto, size : " << attributValue.size() << endl;
+    cout << "/*{{{*/" << endl;
+    for(int n=0;n<attributValue.size();n++)
+    {
+      if(attributValue[n] != rv[n]) 
+        cout << "FAIL:";
+      fprintf(stdout, "%02X%s", attributValue[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
+    }
+    cout << "/*}}}*/" << endl;
+
+     cout << "-- value of foto returned, size : " << rv.size() << endl;
     cout << "/*{{{*/" << endl;
     for(int n=0;n<rv.size();n++)
     {
