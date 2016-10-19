@@ -480,11 +480,10 @@ BOOST_AUTO_TEST_CASE(splitAttributIntoDEDchunks)
 	// verify that image is in DED blocks
 	BOOST_CHECK(listOfDEDchunks.size() == 35);
 
-
+  cout << "/*{{{*/" << endl;
 	BOOST_FOREACH( auto &chunk, listOfDEDchunks )
 	{
-			cout << "decode outside function " << endl;
-			cout << "--- chunk.second ; size of chunk " << chunk.second << endl;
+			//cout << "decode outside function " << endl;
 			DED_PUT_DATA_IN_DECODER(decoder_ptr,chunk.first.data(),chunk.second);
 
 			EntityChunkDataInfo _chunk;
@@ -496,11 +495,21 @@ BOOST_AUTO_TEST_CASE(splitAttributIntoDEDchunks)
 			DED_GET_STDVECTOR	( decoder_ptr, "attribut_chunk_data", _chunk.entity_chunk_data ); //
 			DED_GET_STRUCT_END( decoder_ptr, "chunk_record" );
 
+      /*
+			cout << "--- entity_chunk_seq : " << _chunk.entity_chunk_seq << endl;
 			cout << "--- entity_chunk_id : " << _chunk.entity_chunk_id << endl;
 			cout << "--- entity_aiid : " << _chunk.aiid << endl;
-			cout << "--- entity_chunk_seq : " << _chunk.entity_chunk_seq << endl;
-	}
-
+      */ 
+      
+			cout << "--- entity_chunk_id : " << _chunk.entity_chunk_id << " seq : " << _chunk.entity_chunk_seq << " size of chunk : " << chunk.second << endl;
+      cout << "/*{{{*/" << endl;
+      for(int n=0;n<_chunk.entity_chunk_data.size(); n++)
+      { 
+        fprintf(stdout, "%02X%s", _chunk.entity_chunk_data[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
+      }
+	    cout << "/*}}}*/" << endl;
+  }
+	cout << "/*}}}*/" << endl;
 
 	cout<<"}"<<endl;
 }
