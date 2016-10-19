@@ -13,6 +13,7 @@
 
 using namespace std;
 using namespace boost::unit_test;
+using namespace boost::algorithm;
 
 //////////////////////////////////////////
 // TESTCASE
@@ -61,6 +62,8 @@ struct ReportRedirector
 BOOST_GLOBAL_FIXTURE(ReportRedirector)
 #endif
 #endif
+
+
 
 boost::shared_ptr< std::vector<pair<std::vector<unsigned char>,int>> > getV(){
 	boost::shared_ptr< std::vector<pair<std::vector<unsigned char>,int>> > v( new std::vector<pair<std::vector<unsigned char>,int>>() );
@@ -1234,7 +1237,6 @@ BOOST_AUTO_TEST_CASE(reassembleLargeAttribut)
 	BOOST_CHECK(amountOfBlockRecords == 1); // Only one BlockRecord - the attributs should be added to BlockRecord until it is full, then new BlockRecord will be added
   BOOST_CHECK(records_elements.size() == 2); // should contain assembled attributs : foto, and mobil
 
-	cout << "________________________________________" << endl;
 
   BOOST_CHECK(ptestDataDictionaryControl->findElement(records_elements, "foto"));
   BOOST_CHECK(ptestDataDictionaryControl->findElement(records_elements, "mobil"));
@@ -1250,9 +1252,50 @@ BOOST_AUTO_TEST_CASE(reassembleLargeAttribut)
   BOOST_CHECK( rv == attributValue );
   if( rv == attributValue )
     cout << "OK: foto value was correct" << endl; 
-  else
+  else {
+    /**
+     * to find error difference then do following:
+     * 1. vim visualise mark original
+     * 2. then write :Linediff
+     * 3. then vim visualise mark result
+     * 4. then write :Linediff
+     * 5. now a new view will show with two splits in vim
+     * 6. to return to normal view write :q
+     */
     cout << "FAIL: foto value was NOT correct" << endl; 
+    std::string strOriginal(attributValue.begin(), attributValue.end());
+    std::string strResult(rv.begin(), rv.end());
+	  
+    cout << "-- foto original, size : " << attributValue.size() << endl;
+    cout << "-- differences found, if any " << endl;
+    cout << "/*{{{*/" << endl;
 
+
+    for(int i=0;i<attributValue.size();i++)
+    {
+      if(attributValue[i] != rv[i]) {
+        cout << "WARNING: diff@("<< i << ")";
+        cout <<  ": orig [hex]: "; 
+        fprintf(stdout, "%02X%s", attributValue[i], ( i + 1 ) % 16 == 0 ? "\r\n" : " " );
+        cout << ": returned [hex]: "; 
+        fprintf(stdout, "%02X%s", rv[i], ( i + 1 ) % 16 == 0 ? "\r\n" : " " );
+        cout  << endl;
+      }
+    }
+
+    //cout << strOriginal << endl; 
+    cout << "/*}}}*/" << endl;
+
+    cout << "-- value of foto returned, size : " << rv.size() << endl;
+    cout << "/*{{{*/" << endl;
+    for(int n=0;n<rv.size();n++)
+    {
+      if(attributValue[n] != rv[n]) 
+        cout << "FAIL:";
+      fprintf(stdout, "%02X%s", rv[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
+    }
+    cout << "/*}}}*/" << endl;
+  }
 
 	// attribut 2
   rv = ptestDataDictionaryControl->fetchElement(records_elements, attributName2);
@@ -1263,7 +1306,6 @@ BOOST_AUTO_TEST_CASE(reassembleLargeAttribut)
   else
     cout << "FAIL: mobil value was NOT correct" << endl; 
 
-	
 	cout<<"}"<<endl;
 }
 
