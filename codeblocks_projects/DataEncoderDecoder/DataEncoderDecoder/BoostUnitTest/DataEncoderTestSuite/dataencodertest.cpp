@@ -3,6 +3,17 @@
 #include <boost/test/results_reporter.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/foreach.hpp>
+#include <string>
+#include <list>
+#include <iostream>
+#include <fstream>
+#include <boost/filesystem.hpp>
+#include <boost/filesystem/operations.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
+#include <boost/property_tree/detail/xml_parser_writer_settings.hpp>
+#include <boost/algorithm/hex.hpp>
+#include <boost/log/trivial.hpp>
 #include "../../DataEncoder.h"
 #include "../../compression-lib/compression.h"
 using namespace std;
@@ -83,6 +94,129 @@ bool compare_element(std::vector<Elements> _DEDElements, std::string strElementI
     }
     return bResult;
 }
+
+struct EntityChunkDataInfo{                          
+	std::string entity_chunk_id;                     
+	unsigned long aiid;                              
+	unsigned long entity_chunk_seq;                  
+	std::vector<unsigned char> entity_chunk_data;    
+};
+
+
+std::vector< pair<std::vector<unsigned char>, int> > splitAttributIntoDEDchunks(long &aiid, std::string attributName, std::vector<unsigned char>& attributValue, long maxDEDchunkSize)
+{
+    using boost::property_tree::ptree;
+	ptree pt;
+
+	int iMaxChunkSize=maxDEDchunkSize; 
+	int iTotalSize=attributValue.size();
+	int iBytesLeft=iTotalSize;
+	int n=0;
+	std::vector<unsigned char> chunkdata;
+	unsigned long entity_chunk_seq= (unsigned long)0;
+	bool bInternalFlush=false;
+	std::vector< pair<std::vector<unsigned char>,int> > listOfDEDchunks;
+	int strangeCount=0;
+	bool bError=false;
+
+	cout << "*{{{" << endl;
+	cout << " DED entity_chunk_seq : ";
+
+	do
+	{
+		chunkdata.clear();  
+
+		if(iTotalSize>iMaxChunkSize){
+				if(iMaxChunkSize>iBytesLeft){
+					std::copy(attributValue.begin()+(n*iMaxChunkSize), attributValue.begin()+(n*iMaxChunkSize)+iBytesLeft, std::back_inserter(chunkdata));
+				}
+				else {
+					std::copy(attributValue.begin()+(n*iMaxChunkSize), attributValue.begin()+(n*iMaxChunkSize)+iMaxChunkSize, std::back_inserter(chunkdata));
+				}
+		}
+		else {
+			std::copy(attributValue.begin(), attributValue.end(), std::back_inserter(chunkdata));
+		}
+
+		if(chunkdata.size()<=0){
+				//BOOST_LOG_TRIVIAL(error) << "[splitAttributIntoDEDchunks] ERROR: NO data inserted in chunkdata, default <empty> added to field : " << attributName  << "\n";
+				std::string strtmp="<empty>";
+				std::copy(strtmp.begin(), strtmp.end(), std::back_inserter(chunkdata));
+				strangeCount++;
+				if(strangeCount>10) {
+					bError=true; // avoid deadlock, due to errornous attribut
+					//BOOST_LOG_TRIVIAL(fatal) << "[splitAttributIntoDEDchunks] ERROR: Aborting function !!!!" << "\n";
+				}
+		}
+
+		n++;
+		aiid++;
+		entity_chunk_seq++;
+	
+		cout << "," << entity_chunk_seq;
+    
+
+		{ /// defined in DD_ATTRIBUT_TOAST.xml in datadictionary
+			DED_START_ENCODER(encoder_ptr);
+			DED_PUT_STRUCT_START( encoder_ptr, "chunk_record" );
+				DED_PUT_STDSTRING	( encoder_ptr, "attribut_chunk_id", attributName ); // key of particular item
+				DED_PUT_ULONG   	( encoder_ptr, "attribut_aiid", (unsigned long)aiid ); // this number is continuesly increasing all thruout the entries in this table
+				DED_PUT_ULONG   	( encoder_ptr, "attribut_chunk_seq", (unsigned long)entity_chunk_seq ); // sequence number of particular item
+				DED_PUT_STDVECTOR	( encoder_ptr, "attribut_chunk_data", chunkdata );
+			DED_PUT_STRUCT_END( encoder_ptr, "chunk_record" );
+			DED_GET_ENCODED_DATA(encoder_ptr,data_ptr,iLengthOfTotalData,pCompressedData,sizeofCompressedData);
+			if(sizeofCompressedData==0) sizeofCompressedData = iLengthOfTotalData; // if sizeofcompresseddata is 0 then compression was not possible and size is the same as for uncompressed
+				iBytesLeft = iTotalSize-iMaxChunkSize*n;
+
+			std::vector<unsigned char> vdata;
+			vdata.assign(pCompressedData, pCompressedData + sizeofCompressedData);  
+
+			//+test
+			cout << endl << "/*{{{*/" << endl;
+			cout << "internal test of data - before DED : " << endl;
+			for(int n=0;n<chunkdata.size(); n++)
+			{ 
+				fprintf(stdout, "%02X%s", chunkdata[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
+			}
+
+			EntityChunkDataInfo _chunk;
+			// decode data ...
+			DED_PUT_DATA_IN_DECODER(decoder_ptr,pCompressedData,sizeofCompressedData);
+
+			DED_GET_STRUCT_START( decoder_ptr, "chunk_record" );
+			DED_GET_STDSTRING	( decoder_ptr, "attribut_chunk_id", _chunk.entity_chunk_id ); // key of particular item
+			DED_GET_ULONG   	( decoder_ptr, "attribut_aiid", _chunk.aiid ); // this number is continuesly increasing all thruout the entries in this table
+			DED_GET_ULONG   	( decoder_ptr, "attribut_chunk_seq", _chunk.entity_chunk_seq ); // sequence number of particular item
+			DED_GET_STDVECTOR	( decoder_ptr, "attribut_chunk_data", _chunk.entity_chunk_data ); //
+			DED_GET_STRUCT_END( decoder_ptr, "chunk_record" );
+
+			cout << endl << "internal test of data - after DED : " << endl;
+			cout << endl << "/*{{{*/" << endl;
+			for(int n=0;n<_chunk.entity_chunk_data.size(); n++)
+			{
+				if( chunkdata[n] != _chunk.entity_chunk_data[n] )
+					cout << "FAIL:";	
+				fprintf(stdout, "%02X%s", _chunk.entity_chunk_data[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
+			}
+			cout << "/*}}}*/" << endl;
+
+			cout << "/*}}}*/" << endl;
+
+
+			//-test
+			listOfDEDchunks.push_back(make_pair(vdata,sizeofCompressedData));
+	
+
+		}
+	}while(iBytesLeft>0 && !bError);
+
+	cout << "*}}}" << endl;
+
+
+	return listOfDEDchunks;
+}
+
+
 
 BOOST_GLOBAL_FIXTURE(ReportRedirector)
 //#endif
@@ -659,6 +793,118 @@ BOOST_AUTO_TEST_CASE (encode_decode_toast)
     }
     BOOST_CHECK(bDecoded == true); //
 
+}
+
+
+
+
+
+BOOST_AUTO_TEST_CASE(encodeImagefile)
+{
+	cout << "BOOST_AUTO_TEST_CASE(encodeImagefile)\n{" << endl;
+
+	// use an image file as attribut value
+	std::string attributName = "foto";
+	std::vector<unsigned char> FileDataBytesInVector;
+	std::string fn = "testImage.png"; // should be of size 10.5 Kb
+	std::ifstream is (fn, ios::binary);
+	if (is)
+	{
+		long length = boost::filesystem::file_size(fn);
+		std::cout << "[readFile] Reading file: " << fn << " ; amount " << length << " characters... \n";
+		// Make sure receipient has room
+		FileDataBytesInVector.resize(length,0);
+		//read content of infile
+		is.read ((char*)&FileDataBytesInVector[0],length);
+		std::cout << "[readFile] size: " << (int) FileDataBytesInVector.size() << '\n';
+		std::cout << "[readFile] capacity: " << (int) FileDataBytesInVector.capacity() << '\n';
+		std::cout << "[readFile] max_size: " << (int) FileDataBytesInVector.max_size() << '\n';
+		is.close();
+	}
+	BOOST_CHECK(FileDataBytesInVector.size() > 0);
+
+	cout << "File data before splitting to chunks : " << endl;
+	cout << "/*{{{*/" << endl;
+	for(int n=0;n<FileDataBytesInVector.size(); n++)
+	{ 
+		fprintf(stdout, "%02X%s", FileDataBytesInVector[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
+	}
+	cout << "/*}}}*/" << endl;
+
+	long maxDEDblockSize=65000; // should yield only one BlockRecord, since foto can be in one
+	long maxDEDchunkSize=300; // should yield several chunks for this attribut
+
+	cout << "File data after splitting to chunks : " << endl;
+	// split image data into several chunks of DED
+	long aiid=0;
+	std::vector< pair<std::vector<unsigned char>,int> > listOfDEDchunks = splitAttributIntoDEDchunks(aiid, attributName, FileDataBytesInVector, maxDEDchunkSize);
+	std::cout << "listOfDEDchunks : " << listOfDEDchunks.size() << '\n';
+
+	// verify that image is in DED blocks
+	BOOST_CHECK(listOfDEDchunks.size() == 35);
+
+	// verify by decoding the DED blocks that data is transfered uncorrupted to the chunks
+	cout << "/*{{{*/" << endl;
+	int fails=0;
+	int offset=0; 
+	std::vector<unsigned char> assembledData;
+	BOOST_FOREACH( auto &chunk, listOfDEDchunks )
+	{
+		//cout << "decode outside function " << endl;
+		DED_PUT_DATA_IN_DECODER(decoder_ptr,chunk.first.data(),chunk.second);
+
+		EntityChunkDataInfo _chunk;
+		// decode data ...
+		DED_GET_STRUCT_START( decoder_ptr, "chunk_record" );
+		DED_GET_STDSTRING	( decoder_ptr, "attribut_chunk_id", _chunk.entity_chunk_id ); // key of particular item
+		DED_GET_ULONG   	( decoder_ptr, "attribut_aiid", _chunk.aiid ); // this number is continuesly increasing all thruout the entries in this table
+		DED_GET_ULONG   	( decoder_ptr, "attribut_chunk_seq", _chunk.entity_chunk_seq ); // sequence number of particular item
+		DED_GET_STDVECTOR	( decoder_ptr, "attribut_chunk_data", _chunk.entity_chunk_data ); //
+		DED_GET_STRUCT_END( decoder_ptr, "chunk_record" );
+
+		cout << "--- entity_chunk_id : " << _chunk.entity_chunk_id << " seq : " << _chunk.entity_chunk_seq << " size of chunk : " << chunk.second << endl;
+		cout << "/*{{{*/" << endl;
+		int _offset=0;
+		for(int n=0;n<_chunk.entity_chunk_data.size(); n++)
+		{ 
+			if( FileDataBytesInVector[n+offset] != _chunk.entity_chunk_data[n] ) {
+				cout << "FAIL:";
+				fails++;
+			}
+
+			fprintf(stdout, "%02X%s", _chunk.entity_chunk_data[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
+			_offset++;
+		}
+		offset+=_offset;
+		cout << "/*}}}*/" << endl;
+
+		// this will, chunk by chunk, assemble the elementfile data
+		std::copy(_chunk.entity_chunk_data.begin(), _chunk.entity_chunk_data.end(), std::back_inserter(assembledData));
+
+	}
+	cout << "/*}}}*/" << endl;
+
+	if(fails>0) {
+		cout << "Amount of FAIL: " << fails << endl;
+
+		for(int i=0;i<assembledData.size();i++)
+		{
+			if(assembledData[i] != FileDataBytesInVector[i]) {
+				cout << "WARNING: diff@("<< i << ")";
+				cout <<  ": orig [hex]: "; 
+				fprintf(stdout, "%02X%s", FileDataBytesInVector[i], ( i + 1 ) % 16 == 0 ? "\r\n" : " " );
+				cout << ": returned [hex]: "; 
+				fprintf(stdout, "%02X%s",assembledData[i], ( i + 1 ) % 16 == 0 ? "\r\n" : " " );
+				cout  << endl;
+			}
+		}
+	}
+
+	// verify that data stored is not corrupted
+	BOOST_CHECK(fails == 0); 
+
+
+	cout << "}" << endl;
 }
 
 BOOST_AUTO_TEST_SUITE_END( )
