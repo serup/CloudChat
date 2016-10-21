@@ -105,4 +105,4 @@ let g:ycm_global_ycm_extra_conf = "~/.vim/.bundle/YouCompleteMe/third_party/ycmd
 "disable syntastic on the statusline
 let g:statline_syntastic = 0
 let @q = 'iBOOST_AUGO€kb€kbTO_TEST_CASE(x){cout << "BOOST_AUTO_TEST_CASE(x)\n{" << endl;BOOO€kbST_CHJE€kb€kbECK(true€kbe -€kb== false);cout << "}" << endl;}'
-
+set autoindent noexpandtab tabstop=4 shiftwidth=4
