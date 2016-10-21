@@ -117,6 +117,14 @@ else
   echo "--  sudo systemctl add-wants multi-user.target rpcbind"
   echo "--  this will restart portmapper and your server should then work"
 fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 dstat* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install dstat: Monitoring Linux Systems performance "
+  sudo apt-fast install -yq dstat
+  echo " - done."
+else
+  echo "- dstat already installed"
+fi
 
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 idle* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
