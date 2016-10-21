@@ -469,47 +469,85 @@ BOOST_AUTO_TEST_CASE(splitAttributIntoDEDchunks)
 	}
 	BOOST_CHECK(FileDataBytesInVector.size() > 0);
 
+  cout << "File data before splitting to chunks : " << endl;
+  cout << "/*{{{*/" << endl;
+  for(int n=0;n<FileDataBytesInVector.size(); n++)
+  { 
+          fprintf(stdout, "%02X%s", FileDataBytesInVector[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
+  }
+  cout << "/*}}}*/" << endl;
+
 	long maxDEDblockSize=65000; // should yield only one BlockRecord, since foto can be in one
 	long maxDEDchunkSize=300; // should yield several chunks for this attribut
 
+  cout << "File data after splitting to chunks : " << endl;
 	// split image data into several chunks of DED
 	long aiid=0;
 	std::vector< pair<std::vector<unsigned char>,int> > listOfDEDchunks = ptestDataDictionaryControl->splitAttributIntoDEDchunks(aiid, attributName, FileDataBytesInVector, maxDEDchunkSize);
-
 	std::cout << "listOfDEDchunks : " << listOfDEDchunks.size() << '\n';
+
 	// verify that image is in DED blocks
 	BOOST_CHECK(listOfDEDchunks.size() == 35);
 
-  cout << "/*{{{*/" << endl;
+	// verify by decoding the DED blocks that data is transfered uncorrupted to the chunks
+	cout << "/*{{{*/" << endl;
+	int fails=0;
+	int offset=0; 
+	std::vector<unsigned char> assembledData;
 	BOOST_FOREACH( auto &chunk, listOfDEDchunks )
 	{
-			//cout << "decode outside function " << endl;
-			DED_PUT_DATA_IN_DECODER(decoder_ptr,chunk.first.data(),chunk.second);
+		//cout << "decode outside function " << endl;
+		DED_PUT_DATA_IN_DECODER(decoder_ptr,chunk.first.data(),chunk.second);
 
-			EntityChunkDataInfo _chunk;
-			// decode data ...
-			DED_GET_STRUCT_START( decoder_ptr, "chunk_record" );
-			DED_GET_STDSTRING	( decoder_ptr, "attribut_chunk_id", _chunk.entity_chunk_id ); // key of particular item
-			DED_GET_ULONG   	( decoder_ptr, "attribut_aiid", _chunk.aiid ); // this number is continuesly increasing all thruout the entries in this table
-			DED_GET_ULONG   	( decoder_ptr, "attribut_chunk_seq", _chunk.entity_chunk_seq ); // sequence number of particular item
-			DED_GET_STDVECTOR	( decoder_ptr, "attribut_chunk_data", _chunk.entity_chunk_data ); //
-			DED_GET_STRUCT_END( decoder_ptr, "chunk_record" );
+		EntityChunkDataInfo _chunk;
+		// decode data ...
+		DED_GET_STRUCT_START( decoder_ptr, "chunk_record" );
+		DED_GET_STDSTRING	( decoder_ptr, "attribut_chunk_id", _chunk.entity_chunk_id ); // key of particular item
+		DED_GET_ULONG   	( decoder_ptr, "attribut_aiid", _chunk.aiid ); // this number is continuesly increasing all thruout the entries in this table
+		DED_GET_ULONG   	( decoder_ptr, "attribut_chunk_seq", _chunk.entity_chunk_seq ); // sequence number of particular item
+		DED_GET_STDVECTOR	( decoder_ptr, "attribut_chunk_data", _chunk.entity_chunk_data ); //
+		DED_GET_STRUCT_END( decoder_ptr, "chunk_record" );
 
-      /*
-			cout << "--- entity_chunk_seq : " << _chunk.entity_chunk_seq << endl;
-			cout << "--- entity_chunk_id : " << _chunk.entity_chunk_id << endl;
-			cout << "--- entity_aiid : " << _chunk.aiid << endl;
-      */ 
-      
-			cout << "--- entity_chunk_id : " << _chunk.entity_chunk_id << " seq : " << _chunk.entity_chunk_seq << " size of chunk : " << chunk.second << endl;
-      cout << "/*{{{*/" << endl;
-      for(int n=0;n<_chunk.entity_chunk_data.size(); n++)
-      { 
-        fprintf(stdout, "%02X%s", _chunk.entity_chunk_data[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
-      }
-	    cout << "/*}}}*/" << endl;
-  }
+		cout << "--- entity_chunk_id : " << _chunk.entity_chunk_id << " seq : " << _chunk.entity_chunk_seq << " size of chunk : " << chunk.second << endl;
+		cout << "/*{{{*/" << endl;
+		int _offset=0;
+		for(int n=0;n<_chunk.entity_chunk_data.size(); n++)
+		{ 
+			if( FileDataBytesInVector[n+offset] != _chunk.entity_chunk_data[n] ) {
+				cout << "FAIL:";
+				fails++;
+			}
+
+			fprintf(stdout, "%02X%s", _chunk.entity_chunk_data[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
+			_offset++;
+		}
+		offset+=_offset;
+		cout << "/*}}}*/" << endl;
+
+		// this will, chunk by chunk, assemble the elementfile data
+		std::copy(_chunk.entity_chunk_data.begin(), _chunk.entity_chunk_data.end(), std::back_inserter(assembledData));
+
+	}
 	cout << "/*}}}*/" << endl;
+
+	if(fails>0) {
+		cout << "Amount of FAIL: " << fails << endl;
+
+		for(int i=0;i<assembledData.size();i++)
+		{
+			if(assembledData[i] != FileDataBytesInVector[i]) {
+				cout << "WARNING: diff@("<< i << ")";
+				cout <<  ": orig [hex]: "; 
+				fprintf(stdout, "%02X%s", FileDataBytesInVector[i], ( i + 1 ) % 16 == 0 ? "\r\n" : " " );
+				cout << ": returned [hex]: "; 
+				fprintf(stdout, "%02X%s",assembledData[i], ( i + 1 ) % 16 == 0 ? "\r\n" : " " );
+				cout  << endl;
+			}
+		}
+	}
+
+  // verify that data stored is not corrupted
+  BOOST_CHECK(fails == 0); 
 
 	cout<<"}"<<endl;
 }
