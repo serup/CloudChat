@@ -245,6 +245,40 @@ std::vector< pair<std::vector<unsigned char>, int> > CDataDictionaryControl::spl
 
 			std::vector<unsigned char> vdata;
 			vdata.assign(pCompressedData, pCompressedData + sizeofCompressedData);  
+
+			//+test
+			cout << endl << "/*{{{*/" << endl;
+			cout << "internal test of data - before DED : " << endl;
+			for(int n=0;n<chunkdata.size(); n++)
+			{ 
+				fprintf(stdout, "%02X%s", chunkdata[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
+			}
+
+			EntityChunkDataInfo _chunk;
+			// decode data ...
+			DED_PUT_DATA_IN_DECODER(decoder_ptr,pCompressedData,sizeofCompressedData);
+
+			DED_GET_STRUCT_START( decoder_ptr, "chunk_record" );
+			DED_GET_STDSTRING	( decoder_ptr, "attribut_chunk_id", _chunk.entity_chunk_id ); // key of particular item
+			DED_GET_ULONG   	( decoder_ptr, "attribut_aiid", _chunk.aiid ); // this number is continuesly increasing all thruout the entries in this table
+			DED_GET_ULONG   	( decoder_ptr, "attribut_chunk_seq", _chunk.entity_chunk_seq ); // sequence number of particular item
+			DED_GET_STDVECTOR	( decoder_ptr, "attribut_chunk_data", _chunk.entity_chunk_data ); //
+			DED_GET_STRUCT_END( decoder_ptr, "chunk_record" );
+
+			cout << endl << "internal test of data - after DED : " << endl;
+			cout << endl << "/*{{{*/" << endl;
+			for(int n=0;n<_chunk.entity_chunk_data.size(); n++)
+			{
+				if( chunkdata[n] != _chunk.entity_chunk_data[n] )
+					cout << "FAIL:";	
+				fprintf(stdout, "%02X%s", _chunk.entity_chunk_data[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
+			}
+			cout << "/*}}}*/" << endl;
+
+			cout << "/*}}}*/" << endl;
+
+
+			//-test
 			listOfDEDchunks.push_back(make_pair(vdata,sizeofCompressedData));
 	
 
