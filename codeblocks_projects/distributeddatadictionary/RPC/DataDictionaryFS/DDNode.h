@@ -10,7 +10,7 @@ namespace DDDfsRPC {
 	{
 	
 		public:
-			DEDBlock * handleRequest(DDRequest req);
+			DEDBlock* handleRequest(DDRequest req);
 			enum _eMethod { null, LIST_ATTRIBUTS } eMethod;
 			_eMethod analyseRequestMethod(std::string strMethod);
 		
