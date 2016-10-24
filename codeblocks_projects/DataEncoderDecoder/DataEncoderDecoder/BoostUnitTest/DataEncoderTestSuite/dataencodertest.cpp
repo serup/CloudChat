@@ -180,6 +180,7 @@ std::vector< pair<std::vector<unsigned char>, int> > splitAttributIntoDEDchunks(
 			}
 
 			EntityChunkDataInfo _chunk;
+		
 			// decode data ...
 			DED_PUT_DATA_IN_DECODER(decoder_ptr,pCompressedData,sizeofCompressedData);
 
@@ -202,10 +203,9 @@ std::vector< pair<std::vector<unsigned char>, int> > splitAttributIntoDEDchunks(
 
 			cout << "/*}}}*/" << endl;
 
-
 			//-test
+			
 			listOfDEDchunks.push_back(make_pair(vdata,sizeofCompressedData));
-	
 
 		}
 	}while(iBytesLeft>0 && !bError);
@@ -454,7 +454,7 @@ BOOST_AUTO_TEST_CASE (data_protocol_with_whitspace)
 
   unsigned short trans_id = 24;
   bool action = true;
-  unsigned char buffer[8] = {1,0x20,0x20,4,5,6,7,8};
+  unsigned char buffer[8] = {1,0x20,0x20,0x20,5,6,7,8};
   std::vector<unsigned char> vec(&buffer[0],&buffer[8]);
   std::vector<unsigned char> receivedVector;
 
@@ -463,6 +463,7 @@ BOOST_AUTO_TEST_CASE (data_protocol_with_whitspace)
 	DED_PUT_METHOD	( encoder_ptr, "name",  "MusicPlayer" );
 	DED_PUT_USHORT	( encoder_ptr, "trans_id",	trans_id);
 	DED_PUT_BOOL	( encoder_ptr, "startstop", action );
+	DED_PUT_ULONG   	( encoder_ptr, "seq", (unsigned long)123 ); 
 	DED_PUT_STDVECTOR	( encoder_ptr, "vector", vec );
   DED_PUT_STRUCT_END( encoder_ptr, "event" );
   BOOST_CHECK(encoder_ptr != 0);
@@ -487,6 +488,7 @@ BOOST_AUTO_TEST_CASE (data_protocol_with_whitspace)
   std::string strValue = "";
   unsigned short iValue = 0;
   bool bValue=false;
+  unsigned long lValue = 0;
 
 	// decode data ...
   	if( DED_GET_STRUCT_START( decoder_ptr, (std::string)"event" ) == true )
@@ -497,19 +499,22 @@ BOOST_AUTO_TEST_CASE (data_protocol_with_whitspace)
 			{
 				if(DED_GET_BOOL( decoder_ptr, "startstop", bValue ) == true)
 		        {
-                    if(DED_GET_STDVECTOR( decoder_ptr, "vector", receivedVector ) == true)
-                    {
-                        if(DED_GET_STRUCT_END( decoder_ptr, "event" ) == true)
-                        {
-                            bDecoded=true;
-                        }
-                        else
-                        {
-                            bDecoded=false;
+					if(DED_GET_ULONG( decoder_ptr, "seq",  lValue ) == true)
+					{
+						if(DED_GET_STDVECTOR( decoder_ptr, "vector", receivedVector ) == true)
+						{
+							if(DED_GET_STRUCT_END( decoder_ptr, "event" ) == true)
+							{
+								bDecoded=true;
+							}
+							else
+							{
+								bDecoded=false;
 
-                        }
+							}
 
-		       		}
+						}
+					}
                 }
 
             }
@@ -521,6 +526,7 @@ BOOST_AUTO_TEST_CASE (data_protocol_with_whitspace)
 	BOOST_CHECK(strValue == "MusicPlayer");
 	BOOST_CHECK(iValue == 24);
 	BOOST_CHECK(bValue == true);
+	BOOST_CHECK(lValue == 123);
 	BOOST_CHECK(receivedVector == vec);
 
 	cout << "receivedVector : " << endl;
