@@ -97,6 +97,8 @@ void CDataEncoder::Encodestdstring(std::string method, std::string value)
 
 void CDataEncoder::Encodestdvector(std::string method, std::vector<unsigned char> value)
 {
+	// avoid possible whitespace issue 0x20 -- compression can NOT compress if more than two contiguous 0x20 occurr in data - why ?? TODO: find a better solution than this ugly fix of adding 1 and subtracting 1
+	for(int n=0;n<value.size();n++) value[n] = value[n] + 1;
 	AddElement(method,DED_ELEMENT_TYPE_STDVECTOR, value);
 }
 
@@ -714,6 +716,8 @@ bool CDataEncoder::GetElement(std::string name, int ElementType, std::vector<uns
 							{
 							    value.clear();
 			                    std::vector<unsigned char> vec(pdata, pdata+length);
+								//redo whitespace issue 0x20	
+								for(int n=0;n<vec.size();n++) vec[n] = vec[n] - 1;
                                 std::copy(vec.begin(), vec.end(), std::back_inserter(value));
 								bResult = true;
 							}

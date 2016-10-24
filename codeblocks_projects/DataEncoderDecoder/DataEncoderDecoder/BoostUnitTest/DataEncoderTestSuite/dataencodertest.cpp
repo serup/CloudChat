@@ -454,9 +454,13 @@ BOOST_AUTO_TEST_CASE (data_protocol_with_whitspace)
 
   unsigned short trans_id = 24;
   bool action = true;
-  unsigned char buffer[8] = {1,0x20,0x20,0x20,5,6,7,8};
+  char buffer[8] = {1,0x20,0x20,0x20,0x21,0x21,7,8};
   std::vector<unsigned char> vec(&buffer[0],&buffer[8]);
   std::vector<unsigned char> receivedVector;
+
+  //avoid ws 
+//  for(int n=0;n<vec.size();n++)
+//	  vec[n] = vec[n]+1;
 
   DED_START_ENCODER(encoder_ptr);
   DED_PUT_STRUCT_START( encoder_ptr, (std::string)"event" );
@@ -521,6 +525,19 @@ BOOST_AUTO_TEST_CASE (data_protocol_with_whitspace)
 
         }
 	}
+
+	
+	std::vector<unsigned char> _value;
+    std::vector<unsigned char> _vec(&buffer[0],&buffer[8]);
+    std::copy(_vec.begin(), _vec.end(), std::back_inserter(_value));
+	cout << "basic copy of vector: " << endl;
+	cout << "/*{{{*/" << endl;
+	for(int n=0;n<_value.size(); n++)
+	{
+		fprintf(stdout, "%02X%s", _value[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
+	}
+	cout << "/*}}}*/" << endl;
+
 
   	BOOST_CHECK(bDecoded == true);
 	BOOST_CHECK(strValue == "MusicPlayer");
