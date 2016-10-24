@@ -101,8 +101,13 @@ endif
 
 "let g:ycm_global_ycm_extra_conf = "~/.vim/.ycm_extra_conf.py"
 let g:ycm_global_ycm_extra_conf = "~/.vim/.bundle/YouCompleteMe/third_party/ycmd/examples/.ycm_extra_conf.py"
+let g:ycm_disable_for_files_larger_than_kb = 1000000
+
 
 "disable syntastic on the statusline
 let g:statline_syntastic = 0
-let @q = 'iBOOST_AUGO€kb€kbTO_TEST_CASE(x){cout << "BOOST_AUTO_TEST_CASE(x)\n{" << endl;BOOO€kbST_CHJE€kb€kbECK(true€kbe -€kb== false);cout << "}" << endl;}'
+let @q = 'iBOOST_AUTO_TEST_CASE(x){cout << "BOOST_AUTO_TEST_CASE(x)\n{" << endl;BOOST_CHECK(true == false);cout << "}" << endl;}'
 set autoindent noexpandtab tabstop=4 shiftwidth=4
+"make sure color codes are enabled at startup
+autocmd VimEnter * AnsiEsc
+
