@@ -695,38 +695,38 @@ bool CDataEncoder::GetElement(std::string name, int ElementType, std::vector<uns
 	switch(ElementType)
 	{
 		case DED_ELEMENT_TYPE_STDVECTOR:
-		{
-			CASN1* pasn1 = pasn1FetchData.get();
-
-			int length=0;
-			__byte tag=0;
-			__byte* pdata=NULL;
-			if(pasn1->FetchNextASN1(length,tag,&pdata))
 			{
-				if(tag == DED_ELEMENT_TYPE_STDVECTOR)
+				CASN1* pasn1 = pasn1FetchData.get();
+
+				int length=0;
+				__byte tag=0;
+				__byte* pdata=NULL;
+				if(pasn1->FetchNextASN1(length,tag,&pdata))
 				{
-					std::string str;
-					str.append((const char*)pdata,length);
-					if(name == str)
+					if(tag == DED_ELEMENT_TYPE_STDVECTOR)
 					{
-						length=0; tag=0; pdata = NULL; str="";
-						if(pasn1->FetchNextASN1(length,tag,&pdata))
+						std::string str;
+						str.append((const char*)pdata,length);
+						if(name == str)
 						{
-							if(tag == DED_ELEMENT_TYPE_STDVECTOR)
+							length=0; tag=0; pdata = NULL; str="";
+							if(pasn1->FetchNextASN1(length,tag,&pdata))
 							{
-							    value.clear();
-			                    std::vector<unsigned char> vec(pdata, pdata+length);
-								//redo whitespace issue 0x20	
-								for(int n=0;n<vec.size();n++) vec[n] = vec[n] - 1;
-                                std::copy(vec.begin(), vec.end(), std::back_inserter(value));
-								bResult = true;
+								if(tag == DED_ELEMENT_TYPE_STDVECTOR)
+								{
+									value.clear();
+									std::vector<unsigned char> vec(pdata, pdata+length);
+									//redo whitespace issue 0x20	
+									for(int n=0;n<vec.size();n++) vec[n] = vec[n] - 1;
+									std::copy(vec.begin(), vec.end(), std::back_inserter(value));
+									bResult = true;
+								}
 							}
 						}
 					}
 				}
 			}
-		}
-		break;
+			break;
 	}
 
 	return bResult;
