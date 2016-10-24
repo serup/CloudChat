@@ -243,30 +243,43 @@ BOOST_AUTO_TEST_SUITE (dataencodertest) // name of the test suite is dataencoder
 
 BOOST_AUTO_TEST_CASE (EncoderInstantiation)
 {
+	cout << "BOOST_AUTO_TEST_CASE(EncoderInstantiation)\n{" << endl;
 
   DED_START_ENCODER(encoder_ptr);
   BOOST_CHECK(encoder_ptr != 0);
+
+	cout << "}" << endl;
 }
 
 BOOST_AUTO_TEST_CASE (struct_start_encoder)
 {
+	cout << "BOOST_AUTO_TEST_CASE(struct_start_encoder)\n{" << endl;
+
   DED_START_ENCODER(encoder_ptr);
   DED_PUT_STRUCT_START( encoder_ptr, "event" );
 
   BOOST_CHECK(encoder_ptr != 0);
+
+	cout << "}" << endl;
 }
 
 BOOST_AUTO_TEST_CASE (encoder_put_method)
 {
+	cout << "BOOST_AUTO_TEST_CASE(encoder_put_method)\n{" << endl;
+
   DED_START_ENCODER(encoder_ptr);
   DED_PUT_STRUCT_START( encoder_ptr, "event" );
 	DED_PUT_METHOD	( encoder_ptr, "name",  "MusicPlayer" );
 
   BOOST_CHECK(encoder_ptr != 0);
+
+	cout << "}" << endl;
 }
 
 BOOST_AUTO_TEST_CASE (encoder_put_ushort)
 {
+	cout << "BOOST_AUTO_TEST_CASE(encoder_put_ushort)\n{" << endl;
+
   unsigned short trans_id = 1;
 
   DED_START_ENCODER(encoder_ptr);
@@ -275,10 +288,14 @@ BOOST_AUTO_TEST_CASE (encoder_put_ushort)
 	DED_PUT_USHORT	( encoder_ptr, "trans_id",	trans_id);
 
   BOOST_CHECK(encoder_ptr != 0);
+
+	cout << "}" << endl;
 }
 
 BOOST_AUTO_TEST_CASE (encoder_put_bool)
 {
+	cout << "BOOST_AUTO_TEST_CASE(encoder_put_bool)\n{" << endl;
+
   unsigned short trans_id = 1;
   bool action = true;
 
@@ -289,10 +306,14 @@ BOOST_AUTO_TEST_CASE (encoder_put_bool)
 	DED_PUT_BOOL	( encoder_ptr, "startstop", action );
 
   BOOST_CHECK(encoder_ptr != 0);
+
+	cout << "}" << endl;
 }
 
 BOOST_AUTO_TEST_CASE (encoder_struct_end)
 {
+	cout << "BOOST_AUTO_TEST_CASE(encoder_struct_end)\n{" << endl;
+
   unsigned short trans_id = 1;
   bool action = true;
 
@@ -304,10 +325,14 @@ BOOST_AUTO_TEST_CASE (encoder_struct_end)
   DED_PUT_STRUCT_END( encoder_ptr, "event" );
 
   BOOST_CHECK(encoder_ptr != 0);
+
+	cout << "}" << endl;
 }
 
 BOOST_AUTO_TEST_CASE (get_encoded_data)
 {
+	cout << "BOOST_AUTO_TEST_CASE(get_encoded_data)\n{" << endl;
+
   unsigned short trans_id = 1;
   bool action = true;
 
@@ -329,10 +354,15 @@ BOOST_AUTO_TEST_CASE (get_encoded_data)
   BOOST_CHECK(pCompressedData != 0);
   BOOST_CHECK(sizeofCompressedData != 0); // if sizeofcompresseddata is 0 then compression was not possible and size is the same as for uncompressed
 
+
+	cout << "}" << endl;
 }
+
 
 BOOST_AUTO_TEST_CASE (put_in_dataencoder)
 {
+	cout << "BOOST_AUTO_TEST_CASE(put_in_dataencoder)\n{" << endl;
+
   unsigned short trans_id = 1;
   bool action = true;
 
@@ -360,10 +390,14 @@ BOOST_AUTO_TEST_CASE (put_in_dataencoder)
   DED_PUT_DATA_IN_DECODER(decoder_ptr,pCompressedData,sizeofCompressedData);
   BOOST_CHECK(decoder_ptr != 0);
 
+
+	cout << "}" << endl;
 }
 
 BOOST_AUTO_TEST_CASE (encoder_get)
 {
+	cout << "BOOST_AUTO_TEST_CASE(encoder_get)\n{" << endl;
+
   unsigned short trans_id = 1;
   bool action = true;
 
@@ -410,13 +444,17 @@ BOOST_AUTO_TEST_CASE (encoder_get)
   }
 
   BOOST_CHECK(bDecoded == true);
+
+	cout << "}" << endl;
 }
 
-BOOST_AUTO_TEST_CASE (data_protocol)
+BOOST_AUTO_TEST_CASE (data_protocol_with_whitspace)
 {
+	cout << "BOOST_AUTO_TEST_CASE(data_protocol_with_whitespace)\n{" << endl;
+
   unsigned short trans_id = 24;
   bool action = true;
-  unsigned char buffer[8] = {1,2,3,4,5,6,7,8};
+  unsigned char buffer[8] = {1,0x20,0x20,4,5,6,7,8};
   std::vector<unsigned char> vec(&buffer[0],&buffer[8]);
   std::vector<unsigned char> receivedVector;
 
@@ -485,10 +523,24 @@ BOOST_AUTO_TEST_CASE (data_protocol)
 	BOOST_CHECK(bValue == true);
 	BOOST_CHECK(receivedVector == vec);
 
+	cout << "receivedVector : " << endl;
+	cout << "/*{{{*/" << endl;
+	for(int n=0;n<receivedVector.size(); n++)
+	{
+		if( receivedVector[n] != vec[n] ) {
+			cout << "FAIL:";
+		}
+
+		fprintf(stdout, "%02X%s", receivedVector[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
+	}
+	cout << "/*}}}*/" << endl;
+
+	cout << "}" << endl;
 }
 
 BOOST_AUTO_TEST_CASE (encode_decode_large_toast)
 {
+	cout << "BOOST_AUTO_TEST_CASE(encode_decode_large_toast)\n{" << endl;
     // encode
 
     DED_START_ENCODER(encoder_ptr);
@@ -589,11 +641,14 @@ BOOST_AUTO_TEST_CASE (encode_decode_large_toast)
     }
     BOOST_CHECK(bDecoded == true); //
 
+
+	cout << "}" << endl;
 }
 
 
 BOOST_AUTO_TEST_CASE (encode_decode_Xlarge_toast)
 {
+	cout << "BOOST_AUTO_TEST_CASE(encode_decode_Xlarge_toast)\n{" << endl;
     // encode
 
     DED_START_ENCODER(encoder_ptr);
@@ -692,10 +747,13 @@ BOOST_AUTO_TEST_CASE (encode_decode_Xlarge_toast)
     }
     BOOST_CHECK(bDecoded == true); //
 
+
+	cout << "}" << endl;
 }
 
 BOOST_AUTO_TEST_CASE (encode_decode_toast)
 {
+	cout << "BOOST_AUTO_TEST_CASE(encode_decode_toast)\n{" << endl;
     // encode
 
     DED_START_ENCODER(encoder_ptr);
@@ -793,11 +851,9 @@ BOOST_AUTO_TEST_CASE (encode_decode_toast)
     }
     BOOST_CHECK(bDecoded == true); //
 
+
+	cout << "}" << endl;
 }
-
-
-
-
 
 BOOST_AUTO_TEST_CASE(encodeImagefile)
 {
@@ -866,7 +922,7 @@ BOOST_AUTO_TEST_CASE(encodeImagefile)
 		cout << "/*{{{*/" << endl;
 		int _offset=0;
 		for(int n=0;n<_chunk.entity_chunk_data.size(); n++)
-		{ 
+		{
 			if( FileDataBytesInVector[n+offset] != _chunk.entity_chunk_data[n] ) {
 				cout << "FAIL:";
 				fails++;
