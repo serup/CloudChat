@@ -233,7 +233,9 @@ BOOST_AUTO_TEST_CASE (compressAndUncompress2)
 
 BOOST_AUTO_TEST_CASE (chckForUgglyWS_hack)
 {
-    //std::string str("I am Sam\nSam I am\n\nThat Sam-I-am!\nThat Sam-I-am!\nI do not like\nthat Sam-I-am!\n\nDo you like green eggs and ham?\n\nI do not like them, Sam-I-am.\nI do not like green eggs and ham.");
+    cout<<"BOOST_AUTO_TEST_CASE(chckForUgglyWS_hack)\n{"<<endl;  
+
+	//std::string str("I am Sam\nSam I am\n\nThat Sam-I-am!\nThat Sam-I-am!\nI do not like\nthat Sam-I-am!\n\nDo you like green eggs and ham?\n\nI do not like them, Sam-I-am.\nI do not like green eggs and ham.");
     std::string str("\x19\x19\x19\x19       I am Sam\nSad I am\n\nThat Sam-I-am!\n I \nThat Sam-I-am!\nI do not like\nthat Sam-I-am!\n\nDo you like green eggs and ham?\n\nI do not like them, Sam-I-am.\nI do not like green eggs and ham.");
     std::vector<unsigned char> data_ptr_c_before(str.begin(), str.end());
     std::vector<unsigned char> data_ptr_c(str.begin(), str.end());
@@ -258,7 +260,13 @@ BOOST_AUTO_TEST_CASE (chckForUgglyWS_hack)
 
 	}
 		
-
+	cout << "before compression Data : " << endl;
+	cout << "/*{{{*/" << endl;  
+    for(int n=0;n<data_ptr_c_before.size();n++) {
+			fprintf(stdout, "%02X%s", data_ptr_c_before[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );  
+	}
+	cout << "/*}}}*/" << endl;  
+	
     DED_COMPRESS_DATA((unsigned char*)&data_ptr_c[0],sizeofdata,compresseddata,sizeofcompresseddata)
     BOOST_CHECK(sizeofcompresseddata < sizeofdata);
 
@@ -275,7 +283,7 @@ BOOST_AUTO_TEST_CASE (chckForUgglyWS_hack)
 	}
 
 	bool bError=false;
-	cout << "Data : " << endl;
+	cout << endl << "after decompression Data : " << endl;
 	cout << "/*{{{*/" << endl;  
     for(int n=0;n<sizeofdata;n++) {
         if(pUnCompressedData[n] != data_ptr_c_before[n]) {
@@ -287,6 +295,8 @@ BOOST_AUTO_TEST_CASE (chckForUgglyWS_hack)
 	}
 	cout << "/*}}}*/" << endl;  
 	BOOST_CHECK(!bError);
+
+	cout<<"}"<<endl;
 }
 
 BOOST_AUTO_TEST_CASE (chckDataAfterSmallCompressUncompress)
