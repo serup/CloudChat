@@ -117,6 +117,16 @@ else
   echo "--  sudo systemctl add-wants multi-user.target rpcbind"
   echo "--  this will restart portmapper and your server should then work"
 fi
+
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 w3m* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install w3w google access from terminal ; see info: https://www.youtube.com/watch?v=wlR1oa7uePg"
+  sudo apt-fast install -yq w3m 
+  echo " - done."
+else
+  echo "- w3w already installed"
+fi
+
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 dstat* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install dstat: Monitoring Linux Systems performance "
