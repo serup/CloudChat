@@ -3,7 +3,6 @@
 #include "../compression.h"
 #include <string>
 
-
 //////////////////////////////////////////
 // TESTCASE
 //////////////////////////////////////////
@@ -232,20 +231,62 @@ BOOST_AUTO_TEST_CASE (compressAndUncompress2)
     BOOST_CHECK(sizeofUncompressedData == sizeofdata);
 }
 
-BOOST_AUTO_TEST_CASE (chckDataAfterCompressUncompress3)
+BOOST_AUTO_TEST_CASE (chckForUgglyWS_hack)
 {
-    std::string str("I am Sam\nSam I am\n\nThat Sam-I-am!\nThat Sam-I-am!\nI do not like\nthat Sam-I-am!\n\nDo you like green eggs and ham?\n\nI do not like them, Sam-I-am.\nI do not like green eggs and ham.");
-    const std::vector<char> data_ptr_c(str.begin(), str.end());
+    //std::string str("I am Sam\nSam I am\n\nThat Sam-I-am!\nThat Sam-I-am!\nI do not like\nthat Sam-I-am!\n\nDo you like green eggs and ham?\n\nI do not like them, Sam-I-am.\nI do not like green eggs and ham.");
+    std::string str("\x19\x19\x19\x19       I am Sam\nSad I am\n\nThat Sam-I-am!\n I \nThat Sam-I-am!\nI do not like\nthat Sam-I-am!\n\nDo you like green eggs and ham?\n\nI do not like them, Sam-I-am.\nI do not like green eggs and ham.");
+    std::vector<unsigned char> data_ptr_c_before(str.begin(), str.end());
+    std::vector<unsigned char> data_ptr_c(str.begin(), str.end());
     int sizeofdata=str.size();
 
+	cout << "Found non-alphas in data :" << endl;
+	for(int n=0;n<data_ptr_c.size();n++)
+	{
+		if(!isalpha(data_ptr_c[n]))
+			fprintf(stdout, "%02X%s", data_ptr_c[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );  
+
+	}
+	cout << endl;
+
+	/**
+	 * HACK - should be done in CDataEncoder::Encodestdvector
+	 */
+	//increment all to avoid whitespace issue - UGGLY Hack
+	for(int n=0;n<data_ptr_c.size();n++)
+	{
+		data_ptr_c[n] = data_ptr_c[n] + 1;
+
+	}
+		
 
     DED_COMPRESS_DATA((unsigned char*)&data_ptr_c[0],sizeofdata,compresseddata,sizeofcompresseddata)
     BOOST_CHECK(sizeofcompresseddata < sizeofdata);
 
     DED_DECOMPRESS_DATA(compresseddata,sizeofcompresseddata,pUnCompressedData,sizeofUncompressedData);
     BOOST_CHECK(sizeofUncompressedData == sizeofdata);
-    for(int n=0;n<sizeofdata;n++)
-        BOOST_CHECK(pUnCompressedData[n] == data_ptr_c[n]);
+
+	/**
+	 * HACK - should be done in CDataEncoder::GetElement - under DED_ELEMENT_TYPE_STDVECTOR
+	 */
+	//decrement all to recreate whitespace - UGGLY Hack
+	for(int n=0;n<sizeofUncompressedData;n++)
+	{
+		pUnCompressedData[n] = pUnCompressedData[n] - 1;
+	}
+
+	bool bError=false;
+	cout << "Data : " << endl;
+	cout << "/*{{{*/" << endl;  
+    for(int n=0;n<sizeofdata;n++) {
+        if(pUnCompressedData[n] != data_ptr_c_before[n]) {
+			fprintf(stdout, "FAIL:[%02X!=%02X] ", pUnCompressedData[n], data_ptr_c_before[n] );  
+			bError=true;
+		}
+		else
+			fprintf(stdout, "%02X%s", pUnCompressedData[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );  
+	}
+	cout << "/*}}}*/" << endl;  
+	BOOST_CHECK(!bError);
 }
 
 BOOST_AUTO_TEST_CASE (chckDataAfterSmallCompressUncompress)

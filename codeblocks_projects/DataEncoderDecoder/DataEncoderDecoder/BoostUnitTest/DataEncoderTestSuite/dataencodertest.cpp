@@ -458,10 +458,6 @@ BOOST_AUTO_TEST_CASE (data_protocol_with_whitspace)
   std::vector<unsigned char> vec(&buffer[0],&buffer[8]);
   std::vector<unsigned char> receivedVector;
 
-  //avoid ws 
-//  for(int n=0;n<vec.size();n++)
-//	  vec[n] = vec[n]+1;
-
   DED_START_ENCODER(encoder_ptr);
   DED_PUT_STRUCT_START( encoder_ptr, (std::string)"event" );
 	DED_PUT_METHOD	( encoder_ptr, "name",  "MusicPlayer" );
