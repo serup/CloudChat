@@ -822,8 +822,9 @@ std::vector<unsigned char> CDataDictionaryControl::fetchElement(std::vector<asse
 	}
 	return resultValue;
 }
-		
-pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::string attributpath)
+
+/*
+pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::_ftgt(std::string attributpath)
 {
 	using boost::optional;
 	using boost::property_tree::ptree;
@@ -957,6 +958,86 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::
 	catch (const std::exception& e)  // catch any exceptions
 	{ cerr << endl << "Exception: " << e.what() << endl; }
 
+	resultAttributPair = make_pair(attributpath,ElementData); // assemble data 
+
+	return resultAttributPair;
+}
+*/
+
+pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::string attributpath)
+{
+	using boost::optional;
+	using boost::property_tree::ptree;
+	
+	std::vector<assembledElements> records_elements; // contains assembled elements from tree
+	std::vector<unsigned char> ElementData;
+	pair<std::string, std::vector<unsigned char>> resultAttributPair;
+
+
+	try
+	{
+	std::string transGuid="";
+	std::string id="";
+	std::string str;
+	std::string attribut = "";
+	std::string prev = "";
+	std::string prevAtt = "";
+	boost::property_tree::ptree _empty_tree;
+
+	boost::filesystem::path targetDir( boost::filesystem::current_path() );
+	boost::filesystem::recursive_directory_iterator iter(targetDir), eod;
+
+	BOOST_FOREACH(boost::filesystem::path const& i, make_pair(iter, eod))
+	{
+		if (is_regular_file(i)){
+
+			bool bExtBFi=false;
+			bExtBFi = (boost::filesystem::extension(i.string()) == ".BFi");
+			if(bExtBFi) {
+				cout << "file : " << i << endl;
+				cout << "*{{{" << endl;
+
+				std::ifstream is (i.string());
+				ptree pt;
+				try{
+						read_xml(is, pt);
+				}catch(...) {}
+
+				optional< ptree& > child = pt.get_child_optional("BFi");
+				if(child) 
+				{
+					BOOST_FOREACH(boost::property_tree::ptree::value_type &child, pt.get_child("BFi.BlockEntity.BlockRecord", _empty_tree)) 
+					{
+						BOOST_FOREACH(boost::property_tree::ptree::value_type &vt2, child.second)
+						{
+							if(vt2.first == "chunk_data")
+							{
+							//	const boost::property_tree::ptree::value_type &vt3 = vt2.second;
+							//	std::string attribName = vt3.second.get<unsigned long>("chunk_ddid");
+
+							//	cout << " - chunk_ddid : " << attribName << endl;
+								//attribut = transGuid + "./" + id + "/";
+
+								cout << " - chunk_data : " << endl; 
+								records_elements = readBlockRecordElements(vt2);
+							}
+						}
+					}
+				}
+
+				cout << "*}}}" << endl;
+			}
+			
+		}
+	}
+	}
+	catch (const std::exception& e)  // catch any exceptions
+	{ cerr << endl << "Exception: " << e.what() << endl; }
+
+	//find element in list
+	ElementData = fetchElement(records_elements, attributpath);
+
+	//return as a pair <name,value>
 	resultAttributPair = make_pair(attributpath,ElementData); // assemble data 
 
 	return resultAttributPair;
