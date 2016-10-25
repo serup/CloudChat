@@ -2028,9 +2028,9 @@ BOOST_AUTO_TEST_CASE(addLargeAttributOver2BFifiles)
 	cout << "call ls() - list attributs - validate expected results " << endl;
 	listResult = pDDC->ls();	
 	//expected : reads like this: <GUID> has a profile folder with attribut name, mobil and foto
-	std::string expected1 =  "F8C23762ED2823A27E62A64B95C024EF./profile/foto";
-	std::string expected2 =  "F8C23762ED2823A27E62A64B95C024EF./profile/name";
-	std::string expected3 =  "F8C23762ED2823A27E62A64B95C024EF./profile/mobil";
+	std::string expected1 =  "F8C23762ED2823A27E62A64B95C024EF./profile/name";
+	std::string expected2 =  "F8C23762ED2823A27E62A64B95C024EF./profile/mobil";
+	std::string expected3 =  "F8C23762ED2823A27E62A64B95C024EF./profile/foto";
 
 	BOOST_CHECK(listResult.size() > 0);
 
@@ -2210,12 +2210,12 @@ BOOST_AUTO_TEST_CASE(addLargeAttributOver3BFifiles)
 		   	cout << "- OK amount of BlockRecords created: " << amountOfBlockRecords << endl;
 	else
 		   	cout << "- FAIL: amount of BlockRecords created: " << amountOfBlockRecords << endl;
-	BOOST_CHECK(amountOfBlockRecords == 3); // Only one BlockRecord - the attributs should be added to BlockRecord until it is full, then new BlockRecord will be added
-	if(amountOfchunk_records == 65)
+	BOOST_CHECK(amountOfBlockRecords == 3); 
+	if(amountOfchunk_records == 68)
 		cout << "- OK amount of chunk records : " << amountOfchunk_records << endl;
 	else
 		cout << "- FAIL: amount of chunk records : " << amountOfchunk_records << endl;
-	BOOST_CHECK(amountOfchunk_records == 65); 
+	BOOST_CHECK(amountOfchunk_records == 68); 
 	cout << "________________________________________" << endl;
 
 	cout << "call ls() - list attributs - validate expected results " << endl;

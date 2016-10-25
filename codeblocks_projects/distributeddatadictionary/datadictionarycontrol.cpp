@@ -929,9 +929,9 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::
 
 																	//cout << "Elements in listOfattributChunks : " << listOfattributChunks.size() << endl;
 
-																		//TODO: assemble after sort	of listOfattributChunks
+																	//TODO: assemble after sort	of listOfattributChunks
 																    /// this will, chunk by chunk, assemble the element data
-																    //std::copy(_chunk.entity_chunk_data.begin(), _chunk.entity_chunk_data.end(), std::back_inserter(ElementData));	
+																    std::copy(_chunk.entity_chunk_data.begin(), _chunk.entity_chunk_data.end(), std::back_inserter(ElementData));	
 															}
 															else
 																	BOOST_LOG_TRIVIAL(error) << "[CDataDictionaryControl::ftgt] FAIL: ERROR:  when trying to put data into decoder " << endl;
