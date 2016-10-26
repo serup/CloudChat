@@ -107,7 +107,8 @@ let g:ycm_disable_for_files_larger_than_kb = 1000000
 "disable syntastic on the statusline
 let g:statline_syntastic = 0
 let @q = 'iBOOST_AUTO_TEST_CASE(x){cout << "BOOST_AUTO_TEST_CASE(x)\n{" << endl;BOOST_CHECK(true == false);cout << "}" << endl;}'
+let @j = 'y/^R"^M'
 set autoindent noexpandtab tabstop=4 shiftwidth=4
 "make sure color codes are enabled at startup
-autocmd VimEnter * AnsiEsc
+"autocmd VimEnter * AnsiEsc
 
