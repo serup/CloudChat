@@ -648,9 +648,14 @@ BOOST_AUTO_TEST_CASE(addBlockRecordToBlockEntity)
 	using boost::property_tree::ptree;
 	ptree _empty_tree;
 	int nBlockEntities=0;
-	BOOST_FOREACH(ptree::value_type &v2, ptBlockEntity.get_child("listOfBlockEntities", _empty_tree))
+	BOOST_FOREACH(ptree::value_type &vt2, ptBlockEntity.get_child("listOfBlockEntities", _empty_tree))
 	{
 		nBlockEntities++;
+		BOOST_FOREACH(auto &record, vt2.second)
+		{
+			cout << "record : " << record.first.data() << endl;
+		}
+			
 	}
 
 	if(nBlockEntities==2)
