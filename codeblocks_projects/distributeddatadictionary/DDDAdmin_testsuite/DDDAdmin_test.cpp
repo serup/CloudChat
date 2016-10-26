@@ -636,14 +636,17 @@ BOOST_AUTO_TEST_CASE(addBlockRecordToBlockEntity)
 	cout << "amount of BlockRecords : " << ptListOfBlockRecords.size() << endl;
 	BOOST_CHECK(ptListOfBlockRecords.size() > 0);
 
-
 	//long maxBlockEntitySize=64000; // should result in 1 BlockEntity 
-	long maxBlockEntitySize=27000; // should result in 2 BlockEntity 
+	long maxBlockEntitySize=27000; // should result in 2 BlockEntity - however they are inside same ptree
 	std::string transGuid = "E4C23762ED2823A27E62A64B95C024E7";
 	boost::property_tree::ptree ptBlockEntity = ptestDataDictionaryControl->addBlockRecordToBlockEntity(transGuid, ptListOfBlockRecords, maxBlockEntitySize);
 
-	BOOST_CHECK(ptBlockEntity.size()>0);
-    cout << "amount of BlockEntities : " << ptBlockEntity.size() << endl;
+	BOOST_CHECK(ptBlockEntity.size() == 1); // this is a TOTAL list of BlockEntities for later to be split into multiple files .BFi
+
+
+
+	cout << "TODO: verify that blockentities contain correct amount of blocks" << endl;
+
 	cout<<"}"<<endl;
 }
 
@@ -685,13 +688,14 @@ BOOST_AUTO_TEST_CASE(writeBlockEntitiesToBFiFiles)
 	std::string realmName = "profile";
 	boost::property_tree::ptree ptListOfBlockRecords = ptestDataDictionaryControl->addDEDchunksToBlockRecords(aiid, realmName, attributName, listOfDEDchunks, maxBlockRecordSize);
 
-	BOOST_CHECK(ptListOfBlockRecords.size() > 0);
-
+	cout << "amount of BlockRecords : " << ptListOfBlockRecords.size() << endl;
+	BOOST_CHECK(ptListOfBlockRecords.size() == 4); 
 	long maxBlockEntitySize=27000; // should result in 2 BlockEntity 
 	std::string transGuid = "E4C23762ED2823A27E62A64B95C024E7";
 	boost::property_tree::ptree ptBlockEntity = ptestDataDictionaryControl->addBlockRecordToBlockEntity(transGuid, ptListOfBlockRecords, maxBlockEntitySize);
 
-	BOOST_CHECK(ptBlockEntity.size()>0);
+	BOOST_CHECK(ptBlockEntity.size() == 1); // this is a TOTAL list of BlockEntities for later to be split into multiple files .BFi
+
 
 	// write test xml file
 	ofstream blockFile1 ("xmlresult2.xml", ios::out | ios::binary);
@@ -715,7 +719,7 @@ BOOST_AUTO_TEST_CASE(writeBlockEntitiesToBFiFiles)
 			boost::filesystem::remove(block.first);
 	}
 
-	// test with only 1 blockentity file
+	// now - test with only 1 blockentity file
 	//
 	maxBlockEntitySize=64000; // should result in 1 BlockEntity 
 	transGuid = "F4C23762ED2823A27E62A64B95C024EF";
