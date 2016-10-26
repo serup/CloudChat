@@ -643,9 +643,22 @@ BOOST_AUTO_TEST_CASE(addBlockRecordToBlockEntity)
 
 	BOOST_CHECK(ptBlockEntity.size() == 1); // this is a TOTAL list of BlockEntities for later to be split into multiple files .BFi
 
+	cout << "TODO: verify that blockentities contain correct amount of DED chunks" << endl;
 
+	using boost::property_tree::ptree;
+	ptree _empty_tree;
+	int nBlockEntities=0;
+	BOOST_FOREACH(ptree::value_type &v2, ptBlockEntity.get_child("listOfBlockEntities", _empty_tree))
+	{
+		nBlockEntities++;
+	}
 
-	cout << "TODO: verify that blockentities contain correct amount of blocks" << endl;
+	if(nBlockEntities==2)
+		cout << "OK: BlockEntities amount : " << nBlockEntities << endl;
+	else
+		cout << "FAIL: BlockEntities amount : " << nBlockEntities << " it should have been : 2 " << endl;
+	BOOST_CHECK(nBlockEntities == 2);
+
 
 	cout<<"}"<<endl;
 }
