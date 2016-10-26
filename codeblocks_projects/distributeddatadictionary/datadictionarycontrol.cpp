@@ -700,11 +700,13 @@ std::vector<assembledElements> CDataDictionaryControl::readBlockRecordElements(b
 	assembledElements Element;
 
 	cout << "searching for chunk_record ";
+	bool bFound=false;
 	BOOST_FOREACH(boost::property_tree::ptree::value_type &vt3, vt2.second)
 	{
 		if(vt3.first == "chunk_record")
 		{
-			cout << "+" << endl;
+			if(!bFound) { cout << "+" << endl; bFound=true; }
+
 			chunk_record_entries f;
 			f.chunk_ddid = vt3.second.get<std::string>("chunk_ddid");
 			f.DataSize  = vt3.second.get<unsigned long>("DataSize");
