@@ -2310,9 +2310,9 @@ BOOST_AUTO_TEST_CASE(fetchAttributFromBFi)
 
 	cout << "________________________________________" << endl;
 
-	cout << "Fetch attribut from .BFi file " << endl;
 
 	pair<std::string, std::vector<unsigned char>> pairAttribut = ptestDataDictionaryControl->ftgt("F9D23762ED2823A27E62A64B95C024EF./profile/name");
+	cout << "Fetched attribut from .BFi file " << endl;
 	cout << "Attribut name : " << pairAttribut.first << endl;
 	std::string value(pairAttribut.second.begin(), pairAttribut.second.end());
 	cout << "Attribut value : " << value << endl;

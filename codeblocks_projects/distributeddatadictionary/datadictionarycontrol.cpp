@@ -698,11 +698,15 @@ std::vector<assembledElements> CDataDictionaryControl::readBlockRecordElements(b
 	bool pushed=false;
 	std::string prevchunkid = (std::string)"nothing";
 	assembledElements Element;
+
+	cout << "searching for chunk_record ";
 	BOOST_FOREACH(boost::property_tree::ptree::value_type &vt3, vt2.second)
 	{
 		if(vt3.first == "chunk_record")
 		{
+			cout << "+" << endl;
 			chunk_record_entries f;
+			f.chunk_ddid = vt3.second.get<std::string>("chunk_ddid");
 			f.DataSize  = vt3.second.get<unsigned long>("DataSize");
 			f.Data      = vt3.second.get<std::string>("Data");
 			f.DataMD5   = vt3.second.get<std::string>("DataMD5");
@@ -754,7 +758,7 @@ std::vector<assembledElements> CDataDictionaryControl::readBlockRecordElements(b
 						Element.ElementData.clear();
 						prevchunkid = _chunk.entity_chunk_id;
 					}
-					cout << "attribut : " << _chunk.entity_chunk_id << endl << "- entity_chunk_seq : ";
+					cout << "- attribut : " << _chunk.entity_chunk_id << endl << "-- entity_chunk_seq : ";
 				}
 	
 				cout << "," << _chunk.entity_chunk_seq;
@@ -766,6 +770,8 @@ std::vector<assembledElements> CDataDictionaryControl::readBlockRecordElements(b
 			}
 			free(data_in_unhexed_buf);
 		}
+		else
+			cout << "-";
 	}
 	if(pushed==false){
 		records_elements.push_back(Element);
@@ -1006,22 +1012,34 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::
 				optional< ptree& > child = pt.get_child_optional("BFi");
 				if(child) 
 				{
+					cout << "searching for chunk_data ";
 					BOOST_FOREACH(boost::property_tree::ptree::value_type &child, pt.get_child("BFi.BlockEntity.BlockRecord", _empty_tree)) 
 					{
-						BOOST_FOREACH(boost::property_tree::ptree::value_type &vt2, child.second)
-						{
-							if(vt2.first == "chunk_data")
+							if (child.first == "TransGUID") transGuid = child.second.data();
+							if (child.first == "chunk_id") id = child.second.data();
+
+							//cout << "attribut name : " << child.first << endl;
+							cout << "-";
+							if(child.first == "chunk_data")
 							{
-							//	const boost::property_tree::ptree::value_type &vt3 = vt2.second;
-							//	std::string attribName = vt3.second.get<unsigned long>("chunk_ddid");
-
-							//	cout << " - chunk_ddid : " << attribName << endl;
-								//attribut = transGuid + "./" + id + "/";
-
-								cout << " - chunk_data : " << endl; 
-								records_elements = readBlockRecordElements(vt2);
+								cout << "+" << endl;
+								records_elements = readBlockRecordElements(child);
+								cout << "*{{{" << endl;
+								BOOST_FOREACH(assembledElements &_element, records_elements)
+								{
+									cout << "element id : " << _element.strElementID << endl;
+									// add padding for element
+									_element.strElementID = transGuid + "./" + id + "/" + _element.strElementID;
+									cout << "-element id : " << _element.strElementID << endl;
+									
+									cout << "element size of value : " << _element.ElementData.size() << endl;
+									if(_element.ElementData.size() < 50) {
+										std::string str(_element.ElementData.begin(), _element.ElementData.end());
+										cout << "element value : " << str << endl;
+									}
+								}
+								cout << "*}}}" << endl;
 							}
-						}
 					}
 				}
 
