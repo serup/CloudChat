@@ -194,6 +194,7 @@ std::vector< pair<std::vector<unsigned char>, int> > CDataDictionaryControl::spl
 	int strangeCount=0;
 	bool bError=false;
 
+	cout << "split Attribut into DED chunks : " << endl;
 	cout << "*{{{" << endl;
 	cout << " DED entity_chunk_seq : ";
 
