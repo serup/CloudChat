@@ -309,8 +309,11 @@ boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(l
 	ptree &node = pt.add("listOfBlockRecords", "");
 	node.put("chunksInBlockRecords",listOfDEDchunks.size());
 
+	int c=0;
+	cout << "handling DED chunk : ";
 	BOOST_FOREACH( auto &chunk, listOfDEDchunks )
 	{
+		cout << ++c << ",";
 		if(aiid==0) 
 			strTransGUID = CMD5((const char*)chunk.first.data()).GetMD5s();
 
@@ -320,7 +323,7 @@ boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(l
 		}
 		bytesLeftInBlockRecord-= chunk.second;
 		iBytesLeft = iBytesLeft - chunk.second;
-		if(iBytesLeft > 0) {
+		if(iBytesLeft >= 0) {
 			aiid++;
 			boost::property_tree::ptree subpt = createBFiBlockRecord(bfirst, aiid, seq, strTransGUID, ddid, realmName, (char*)chunk.first.data(), chunk.second);
 			if(bfirst) {
@@ -333,6 +336,7 @@ boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(l
 		}
 		bfirst=false;	
 	}
+	cout << endl;
 
 	//DEBUG	
 	// write test xml file
@@ -376,8 +380,11 @@ bool CDataDictionaryControl::addDEDchunksToBlockRecords(std::string transGuid, b
 
 	ptree &node = pt.get_child("listOfBlockRecords");
 
+	int c=0;
+	cout << "handling DED chunk : ";
 	BOOST_FOREACH( auto &chunk, listOfDEDchunks )
 	{
+		cout << ++c << ",";
 		strTransGUID = transGuid;
 
 		if(bytesLeftInBlockRecord<=0) {
@@ -401,6 +408,7 @@ bool CDataDictionaryControl::addDEDchunksToBlockRecords(std::string transGuid, b
 		bfirst=false;	
 	}
 
+	cout << endl;
 	maxBlockRecordSize = bytesLeftInBlockRecord;
 	return bResult;		
 }

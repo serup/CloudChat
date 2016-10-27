@@ -702,18 +702,20 @@ BOOST_AUTO_TEST_CASE( addChunkDataToBlockRecord)
 
 	long aiid=0;
 	std::vector< pair<std::vector<unsigned char>,int> > listOfDEDchunks = ptestDataDictionaryControl->splitAttributIntoDEDchunks(aiid, attributName, FileDataBytesInVector, maxDEDchunkSize);
-	std::cout << "listOfDEDchunks : " << listOfDEDchunks.size() << '\n';
+	std::cout << "amount of DED chunks generated from file : " << listOfDEDchunks.size() << '\n';
 	BOOST_CHECK(listOfDEDchunks.size() == 35);
 
 
+	cout << "add DED chunks to BlockRecords " << endl;
 	aiid=0;
 	std::string realmName = "profile";
 	boost::property_tree::ptree pt = ptestDataDictionaryControl->addDEDchunksToBlockRecords(aiid, realmName, attributName, listOfDEDchunks, maxBlockRecordSize);
 
+	cout << "level of BlockRecords : " << pt.size() << endl;
 	BOOST_CHECK(pt.size() > 0);
 
 	int nAmountOfDEDchunks = amountOfDEDchunksInBlockRecords(pt);
-	cout << endl << "amount of DED chuncks in BlockRecords : " << nAmountOfDEDchunks << endl;
+	cout << "amount of DED chuncks in BlockRecords : " << nAmountOfDEDchunks << endl;
 	if(listOfDEDchunks.size() != nAmountOfDEDchunks)
 		cout << "FAIL: amount of DED chunks differ from actual amount, should be : " << listOfDEDchunks.size() << " it is : " << nAmountOfDEDchunks << endl;
 	else
