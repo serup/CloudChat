@@ -446,6 +446,7 @@ bool CDataDictionaryControl::appendChunkRecordToLastBlockRecordsChunkData(boost:
 						break;	
 					}
 				}
+				break;
 			}	 
 		}
 	} 
