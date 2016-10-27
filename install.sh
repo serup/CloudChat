@@ -166,6 +166,7 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- lib32stdc already installed"
 fi
+
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 *libxml2-utils* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install xmllint on ubuntu, to use for pretty format xml output; xmllint --format <file> "
@@ -174,6 +175,17 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- xmllint already installed"
 fi
+
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 highlight* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install highlight - to help with colorize xml output from xmllint "
+  sudo apt-fast install -yq highlight 
+  echo " - done."
+else
+  echo "- highlight already installed"
+fi
+
+
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 *libncurses* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install  libcurses on ubuntu, to use for screen handling in terminals "
