@@ -14,6 +14,7 @@
 using namespace std;
 using namespace boost::unit_test;
 using namespace boost::algorithm;
+using boost::property_tree::ptree;
 
 //////////////////////////////////////////
 // TESTCASE
@@ -105,9 +106,38 @@ std::vector< pair<std::unique_ptr<unsigned char>,int>> getVVblob()
 	return v;
 }
 
+int calculateDEDchunks(boost::property_tree::ptree ptBlockEntity)
+{
+	int amountOfRecords=0;
+	ptree _empty_tree;
+	BOOST_FOREACH(ptree::value_type &vt2, ptBlockEntity.get_child("listOfBlockEntities", _empty_tree))
+	{
+		BOOST_FOREACH(auto &record, vt2.second)
+		{
+			if(record.first == "BlockRecord") {
+				BOOST_FOREACH(auto &blkattrib, record.second)
+				{
+					if( blkattrib.first == "chunk_data" ) {
+						bool bFound=false;
+						BOOST_FOREACH( auto &chunk_data, blkattrib.second )
+						{
+							if( chunk_data.first == "chunk_record" ) {
+								if(!bFound) { 
+									BOOST_FOREACH( auto &c, blkattrib.second ) { if( c.first == "chunk_record" ) amountOfRecords++; } 
+									bFound=true;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	return amountOfRecords;
+}
+
 int displayBlockEntities(boost::property_tree::ptree ptBlockEntity)
 {
-	using boost::property_tree::ptree;
 	ptree _empty_tree;
 	int nBlockEntities=0;
 	cout << "BlockEntities : " << endl;
@@ -706,6 +736,14 @@ BOOST_AUTO_TEST_CASE( addBlockRecordToBlockEntity)
 		cout << "FAIL: BlockEntities amount : " << nBlockEntities << " it should have been : 2 " << endl;
 	BOOST_CHECK(nBlockEntities == 2);
 
+	int nAmountOfDEDchunks = calculateDEDchunks(ptBlockEntity);
+	cout << "amount of DED chuncks in BlockEntities : " << nAmountOfDEDchunks << endl;
+	if(listOfDEDchunks.size() != nAmountOfDEDchunks)
+		cout << "FAIL: amount of DED chunks differ from actual amount, should be : " << listOfDEDchunks.size() << " but is : " << nAmountOfDEDchunks << endl;
+	else
+		cout << "OK: amount of DED chunks stored is same as compiled " << endl;
+
+	BOOST_CHECK(listOfDEDchunks.size() == nAmountOfDEDchunks);
 
 	cout<<"}"<<endl;
 }
