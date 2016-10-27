@@ -436,11 +436,11 @@ bool CDataDictionaryControl::appendChunkRecordToLastBlockRecordsChunkData(boost:
 
 			if(v2.first == "BlockRecord")
 			{ 
-//				cout << "- OK: Found Last BlockRecord " << endl;
+				cout << "- OK: Found Last BlockRecord " << endl;
 				BOOST_REVERSE_FOREACH(boost::property_tree::ptree::value_type &v3, v2.second)
 				{
 					if(v3.first == "chunk_data"){
-//						cout << "- append new chunk_record inside chunk_data " << endl;
+						cout << "- append new chunk_record inside chunk_data " << endl;
 						v3.second.add_child("chunk_record", subpt.get_child("chunk_record", _empty_tree));
 						bResult=true;
 						break;	
