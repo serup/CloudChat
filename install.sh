@@ -640,7 +640,7 @@ else
   #sudo cp channel_numeric_operations.hpp /usr/include/boost/gil/extension/numeric/.
   #sudo cp affine.hpp /usr/include/boost/gil/extension/numeric/.
  fi
-PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 virtualbox |grep "install ok installed")
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 virtualbox |grep "ok")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install Virtualbox -- PARAMOUNT DO NOT HAVE SECURE BOOT ENABLED otherwise install of virtualbox will fail"
 
