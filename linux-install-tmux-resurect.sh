@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 echo "fetch tmux resurect plugin"
 git clone https://github.com/tmux-plugins/tmux-resurrect ~/.tmux
 echo "fetch tmux plugin manager"
