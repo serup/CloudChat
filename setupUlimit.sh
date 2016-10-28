@@ -1,4 +1,4 @@
-#!/usr/bin bash
+#!/usr/bin/env bash
 #somehow individual file does not work - why?
 #user=$(whoami)
 #echo $user
