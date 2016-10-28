@@ -1,4 +1,4 @@
-#!/usr/bin bash
+#!/usr/bin/env bash
 
 sudo git clone https://github.com/powerman/vim-plugin-AnsiEsc.git ~/.vim/bundle/AnsiEsc/ 
 echo "go into vim and write :helptags ~/.vim/"
