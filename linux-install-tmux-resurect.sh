@@ -9,4 +9,5 @@ git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 echo "copy .bash_profile and .tmux.conf files"
 cp .bash_profile ~/.
 cp .tmux.conf ~/.
+cp .bash_aliases ~/.
 echo "-done -  start tmux, then write <prefix> I  -- this will install tmux plugins - NB! NOW RESTART PC inorder for resurrect to work " 
