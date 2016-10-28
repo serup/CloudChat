@@ -25,7 +25,7 @@ alias vimstart='vim --cmd "let g:startify_disable_at_vimenter = 1" -S Session.vi
 alias ks='function _blabla(){ kill "$(ps -aux|grep $1|head -1|awk '\''{print $2}'\'')"; }; _blabla'
 
 echo "Setup ULIMIT -- IMPORTANT - this is needed to avoid too many handles or processes, which will freeze system"
-bash setupUlimit.sh
+sudo bash setupUlimit.sh
 
 function set-title() {
   if [[ -z "$ORIG" ]]; then
