@@ -9,5 +9,7 @@ cat javascript_projects/total_result.txt >> output.txt
 rm fail.txt
 rm pass.txt
 rm result.txt
-cat _total_result.txt
+cat _total_result.txt > test_results.txt
+./result.sh test_results.txt > test_results_color.txt
+cat test_results_color.txt
 

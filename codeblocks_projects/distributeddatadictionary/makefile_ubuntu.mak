@@ -22,7 +22,7 @@ dep: depend
 
 depend:
 	@ echo "- remove old version of TCLAP"
-	@ rm -rf tclap*
+	-@ rm -rf tclap*
 	@ echo "- Download TCLAP for handling commandline commands"
 	@ wget https://sourceforge.net/projects/tclap/files/tclap-1.2.1.tar.gz/download -O tclap-1.2.1.tar.gz
 	@ echo "- extract "

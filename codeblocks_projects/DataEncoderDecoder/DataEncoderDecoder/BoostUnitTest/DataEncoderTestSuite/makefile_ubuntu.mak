@@ -15,7 +15,7 @@ CONVERT2=xsltproc -o test_results.txt ../test_results_text.xslt test_results.xml
 all: buildstartmsg compile buildfinishmsg display_waitfortest test
 
 total: compile display_waitfortest test
-_total: compile test
+_total: compile _test
 
 
 buildstartmsg:
@@ -41,6 +41,24 @@ testbasic:
 display_waitfortest:
 	@ echo " Test of DataEncoderDecoder - please wait... " 
 	@ echo "-----------------------------------------------" 
+
+_test:
+	@ $(TEST) $(TESTFLAGS) > error.txt;$(CONVERT) 
+	@ $(TEST) $(TESTFLAGS3) > error2.txt;$(CONVERT2) 
+	@ echo "-----------------------------------------------" > test_txt_result.txt 
+	@ echo " Test of DataEncoderDecoder  " >> test_txt_result.txt  
+	@ echo "-----------------------------------------------" >> test_txt_result.txt 
+	@ cat test_results.txt | grep 'OK\|FAIL' >> test_txt_result.txt
+	@ echo "--------------" >> test_txt_result.txt
+	@ echo "Tests Complete" >> test_txt_result.txt
+	@ echo "--------------" >> test_txt_result.txt
+	@ printf "Passed: " >> test_txt_result.txt;(cat test_results.txt | grep -c 'OK'; printf "") >> test_txt_result.txt
+	@ printf "Failed: " >> test_txt_result.txt;(cat test_results.txt | grep -c 'FAIL'; printf "") >> test_txt_result.txt 
+	@ echo "--------------" >> test_txt_result.txt
+	@ cat test_txt_result.txt > test_results.txt
+	@ cat test_results.txt
+	-@ rm test_txt_result.txt
+	-@ rm error2.txt
 
 test:
 	@ $(TEST) $(TESTFLAGS) > error.txt;$(CONVERT) 
