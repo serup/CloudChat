@@ -2563,9 +2563,9 @@ BOOST_AUTO_TEST_CASE( addSmallAndLargeAttributesOver2BFifiles)
 	cout<<"}"<<endl;
 }
 
-BOOST_AUTO_TEST_CASE( addLargeAttributOver3BFifiles)
+BOOST_AUTO_TEST_CASE( addSmallAndLargeAttributOver3BFifiles)
 {
-	cout<<"BOOST_AUTO_TEST_CASE( addLargeAttributOver3BFifiles )\n{"<<endl;
+	cout<<"BOOST_AUTO_TEST_CASE( addSmallAndLargeAttributOver3BFifiles )\n{"<<endl;
 
 	using boost::optional;
 	using boost::property_tree::ptree;
@@ -2616,15 +2616,17 @@ BOOST_AUTO_TEST_CASE( addLargeAttributOver3BFifiles)
 
 
 	cout << "BlockRecord size before: " << maxBlockRecordSize << endl;
+	cout << "*{{{" << endl;
 	std::string transGuid = "F9C23762ED2823A27E62A64B95C024EF";
 	BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName, attributValue)); 
 	cout << "BlockRecord size after 1 attribut add : " << maxBlockRecordSize << endl;
 	BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName2, attributValue2)); 
 	cout << "BlockRecord size after 2 atrribut add : " << maxBlockRecordSize << endl;
 	BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName3, attributValue3)); 
+	cout << "*}}}" << endl;
 	cout << "BlockRecord size after 3 atrribut add : " << maxBlockRecordSize << endl;
 	 
-	long maxBlockEntitySize=15000; // should result in 2 BlockEntity 
+	long maxBlockEntitySize=10000; // should result in 3 BlockEntity 
 	boost::property_tree::ptree ptBlockEntity = ptestDataDictionaryControl->addBlockRecordToBlockEntity(transGuid, ptListOfBlockRecords, maxBlockEntitySize);
 	BOOST_CHECK(ptBlockEntity.size()>0);
 
