@@ -1606,6 +1606,7 @@ BOOST_AUTO_TEST_CASE( reassembleAndVerifyAttributFromMultipleBlockRecords)
 
 	std::vector<assembledElements> records_elements[3]; // contains assembled elements from tree 
 
+	cout << "Fetch all BlockRecords for attribut from BlockEntity : " << endl;
 	int nEntity=0;
 	BOOST_FOREACH(ptree::value_type &vt, ptBlockEntity.get_child("listOfBlockEntities"))
 	{
@@ -1643,8 +1644,8 @@ BOOST_AUTO_TEST_CASE( reassembleAndVerifyAttributFromMultipleBlockRecords)
 	BOOST_FOREACH( auto &assembledElements, records_elements )
 	{
 		BOOST_CHECK(ptestDataDictionaryControl->findElement(assembledElements, "foto"));
-		/// this will, chunk by chunk, assemble the data
 		std::vector<unsigned char> chunkdata = ptestDataDictionaryControl->fetchElement(assembledElements, "foto");
+		
 		cout << "chunk data fetched from BlockEntity.BlockRecords : " << endl;
 		cout << "/*{{{*/" << endl;
 		for(int n=0;n<chunkdata.size(); n++)
@@ -1652,7 +1653,8 @@ BOOST_AUTO_TEST_CASE( reassembleAndVerifyAttributFromMultipleBlockRecords)
 			fprintf(stdout, "%02X%s", chunkdata[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
 		}
 		cout << "/*}}}*/" << endl;
-
+		
+		/// this will, chunk by chunk, assemble the data
 		std::copy(chunkdata.begin(), chunkdata.end(), std::back_inserter(assembledFoto));
 	}
 
@@ -2520,11 +2522,11 @@ BOOST_AUTO_TEST_CASE( addSmallAndLargeAttributesOver2BFifiles)
 	else
 		   	cout << "- FAIL: amount of BlockRecords created: " << amountOfBlockRecords << endl;
 	BOOST_CHECK(amountOfBlockRecords == 2); // Only one BlockRecord - the attributs should be added to BlockRecord until it is full, then new BlockRecord will be added
-	if(amountOfchunk_records == 47)
+	if(amountOfchunk_records == 37)
 		cout << "- OK amount of chunk records : " << amountOfchunk_records << endl;
 	else
 		cout << "- FAIL: amount of chunk records : " << amountOfchunk_records << endl;
-	BOOST_CHECK(amountOfchunk_records == 47); 
+	BOOST_CHECK(amountOfchunk_records == 37); // 35 for foto, 1 for mobil, and 1 for name
 	cout << "________________________________________" << endl;
 
 	cout << "call ls() - list attributs - validate expected results " << endl;
