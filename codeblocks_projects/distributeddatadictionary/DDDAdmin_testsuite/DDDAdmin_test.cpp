@@ -15,6 +15,8 @@ using namespace std;
 using namespace boost::unit_test;
 using namespace boost::algorithm;
 using boost::property_tree::ptree;
+using boost::optional;
+
 
 //////////////////////////////////////////
 // TESTCASE
@@ -767,23 +769,21 @@ BOOST_AUTO_TEST_CASE( addBlockRecordToBlockEntity)
 	cout << "level of BlockRecords (BlockEntity->BlockRecord->chunk_data->chunk_record) : " << ptListOfBlockRecords.size() << endl;
 	BOOST_CHECK(ptListOfBlockRecords.size() == 4); // NB! size is misleading - it returns how deep level the tree has - NOT amount of entries 
 
-	//long maxBlockEntitySize=64000; // should result in 1 BlockEntity 
-	long maxBlockEntitySize=27000; // should result in 2 BlockEntity - however they are inside same ptree
+	long maxBlockEntitySize=27000; // should result in 1 BlockEntity - since foto attribut size is less than this, and this test only use this one attribut  
 	std::string transGuid = "E4C23762ED2823A27E62A64B95C024E7";
 	boost::property_tree::ptree ptBlockEntity = ptestDataDictionaryControl->addBlockRecordToBlockEntity(transGuid, ptListOfBlockRecords, maxBlockEntitySize);
 
 	BOOST_CHECK(ptBlockEntity.size() == 1); // this is a TOTAL list of BlockEntities for later to be split into multiple files .BFi
 
-	cout << "TODO: verify that blockentities contain correct amount of DED chunks" << endl;
-
 	int nBlockEntities = displayBlockEntities(ptBlockEntity);
 
-	if(nBlockEntities==2)
+	if(nBlockEntities==1)
 		cout << "OK: BlockEntities amount : " << nBlockEntities << endl;
 	else
-		cout << "FAIL: BlockEntities amount : " << nBlockEntities << " it should have been : 2 " << endl;
-	BOOST_CHECK(nBlockEntities == 2);
+		cout << "FAIL: BlockEntities amount : " << nBlockEntities << " it should have been : 1 " << endl;
+	BOOST_CHECK(nBlockEntities == 1);
 
+	cout << "verify that blockentities contain correct amount of DED chunks" << endl;
 	int nAmountOfDEDchunks = calculateDEDchunksInBlockEntities(ptBlockEntity);
 	cout << "amount of DED chuncks in BlockEntities : " << nAmountOfDEDchunks << endl;
 	if(listOfDEDchunks.size() != nAmountOfDEDchunks)
@@ -795,6 +795,8 @@ BOOST_AUTO_TEST_CASE( addBlockRecordToBlockEntity)
 
 	cout<<"}"<<endl;
 }
+
+
 
 BOOST_AUTO_TEST_CASE( writeBlockEntitiesToBFiFiles)
 {
@@ -836,7 +838,7 @@ BOOST_AUTO_TEST_CASE( writeBlockEntitiesToBFiFiles)
 
 	cout << "amount of BlockRecords : " << ptListOfBlockRecords.size() << endl;
 	BOOST_CHECK(ptListOfBlockRecords.size() == 4); 
-	long maxBlockEntitySize=27000; // should result in 2 BlockEntity 
+	long maxBlockEntitySize=20000; // should result in 2 BlockEntity 
 	std::string transGuid = "E4C23762ED2823A27E62A64B95C024E7";
 	boost::property_tree::ptree ptBlockEntity = ptestDataDictionaryControl->addBlockRecordToBlockEntity(transGuid, ptListOfBlockRecords, maxBlockEntitySize);
 
@@ -1329,12 +1331,11 @@ BOOST_AUTO_TEST_CASE( add2AttributsOneLargeOneSmallToBlockRecord)
 	cout<<"}"<<endl;
 }
 
-BOOST_AUTO_TEST_CASE( reassembleLargeAttribut)
-{
-	using boost::optional;
-	using boost::property_tree::ptree;
 
-	cout<<"BOOST_AUTO_TEST_CASE( reassembleLargeAttribut )\n{"<<endl;
+
+BOOST_AUTO_TEST_CASE( reassembleOneSmallAndOneLargeAttributFromBlockEntity )
+{
+	cout<<"BOOST_AUTO_TEST_CASE( reassembleOneSmallAndOneLargeAttribut)\n{"<<endl;
 
 	CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
 	ptree ptListOfBlockRecords;
@@ -1419,7 +1420,7 @@ BOOST_AUTO_TEST_CASE( reassembleLargeAttribut)
 	std::string hexdata_attribut2="";
 	std::string chunk_ddid2="";
 
-  std::vector<assembledElements> records_elements; // contains assembled elements from tree
+	std::vector<assembledElements> records_elements; // contains assembled elements from tree
 
 	BOOST_FOREACH(ptree::value_type &vt, ptListOfBlockRecords.get_child("listOfBlockRecords"))
 	{
@@ -1432,92 +1433,250 @@ BOOST_AUTO_TEST_CASE( reassembleLargeAttribut)
 				if(vt2.first == "chunk_data")
 				{
 					cout << " - chunk_data : " << endl; 
-          records_elements = ptestDataDictionaryControl->readBlockRecordElements(vt2);
+					records_elements = ptestDataDictionaryControl->readBlockRecordElements(vt2);
 				}
 			}
 		}
 	}
 
 	BOOST_CHECK(amountOfBlockRecords == 1); // Only one BlockRecord - the attributs should be added to BlockRecord until it is full, then new BlockRecord will be added
-  BOOST_CHECK(records_elements.size() == 2); // should contain assembled attributs : foto, and mobil
+	BOOST_CHECK(records_elements.size() == 2); // should contain assembled attributs : foto, and mobil
 
 
-  BOOST_CHECK(ptestDataDictionaryControl->findElement(records_elements, "foto"));
-  BOOST_CHECK(ptestDataDictionaryControl->findElement(records_elements, "mobil"));
+	BOOST_CHECK(ptestDataDictionaryControl->findElement(records_elements, "foto"));
+	BOOST_CHECK(ptestDataDictionaryControl->findElement(records_elements, "mobil"));
 
 	cout << "verify if data is correctly stored - attributs 1 and 2" << endl;		
 
-  // verify decoded Data
+	// verify decoded Data
 	std::vector<unsigned char> rv;
-          
-  // attribut 1
-  rv = ptestDataDictionaryControl->fetchElement(records_elements, attributName);
+
+	// attribut 1
+	rv = ptestDataDictionaryControl->fetchElement(records_elements, attributName);
 	BOOST_CHECK(rv.size() > 0);
-  BOOST_CHECK( rv == attributValue );
-  if( rv == attributValue )
-    cout << "OK: foto value was correct" << endl; 
-  else {
-    /**
-     * to find error difference then do following:
-     * 1. vim visualise mark original
-     * 2. then write :Linediff
-     * 3. then vim visualise mark result
-     * 4. then write :Linediff
-     * 5. now a new view will show with two splits in vim
-     * 6. to return to normal view write :q
-     */
-    cout << "FAIL: foto value was NOT correct" << endl; 
-    cout << "-- foto original, size : " << attributValue.size() << endl;
-    cout << "-- differences found, if any " << endl;
-    cout << "/*{{{*/" << endl;
+	BOOST_CHECK( rv == attributValue );
+	if( rv == attributValue )
+		cout << "OK: foto value was correct" << endl; 
+	else {
+		/**
+		 * to find error difference then do following:
+		 * 1. vim visualise mark original
+		 * 2. then write :Linediff
+		 * 3. then vim visualise mark result
+		 * 4. then write :Linediff
+		 * 5. now a new view will show with two splits in vim
+		 * 6. to return to normal view write :q
+		 */
+		cout << "FAIL: foto value was NOT correct" << endl; 
+		cout << "-- foto original, size : " << attributValue.size() << endl;
+		cout << "-- differences found, if any " << endl;
+		cout << "/*{{{*/" << endl;
 
-    for(int i=0;i<attributValue.size();i++)
-    {
-      if(attributValue[i] != rv[i]) {
-        cout << "WARNING: diff@("<< i << ")";
-        cout <<  ": orig [hex]: "; 
-        fprintf(stdout, "%02X%s", attributValue[i], ( i + 1 ) % 16 == 0 ? "\r\n" : " " );
-        cout << ": returned [hex]: "; 
-        fprintf(stdout, "%02X%s", rv[i], ( i + 1 ) % 16 == 0 ? "\r\n" : " " );
-        cout  << endl;
-      }
-    }
+		for(int i=0;i<attributValue.size();i++)
+		{
+			if(attributValue[i] != rv[i]) {
+				cout << "WARNING: diff@("<< i << ")";
+				cout <<  ": orig [hex]: "; 
+				fprintf(stdout, "%02X%s", attributValue[i], ( i + 1 ) % 16 == 0 ? "\r\n" : " " );
+				cout << ": returned [hex]: "; 
+				fprintf(stdout, "%02X%s", rv[i], ( i + 1 ) % 16 == 0 ? "\r\n" : " " );
+				cout  << endl;
+			}
+		}
 
-    cout << "/*}}}*/" << endl;
+		cout << "/*}}}*/" << endl;
 
-    cout << "-- value of original foto, size : " << attributValue.size() << endl;
-    cout << "/*{{{*/" << endl;
-    for(int n=0;n<attributValue.size();n++)
-    {
-      if(attributValue[n] != rv[n]) 
-        cout << "FAIL:";
-      fprintf(stdout, "%02X%s", attributValue[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
-    }
-    cout << "/*}}}*/" << endl;
+		cout << "-- value of original foto, size : " << attributValue.size() << endl;
+		cout << "/*{{{*/" << endl;
+		for(int n=0;n<attributValue.size();n++)
+		{
+			if(attributValue[n] != rv[n]) 
+				cout << "FAIL:";
+			fprintf(stdout, "%02X%s", attributValue[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
+		}
+		cout << "/*}}}*/" << endl;
 
-     cout << "-- value of foto returned, size : " << rv.size() << endl;
-    cout << "/*{{{*/" << endl;
-    for(int n=0;n<rv.size();n++)
-    {
-      if(attributValue[n] != rv[n]) 
-        cout << "FAIL:";
-      fprintf(stdout, "%02X%s", rv[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
-    }
-    cout << "/*}}}*/" << endl;
-  }
+		cout << "-- value of foto returned, size : " << rv.size() << endl;
+		cout << "/*{{{*/" << endl;
+		for(int n=0;n<rv.size();n++)
+		{
+			if(attributValue[n] != rv[n]) 
+				cout << "FAIL:";
+			fprintf(stdout, "%02X%s", rv[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
+		}
+		cout << "/*}}}*/" << endl;
+	}
 
 	// attribut 2
-  rv = ptestDataDictionaryControl->fetchElement(records_elements, attributName2);
-  std::string strFetchedValue(rv.begin(), rv.end());
-  BOOST_CHECK( strFetchedValue == mobil);
-  if( strFetchedValue == mobil )
-    cout << "OK: mobil value was correct" << endl; 
-  else
-    cout << "FAIL: mobil value was NOT correct" << endl; 
+	rv = ptestDataDictionaryControl->fetchElement(records_elements, attributName2);
+	std::string strFetchedValue(rv.begin(), rv.end());
+	BOOST_CHECK( strFetchedValue == mobil);
+	if( strFetchedValue == mobil )
+		cout << "OK: mobil value was correct" << endl; 
+	else
+		cout << "FAIL: mobil value was NOT correct" << endl; 
 
 	cout<<"}"<<endl;
 }
 
+BOOST_AUTO_TEST_CASE( reassembleAndVerifyAttributFromMultipleBlockEntities)
+{
+	cout<<"BOOST_AUTO_TEST_CASE( reassembleAndVerifyAttributFromMultipleBlockEntities)\n{"<<endl;
+
+	CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
+	std::string attributName = "foto"; // it should be ddid -- datadictionary id which refers to attribut description
+	std::vector<unsigned char> FileDataBytesInVector;
+	std::string fn = "testImage.png"; // should be of size 10.5 Kb
+	std::ifstream is (fn, ios::binary);
+	long lengthOffotoFile = 0;
+	if (is)
+	{
+		long length = boost::filesystem::file_size(fn);
+		lengthOffotoFile = length;
+		std::cout << "[readFile] Reading file: " << fn << " ; amount " << length << " characters... \n";
+		// Make sure receipient has room
+		FileDataBytesInVector.resize(length,0);
+		//read content of infile
+		is.read ((char*)&FileDataBytesInVector[0],length);
+		std::cout << "[readFile] size: " << (int) FileDataBytesInVector.size() << '\n';
+		std::cout << "[readFile] capacity: " << (int) FileDataBytesInVector.capacity() << '\n';
+		std::cout << "[readFile] max_size: " << (int) FileDataBytesInVector.max_size() << '\n';
+		is.close();
+	}
+
+	BOOST_CHECK(FileDataBytesInVector.size() > 0);
+
+	long maxBlockRecordSize=5250; // should yield in 3 BlockRecord, since foto cant be in one
+	long maxDEDchunkSize=300; // should yield several chunks for this attribut
+
+	long aiid=0;
+	std::vector< pair<std::vector<unsigned char>,int> > listOfDEDchunks = ptestDataDictionaryControl->splitAttributIntoDEDchunks(aiid, attributName, FileDataBytesInVector, maxDEDchunkSize);
+	std::cout << "listOfDEDchunks : " << listOfDEDchunks.size() << '\n';
+	BOOST_CHECK(listOfDEDchunks.size() == 35);
+
+
+	aiid=0;
+	std::string realmName = "profile";
+	boost::property_tree::ptree ptListOfBlockRecords = ptestDataDictionaryControl->addDEDchunksToBlockRecords(aiid, realmName, attributName, listOfDEDchunks, maxBlockRecordSize);
+
+	cout << "level of BlockRecords (BlockEntity->BlockRecord->chunk_data->chunk_record) : " << ptListOfBlockRecords.size() << endl;
+	BOOST_CHECK(ptListOfBlockRecords.size() == 4); // NB! size is misleading - it returns how deep level the tree has - NOT amount of entries 
+
+	long maxBlockEntitySize=27000; // should result in 1 BlockEntity - since foto attribut size is less than this, and this test only use this one attribut  
+	std::string transGuid = "E4C23762ED2823A27E62A64B95C024E7";
+	boost::property_tree::ptree ptBlockEntity = ptestDataDictionaryControl->addBlockRecordToBlockEntity(transGuid, ptListOfBlockRecords, maxBlockEntitySize);
+
+	BOOST_CHECK(ptBlockEntity.size() == 1); // this is a TOTAL list of BlockEntities for later to be split into multiple files .BFi
+
+	int nBlockEntities = displayBlockEntities(ptBlockEntity);
+
+	if(nBlockEntities==1)
+		cout << "OK: BlockEntities amount : " << nBlockEntities << endl;
+	else
+		cout << "FAIL: BlockEntities amount : " << nBlockEntities << " it should have been : 1 " << endl;
+	BOOST_CHECK(nBlockEntities == 1);
+
+	cout << "verify that blockentities contain correct amount of BlockEntities and DED chunks for the attribut foto" << endl;
+	int nAmountOfDEDchunks = calculateDEDchunksInBlockEntities(ptBlockEntity);
+	cout << "amount of DED chuncks in BlockEntities : " << nAmountOfDEDchunks << endl;
+	if(listOfDEDchunks.size() != nAmountOfDEDchunks)
+		cout << "FAIL: amount of DED chunks differ from actual amount, should be : " << listOfDEDchunks.size() << " but is : " << nAmountOfDEDchunks << endl;
+	else
+		cout << "OK: amount of DED chunks stored is same as compiled " << endl;
+
+	BOOST_CHECK(listOfDEDchunks.size() == nAmountOfDEDchunks);
+
+	//TODO: verify that foto attribut has been stored correctly in BlockEntity - fetch it reassemble it and compare with original
+	// check that list now contain basic 'listOfBlockEntities' - which is necessary	
+	int amountOfBlockRecords = 0;
+	int amountOfAttributchunk_records = 0;
+
+	optional< ptree& > child = ptBlockEntity.get_child_optional( "listOfBlockEntities" );
+	BOOST_CHECK(child);
+
+	// verify that BlockRecord has been added
+	child = ptBlockEntity.get_child_optional( "listOfBlockEntities.BlockEntity.BlockRecord.chunk_data" );
+	BOOST_CHECK(child);
+
+	child = ptBlockEntity.get_child_optional( "listOfBlockEntities.BlockEntity.BlockRecord.chunk_data.chunk_record" );
+	BOOST_CHECK(child);
+
+	child = ptBlockEntity.get_child_optional( "listOfBlockEntities.BlockEntity.BlockRecord.chunk_data.chunk_record.chunk_ddid" );
+	BOOST_CHECK(child);
+
+	std::vector<assembledElements> records_elements[3]; // contains assembled elements from tree 
+
+	int nEntity=0;
+	BOOST_FOREACH(ptree::value_type &vt, ptBlockEntity.get_child("listOfBlockEntities"))
+	{
+		BOOST_FOREACH( auto &blkrecord, vt.second )
+		{
+			cout << "BlockRecord attribut : " << blkrecord.first << endl;
+			if(blkrecord.first == "BlockRecord")
+			{
+				amountOfBlockRecords++;
+				BOOST_FOREACH(ptree::value_type &vt2 , blkrecord.second)
+				{
+					if(vt2.first == "chunk_data")
+					{
+						cout << " - chunk_data : " << endl; 
+						// assemble attribut across multiple BlockRecords
+						records_elements[nEntity] = ptestDataDictionaryControl->readBlockRecordElements(vt2);
+					}
+				}
+				nEntity++;
+			}
+		}
+	}
+
+	BOOST_CHECK(ptestDataDictionaryControl->findElement(records_elements[0], "foto"));
+	BOOST_CHECK(ptestDataDictionaryControl->findElement(records_elements[1], "foto"));
+	BOOST_CHECK(ptestDataDictionaryControl->findElement(records_elements[2], "foto"));
+
+	std::vector<unsigned char> assembledFoto;
+	assembledFoto.resize(lengthOffotoFile,0); // should be same size as original foto file
+
+	// assemble attribut across multiple BlockEntities
+	BOOST_FOREACH( auto &assembledElements, records_elements )
+	{
+		BOOST_CHECK(ptestDataDictionaryControl->findElement(assembledElements, "foto"));
+		/// this will, chunk by chunk, assemble the data
+		std::vector<unsigned char> chunkdata = ptestDataDictionaryControl->fetchElement(assembledElements, "foto");
+		std::copy(chunkdata.begin(), chunkdata.end(), std::back_inserter(assembledFoto));
+	}
+
+	cout << endl << "compare result foto assembled data with original foto file data : " << endl;
+	cout << "Original foto data : " << endl;
+	cout << endl << "/*{{{*/" << endl;
+	for(int n=0;n<FileDataBytesInVector.size(); n++)
+	{
+		fprintf(stdout, "%02X%s", FileDataBytesInVector[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
+	}
+	cout << "/*}}}*/" << endl;
+
+	cout << "assembled foto from BlockEntities data : " << endl;
+	cout << endl << "/*{{{*/" << endl;
+	for(int n=0;n<assembledFoto.size(); n++)
+	{
+		fprintf(stdout, "%02X%s", assembledFoto[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
+	}
+	cout << "/*}}}*/" << endl;
+
+	cout << "Differences between original and assembled data : " << endl;
+	cout << endl << "/*{{{*/" << endl;
+	for(int n=0;n<assembledFoto.size(); n++)
+	{
+		if( FileDataBytesInVector[n] != assembledFoto[n] )
+			cout << "FAIL:";	
+		fprintf(stdout, "%02X%s", assembledFoto[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
+	}
+	cout << "/*}}}*/" << endl;
+
+
+	BOOST_CHECK(assembledFoto == FileDataBytesInVector); 
+
+	cout<<"}"<<endl;
+}
 
 BOOST_AUTO_TEST_CASE( listDataDictionaryAttributs)
 {
