@@ -2715,11 +2715,11 @@ BOOST_AUTO_TEST_CASE( addLargeAttributOver3BFifiles)
 	else
 		   	cout << "- FAIL: amount of BlockRecords created: " << amountOfBlockRecords << endl;
 	BOOST_CHECK(amountOfBlockRecords == 3); 
-	if(amountOfchunk_records == 68)
+	if(amountOfchunk_records == 37)
 		cout << "- OK amount of chunk records : " << amountOfchunk_records << endl;
 	else
 		cout << "- FAIL: amount of chunk records : " << amountOfchunk_records << endl;
-	BOOST_CHECK(amountOfchunk_records == 68); 
+	BOOST_CHECK(amountOfchunk_records == 37); 
 	cout << "________________________________________" << endl;
 
 	cout << "call ls() - list attributs - validate expected results " << endl;
