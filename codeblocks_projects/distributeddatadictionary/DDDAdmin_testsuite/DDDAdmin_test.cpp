@@ -1335,7 +1335,7 @@ BOOST_AUTO_TEST_CASE( add2AttributsOneLargeOneSmallToBlockRecord)
 
 BOOST_AUTO_TEST_CASE( reassembleOneSmallAndOneLargeAttributFromBlockEntity )
 {
-	cout<<"BOOST_AUTO_TEST_CASE( reassembleOneSmallAndOneLargeAttribut)\n{"<<endl;
+	cout<<"BOOST_AUTO_TEST_CASE( reassembleOneSmallAndOneLargeAttributFromBlockEntity)\n{"<<endl;
 
 	CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
 	ptree ptListOfBlockRecords;
@@ -1519,9 +1519,9 @@ BOOST_AUTO_TEST_CASE( reassembleOneSmallAndOneLargeAttributFromBlockEntity )
 	cout<<"}"<<endl;
 }
 
-BOOST_AUTO_TEST_CASE( reassembleAndVerifyAttributFromMultipleBlockEntities)
+BOOST_AUTO_TEST_CASE( reassembleAndVerifyAttributFromMultipleBlockRecords)
 {
-	cout<<"BOOST_AUTO_TEST_CASE( reassembleAndVerifyAttributFromMultipleBlockEntities)\n{"<<endl;
+	cout<<"BOOST_AUTO_TEST_CASE( reassembleAndVerifyAttributFromMultipleBlockRecords)\n{"<<endl;
 
 	CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
 	std::string attributName = "foto"; // it should be ddid -- datadictionary id which refers to attribut description
@@ -1576,7 +1576,7 @@ BOOST_AUTO_TEST_CASE( reassembleAndVerifyAttributFromMultipleBlockEntities)
 		cout << "FAIL: BlockEntities amount : " << nBlockEntities << " it should have been : 1 " << endl;
 	BOOST_CHECK(nBlockEntities == 1);
 
-	cout << "verify that blockentities contain correct amount of BlockEntities and DED chunks for the attribut foto" << endl;
+	cout << "verify that blockentities contain correct amount of BlockRecords and DED chunks for the attribut foto" << endl;
 	int nAmountOfDEDchunks = calculateDEDchunksInBlockEntities(ptBlockEntity);
 	cout << "amount of DED chuncks in BlockEntities : " << nAmountOfDEDchunks << endl;
 	if(listOfDEDchunks.size() != nAmountOfDEDchunks)
@@ -1586,7 +1586,7 @@ BOOST_AUTO_TEST_CASE( reassembleAndVerifyAttributFromMultipleBlockEntities)
 
 	BOOST_CHECK(listOfDEDchunks.size() == nAmountOfDEDchunks);
 
-	//TODO: verify that foto attribut has been stored correctly in BlockEntity - fetch it reassemble it and compare with original
+	// verify that foto attribut has been stored correctly in BlockEntity - fetch it reassemble it and compare with original
 	// check that list now contain basic 'listOfBlockEntities' - which is necessary	
 	int amountOfBlockRecords = 0;
 	int amountOfAttributchunk_records = 0;
@@ -1609,6 +1609,7 @@ BOOST_AUTO_TEST_CASE( reassembleAndVerifyAttributFromMultipleBlockEntities)
 	int nEntity=0;
 	BOOST_FOREACH(ptree::value_type &vt, ptBlockEntity.get_child("listOfBlockEntities"))
 	{
+		cout << "BlockEntity : " << nEntity+1 << endl;
 		BOOST_FOREACH( auto &blkrecord, vt.second )
 		{
 			cout << "BlockRecord attribut : " << blkrecord.first << endl;
@@ -1629,25 +1630,35 @@ BOOST_AUTO_TEST_CASE( reassembleAndVerifyAttributFromMultipleBlockEntities)
 		}
 	}
 
+	cout << endl;
+
 	BOOST_CHECK(ptestDataDictionaryControl->findElement(records_elements[0], "foto"));
 	BOOST_CHECK(ptestDataDictionaryControl->findElement(records_elements[1], "foto"));
 	BOOST_CHECK(ptestDataDictionaryControl->findElement(records_elements[2], "foto"));
 
 	std::vector<unsigned char> assembledFoto;
-	assembledFoto.resize(lengthOffotoFile,0); // should be same size as original foto file
 
-	// assemble attribut across multiple BlockEntities
+	// assemble attribut across multiple BlockRecords
+	cout << "Now assemble the results from multiple BlockRecords : " << endl;
 	BOOST_FOREACH( auto &assembledElements, records_elements )
 	{
 		BOOST_CHECK(ptestDataDictionaryControl->findElement(assembledElements, "foto"));
 		/// this will, chunk by chunk, assemble the data
 		std::vector<unsigned char> chunkdata = ptestDataDictionaryControl->fetchElement(assembledElements, "foto");
+		cout << "chunk data fetched from BlockEntity.BlockRecords : " << endl;
+		cout << "/*{{{*/" << endl;
+		for(int n=0;n<chunkdata.size(); n++)
+		{
+			fprintf(stdout, "%02X%s", chunkdata[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
+		}
+		cout << "/*}}}*/" << endl;
+
 		std::copy(chunkdata.begin(), chunkdata.end(), std::back_inserter(assembledFoto));
 	}
 
 	cout << endl << "compare result foto assembled data with original foto file data : " << endl;
 	cout << "Original foto data : " << endl;
-	cout << endl << "/*{{{*/" << endl;
+	cout << "/*{{{*/" << endl;
 	for(int n=0;n<FileDataBytesInVector.size(); n++)
 	{
 		fprintf(stdout, "%02X%s", FileDataBytesInVector[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
@@ -1655,15 +1666,15 @@ BOOST_AUTO_TEST_CASE( reassembleAndVerifyAttributFromMultipleBlockEntities)
 	cout << "/*}}}*/" << endl;
 
 	cout << "assembled foto from BlockEntities data : " << endl;
-	cout << endl << "/*{{{*/" << endl;
+	cout << "/*{{{*/" << endl;
 	for(int n=0;n<assembledFoto.size(); n++)
 	{
 		fprintf(stdout, "%02X%s", assembledFoto[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
 	}
 	cout << "/*}}}*/" << endl;
 
-	cout << "Differences between original and assembled data : " << endl;
-	cout << endl << "/*{{{*/" << endl;
+	cout << "Differences, if any,  between original and assembled data (should show as FAIL: ) : " << endl;
+	cout << "/*{{{*/" << endl;
 	for(int n=0;n<assembledFoto.size(); n++)
 	{
 		if( FileDataBytesInVector[n] != assembledFoto[n] )
@@ -1672,6 +1683,7 @@ BOOST_AUTO_TEST_CASE( reassembleAndVerifyAttributFromMultipleBlockEntities)
 	}
 	cout << "/*}}}*/" << endl;
 
+	cout << "INFO: this test does NOT take into account that BlockEntities chould be read in unsorted order " << endl;
 
 	BOOST_CHECK(assembledFoto == FileDataBytesInVector); 
 

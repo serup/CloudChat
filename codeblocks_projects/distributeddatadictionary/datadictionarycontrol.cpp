@@ -312,6 +312,7 @@ boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(l
 
 	int c=0;
 	cout << "handling DED chunk : ";
+	cout << "/*{{{*/" << endl;
 	BOOST_FOREACH( auto &chunk, listOfDEDchunks )
 	{
 		cout << ++c << ",";
@@ -337,6 +338,7 @@ boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(l
 		}
 		bfirst=false;	
 	}
+	cout << "/*}}}*/" << endl;
 	cout << endl;
 
 	//DEBUG	
