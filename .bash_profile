@@ -1,7 +1,4 @@
-# tmux-resurrect-ng prompt_runner for auto save/restore
-if [[ -n "$TMUX" ]]; then
-#	source "$HOME/.tmux/plugins/tmux-resurrect-ng/scripts/prompt_runner.sh"
-#	export PROMPT_COMMAND="tmxr_runner${PROMPT_COMMAND:+; }${PROMPT_COMMAND}"
-	source ~/.bashrc
-fi
-
+# This automatically sources the rc file under those circumstances where it would normally only process the profile.
+#
+# The rules as to when bash runs certain files are complicated, and depend on the type of shell being started (login/non-login, interactive or not, and so forth), along with command line arguments and environment variables.
+. ~/.bashrc
