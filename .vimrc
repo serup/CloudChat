@@ -81,7 +81,7 @@ noremap <leader>m <C-W>=
 "nnoremap <silent> <F2> :lchdir %:p:h<CR>:pwd<CR>
 set showcmd
 set sessionoptions+=folds
-set statusline+=_col:\ %c,
+set statusline=line:\ %l,%c
 augroup XML
 	autocmd!
 	autocmd FileType xml setlocal foldmethod=indent foldlevelstart=999 foldminlines=0
