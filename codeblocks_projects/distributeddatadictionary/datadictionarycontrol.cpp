@@ -990,6 +990,7 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::
 	using boost::property_tree::ptree;
 	
 	std::vector<assembledElements> records_elements; // contains assembled elements from tree
+	std::list<std::vector<assembledElements>> listOfAssembledAttributes;
 	std::vector<unsigned char> ElementData;
 	pair<std::string, std::vector<unsigned char>> resultAttributPair;
 
@@ -1029,31 +1030,34 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::
 					cout << "searching for chunk_data ";
 					BOOST_FOREACH(boost::property_tree::ptree::value_type &child, pt.get_child("BFi.BlockEntity.BlockRecord", _empty_tree)) 
 					{
-							if (child.first == "TransGUID") transGuid = child.second.data();
-							if (child.first == "chunk_id") id = child.second.data();
+						if (child.first == "TransGUID") transGuid = child.second.data();
+						if (child.first == "chunk_id") id = child.second.data();
 
-							//cout << "attribut name : " << child.first << endl;
-							cout << "-";
-							if(child.first == "chunk_data")
+						//cout << "attribut name : " << child.first << endl;
+						cout << "-";
+						if(child.first == "chunk_data")
+						{
+							cout << "+" << endl;
+							//records_elements = readBlockRecordElements(child);
+							std::vector<assembledElements> recElements;
+							recElements = readBlockRecordElements(child);
+							cout << "*{{{" << endl;
+							BOOST_FOREACH(assembledElements &_element, recElements)
 							{
-								cout << "+" << endl;
-								records_elements = readBlockRecordElements(child);
-								cout << "*{{{" << endl;
-								BOOST_FOREACH(assembledElements &_element, records_elements)
-								{
-									cout << "element id : " << _element.strElementID << endl;
-									// add padding for element
-									_element.strElementID = transGuid + "./" + id + "/" + _element.strElementID;
-									cout << "-element id : " << _element.strElementID << endl;
-									
-									cout << "element size of value : " << _element.ElementData.size() << endl;
-									if(_element.ElementData.size() < 50) {
-										std::string str(_element.ElementData.begin(), _element.ElementData.end());
-										cout << "element value : " << str << endl;
-									}
+								cout << "element id : " << _element.strElementID << endl;
+								// add padding for element
+								_element.strElementID = transGuid + "./" + id + "/" + _element.strElementID;
+								cout << "-element id : " << _element.strElementID << endl;
+								cout << "element size of value : " << _element.ElementData.size() << endl;
+								
+								if(_element.ElementData.size() < 50) {
+									std::string str(_element.ElementData.begin(), _element.ElementData.end());
+									cout << "element value : " << str << endl;
 								}
-								cout << "*}}}" << endl;
 							}
+							cout << "*}}}" << endl;
+							listOfAssembledAttributes.push_back(recElements);
+						}
 					}
 				}
 
@@ -1062,15 +1066,35 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::
 			
 		}
 	}
+
+	//TODO: sort so assemble will be in correct order
+	// assemble acros multible .BFi files
+	BOOST_FOREACH( auto &assembledElements, listOfAssembledAttributes )
+	{
+		std::vector<unsigned char> chunkdata = fetchElement(assembledElements, attributpath);
+		
+		cout << "chunk data fetched from BlockEntity.BlockRecords : " << endl;
+		cout << "/*{{{*/" << endl;
+		for(int n=0;n<chunkdata.size(); n++)
+		{
+			fprintf(stdout, "%02X%s", chunkdata[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
+		}
+		cout << "/*}}}*/" << endl;
+		
+		/// this will, chunk by chunk, assemble the attribut data
+		std::copy(chunkdata.begin(), chunkdata.end(), std::back_inserter(ElementData));
+	}
+
+
 	}
 	catch (const std::exception& e)  // catch any exceptions
 	{ cerr << endl << "Exception: " << e.what() << endl; }
 
 	//find element in list
-	ElementData = fetchElement(records_elements, attributpath);
+	//ElementData = fetchElement(records_elements, attributpath);
 
 	//return as a pair <name,value>
-	resultAttributPair = make_pair(attributpath,ElementData); // assemble data 
+	resultAttributPair = make_pair(attributpath,ElementData); // create assemble data result pair
 
 	return resultAttributPair;
 }
