@@ -2881,8 +2881,10 @@ BOOST_AUTO_TEST_CASE( fetchAttributFrom2BFi)
 
 
 	cout << "BlockRecord size before: " << maxBlockRecordSize << endl;
+	cout << "*{{{" << endl;
 	std::string transGuid = "F9D23762ED2823A27E62A64B95C024EF";
 	BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName, attributValue)); 
+	cout << "*}}}" << endl;
 	cout << "BlockRecord size after 1 attribut add : " << maxBlockRecordSize << endl;
  
 	long maxBlockEntitySize=15000; // should result in 2 BlockEntity 
@@ -2912,10 +2914,39 @@ BOOST_AUTO_TEST_CASE( fetchAttributFrom2BFi)
 
 	cout << "Fetch attribut from .BFi file " << endl;
 
+	cout << "TODO: ftgt should beable to assemble across multiple .BFi files " << endl;
 	pair<std::string, std::vector<unsigned char>> pairAttribut = ptestDataDictionaryControl->ftgt("F9D23762ED2823A27E62A64B95C024EF./profile/foto");
 	cout << "Attribut name : " << pairAttribut.first << endl;
-//	std::string value(pairAttribut.second.begin(), pairAttribut.second.end());
-//	cout << "Attribut value : " << value << endl;
+
+	cout << "Original data : " << endl;
+	cout << "/*{{{*/" << endl;
+	for(int n=0;n<attributValue.size(); n++)
+	{
+		fprintf(stdout, "%02X%s", attributValue[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
+	}
+	cout << "/*}}}*/" << endl;
+
+	cout << "Result data : " << endl;
+	cout << "/*{{{*/" << endl;
+	bool bFoundError=false;
+	for(int n=0;n<pairAttribut.second.size(); n++)
+	{
+		if( pairAttribut.second[n] != attributValue[n] ){
+			cout << "FAIL:";	
+			bFoundError=true;
+		}
+		fprintf(stdout, "%02X%s", pairAttribut.second[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
+	}
+	cout << "/*}}}*/" << endl;
+	if(!bFoundError) cout << "INFO: bytes assembled and retrieved had no errors " << endl;
+
+	cout << "size of Original : " << attributValue.size() << " size of result : " << pairAttribut.second.size() << endl;
+	int missingbytes = (attributValue.size() - pairAttribut.second.size());
+	if(missingbytes > 0) cout << "FAIL: Missing byte(s) : " << missingbytes << endl;
+	BOOST_CHECK(attributValue.size() == pairAttribut.second.size());
+
+	//sort before compare
+	std::sort(attributValue.begin(), attributValue.end());
 
 	BOOST_CHECK(attributValue == pairAttribut.second); // verify that retrieved value is same as stored
 
