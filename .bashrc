@@ -84,7 +84,7 @@ if [ -x /usr/bin/dircolors ]; then
     alias grep='grep --color=auto'
     alias fgrep='fgrep --color=auto'
     alias egrep='egrep --color=auto'
-    alias gitlog='git log --pretty=format:"%C(yellow)%h %Cred%ad %Cblue%an%Cgreen%d %Creset%s" --date=short'
+	alias gitlog='git log --graph --decorate --abbrev-commit --all --oneline --color | nowrap | head -$(($(tput lines) - 1))' 
     alias gitshow='function _blah(){ git show "$(git annotate $1 | grep $2 | head -1| cut -f1)"; };_blah'
     alias findfile='find . -type f -name '
     alias ff='find . -type f -name '
