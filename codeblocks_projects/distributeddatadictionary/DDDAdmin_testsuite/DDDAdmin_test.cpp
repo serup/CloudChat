@@ -2899,7 +2899,7 @@ BOOST_AUTO_TEST_CASE( fetchAttributFrom2BFi)
 	// create BFi files
 	std::vector< pair<std::string ,int> > listOfBlockEntityFiles = ptestDataDictionaryControl->writeBlockEntityToBFiFile(ptBlockEntity);
 	cout << "Created : " << listOfBlockEntityFiles.size() << " .BFi files " << endl;
-	BOOST_CHECK(listOfBlockEntityFiles.size()==1);
+	BOOST_CHECK(listOfBlockEntityFiles.size()==2);
 
 	pair <std::string,int> block;
 	std::list<std::string> listBFiFiles;

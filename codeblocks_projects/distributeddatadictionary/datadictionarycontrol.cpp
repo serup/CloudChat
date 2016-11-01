@@ -760,7 +760,6 @@ std::vector<assembledElements> CDataDictionaryControl::readBlockRecordElements(b
 						pushed=true;
 						/// new Element
 						Element.strElementID = _chunk.entity_chunk_id;
-						Element.seq = _chunk.entity_chunk_seq;
 						Element.ElementData.clear();
 						prevchunkid = _chunk.entity_chunk_id;
 						cout << endl; 
@@ -770,13 +769,13 @@ std::vector<assembledElements> CDataDictionaryControl::readBlockRecordElements(b
 						pushed=false;
 						/// new Element
 						Element.strElementID = _chunk.entity_chunk_id;
-						Element.seq = _chunk.entity_chunk_seq;
 						Element.ElementData.clear();
 						prevchunkid = _chunk.entity_chunk_id;
 					}
 					cout << "- attribut : " << _chunk.entity_chunk_id << endl << "-- entity_chunk_seq : ";
 				}
-	
+
+				Element.seqNumbers.push_back(_chunk.entity_chunk_seq);
 				cout << "," << _chunk.entity_chunk_seq;
 
 				/// this will, chunk by chunk, assemble the data
@@ -1049,9 +1048,16 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::
 							cout << "*{{{" << endl;
 							BOOST_FOREACH(assembledElements &_element, recElements)
 							{
-								ss.seqNumbers.push_back( _element.seq ); 
-								
-								cout << "element seq : " << _element.seq << endl;
+								//ss.seqNumbers.push_back( _element.seq ); 
+							    ss.seqNumbers = _element.seqNumbers;	
+							
+
+								cout << "element seq : ";
+								BOOST_FOREACH( auto &seqnumber, _element.seqNumbers )
+								{
+									cout << seqnumber << ",";
+								}
+								cout << endl;
 								cout << "element id : " << _element.strElementID << endl;
 								
 								// add padding for element
@@ -1087,21 +1093,43 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::
 		}
 	}
 
-	//TODO: sort so assemble will be in correct order
-	// assemble acros multible .BFi files
+	//+ sort so assemble will be in correct order
+	vector<pair<unsigned long, std::vector<unsigned char> >> list;
 	BOOST_FOREACH( auto &assembledElements, listOfAssembledAttributes )
 	{
 		std::vector<unsigned char> chunkdata = fetchElement(assembledElements.second, attributpath);
-		
-		cout << "chunk data fetched from BlockEntity.BlockRecords : " << endl;
-		cout << "- seq : ";
 		seqSpan ss = assembledElements.first;
 		std::list<unsigned long> seqnumbers = ss.seqNumbers;
-		BOOST_FOREACH( auto &seqnumber, seqnumbers )
+		unsigned long lastSeq=0;
+		BOOST_REVERSE_FOREACH( auto &seqnumber, seqnumbers )
 		{
-			cout << seqnumber << ",";
+			lastSeq = seqnumber;
+			break;
 		}
-		cout << endl;
+
+		list.push_back( pair<unsigned long, std::vector<unsigned char>> (lastSeq, chunkdata) );
+	}
+	cout << "UnSorted : ";
+	for(auto item : list) {
+		cout << item.first << ",";
+	}
+	cout << endl;
+		
+	sort(list.begin(), list.end());
+	cout << "Sorted : ";
+	for(auto item : list) {
+		cout << item.first << ",";
+	}
+	cout << endl;
+	//-
+	
+	// assemble acros multible .BFi files
+	BOOST_FOREACH( auto &assembledElements, list )
+	{
+		std::vector<unsigned char> chunkdata = assembledElements.second;
+		
+		cout << "chunk data fetched from BlockEntity.BlockRecords : " << endl;
+		cout << "- lastSeq of assembled record : " << assembledElements.first;
 
 		cout << "/*{{{*/" << endl;
 		for(int n=0;n<chunkdata.size(); n++)
@@ -1118,9 +1146,6 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::
 	}
 	catch (const std::exception& e)  // catch any exceptions
 	{ cerr << endl << "Exception: " << e.what() << endl; }
-
-	//find element in list
-	//ElementData = fetchElement(records_elements, attributpath);
 
 	//return as a pair <name,value>
 	resultAttributPair = make_pair(attributpath,ElementData); // create assemble data result pair

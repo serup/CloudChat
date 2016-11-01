@@ -53,7 +53,7 @@ struct EntityChunkDataInfo{
 
 struct assembledElements {
 	std::string strElementID;
-	unsigned long seq;
+	std::list<unsigned long> seqNumbers;
 	std::vector<unsigned char> ElementData;
 };
 
