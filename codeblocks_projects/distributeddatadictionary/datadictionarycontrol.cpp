@@ -1093,9 +1093,26 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::
 		}
 	}
 
+	mergeRecords(sortAssembledRecords(attributpath, listOfAssembledAttributes), ElementData);
+
+	}
+	catch (const std::exception& e)  // catch any exceptions
+	{ cerr << endl << "Exception: " << e.what() << endl; }
+
+	//return as a pair <name,value>
+	resultAttributPair = make_pair(attributpath,ElementData); // create assemble data result pair
+
+	return resultAttributPair;
+}
+
+/**
+ * Sort the BlockRecords according to attributpathname and sequence numbers of chunks
+ */
+vector<pair<unsigned long, std::vector<unsigned char> >> CDataDictionaryControl::sortAssembledRecords(std::string attributpath, std::list< pair<seqSpan, std::vector<assembledElements>> > listOfRecords)
+{
 	//+ sort so assemble will be in correct order
 	vector<pair<unsigned long, std::vector<unsigned char> >> list;
-	BOOST_FOREACH( auto &assembledElements, listOfAssembledAttributes )
+	BOOST_FOREACH( auto &assembledElements, listOfRecords )
 	{
 		std::vector<unsigned char> chunkdata = fetchElement(assembledElements.second, attributpath);
 		seqSpan ss = assembledElements.first;
@@ -1123,6 +1140,11 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::
 	cout << endl;
 	//-
 	
+	return list;
+}
+
+void CDataDictionaryControl::mergeRecords(vector<pair<unsigned long, std::vector<unsigned char> >> list, std::vector<unsigned char> &ElementData)
+{
 	// assemble acros multible .BFi files
 	BOOST_FOREACH( auto &assembledElements, list )
 	{
@@ -1141,15 +1163,5 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::
 		/// this will, chunk by chunk, assemble the attribut data
 		std::copy(chunkdata.begin(), chunkdata.end(), std::back_inserter(ElementData));
 	}
-
-
-	}
-	catch (const std::exception& e)  // catch any exceptions
-	{ cerr << endl << "Exception: " << e.what() << endl; }
-
-	//return as a pair <name,value>
-	resultAttributPair = make_pair(attributpath,ElementData); // create assemble data result pair
-
-	return resultAttributPair;
 }
 
