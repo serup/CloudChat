@@ -760,6 +760,7 @@ std::vector<assembledElements> CDataDictionaryControl::readBlockRecordElements(b
 						pushed=true;
 						/// new Element
 						Element.strElementID = _chunk.entity_chunk_id;
+						Element.seq = _chunk.entity_chunk_seq;
 						Element.ElementData.clear();
 						prevchunkid = _chunk.entity_chunk_id;
 						cout << endl; 
@@ -769,6 +770,7 @@ std::vector<assembledElements> CDataDictionaryControl::readBlockRecordElements(b
 						pushed=false;
 						/// new Element
 						Element.strElementID = _chunk.entity_chunk_id;
+						Element.seq = _chunk.entity_chunk_seq;
 						Element.ElementData.clear();
 						prevchunkid = _chunk.entity_chunk_id;
 					}
@@ -989,8 +991,9 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::
 	using boost::optional;
 	using boost::property_tree::ptree;
 	
+
 	std::vector<assembledElements> records_elements; // contains assembled elements from tree
-	std::list<std::vector<assembledElements>> listOfAssembledAttributes;
+	std::list< pair<seqSpan, std::vector<assembledElements>> > listOfAssembledAttributes;
 	std::vector<unsigned char> ElementData;
 	pair<std::string, std::vector<unsigned char>> resultAttributPair;
 
@@ -1041,12 +1044,26 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::
 							//records_elements = readBlockRecordElements(child);
 							std::vector<assembledElements> recElements;
 							recElements = readBlockRecordElements(child);
+							seqSpan ss;
+							ss.attributPath="<empty>";
 							cout << "*{{{" << endl;
 							BOOST_FOREACH(assembledElements &_element, recElements)
 							{
+								ss.seqNumbers.push_back( _element.seq ); 
+								
+								cout << "element seq : " << _element.seq << endl;
 								cout << "element id : " << _element.strElementID << endl;
+								
 								// add padding for element
 								_element.strElementID = transGuid + "./" + id + "/" + _element.strElementID;
+
+								if( ss.attributPath == "<empty>")
+									ss.attributPath = _element.strElementID;
+								else {
+									if(ss.attributPath != _element.strElementID)
+										cout << "FAIL: individual sequence element differs in name -- this is SERIOUS ERROR ";
+								}
+								
 								cout << "-element id : " << _element.strElementID << endl;
 								cout << "element size of value : " << _element.ElementData.size() << endl;
 								
@@ -1056,7 +1073,10 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::
 								}
 							}
 							cout << "*}}}" << endl;
-							listOfAssembledAttributes.push_back(recElements);
+							pair<seqSpan, std::vector<assembledElements>> assembledBlockRecordElement = make_pair(ss,recElements);
+
+
+							listOfAssembledAttributes.push_back(assembledBlockRecordElement);
 						}
 					}
 				}
@@ -1071,9 +1091,18 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::
 	// assemble acros multible .BFi files
 	BOOST_FOREACH( auto &assembledElements, listOfAssembledAttributes )
 	{
-		std::vector<unsigned char> chunkdata = fetchElement(assembledElements, attributpath);
+		std::vector<unsigned char> chunkdata = fetchElement(assembledElements.second, attributpath);
 		
 		cout << "chunk data fetched from BlockEntity.BlockRecords : " << endl;
+		cout << "- seq : ";
+		seqSpan ss = assembledElements.first;
+		std::list<unsigned long> seqnumbers = ss.seqNumbers;
+		BOOST_FOREACH( auto &seqnumber, seqnumbers )
+		{
+			cout << seqnumber << ",";
+		}
+		cout << endl;
+
 		cout << "/*{{{*/" << endl;
 		for(int n=0;n<chunkdata.size(); n++)
 		{

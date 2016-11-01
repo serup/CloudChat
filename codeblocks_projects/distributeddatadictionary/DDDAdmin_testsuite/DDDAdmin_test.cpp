@@ -2946,7 +2946,7 @@ BOOST_AUTO_TEST_CASE( fetchAttributFrom2BFi)
 	BOOST_CHECK(attributValue.size() == pairAttribut.second.size());
 
 	//sort before compare
-	std::sort(attributValue.begin(), attributValue.end());
+	//std::sort(attributValue.begin(), attributValue.end());
 
 	BOOST_CHECK(attributValue == pairAttribut.second); // verify that retrieved value is same as stored
 
