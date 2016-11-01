@@ -53,9 +53,14 @@ struct EntityChunkDataInfo{
 
 struct assembledElements {
 	std::string strElementID;
+	unsigned long seq;
 	std::vector<unsigned char> ElementData;
 };
 
+struct seqSpan {
+	std::list<unsigned long> seqNumbers;
+	std::string attributPath;
+};
 
 class CDataDictionaryControl
 {
