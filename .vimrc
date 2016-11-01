@@ -56,7 +56,7 @@ set mouse=a
 "endif
 noremap <C-W>M <C-W>\| <C-W>_
 noremap <C-W>m <C-W>=
-execute pathogen#infect()
+"execute pathogen#infect()
 syntax on
 
 
@@ -68,6 +68,7 @@ nnoremap <silent> <leader>ww :call WindowSwap#EasyWindowSwap()<CR>
 noremap <F2> :AnsiEsc<CR>
 noremap <F9> :so build_project.vim<CR>:%g/^{/normal! zf%<CR>:set foldmethod=marker<CR>gg<CR>
 noremap <F3> :so test_project.vim <CR>:%g/^{/normal! zf%<CR>:set foldmethod=marker<CR>gg<CR>
+noremap <silent> <leader>ct :!ctags-proj.sh<CR>
 noremap <silent> <leader>fa :%g/^{/normal! zf%<CR>
 noremap <silent> <leader>jf <C-]><CR>
 noremap <silent> <leader>jb <C-t><CR>
