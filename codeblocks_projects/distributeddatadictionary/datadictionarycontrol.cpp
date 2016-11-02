@@ -882,29 +882,9 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::
 				std::ifstream is (i.string());
 				ptree pt;
 				try{
-						read_xml(is, pt);
-				}catch(...) {}
-
-				optional< ptree& > child = pt.get_child_optional("BFi");
-				if(child) 
-				{
-					cout << "searching for chunk_data ";
-
-					BOOST_FOREACH(boost::property_tree::ptree::value_type &child, pt.get_child("BFi.BlockEntity.BlockRecord", _empty_tree)) 
-					{
-						if (child.first == "TransGUID") transGuid = child.second.data();
-						if (child.first == "chunk_id") id = child.second.data();
-
-						cout << "-";
-						if(child.first == "chunk_data")
-						{
-							cout << "+" << endl;
-
-							std::vector<assembledElements> recElements = readBlockRecordElements(child);
-							listOfAssembledAttributes.push_back(assembleBlockRecords(transGuid, id, recElements));
-						}
-					}
-				}
+					read_xml(is, pt);
+					addAttributFromBFiToList(pt, listOfAssembledAttributes);
+				}catch(...) { cout << "FAIL: EXCEPTION trying to read xml file : " << i.string(); }
 
 				cout << "*}}}" << endl;
 			}
@@ -922,6 +902,37 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::
 	resultAttributPair = make_pair(attributpath,ElementData); // create assemble data result pair
 
 	return resultAttributPair;
+}
+
+bool CDataDictionaryControl::addAttributFromBFiToList(ptree pt, std::list< pair<seqSpan, std::vector<assembledElements>> > &listOfAssembledAttributes)
+{
+	bool bResult=false;
+	std::string transGuid="";
+	std::string id="";
+	boost::property_tree::ptree _empty_tree;
+	optional< ptree& > child = pt.get_child_optional("BFi");
+	if(child) 
+	{
+		cout << "searching for chunk_data ";
+
+		BOOST_FOREACH(boost::property_tree::ptree::value_type &child, pt.get_child("BFi.BlockEntity.BlockRecord", _empty_tree)) 
+		{
+			if (child.first == "TransGUID") transGuid = child.second.data();
+			if (child.first == "chunk_id") id = child.second.data();
+
+			cout << "-";
+			if(child.first == "chunk_data")
+			{
+				cout << "+" << endl;
+
+				std::vector<assembledElements> recElements = readBlockRecordElements(child);
+				listOfAssembledAttributes.push_back(assembleBlockRecords(transGuid, id, recElements));
+				bResult=true;
+			}
+		}
+	}
+	
+	return bResult;
 }
 
 pair<seqSpan, std::vector<assembledElements>> CDataDictionaryControl::assembleBlockRecords(std::string transGuid, std::string id, std::vector<assembledElements> &recElements)

@@ -101,7 +101,7 @@ class CDataDictionaryControl
 		vector<pair<unsigned long, std::vector<unsigned char> >> sortAssembledRecords(std::string attributpath, std::list< pair<seqSpan, std::vector<assembledElements>> > listOfRecords);
 		void mergeRecords(vector<pair<unsigned long, std::vector<unsigned char> >> list, std::vector<unsigned char> &ElementData);
 		pair<seqSpan, std::vector<assembledElements>> assembleBlockRecords(std::string transGuid, std::string id, std::vector<assembledElements> &recElements);
-		std::list< pair<seqSpan, std::vector<assembledElements>> > createListOfAssembledAttributes(ptree pt, optional<ptree&> child);
+		bool addAttributFromBFiToList(ptree pt, std::list< pair<seqSpan, std::vector<assembledElements>> > &listOfAssembledAttributes);
 
 };
 
