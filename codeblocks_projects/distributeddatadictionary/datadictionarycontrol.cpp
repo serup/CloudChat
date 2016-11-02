@@ -889,6 +889,7 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::
 				if(child) 
 				{
 					cout << "searching for chunk_data ";
+
 					BOOST_FOREACH(boost::property_tree::ptree::value_type &child, pt.get_child("BFi.BlockEntity.BlockRecord", _empty_tree)) 
 					{
 						if (child.first == "TransGUID") transGuid = child.second.data();
@@ -898,46 +899,9 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::
 						if(child.first == "chunk_data")
 						{
 							cout << "+" << endl;
-							std::vector<assembledElements> recElements;
-							recElements = readBlockRecordElements(child);
-							seqSpan ss;
-							ss.attributPath="<empty>";
-							cout << "*{{{" << endl;
-							BOOST_FOREACH(assembledElements &_element, recElements)
-							{
-							    ss.seqNumbers = _element.seqNumbers;	
 
-								cout << "element seq : ";
-								BOOST_FOREACH( auto &seqnumber, _element.seqNumbers )
-								{
-									cout << seqnumber << ",";
-								}
-								cout << endl;
-								cout << "element id : " << _element.strElementID << endl;
-								
-								// add padding for element
-								_element.strElementID = transGuid + "./" + id + "/" + _element.strElementID;
-
-								if( ss.attributPath == "<empty>")
-									ss.attributPath = _element.strElementID;
-								else {
-									if(ss.attributPath != _element.strElementID)
-										cout << "FAIL: individual sequence element differs in name -- this is SERIOUS ERROR ";
-								}
-								
-								cout << "-element id : " << _element.strElementID << endl;
-								cout << "element size of value : " << _element.ElementData.size() << endl;
-								
-								if(_element.ElementData.size() < 50) {
-									std::string str(_element.ElementData.begin(), _element.ElementData.end());
-									cout << "element value : " << str << endl;
-								}
-							}
-							cout << "*}}}" << endl;
-							pair<seqSpan, std::vector<assembledElements>> assembledBlockRecordElement = make_pair(ss,recElements);
-
-
-							listOfAssembledAttributes.push_back(assembledBlockRecordElement);
+							std::vector<assembledElements> recElements = readBlockRecordElements(child);
+							listOfAssembledAttributes.push_back(assembleBlockRecords(transGuid, id, recElements));
 						}
 					}
 				}
@@ -959,6 +923,50 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::
 
 	return resultAttributPair;
 }
+
+pair<seqSpan, std::vector<assembledElements>> CDataDictionaryControl::assembleBlockRecords(std::string transGuid, std::string id, std::vector<assembledElements> &recElements)
+{
+	seqSpan ss;
+	ss.attributPath="<empty>";
+
+	cout << "*{{{" << endl;
+	BOOST_FOREACH(assembledElements &_element, recElements)
+	{
+		ss.seqNumbers = _element.seqNumbers;	
+
+		cout << "element seq : ";
+		BOOST_FOREACH( auto &seqnumber, _element.seqNumbers )
+		{
+			cout << seqnumber << ",";
+		}
+		cout << endl;
+		cout << "element id : " << _element.strElementID << endl;
+
+		// add padding for element
+		_element.strElementID = transGuid + "./" + id + "/" + _element.strElementID;
+
+		if( ss.attributPath == "<empty>")
+			ss.attributPath = _element.strElementID;
+		else {
+			if(ss.attributPath != _element.strElementID)
+				cout << "FAIL: individual sequence element differs in name -- this is SERIOUS ERROR ";
+		}
+
+		cout << "-element id : " << _element.strElementID << endl;
+		cout << "element size of value : " << _element.ElementData.size() << endl;
+
+		if(_element.ElementData.size() < 50) {
+			std::string str(_element.ElementData.begin(), _element.ElementData.end());
+			cout << "element value : " << str << endl;
+		}
+	}
+	cout << "*}}}" << endl;
+
+	pair<seqSpan, std::vector<assembledElements>> assembledBlockRecordElement = make_pair(ss,recElements);
+
+	return assembledBlockRecordElement;
+}
+
 
 /**
  * Sort the BlockRecords according to attributpathname and sequence numbers of chunks

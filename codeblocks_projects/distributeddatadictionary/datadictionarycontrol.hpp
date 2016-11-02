@@ -23,7 +23,9 @@
 #include "../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.h"
 
 using namespace std;
-
+using boost::optional;
+using boost::property_tree::ptree;
+	
 struct BlockRecordEntry{
 	std::string TransGUID;
 	std::string chunk_id;
@@ -98,6 +100,8 @@ class CDataDictionaryControl
 		long getMaxDEDchunkSize();
 		vector<pair<unsigned long, std::vector<unsigned char> >> sortAssembledRecords(std::string attributpath, std::list< pair<seqSpan, std::vector<assembledElements>> > listOfRecords);
 		void mergeRecords(vector<pair<unsigned long, std::vector<unsigned char> >> list, std::vector<unsigned char> &ElementData);
+		pair<seqSpan, std::vector<assembledElements>> assembleBlockRecords(std::string transGuid, std::string id, std::vector<assembledElements> &recElements);
+		std::list< pair<seqSpan, std::vector<assembledElements>> > createListOfAssembledAttributes(ptree pt, optional<ptree&> child);
 
 };
 
