@@ -846,44 +846,19 @@ std::vector<unsigned char> CDataDictionaryControl::fetchElement(std::vector<asse
 
 pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::string attributpath)
 {
-	using boost::optional;
-	using boost::property_tree::ptree;
-	
-
-	std::vector<assembledElements> records_elements; // contains assembled elements from tree
 	std::list< pair<seqSpan, std::vector<assembledElements>> > listOfAssembledAttributes;
-	std::vector<unsigned char> ElementData;
 	pair<std::string, std::vector<unsigned char>> resultAttributPair;
 
-
-	try
-	{
-	std::string transGuid="";
-	std::string id="";
-	std::string str;
-	std::string attribut = "";
-	std::string prev = "";
-	std::string prevAtt = "";
-	boost::property_tree::ptree _empty_tree;
-
-	if(findAndAssembleAttributFromBFiFiles( boost::filesystem::current_path(), listOfAssembledAttributes )) 
-		mergeRecords(filterAndSortAssembledRecords(attributpath, listOfAssembledAttributes), ElementData);
-	else
-		cout << "WARNING: [ftgt] no attribut found " << endl;
-
-	}
-	catch (const std::exception& e)  // catch any exceptions
-	{ cerr << endl << "Exception: " << e.what() << endl; }
-
-	//return as a pair <name,value>
-	resultAttributPair = make_pair(attributpath,ElementData); // create assemble data result pair
-
-	return resultAttributPair;
+	resultAttributPair = findAndAssembleAttributFromBFiFiles( attributpath, boost::filesystem::current_path(), listOfAssembledAttributes ); 
+		
+	return resultAttributPair; //return as a pair <name,value>
 }
 
-bool CDataDictionaryControl::findAndAssembleAttributFromBFiFiles( boost::filesystem::path _targetDir, std::list< pair<seqSpan, std::vector<assembledElements>> > &listOfAssembledAttributes) 
+pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::findAndAssembleAttributFromBFiFiles( std::string attributpath, boost::filesystem::path _targetDir, std::list< pair<seqSpan, std::vector<assembledElements>> > &listOfAssembledAttributes) 
 {
 	bool bResult=false;
+	std::vector<unsigned char> ElementData;
+	pair<std::string, std::vector<unsigned char>> resultAttributPair;
 
 	boost::filesystem::path targetDir( _targetDir );
 	boost::filesystem::recursive_directory_iterator iter(targetDir), eod;
@@ -912,7 +887,12 @@ bool CDataDictionaryControl::findAndAssembleAttributFromBFiFiles( boost::filesys
 			
 		}
 	}
-	return bResult;
+	if(bResult==true) {
+		if(mergeRecords(filterAndSortAssembledRecords(attributpath, listOfAssembledAttributes), ElementData))
+			resultAttributPair = make_pair(attributpath,ElementData); // create assemble data result pair
+
+	}
+	return resultAttributPair;
 }
 
 bool CDataDictionaryControl::addAttributFromBFiToList(ptree pt, std::list< pair<seqSpan, std::vector<assembledElements>> > &listOfAssembledAttributes)
@@ -1028,13 +1008,15 @@ vector<pair<unsigned long, std::vector<unsigned char> >> CDataDictionaryControl:
 	return list;
 }
 
-void CDataDictionaryControl::mergeRecords(vector<pair<unsigned long, std::vector<unsigned char> >> list, std::vector<unsigned char> &ElementData)
+bool CDataDictionaryControl::mergeRecords(vector<pair<unsigned long, std::vector<unsigned char> >> list, std::vector<unsigned char> &ElementData)
 {
+	bool bResult=false;
 	// assemble acros multible .BFi files
 	BOOST_FOREACH( auto &assembledElements, list )
 	{
 		std::vector<unsigned char> chunkdata = assembledElements.second;
-		
+		if(chunkdata.size()>0) bResult=true;
+
 		cout << "chunk data fetched from BlockEntity.BlockRecords : " << endl;
 		cout << "- lastSeq of assembled record : " << assembledElements.first;
 
@@ -1048,5 +1030,6 @@ void CDataDictionaryControl::mergeRecords(vector<pair<unsigned long, std::vector
 		/// this will, chunk by chunk, assemble the attribut data
 		std::copy(chunkdata.begin(), chunkdata.end(), std::back_inserter(ElementData));
 	}
+	return bResult;
 }
 
