@@ -846,17 +846,15 @@ std::vector<unsigned char> CDataDictionaryControl::fetchElement(std::vector<asse
 
 pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::string attributpath)
 {
-	std::list< pair<seqSpan, std::vector<assembledElements>> > listOfAssembledAttributes;
 	pair<std::string, std::vector<unsigned char>> resultAttributPair;
-
-	resultAttributPair = findAndAssembleAttributFromBFiFiles( attributpath, boost::filesystem::current_path(), listOfAssembledAttributes ); 
-		
+	resultAttributPair = findAndAssembleAttributFromBFiFiles( attributpath, boost::filesystem::current_path() ); 
 	return resultAttributPair; //return as a pair <name,value>
 }
 
-pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::findAndAssembleAttributFromBFiFiles( std::string attributpath, boost::filesystem::path _targetDir, std::list< pair<seqSpan, std::vector<assembledElements>> > &listOfAssembledAttributes) 
+pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::findAndAssembleAttributFromBFiFiles( std::string attributpath, boost::filesystem::path _targetDir) 
 {
 	bool bResult=false;
+	std::list< pair<seqSpan, std::vector<assembledElements>> > listOfAssembledAttributes;
 	std::vector<unsigned char> ElementData;
 	pair<std::string, std::vector<unsigned char>> resultAttributPair;
 

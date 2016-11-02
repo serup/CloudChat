@@ -2914,7 +2914,7 @@ BOOST_AUTO_TEST_CASE( fetchAttributFrom2BFi)
 
 	cout << "Fetch attribut from .BFi file " << endl;
 
-	cout << "TODO: ftgt should beable to assemble across multiple .BFi files " << endl;
+	cout << "INFO: ftgt should beable to assemble across multiple .BFi files " << endl;
 	pair<std::string, std::vector<unsigned char>> pairAttribut = ptestDataDictionaryControl->ftgt("F9D23762ED2823A27E62A64B95C024EF./profile/foto");
 	cout << "Attribut name : " << pairAttribut.first << endl;
 
