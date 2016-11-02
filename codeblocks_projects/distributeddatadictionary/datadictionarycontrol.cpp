@@ -866,7 +866,26 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::
 	std::string prevAtt = "";
 	boost::property_tree::ptree _empty_tree;
 
-	boost::filesystem::path targetDir( boost::filesystem::current_path() );
+	if(findAndAssembleAttributFromBFiFiles( boost::filesystem::current_path(), listOfAssembledAttributes )) 
+		mergeRecords(filterAndSortAssembledRecords(attributpath, listOfAssembledAttributes), ElementData);
+	else
+		cout << "WARNING: [ftgt] no attribut found " << endl;
+
+	}
+	catch (const std::exception& e)  // catch any exceptions
+	{ cerr << endl << "Exception: " << e.what() << endl; }
+
+	//return as a pair <name,value>
+	resultAttributPair = make_pair(attributpath,ElementData); // create assemble data result pair
+
+	return resultAttributPair;
+}
+
+bool CDataDictionaryControl::findAndAssembleAttributFromBFiFiles( boost::filesystem::path _targetDir, std::list< pair<seqSpan, std::vector<assembledElements>> > &listOfAssembledAttributes) 
+{
+	bool bResult=false;
+
+	boost::filesystem::path targetDir( _targetDir );
 	boost::filesystem::recursive_directory_iterator iter(targetDir), eod;
 
 	BOOST_FOREACH(boost::filesystem::path const& i, make_pair(iter, eod))
@@ -883,7 +902,9 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::
 				ptree pt;
 				try{
 					read_xml(is, pt);
-					addAttributFromBFiToList(pt, listOfAssembledAttributes);
+					if(addAttributFromBFiToList(pt, listOfAssembledAttributes))
+						bResult=true;
+
 				}catch(...) { cout << "FAIL: EXCEPTION trying to read xml file : " << i.string(); }
 
 				cout << "*}}}" << endl;
@@ -891,17 +912,7 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::
 			
 		}
 	}
-
-	mergeRecords(sortAssembledRecords(attributpath, listOfAssembledAttributes), ElementData);
-
-	}
-	catch (const std::exception& e)  // catch any exceptions
-	{ cerr << endl << "Exception: " << e.what() << endl; }
-
-	//return as a pair <name,value>
-	resultAttributPair = make_pair(attributpath,ElementData); // create assemble data result pair
-
-	return resultAttributPair;
+	return bResult;
 }
 
 bool CDataDictionaryControl::addAttributFromBFiToList(ptree pt, std::list< pair<seqSpan, std::vector<assembledElements>> > &listOfAssembledAttributes)
@@ -982,7 +993,7 @@ pair<seqSpan, std::vector<assembledElements>> CDataDictionaryControl::assembleBl
 /**
  * Sort the BlockRecords according to attributpathname and sequence numbers of chunks
  */
-vector<pair<unsigned long, std::vector<unsigned char> >> CDataDictionaryControl::sortAssembledRecords(std::string attributpath, std::list< pair<seqSpan, std::vector<assembledElements>> > listOfRecords)
+vector<pair<unsigned long, std::vector<unsigned char> >> CDataDictionaryControl::filterAndSortAssembledRecords(std::string attributpath, std::list< pair<seqSpan, std::vector<assembledElements>> > listOfRecords)
 {
 	//+ sort so assemble will be in correct order
 	vector<pair<unsigned long, std::vector<unsigned char> >> list;

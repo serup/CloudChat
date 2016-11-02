@@ -98,10 +98,11 @@ class CDataDictionaryControl
 		bool appendToLastBlockEntity(boost::property_tree::ptree &node, boost::property_tree::ptree &subpt, std::string transGuid);
 		void setMaxDEDchunkSize(long maxSize);
 		long getMaxDEDchunkSize();
-		vector<pair<unsigned long, std::vector<unsigned char> >> sortAssembledRecords(std::string attributpath, std::list< pair<seqSpan, std::vector<assembledElements>> > listOfRecords);
+		vector<pair<unsigned long, std::vector<unsigned char> >> filterAndSortAssembledRecords(std::string attributpath, std::list< pair<seqSpan, std::vector<assembledElements>> > listOfRecords);
 		void mergeRecords(vector<pair<unsigned long, std::vector<unsigned char> >> list, std::vector<unsigned char> &ElementData);
 		pair<seqSpan, std::vector<assembledElements>> assembleBlockRecords(std::string transGuid, std::string id, std::vector<assembledElements> &recElements);
 		bool addAttributFromBFiToList(ptree pt, std::list< pair<seqSpan, std::vector<assembledElements>> > &listOfAssembledAttributes);
+		bool findAndAssembleAttributFromBFiFiles( boost::filesystem::path _targetDir, std::list< pair<seqSpan, std::vector<assembledElements>> > &listOfAssembledAttributes );
 
 };
 
