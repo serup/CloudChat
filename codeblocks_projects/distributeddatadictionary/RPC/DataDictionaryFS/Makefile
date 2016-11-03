@@ -51,11 +51,12 @@ prereq:
 	@sed -i 's/DDRequest dddfs_1_arg1;/DDRequest dddfs_1_arg1 = createDummyDDRequest();/' DDDfs_client.cpp
 	@sed -i 's/DDRequest ddnode_1_arg1;/DDRequest ddnode_1_arg1 = createDummyDDRequest();/' DDDfs_client.cpp
 	@sed -i '/exit (1);\	}/a\	DED_PUT_DATA_IN_DECODER(decoder_ptr,(unsigned char*)result_1->data.data_val,result_1->data.data_len);' DDDfs_client.cpp
-	@sed -i '/result_1 = dddfs_1(clnt);/a\
+	@sed -i '/result_1 = dddfs_1(dddfs_1_arg1, clnt);/a\
 		if (result_1 != (DEDBlock *) NULL) {\
 			DED_PUT_DATA_IN_DECODER(decoder_ptr,(unsigned char*)result_1->data.data_val,result_1->data.data_len); \
-			\/\/TODO: decode message\
+			handleResponse(decoder_ptr); \/\/ decode message\
 		}' DDDfs_client.cpp
+	@
 	@echo "- and you can now compile and link using :  make all"
  
 all:	clean
