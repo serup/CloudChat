@@ -47,7 +47,7 @@ in other words a RPCclient should be able to die and others should together with
 to reestablish data lying on the downed RPCclient - this is done from redundant replicas of .BFi files        
 on each RPCNode                                                                                               
 each Node has up to 3 backup nodes in forward chain - example ring with 3 nodes:                              
-node1->node2->node3; node2->node3->node4; node3->node1->node2                                                 
+node1->node2->node3; node2->node3->node1; node3->node1->node2                                                 
 read as :                                                                                                     
   node1 backup on node2 and node3                                                                             
   node2 backup on node3 and node1                                                                             
