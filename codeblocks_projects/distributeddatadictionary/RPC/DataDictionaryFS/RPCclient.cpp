@@ -84,7 +84,7 @@ bool RPCclient::sendRequestTo(DDRequest req, const char *host, void(*fptr)(std::
 /**
  * this is the default response handler - it can be overridden with other callback functions
  */
-void RPCclient::handleResponse(std::unique_ptr<CDataEncoder> &decoder_ptr)
+bool RPCclient::handleResponse(std::unique_ptr<CDataEncoder> &decoder_ptr)
 {
 	bool bDecoded=false;
 	std::string strValue;
@@ -129,7 +129,28 @@ void RPCclient::handleResponse(std::unique_ptr<CDataEncoder> &decoder_ptr)
 			else	
 				cout << "FAIL: did NOT decode DDNodeResponse" << endl;
 		}
+
+		if(!bDecoded){
+		// could be server is sending a request
+			cout << "TODO: handle a possible Request from server" << endl;	
+			
+		}
 	}
+
+	return bDecoded;
+}
+
+/**
+ * The RPCclient is connected to DDDAdmin server and it
+ * receives communication as responses to request from 
+ * client or as request from DDDAdmin server
+ *
+ * It is important that the RPCclient is connected
+ * to server and not opposite, since the RPCclient could
+ * be residing on a non-static ip address
+ */
+bool RPCclient::handleServerRequest(DDRequest req)
+{
 
 }
 

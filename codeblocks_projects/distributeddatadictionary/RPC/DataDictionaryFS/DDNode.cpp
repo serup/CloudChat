@@ -29,9 +29,11 @@ DEDBlock * dddfsServer::handleRequest(DDRequest req)
 	else {
 			//TODO: handle various requests and make appropriate responses
 			
-			if(req.reqType == SEARCH)
+			if(req.reqType == requestType::SEARCH)
 				printf("Request type : SEARCH received\n");
 
+			if(req.reqType == requestType::CONNECT)
+				printf("Request type : CONNECT received\n");
 
 			//TODO: decode incomming request
 			//
@@ -44,7 +46,41 @@ DEDBlock * dddfsServer::handleRequest(DDRequest req)
 					eMethod = analyseRequestMethod(methodName);
 					switch(eMethod)
 					{
-				
+			
+						case CONNECT:
+						{
+							/** 
+							 * TODO: setup a list with connected RPCclients with message ques (ringbuffers) 
+							 * a RPCclient will connect to server and ask for requests from its message que
+							 * this construction is to allow RPCclients to be unflexible in their connection to server
+							 * in other words a RPCclient should be able to die and others should together with server be able 
+							 * to reestablish data lying on the downed RPCclient - this is done from redundant replicas of .BFi files 
+							 * on each RPCNode 
+							 * each Node has up to 3 backup nodes in forward chain - example ring with 3 nodes: 
+							 * node1->node2->node3; node2->node3->node4; node3->node1->node2 
+							 * read as : 
+							 *   node1 backup on node2 and node3 
+							 *   node2 backup on node3 and node1 
+							 *   node3 backup on node1 and node2 
+							 */
+
+							printf("** \n\
+* TODO: setup a list with connected RPCclients with message ques (ringbuffers) \n\
+* a RPCclient will connect to server and ask for requests from its message que \n\
+* this construction is to allow RPCclients to be unflexible in their connection to server \n\
+* in other words a RPCclient should be able to die and others should together with server be able \n\
+* to reestablish data lying on the downed RPCclient - this is done from redundant replicas of .BFi files \n\
+* on each RPCNode \n\
+* each Node has up to 3 backup nodes in forward chain - example ring with 3 nodes: \n\
+* node1->node2->node3; node2->node3->node4; node3->node1->node2 \n\
+* read as : \n\
+*   node1 backup on node2 and node3 \n\
+*   node2 backup on node3 and node1 \n\
+*   node3 backup on node1 and node2 \n\
+*\n");
+							printf("TODO: handle a RPCclient connection request \n");	
+						}
+						break;
 
 						default:
 						{
@@ -52,7 +88,6 @@ DEDBlock * dddfsServer::handleRequest(DDRequest req)
 						}
 						break;
 					}
-
 
 				}
 
@@ -76,6 +111,7 @@ DEDBlock * dddfsServer::handleRequest(DDRequest req)
 dddfsServer::_eMethod dddfsServer::analyseRequestMethod(std::string strMethod)
 {
 	_eMethod eRmethod;
+	if( strMethod ==(std::string)"RPCclientConnect" ) eRmethod = CONNECT;
 	if( strMethod ==(std::string)"LIST_ATTRIBUTS" ) eRmethod = LIST_ATTRIBUTS;
 	if( strMethod ==(std::string)"LA" ) eRmethod = LIST_ATTRIBUTS;
 

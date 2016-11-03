@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_SUITE_END( )
 
 BOOST_AUTO_TEST_CASE(handleRequest_helloworld)
 {
-	cout<<"BOOST_AUTO_TEST(handleRequest_helloworld)\n{"<<endl;    
+	cout<<"BOOST_AUTO_TEST_CASE( handleRequest_helloworld)\n{"<<endl;    
 
 	dddfsServer* pddfsServer = new dddfsServer();
 	BOOST_CHECK(pddfsServer!=NULL);
@@ -119,7 +119,7 @@ BOOST_AUTO_TEST_CASE(handleRequest_helloworld)
 
 BOOST_AUTO_TEST_CASE(serverclient_udp)
 {
-	cout<<"BOOST_AUTO_TEST(serverclient_udp)\n{"<<endl;    
+	cout<<"BOOST_AUTO_TEST_CASE( serverclient_udp)\n{"<<endl;    
 	
 	// setup server
 	mockRPCServer *pserver = new mockRPCServer();
@@ -190,7 +190,7 @@ BOOST_AUTO_TEST_CASE(serverclient_udp)
 
 BOOST_AUTO_TEST_CASE(serverclient_tcp)
 {
-	cout<<"BOOST_AUTO_TEST(serverclient_tcp)\n{"<<endl;    
+	cout<<"BOOST_AUTO_TEST_CASE( serverclient_tcp)\n{"<<endl;    
 	
 	// setup server
 	mockRPCServer *pserver = new mockRPCServer();
@@ -265,7 +265,7 @@ void dummycallbackfnct(std::unique_ptr<CDataEncoder> &decoder_ptr)
 
 BOOST_AUTO_TEST_CASE(classRPCclient)
 {
-	cout<<"BOOST_AUTO_TEST(classRPCclient)\n{"<<endl;    
+	cout<<"BOOST_AUTO_TEST_CASE( classRPCclient)\n{"<<endl;    
 	
 	// setup client
 	//
@@ -349,7 +349,7 @@ BOOST_AUTO_TEST_CASE(classRPCclient)
 
 BOOST_AUTO_TEST_CASE(RequestResponseMethod)
 {
-	cout<<"BOOST_AUTO_TEST(RequestResponseMethod)\n{"<<endl;    
+	cout<<"BOOST_AUTO_TEST_CASE( RequestResponseMethod)\n{"<<endl;    
 
 	// setup a request
 	DED_START_ENCODER(dedptr);
@@ -370,3 +370,48 @@ BOOST_AUTO_TEST_CASE(RequestResponseMethod)
  
 	cout<<"}"<<endl;   
 }
+
+
+BOOST_AUTO_TEST_CASE(ServerRequestToRPCclient)
+{
+	cout << "BOOST_AUTO_TEST_CASE( ServerRequestToRPCclient )\n{" << endl;
+
+	cout<<"/*{{{*/"<<endl;   
+	// test with lambda function as callback
+	{
+	// setup mock server
+	mockRPCServer server;
+    server.start();
+    server.wait();				
+
+	// setup RPCclient
+	RPCclient client;
+
+	// setup a RPCclient connect request
+	DED_START_ENCODER(dedptr);
+	DED_PUT_STRUCT_START( dedptr, "DDNodeRequest" );
+		DED_PUT_METHOD	( dedptr, "name", (std::string)"RPCclientConnect" );
+	DED_PUT_STRUCT_END( dedptr, "DDNodeRequest" );
+
+	// setup connection from RPCclient to server
+	// test with lambda callback function
+	BOOST_CHECK( client.sendRequestTo("localhost", dedptr,421,CONNECT,
+			[&](std::unique_ptr<CDataEncoder> &decoder_ptr) // lambda functionality
+				{
+					printf("************************************************\n");
+					printf("WARNING: lambda callback function called \n");
+					if (decoder_ptr == 0) { printf(">>> no data received\n"); }
+					printf("************************************************\n");
+				}
+  		     	) == true );
+
+	}
+	cout <<"hello" << endl;
+	cout<<"/*}}}*/"<<endl;   
+
+
+	BOOST_CHECK(true == false);
+
+	cout << "}" << endl;
+}
+
