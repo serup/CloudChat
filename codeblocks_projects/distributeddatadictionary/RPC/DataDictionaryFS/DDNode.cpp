@@ -14,6 +14,7 @@ void DED_GET_DATA(std::unique_ptr<CDataEncoder> &encoder_ptr, DEDBlock &result)
 
 DEDBlock * dddfsServer::handleRequest(DDRequest req)  
 {
+	bool bResponseSend=false;
 	static DEDBlock  result;
 
 	if(req.reqType == PINGPONG) {
@@ -93,14 +94,14 @@ DEDBlock * dddfsServer::handleRequest(DDRequest req)
 
 			}
 
-
-			// send an appropriate response back	
-			DED_START_ENCODER(encoder_ptr);
-			DED_PUT_STRUCT_START( encoder_ptr, "DDNodeResponse" );
-			DED_PUT_METHOD 		( encoder_ptr, "name", (std::string)"unknown_request" );
-			DED_PUT_STRUCT_END( encoder_ptr, "DDNodeResponse" );
-			DED_GET_DATA(encoder_ptr,result);
-
+			if(!bResponseSend) {
+				// send an appropriate - default response back	
+				DED_START_ENCODER(encoder_ptr);
+				DED_PUT_STRUCT_START( encoder_ptr, "DDNodeResponse" );
+				DED_PUT_METHOD 		( encoder_ptr, "name", (std::string)"unknown_request" );
+				DED_PUT_STRUCT_END( encoder_ptr, "DDNodeResponse" );
+				DED_GET_DATA(encoder_ptr,result);
+			}
 	}
 	
 	result.transID = req.ded.transID;

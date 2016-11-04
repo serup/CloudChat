@@ -23,8 +23,8 @@ class RPCclient
 		bool sendRequestTo(DDRequest req, string host);
 		bool sendRequestTo(string host);
 		bool sendRequestTo(string host, std::unique_ptr<CDataEncoder> &encoder_ptr, int transID, enum requestType reqtype,  void(*fptr)(std::unique_ptr<CDataEncoder> &decoder_ptr));
-		bool sendRequestTo(DDRequest req, const char *host,  void(*fptr)(std::unique_ptr<CDataEncoder> &decoder_ptr));
 		bool sendRequestTo(string host, std::unique_ptr<CDataEncoder> &encoder_ptr, int transID, enum requestType reqtype);
+		bool sendRequestTo(DDRequest req, const char *host,  void(*fptr)(std::unique_ptr<CDataEncoder> &decoder_ptr), std::string tcpORudp );
 		bool handleResponse(std::unique_ptr<CDataEncoder> &decoder_ptr);	
 		
 	private:

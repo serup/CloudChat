@@ -23,36 +23,36 @@ DDRequest RPCclient::createDDRequest(std::unique_ptr<CDataEncoder> &encoder_ptr,
 bool RPCclient::sendRequestTo(DDRequest req, string host)
 {
 	char const* ca = host.c_str();
-	return sendRequestTo(req, ca, NULL);		
+	return sendRequestTo(req, ca, NULL, "udp");		
 }
 
 bool RPCclient::sendRequestTo(string host, std::unique_ptr<CDataEncoder> &encoder_ptr, int transID, enum requestType reqtype,  void(*fptr)(std::unique_ptr<CDataEncoder> &decoder_ptr))
 {
 	char const* ca = host.c_str();
 	request = createDDRequest(encoder_ptr, transID, reqtype);
-	return sendRequestTo(request, ca, fptr);		
+	return sendRequestTo(request, ca, fptr, "tcp");		
 }
 
 bool RPCclient::sendRequestTo(string host, std::unique_ptr<CDataEncoder> &encoder_ptr, int transID, enum requestType reqtype)
 {
 	char const* ca = host.c_str();
 	request = createDDRequest(encoder_ptr, transID, reqtype);
-	return sendRequestTo(request, ca, NULL);		
+	return sendRequestTo(request, ca, NULL, "tcp");		
 }
 
 bool RPCclient::sendRequestTo(string host)
 {
 	char const* ca = host.c_str();
-	return sendRequestTo(request, ca, NULL);		
+	return sendRequestTo(request, ca, NULL, "tcp");		
 }
 
-bool RPCclient::sendRequestTo(DDRequest req, const char *host, void(*fptr)(std::unique_ptr<CDataEncoder> &decoder_ptr))
+bool RPCclient::sendRequestTo(DDRequest req, const char *host, void(*fptr)(std::unique_ptr<CDataEncoder> &decoder_ptr), std::string tcpORudp)
 {
 	bool bResult=true;
 	CLIENT *clnt;
 	DEDBlock  *result;
 
-	clnt = clnt_create (host, DDD_FS_PROG, DDD_FS_VERS, "udp");
+	clnt = clnt_create (host, DDD_FS_PROG, DDD_FS_VERS, tcpORudp.c_str());
 	if (clnt == NULL) {
 		clnt_pcreateerror (host);
 		bResult=false;

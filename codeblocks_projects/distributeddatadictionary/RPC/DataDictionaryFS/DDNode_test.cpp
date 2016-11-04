@@ -395,7 +395,7 @@ BOOST_AUTO_TEST_CASE(ServerRequestToRPCclient)
 
 	// setup connection from RPCclient to server
 	// test with lambda callback function
-	BOOST_CHECK( client.sendRequestTo("localhost", dedptr,421,CONNECT,
+/*	BOOST_CHECK( client.sendRequestTo("localhost", dedptr,421,CONNECT,
 			[&](std::unique_ptr<CDataEncoder> &decoder_ptr) // lambda functionality
 				{
 					printf("************************************************\n");
@@ -404,9 +404,10 @@ BOOST_AUTO_TEST_CASE(ServerRequestToRPCclient)
 					printf("************************************************\n");
 				}
   		     	) == true );
+*/
+	BOOST_CHECK( client.sendRequestTo("localhost", dedptr,421,CONNECT) == true );
 
 	}
-	cout <<"hello" << endl;
 	cout<<"/*}}}*/"<<endl;   
 
 
