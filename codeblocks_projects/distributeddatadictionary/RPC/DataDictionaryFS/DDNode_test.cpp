@@ -24,6 +24,7 @@
 #include "DDDfs.h"
 #include "mockRPCServer.h"
 #include "dummyrequest.h"
+#include "ServerRequestHandling.h"
 
 using namespace std;
 using namespace boost::unit_test;
@@ -371,6 +372,20 @@ BOOST_AUTO_TEST_CASE(RequestResponseMethod)
 	cout<<"}"<<endl;   
 }
 
+BOOST_AUTO_TEST_CASE(SRChandling_initialize)
+{
+	cout << "BOOST_AUTO_TEST_CASE( SRChandling )\n{" << endl;
+	CHandlingServerRequestToClients SRC;	
+
+	// setup a request - simulating a request from server
+	DDRequest req = createDummyDDRequest();
+	DED_PUT_DATA_IN_DECODER(decoder_ptr,(unsigned char*)req.ded.data.data_val, req.ded.data.data_len);
+
+	// test handleRequest function
+	BOOST_CHECK(SRC.handlingRequest(decoder_ptr) == false);
+
+	cout << "}" << endl;
+}
 
 BOOST_AUTO_TEST_CASE(ServerRequestToRPCclient)
 {
