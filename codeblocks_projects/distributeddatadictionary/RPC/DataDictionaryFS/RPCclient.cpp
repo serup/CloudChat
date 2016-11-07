@@ -134,24 +134,12 @@ bool RPCclient::handleResponse(std::unique_ptr<CDataEncoder> &decoder_ptr)
 			// could be server is sending a request
 			cout << "TODO: handle a possible Request from server" << endl;	
 			//CHandlingServerRequestToClients SRC;	
+			//SRC.handlingRequst(decoder_ptr);
+			
 		}
 	}
 
 	return bDecoded;
-}
-
-/**
- * The RPCclient is connected to DDDAdmin server and it
- * receives communication as responses to request from 
- * client or as request from DDDAdmin server
- *
- * It is important that the RPCclient is connected
- * to server and not opposite, since the RPCclient could
- * be residing on a non-static ip address
- */
-bool RPCclient::handleServerRequest(DDRequest req)
-{
-
 }
 
 

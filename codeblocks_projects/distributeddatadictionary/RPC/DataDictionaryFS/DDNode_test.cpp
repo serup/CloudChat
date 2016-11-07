@@ -387,6 +387,18 @@ BOOST_AUTO_TEST_CASE(SRChandling_initialize)
 	cout << "}" << endl;
 }
 
+BOOST_AUTO_TEST_CASE(SRChandling_status)
+{
+	cout << "BOOST_AUTO_TEST( SRChandling_status )\n{" << endl;
+
+	cout << "TODO: RPCclient node will perform a status update and send back to server as response" << endl;
+
+	BOOST_CHECK(true == false);
+
+	cout << "}" << endl;
+}
+
+
 BOOST_AUTO_TEST_CASE(ServerRequestToRPCclient)
 {
 	cout << "BOOST_AUTO_TEST_CASE( ServerRequestToRPCclient )\n{" << endl;
