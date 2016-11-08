@@ -56,6 +56,9 @@ BOOST_GLOBAL_FIXTURE(ReportRedirector)
 BOOST_AUTO_TEST_SUITE (DDNode_Test) // name of the test suite
 BOOST_AUTO_TEST_SUITE_END( )
 
+/**
+ * RPCclient request to Server
+ */
 BOOST_AUTO_TEST_CASE(handleRequest_helloworld)
 {
 	cout<<"BOOST_AUTO_TEST_CASE( handleRequest_helloworld)\n{"<<endl;    
@@ -372,36 +375,9 @@ BOOST_AUTO_TEST_CASE(RequestResponseMethod)
 	cout<<"}"<<endl;   
 }
 
-BOOST_AUTO_TEST_CASE(SRChandling_initialize)
+BOOST_AUTO_TEST_CASE(RPCclient_connect_to_Server)
 {
-	cout << "BOOST_AUTO_TEST_CASE( SRChandling )\n{" << endl;
-	CHandlingServerRequestToClients SRC;	
-
-	// setup a request - simulating a request from server
-	DDRequest req = createDummyDDRequest();
-	DED_PUT_DATA_IN_DECODER(decoder_ptr,(unsigned char*)req.ded.data.data_val, req.ded.data.data_len);
-
-	// test handleRequest function
-	BOOST_CHECK(SRC.handlingRequest(decoder_ptr) == false);
-
-	cout << "}" << endl;
-}
-
-BOOST_AUTO_TEST_CASE(SRChandling_status)
-{
-	cout << "BOOST_AUTO_TEST( SRChandling_status )\n{" << endl;
-
-	cout << "TODO: RPCclient node will perform a status update and send back to server as response" << endl;
-
-	BOOST_CHECK(true == false);
-
-	cout << "}" << endl;
-}
-
-
-BOOST_AUTO_TEST_CASE(ServerRequestToRPCclient)
-{
-	cout << "BOOST_AUTO_TEST_CASE( ServerRequestToRPCclient )\n{" << endl;
+	cout << "BOOST_AUTO_TEST_CASE( RPCclient_connect_to_Server)\n{" << endl;
 
 	cout<<"/*{{{*/"<<endl;   
 	// test with lambda function as callback
@@ -442,4 +418,35 @@ BOOST_AUTO_TEST_CASE(ServerRequestToRPCclient)
 
 	cout << "}" << endl;
 }
+
+/**
+ * Incomming request from server 
+ */
+BOOST_AUTO_TEST_CASE(CHandlingServerRequestToClients_init)
+{
+	cout << "BOOST_AUTO_TEST_CASE( CHandlingServerRequestToClients_init )\n{" << endl;
+	CHandlingServerRequestToClients SRC;	
+
+	// setup a request - simulating a request from server
+	DDRequest req = createDummyDDRequest();
+	DED_PUT_DATA_IN_DECODER(decoder_ptr,(unsigned char*)req.ded.data.data_val, req.ded.data.data_len);
+
+	// test handleRequest function
+	BOOST_CHECK(SRC.handlingRequest(decoder_ptr) == false);
+
+	cout << "}" << endl;
+}
+
+BOOST_AUTO_TEST_CASE(CHandlingServerRequestToClients_request)
+{
+	cout << "BOOST_AUTO_TEST( CHandlingServerRequestToClients_request )\n{" << endl;
+
+	cout << "TODO: RPCclient node will perform a status update and send back to server as response" << endl;
+	CHandlingServerRequestToClients SRC;	
+
+	BOOST_CHECK(true == false);
+
+	cout << "}" << endl;
+}
+
 
