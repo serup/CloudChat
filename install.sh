@@ -118,6 +118,15 @@ else
   echo "--  this will restart portmapper and your server should then work"
 fi
 
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 uuid-dev* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install uuid-dev - used in libminify project"
+  sudo apt-fast install -yq uuid-dev 
+  echo " - done."
+else
+  echo "- uuid-dev already installed"
+fi
+
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 w3m* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install w3m google access from terminal ; see info: https://www.youtube.com/watch?v=wlR1oa7uePg"
