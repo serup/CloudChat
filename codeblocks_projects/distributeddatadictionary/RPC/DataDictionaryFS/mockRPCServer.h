@@ -46,8 +46,7 @@ class mockRPCServer
 			{
 				mockRPCServer *_this = new mockRPCServer();
 				union {
-					DDRequest fs_1_arg;
-					DDRequest node_1_arg;
+					DDRequest req;
 				} argument;
 				char *result;
 				xdrproc_t _xdr_argument, _xdr_result;
