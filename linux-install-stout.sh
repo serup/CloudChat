@@ -14,6 +14,6 @@ cd ~/GitHub/mesos; ./bootstrap
 cd ~/GitHub/mesos; ./configure
 cd ~/GitHub/mesos; make
 
-echo "- install into /usr/include/stout"
-sudo cp -r ~/GitHub/mesos/3rdparty/stout/include/stout/ /usr/include/
+echo "- install into /usr/include/stout - do NOT overwrite"
+sudo cp -ir ~/GitHub/mesos/3rdparty/stout/include/stout/ /usr/include/
 echo "- Done."
