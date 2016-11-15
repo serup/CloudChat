@@ -27,4 +27,13 @@ else
 	echo "- libzookeeper-mt-dev already installed"
 fi
 
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' libgoogle-glog-dev |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+	echo -n "- install libgoogle-glog-dev "
+	sudo apt-get install -yq libgoogle-glog-dev
+	echo " - done."
+else
+	echo "- libgoogle-glog-dev already installed"
+fi
+
 
