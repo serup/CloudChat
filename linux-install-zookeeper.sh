@@ -18,6 +18,15 @@ else
 	echo "- zookeeper already installed"
 fi
 
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' check |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+	echo -n "- install libcheck "
+	sudo apt-get install -yq check
+	echo " - done."
+else
+	echo "- libcheck already installed"
+fi
+
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' libzookeeper-mt-dev |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
 	echo -n "- install libzookeeper-mt-dev "

@@ -9,7 +9,7 @@ echo "structure : "
 find  /usr/share/doc/c* -maxdepth 1  -type d|grep cdh4
 echo "Create new folder structure (/usr/share/doc/cdh3-repository)"
 sudo mkdir -p /usr/share/doc/cdh3-repository
-echo "Copy files from /usr/share/doc/cdh3-repository unto /usr/share/doc/cdh4-repository"
+echo "Copy files from /usr/share/doc/cdh4-repository unto /usr/share/doc/cdh3-repository"
 sudo cp --recursive /usr/share/doc/cdh4-repository/* /usr/share/doc/cdh3-repository/
 echo "structure:"
 find  /usr/share/doc/cdh* -maxdepth 1  -type d

@@ -3,7 +3,7 @@ cat DOPS_outline.txt
 echo "********************************************************"
 echo "** Installing vagrant, puppetlabs, virtualbox, docker **"
 echo "********************************************************"
-echo "MUST run as '. ./install.sh' or as 'sudo bash ./install.sh' otherwise it will fail !!!"
+echo "if issues then run as '. ./install.sh' or as 'sudo bash ./install.sh'  "
 
 echo "setting up alias"
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
@@ -184,6 +184,16 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- xmllint already installed"
 fi
+
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 *libprocess-cpp-dev* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- libprocess library <file> "
+  sudo apt-fast install -yq libprocess-cpp-dev
+  echo " - done."
+else
+  echo "- libprocess library already installed"
+fi
+
 
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 highlight* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then

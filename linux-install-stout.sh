@@ -16,4 +16,6 @@ cd ~/GitHub/mesos; make
 
 echo "- install into /usr/include/stout - do NOT overwrite"
 sudo cp -ir ~/GitHub/mesos/3rdparty/stout/include/stout/ /usr/include/
+echo "- copy static library libprocess to default /usr/lib"
+sudo cp -ir ~/GitHub/mesos/3rdparty/libprocess/.libs/libprocess.a /usr/lib/
 echo "- Done."
