@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# DEPRECATED - MESOS project should be looked at instead - somehow this project fails and mesos as libprocess inside
 echo "Clone libprocess library "
 cd ~/GitHub; git clone https://github.com/3rdparty/libprocess.git
 echo "- install into /usr/include/stout"

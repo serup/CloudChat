@@ -49,8 +49,10 @@ DEDBlock* mockRPCServer::handleRequest(DDRequest req)
 						case CONNECT:
 						{
 							/** 
-							 * TODO: setup a list with connected RPCclients with message ques (ringbuffers) 
-							 * a RPCclient will connect to server and ask for requests from its message que
+							 * TODO: setup a list with connected RPCclients  
+							 * - handle the clients using ZooKeeper api
+							 *
+							 * a RPCclient will connect to server and register as a client and also register to zookeeper service 
 							 * this construction is to allow RPCclients to be unflexible in their connection to server
 							 * in other words a RPCclient should be able to die and others should together with server be able 
 							 * to reestablish data lying on the downed RPCclient - this is done from redundant replicas of .BFi files 
@@ -64,8 +66,9 @@ DEDBlock* mockRPCServer::handleRequest(DDRequest req)
 							 */
 
 							printf("** \n\
-* TODO: setup a list with connected RPCclients with message ques (ringbuffers) \n\
-* a RPCclient will connect to server and ask for requests from its message que \n\
+* TODO: setup a list with connected RPCclients \n\
+* - handle the clients using ZooKeeper api \n\
+* a RPCclient will connect to server and register as a client and also register to zookeeper service \n\
 * this construction is to allow RPCclients to be unflexible in their connection to server \n\
 * in other words a RPCclient should be able to die and others should together with server be able \n\
 * to reestablish data lying on the downed RPCclient - this is done from redundant replicas of .BFi files \n\
