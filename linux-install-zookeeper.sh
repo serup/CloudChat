@@ -12,7 +12,7 @@ if [ "" == "$PKG_OK" ]; then
 	#sudo tar -zxf zookeeper-3.4.9.tar.gz -C /opt/
 	#sudo mkdir /opt/zookeeper-3.4.9/data
 	#sudo cp /opt/zookeeper-3.4.9/conf/zoo_sample.cfg /opt/zookeeper-3.4.9/conf/zoo.cfg
-	sudo sed -i '/#/d' /opt/zookeeper-3.4.9/conf/zoo.cfg
+	#sudo sed -i '/#/d' /opt/zookeeper-3.4.9/conf/zoo.cfg
 	echo " - done."
 else
 	echo "- zookeeper already installed"

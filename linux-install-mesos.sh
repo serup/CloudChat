@@ -23,5 +23,5 @@ cd ~/GitHub/mesos/build; make
 echo "check build"
 cd ~/GitHub/mesos/build; make check
 echo "install mesos"
-cd ~/GitHub/mesos/build; make install 
+cd ~/GitHub/mesos/build; sudo make install 
 echo "- Done."
