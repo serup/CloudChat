@@ -381,10 +381,15 @@ BOOST_AUTO_TEST_CASE(ClientRequestHandling_connect)
 	cout << "BOOST_AUTO_TEST( ClientRequestHandling_connect )\n{" << endl;
 
 	CHandlingRPCclientRequestToServer hcr;
-	CHandlingRPCclientRequestToServer::clientInfo clientInfo;
+	CHandlingRPCclientRequestToServer::clientInfo *pclientInfo = hcr.createClientInfoObject();
 
 	// connect with empty clientInfo
-	BOOST_CHECK(hcr.connect(&clientInfo) == false);
+	BOOST_CHECK(hcr.connect(NULL) == false);
+	BOOST_CHECK(hcr.connect(pclientInfo) == false);
+
+	// connect with clientInfo, only transID set
+	pclientInfo->transID = 1;
+	BOOST_CHECK(hcr.connect(pclientInfo) == true);
 
 	//TODO: add new tests for handling this connect feature
 
