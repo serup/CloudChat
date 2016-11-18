@@ -78,6 +78,7 @@ noremap <silent> <leader>gb :Gblame<CR>
 noremap <silent> <leader>ld :Linediff<CR>
 noremap <silent> <leader>lc `.
 noremap <silent> <leader>li `^
+noremap <silent> <leader>db :ConqueGdb<CR>
 noremap <leader>xml :so xml_project_output.vim<CR>
 noremap <leader>M <C-W>\| <C-W>_
 noremap <leader>m <C-W>=
@@ -102,6 +103,10 @@ if exists('$TMUX')
       	autocmd BufEnter * let &titlestring = ' ' . expand("%:t")
 	set title
 endif
+
+let g:ConqueTerm_Color = 2         " 1: strip color after 200 lines, 2: always with color
+let g:ConqueTerm_CloseOnEnd = 1    " close conque when program ends running
+let g:ConqueTerm_StartMessages = 0 " display warning messages if conqueTerm is configured incorrectly 
 
 "let g:ycm_global_ycm_extra_conf = "~/.vim/.ycm_extra_conf.py"
 let g:ycm_global_ycm_extra_conf = "~/.vim/.bundle/YouCompleteMe/third_party/ycmd/examples/.ycm_extra_conf.py"
