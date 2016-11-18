@@ -25,6 +25,7 @@
 #include "mockRPCServer.h"
 #include "dummyrequest.h"
 #include "ServerRequestHandling.h"
+#include "ClientRequestHandling.h"
 
 using namespace std;
 using namespace boost::unit_test;
@@ -373,6 +374,21 @@ BOOST_AUTO_TEST_CASE(RequestResponseMethod)
 	BOOST_CHECK( client.sendRequestTo("localhost", dedptr,123,SEARCH) == true );
  
 	cout<<"}"<<endl;   
+}
+
+BOOST_AUTO_TEST_CASE(ClientRequestHandling_connect)
+{
+	cout << "BOOST_AUTO_TEST( ClientRequestHandling_connect )\n{" << endl;
+
+	CHandlingRPCclientRequestToServer hcr;
+	CHandlingRPCclientRequestToServer::clientInfo clientInfo;
+
+	// connect with empty clientInfo
+	BOOST_CHECK(hcr.connect(&clientInfo) == false);
+
+	//TODO: add new tests for handling this connect feature
+
+	cout << "}" << endl;
 }
 
 BOOST_AUTO_TEST_CASE(RPCclient_connect_to_Server)
