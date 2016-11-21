@@ -9,7 +9,7 @@ import java.io.IOException;
  * Created by serup on 11/21/16.
  */
 public class DeleteZNode {
-    private static ZooKeeper zk;
+    public static ZooKeeper zk;
     private static ZkConnector zkc;
 
     public static void delete(String path) throws KeeperException, InterruptedException {

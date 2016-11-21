@@ -11,10 +11,10 @@ import java.util.List;
  * Created by serup on 11/21/16.
  */
 public class GetACL {
-    private static ZooKeeper zk;
+    public static ZooKeeper zk;
     private static ZkConnector zkc;
 
-    private static List<ACL> getacl(String path) throws KeeperException, InterruptedException {
+    public static List<ACL> getacl(String path) throws KeeperException, InterruptedException {
         // permission sets is in binary as follows:
         // Read, Write, Create, Delete, Admin
         // 2^0 , 2^1  , 2^2   , 2^3   , 2^4
