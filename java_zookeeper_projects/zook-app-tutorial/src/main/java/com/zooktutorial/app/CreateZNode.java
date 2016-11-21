@@ -12,11 +12,12 @@ import java.io.IOException;
  */
 public class CreateZNode {
 
-    private static ZooKeeper zk;
+    public static ZooKeeper zk;
     private static ZkConnector zkc;
     public static void create(String path, byte[] data) throws KeeperException, InterruptedException {
         zk.create(path, data, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
     }
+
     public static void main(String[] args) throws KeeperException, InterruptedException, IOException {
         String path = "/sampleznode";
         byte[] data = "sample znode data".getBytes();
