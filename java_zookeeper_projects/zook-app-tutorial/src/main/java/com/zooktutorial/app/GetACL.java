@@ -31,7 +31,14 @@ public class GetACL {
         // <username>:<passworld>  --> convert to hexadecimal using SHA-1 (Secure Hashing Algorithm)
         // then again --> encode with Base64, to get a value which zookeeper uses to authenticate user trying to access
         // a znode ( a path to a value inside the zookeeper tree structure )
-        //
+        // example:
+        // first add an authentication digest
+        //  addauth digest datanotfound:channel123
+        // then set authentication on znode with username = datanotfound, and password = channel123
+        //  setAcl /sampleznode auth:datanotfound:channel123:card
+        // Now you can get authentication :
+        // [zk: localhost:2181(CONNECTED) 7] getAcl /sampleznode
+        // 'digest,'datanotfound:gl+StP2pWGs7qLgwPXvcO8IQWc0=
        return zk.getACL(path, zk.exists(path,true));
     }
 
