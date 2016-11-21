@@ -20,6 +20,18 @@ public class GetACL {
         // 2^0 , 2^1  , 2^2   , 2^3   , 2^4
         // example:
         // permission set cdaw = 2^2 + 2^3 + 2^4 + 2^1 = 4 + 8 +16 + 2 = 12 + 18 = 30
+        // result example:
+        // 30, s{'world,'anyone}
+        // scheme can be following:
+        // - world    ; represents anyone in the world who has access to zookeeper ensemble
+        // - digest   ; represents one single individual with their own unique id and password
+        // - host     ; represents group of users within that host (myhost.com)
+        // - ip       ; represents group of users within that same ip address
+        // if scheme is other than world, then scheme zookeeper handle it as follows:
+        // <username>:<passworld>  --> convert to hexadecimal using SHA-1 (Secure Hashing Algorithm)
+        // then again --> encode with Base64, to get a value which zookeeper uses to authenticate user trying to access
+        // a znode ( a path to a value inside the zookeeper tree structure )
+        //
        return zk.getACL(path, zk.exists(path,true));
     }
 
