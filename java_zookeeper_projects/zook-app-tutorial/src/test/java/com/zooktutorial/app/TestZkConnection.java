@@ -22,13 +22,16 @@ public class TestZkConnection {
         zk = zkc.connect("localhost");
         znodeList = zk.getChildren("/", true);
 
+        System.out.println("list of existing znodes: ");
         for (String znode : znodeList) {
-            System.out.println(znode);
+            System.out.print(znode);
+            System.out.print(",");
         }
+        System.out.println("");
     }
 
     @Test
-    public void createZNode() throws Exception {
+    public void createAndDeleteZNode() throws Exception {
         String path = "/sampleznode";
         byte[] data = "sample znode data".getBytes();
 
@@ -38,5 +41,12 @@ public class TestZkConnection {
         znode.create(path, data);
 
         System.out.println("I created sampleznode successfully! ");
+
+        DeleteZNode znode2 = new DeleteZNode();
+        znode2.zk = zkc.connect("localhost");
+        znode2.delete(path);
+
+        System.out.println("I deleted sampleznode successfully! ");
     }
+
 }
