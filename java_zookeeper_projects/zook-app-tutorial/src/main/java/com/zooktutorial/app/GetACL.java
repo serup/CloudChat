@@ -15,6 +15,11 @@ public class GetACL {
     private static ZkConnector zkc;
 
     private static List<ACL> getacl(String path) throws KeeperException, InterruptedException {
+        // permission sets is in binary as follows:
+        // Read, Write, Create, Delete, Admin
+        // 2^0 , 2^1  , 2^2   , 2^3   , 2^4
+        // example:
+        // permission set cdaw = 2^2 + 2^3 + 2^4 + 2^1 = 4 + 8 +16 + 2 = 12 + 18 = 30
        return zk.getACL(path, zk.exists(path,true));
     }
 
