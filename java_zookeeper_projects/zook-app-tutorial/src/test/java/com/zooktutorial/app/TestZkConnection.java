@@ -3,12 +3,16 @@ package com.zooktutorial.app;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.ACL;
+import org.apache.zookeeper.data.Id;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.zooktutorial.app.SetACL.setacl;
+import static com.zooktutorial.app.ZookeeperSecurityUtil.generateDigest;
+import static com.zooktutorial.app.ZookeeperSecurityUtil.getPermFromString;
 import static org.junit.Assert.assertArrayEquals;
 
 /**
@@ -152,4 +156,62 @@ public class TestZkConnection {
         System.out.println("I deleted sampleznode successfully! ");
     }
 
+    @Test
+    public void getACLwithDigest() throws Exception {
+        String path = "/sampleznode";
+        byte[] data = "sample znode data".getBytes();
+
+        CreateZNode znode = new CreateZNode();
+        zkc = new ZkConnector();
+        znode.zk = zkc.connect("localhost");
+
+        String user = "datanotfound";
+        String pwd  = "channel123";
+
+        System.out.println("create a znode ");
+        znode.create(path, data);
+
+        System.out.println("add authentication to znode - meaning lock it ");
+        ACL newAcl = new ACL();
+        newAcl.setId(new Id("digest", generateDigest("datanotfound" + ":" + "channel123") ));
+        newAcl.setPerms(getPermFromString("car"));
+        System.out.println(newAcl.toString());
+        List<ACL> lAcl = new ArrayList<ACL>();
+        lAcl.add(newAcl);
+        SetACL aclnode = new SetACL();
+        aclnode.zk = znode.zk;
+        aclnode.setacl(path, lAcl );
+
+        System.out.println("I created sampleznode with digest authentication successfully! ");
+        System.out.println("- getData from znode without authentication : ");
+        System.out.println("- getData result :  ");
+        try {
+            CreateZNode woauthZNode = new CreateZNode();
+            ZkConnector woauthZKC = new ZkConnector();
+            woauthZNode.zk = woauthZKC.connect("localhost");
+            byte[] wdata = woauthZNode.zk.getData(path, true, woauthZNode.zk.exists(path, true));
+            for (byte b : wdata) {
+                System.out.print((char) b);
+            }
+            System.out.println();
+        } catch (Exception e) { System.out.println(e.getMessage()); }
+
+
+        System.out.println("- getData with authentication : ");
+        System.out.println("add authentication info to zookeeper object ");
+        znode.zk.addAuthInfo("digest", (user + ":" + pwd).getBytes());
+        byte[] rdata = znode.zk.getData(path, true, znode.zk.exists(path,true));
+        System.out.println("- getData result :  ");
+        for (byte b: rdata ) {
+           System.out.print((char)b);
+        }
+        System.out.println();
+
+        System.out.println("Cleanup : ");
+        DeleteZNode znode2 = new DeleteZNode();
+        znode2.zk = zkc.connect("localhost");
+        znode2.delete(path);
+
+        System.out.println("I deleted sampleznode successfully! ");
+    }
 }
