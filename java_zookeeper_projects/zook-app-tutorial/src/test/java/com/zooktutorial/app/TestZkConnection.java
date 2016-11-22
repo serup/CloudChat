@@ -157,7 +157,47 @@ public class TestZkConnection {
     }
 
     @Test
-    public void getACLwithDigest() throws Exception {
+    public void setACL() throws Exception {
+        String path = "/sampleznode";
+        byte[] data = "sample znode data".getBytes();
+
+        CreateZNode znode = new CreateZNode();
+        zkc = new ZkConnector();
+        znode.zk = zkc.connect("localhost");
+        znode.create(path, data);
+
+        System.out.println("I created sampleznode successfully! ");
+
+        GetACL cnode = new GetACL();
+        cnode.zk = znode.zk;
+        List<ACL> acl = cnode.getacl(path);
+
+        System.out.println("Access Control List : ");
+        for (ACL aclitem: acl) {
+            System.out.println(aclitem.toString());
+        }
+
+        System.out.println("add authentication to znode - meaning lock it ");
+        ACL newAcl = new ACL();
+        newAcl.setId(new Id("digest", generateDigest("datanotfound" + ":" + "channel123") ));
+        newAcl.setPerms(getPermFromString("car"));
+        System.out.println("New Access Control List : ");
+        System.out.println(newAcl.toString());
+        List<ACL> lAcl = new ArrayList<ACL>();
+        lAcl.add(newAcl);
+        SetACL aclnode = new SetACL();
+        aclnode.zk = znode.zk;
+        aclnode.setacl(path, lAcl );
+
+        System.out.println("Cleanup : ");
+        DeleteZNode znode2 = new DeleteZNode();
+        znode2.zk = zkc.connect("localhost");
+        znode2.delete(path);
+        System.out.println("I deleted sampleznode successfully! ");
+    }
+
+    @Test
+    public void getDataWithAuthentication() throws Exception {
         String path = "/sampleznode";
         byte[] data = "sample znode data".getBytes();
 
