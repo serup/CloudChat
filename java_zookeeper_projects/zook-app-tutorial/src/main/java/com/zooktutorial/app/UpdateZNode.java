@@ -9,7 +9,7 @@ import java.io.IOException;
  * Created by serup on 11/21/16.
  */
 public class UpdateZNode {
-    private static ZooKeeper zk;
+    public static ZooKeeper zk;
     private static ZkConnector zkc;
 
     public static void update(String path, byte[] data) throws KeeperException, InterruptedException {

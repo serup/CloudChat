@@ -9,7 +9,7 @@ import java.io.IOException;
  * Created by serup on 11/21/16.
  */
 public class ReadZNode {
-    private static ZooKeeper zk;
+    public static ZooKeeper zk;
     private static ZkConnector zkc;
 
     public static byte[] read(String path) throws KeeperException, InterruptedException {
