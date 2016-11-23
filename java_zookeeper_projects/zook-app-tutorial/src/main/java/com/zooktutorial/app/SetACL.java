@@ -26,19 +26,19 @@ public class SetACL {
     public static boolean setacl(String path, String username, String password) throws NoSuchAlgorithmException, KeeperException, InterruptedException {
         boolean bResult=false;
 
-        System.out.println("add authentication to znode - meaning lock it ");
-        ACL newAcl = new ACL();
-        newAcl.setId(new Id("digest", generateDigest("datanotfound" + ":" + "channel123") ));
-        newAcl.setPerms(getPermFromString("car"));
-        System.out.println("New Access Control List : ");
-        System.out.println(newAcl.toString());
-        List<ACL> lAcl = new ArrayList<ACL>();
-        lAcl.add(newAcl);
-        SetACL aclnode = new SetACL();
-        aclnode.zk = zk;
-        aclnode.setacl(path, lAcl );
+        try {
+            System.out.println("add authentication to znode - meaning lock it ");
+            ACL newAcl = new ACL();
+            newAcl.setId(new Id("digest", generateDigest(username + ":" + password) ));
+            newAcl.setPerms(getPermFromString("car"));
+            System.out.println("New Access Control List : ");
+            System.out.println(newAcl.toString());
+            List<ACL> lAcl = new ArrayList<ACL>();
+            lAcl.add(newAcl);
+            setacl(path, lAcl );
+            bResult=true;
+        } catch (Exception e) { System.out.println(e.getMessage()); }
 
-        bResult=true;
         return bResult;
    }
 
