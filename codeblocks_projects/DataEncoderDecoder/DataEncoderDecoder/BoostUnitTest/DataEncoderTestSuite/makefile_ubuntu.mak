@@ -12,7 +12,7 @@ TESTFLAGS3= --report_format=XML --report_level=detailed
 CONVERT=xsltproc -o test_results.html ../test_results.xslt test_results.xml
 CONVERT2=xsltproc -o test_results.txt ../test_results_text.xslt test_results.xml
 
-all: buildstartmsg compile buildfinishmsg display_waitfortest test
+all: buildstartmsg compile buildfinishmsg display_waitfortest _test
 
 total: compile display_waitfortest test
 _total: compile _test

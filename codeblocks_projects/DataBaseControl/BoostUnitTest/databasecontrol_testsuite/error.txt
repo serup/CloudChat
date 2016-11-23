@@ -9,149 +9,149 @@ Running 16 test cases...
 [ftgt] WARNING: there could not be found a TOAST file, this is not necessary an error, however strange : /home/serup/GerritHub/CloudChat/codeblocks_projects/DataDictionary/Database/TOASTs/0.xml
 [WriteEntityFile] WARNING : WriteEntityTOASTFile NO ELEMENTS UPDATED!! : 22980574
 [ftgt] WARNING: there could not be found a TOAST file, this is not necessary an error, however strange : /home/serup/GerritHub/CloudChat/codeblocks_projects/DataDictionary/Database/TOASTs/22980574.xml
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : password
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : devicelist
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : firstname
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : lastname
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : streetname
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : streetno
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : postalcode
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : city
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : state
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : country
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : email
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : mobilephone
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : title
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : about
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : foto
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : type
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : status
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : expiredate
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : creditor
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : terms
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : subscriptions
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : paymentdetails
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : notificationlevel
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : bankaccount
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : memberships
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : friendships
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : presence
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : location
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : context
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : schedule
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : deviceID
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : experience
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : skills
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : messagesboard
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : eventlog
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : supervisor
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : devicelist
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : firstname
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : lastname
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : streetname
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : streetno
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : postalcode
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : city
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : state
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : country
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : email
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : mobilephone
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : title
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : about
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : foto
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : type
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : status
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : expiredate
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : creditor
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : terms
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : subscriptions
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : paymentdetails
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : notificationlevel
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : bankaccount
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : memberships
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : friendships
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : presence
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : location
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : context
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : schedule
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : deviceID
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : experience
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : skills
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : messagesboard
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : eventlog
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : supervisor
 [FetchFileAsVector] Reading file: /home/serup/GerritHub/CloudChat/codeblocks_projects/DataBaseControl/BoostUnitTest/databasecontrol_testsuite/Hugo1.gif ; amount 3548 characters... 
 [FetchFileAsVector] size: 3548
 [FetchFileAsVector] capacity: 3548
 [FetchFileAsVector] max_size: -1
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
-[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added 
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : type
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : status
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : expiredate
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : creditor
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : terms
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : subscriptions
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : paymentdetails
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : notificationlevel
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : bankaccount
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : memberships
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : friendships
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : presence
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : location
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : context
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : schedule
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : deviceID
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : experience
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : skills
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : messagesboard
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : eventlog
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : supervisor
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : type
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : status
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : expiredate
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : creditor
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : terms
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : subscriptions
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : paymentdetails
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : notificationlevel
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : bankaccount
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : memberships
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : friendships
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : presence
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : location
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : context
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : schedule
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : deviceID
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : experience
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : skills
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : messagesboard
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : eventlog
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : supervisor
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : type
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : status
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : expiredate
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : creditor
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : terms
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : subscriptions
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : paymentdetails
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : notificationlevel
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : bankaccount
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : memberships
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : friendships
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : presence
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : location
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : context
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : schedule
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : deviceID
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : experience
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : skills
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : messagesboard
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : eventlog
+[AppendElementToToastXmlFile] ERROR: NO data inserted in chunkdata, default <empty> added to field : supervisor
 [ReadXmlFile] Error: No such node (Profile)
-[ReadEntityFile] ERROR : File can not be read : /home/serup/GerritHub/CloudChat/codeblocks_projects/DataDictionary/Database/ENTITIEs/20151203_HIST_DADEC3PO6BAA30E8AD733671370FECFC.xml
-[ReadEntityFile] File NOT found : /home/serup/GerritHub/CloudChat/codeblocks_projects/DataDictionary/Database/ENTITIEs/.xml
-[ReadEntityFile] ERROR : File can not be read : /home/serup/GerritHub/CloudChat/codeblocks_projects/DataDictionary/Database/ENTITIEs/.xml
 [ReadXmlFile] Error: No such node (Profile)
-[ReadEntityFile] ERROR : File can not be read : /home/serup/GerritHub/CloudChat/codeblocks_projects/DataDictionary/Database/ENTITIEs/20151130_HIST_DADEC3PO6BAA30E8AD733671370FECFC.xml
- realm filename: /home/serup/GerritHub/CloudChat/codeblocks_projects/DataDictionary/Database/ENTITIEs/355760fb6afaf9c41d17ac5b9397fd45.xml
+[ReadXmlFile] Error: No such node (Profile)
+[ReadXmlFile] Error: No such node (Profile)
+[ReadXmlFile] Error: No such node (Profile)
+ realm filename: /home/serup/GerritHub/CloudChat/codeblocks_projects/DataDictionary/Database/ENTITIEs/d82286d868dd0a1c84dd424c01b11380.xml
  realm filename: /home/serup/GerritHub/CloudChat/codeblocks_projects/DataDictionary/Database/ENTITIEs/DBDER2D26BBB30E8CD733671370FEDFD.xml
+ realm filename: /home/serup/GerritHub/CloudChat/codeblocks_projects/DataDictionary/Database/ENTITIEs/355760fb6afaf9c41d17ac5b9397fd45.xml
