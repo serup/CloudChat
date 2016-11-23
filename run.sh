@@ -12,4 +12,6 @@ rm result.txt
 cat _total_result.txt > test_results.txt
 ./result.sh test_results.txt > test_results_color.txt
 cat test_results_color.txt
+rm _total_result.txt
+rm output.txt
 
