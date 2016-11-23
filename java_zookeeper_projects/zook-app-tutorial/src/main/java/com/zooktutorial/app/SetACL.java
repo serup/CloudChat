@@ -43,7 +43,7 @@ public class SetACL {
    }
 
     // https://ihong5.wordpress.com/2014/07/24/apache-zookeeper-setting-acl-in-zookeeper-client/
-    public static void setacl(String path, List<ACL> acl) throws KeeperException.InvalidACLException, KeeperException, InterruptedException, IllegalArgumentException {
+    private static void setacl(String path, List<ACL> acl) throws KeeperException.InvalidACLException, KeeperException, InterruptedException, IllegalArgumentException {
        zk.setACL(path,acl,zk.exists(path,true).getVersion());
     }
 
