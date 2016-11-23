@@ -122,6 +122,12 @@ if ! shopt -oq posix; then
   fi
 fi
 
+DIR=$(cd . && pwd)                                                   
+export DOPS_PUPPET_PATH="$DIR""/puppet/trunk/environments/"          
+export DOCKER_PUPPET_PATH="$DIR""/puppet/trunk/environments/"        
+
+source /etc/environment 
+
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="/home/serup/.sdkman"
 [[ -s "/home/serup/.sdkman/bin/sdkman-init.sh" ]] && source "/home/serup/.sdkman/bin/sdkman-init.sh"
