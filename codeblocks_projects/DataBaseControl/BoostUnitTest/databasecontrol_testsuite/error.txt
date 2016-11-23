@@ -152,6 +152,7 @@ Running 16 test cases...
 [ReadXmlFile] Error: No such node (Profile)
 [ReadXmlFile] Error: No such node (Profile)
 [ReadXmlFile] Error: No such node (Profile)
+[ReadXmlFile] Error: No such node (Profile)
  realm filename: /home/serup/GerritHub/CloudChat/codeblocks_projects/DataDictionary/Database/ENTITIEs/d82286d868dd0a1c84dd424c01b11380.xml
  realm filename: /home/serup/GerritHub/CloudChat/codeblocks_projects/DataDictionary/Database/ENTITIEs/DBDER2D26BBB30E8CD733671370FEDFD.xml
  realm filename: /home/serup/GerritHub/CloudChat/codeblocks_projects/DataDictionary/Database/ENTITIEs/355760fb6afaf9c41d17ac5b9397fd45.xml
