@@ -23,6 +23,25 @@ public class SetACL {
     public static ZooKeeper zk;
     private static ZkConnector zkc;
 
+    public static boolean setacl(String path, String username, String password) throws NoSuchAlgorithmException, KeeperException, InterruptedException {
+        boolean bResult=false;
+
+        System.out.println("add authentication to znode - meaning lock it ");
+        ACL newAcl = new ACL();
+        newAcl.setId(new Id("digest", generateDigest("datanotfound" + ":" + "channel123") ));
+        newAcl.setPerms(getPermFromString("car"));
+        System.out.println("New Access Control List : ");
+        System.out.println(newAcl.toString());
+        List<ACL> lAcl = new ArrayList<ACL>();
+        lAcl.add(newAcl);
+        SetACL aclnode = new SetACL();
+        aclnode.zk = zk;
+        aclnode.setacl(path, lAcl );
+
+        bResult=true;
+        return bResult;
+   }
+
     // https://ihong5.wordpress.com/2014/07/24/apache-zookeeper-setting-acl-in-zookeeper-client/
     public static void setacl(String path, List<ACL> acl) throws KeeperException.InvalidACLException, KeeperException, InterruptedException, IllegalArgumentException {
        zk.setACL(path,acl,zk.exists(path,true).getVersion());

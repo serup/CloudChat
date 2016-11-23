@@ -177,6 +177,7 @@ public class TestZkConnection {
             System.out.println(aclitem.toString());
         }
 
+        /*
         System.out.println("add authentication to znode - meaning lock it ");
         ACL newAcl = new ACL();
         newAcl.setId(new Id("digest", generateDigest("datanotfound" + ":" + "channel123") ));
@@ -188,6 +189,10 @@ public class TestZkConnection {
         SetACL aclnode = new SetACL();
         aclnode.zk = znode.zk;
         aclnode.setacl(path, lAcl );
+        */
+        SetACL aclnode = new SetACL();
+        aclnode.zk = znode.zk;
+        aclnode.setacl(path, "datanotfound", "channel123" );
 
         System.out.println("Cleanup : ");
         DeleteZNode znode2 = new DeleteZNode();
@@ -211,6 +216,7 @@ public class TestZkConnection {
         System.out.println("create a znode ");
         znode.create(path, data);
 
+       /*
         System.out.println("add authentication to znode - meaning lock it ");
         ACL newAcl = new ACL();
         newAcl.setId(new Id("digest", generateDigest("datanotfound" + ":" + "channel123") ));
@@ -221,6 +227,11 @@ public class TestZkConnection {
         SetACL aclnode = new SetACL();
         aclnode.zk = znode.zk;
         aclnode.setacl(path, lAcl );
+        */
+
+        SetACL aclnode = new SetACL();
+        aclnode.zk = znode.zk;
+        aclnode.setacl(path, "datanotfound", "channel123" );
 
         System.out.println("I created sampleznode with digest authentication successfully! ");
         System.out.println("- getData from znode without authentication : ");
