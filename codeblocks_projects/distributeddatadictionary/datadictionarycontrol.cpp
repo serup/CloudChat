@@ -311,8 +311,8 @@ boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(l
 	node.put("chunksInBlockRecords",listOfDEDchunks.size());
 
 	int c=0;
-	cout << "handling DED chunk : ";
 	cout << "/*{{{*/" << endl;
+	cout << "handling DED chunk : ";
 	BOOST_FOREACH( auto &chunk, listOfDEDchunks )
 	{
 		cout << ++c << ",";
@@ -338,13 +338,13 @@ boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(l
 		}
 		bfirst=false;	
 	}
-	cout << "/*}}}*/" << endl;
 	cout << endl;
 
 	//DEBUG	
 	// write test xml file
 	ofstream blockFile ("xmlresult.xml", ios::out | ios::binary);
 	write_xml(blockFile, pt);
+	cout << "/*}}}*/" << endl;
 
 	return pt;		
 }
@@ -384,6 +384,7 @@ bool CDataDictionaryControl::addDEDchunksToBlockRecords(std::string transGuid, b
 	ptree &node = pt.get_child("listOfBlockRecords");
 
 	int c=0;
+	cout << "/*{{{*/" << endl;
 	cout << "handling DED chunk : ";
 	BOOST_FOREACH( auto &chunk, listOfDEDchunks )
 	{
@@ -412,6 +413,7 @@ bool CDataDictionaryControl::addDEDchunksToBlockRecords(std::string transGuid, b
 	}
 
 	cout << endl;
+	cout << "/*}}}*/" << endl;
 	maxBlockRecordSize = bytesLeftInBlockRecord;
 	return bResult;		
 }
