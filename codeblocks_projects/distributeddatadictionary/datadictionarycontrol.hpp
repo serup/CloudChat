@@ -100,7 +100,7 @@ class CDataDictionaryControl
 		long getMaxDEDchunkSize();
 		vector<pair<unsigned long, std::vector<unsigned char> >> filterAndSortAssembledRecords(std::string attributpath, std::list< pair<seqSpan, std::vector<assembledElements>> > listOfRecords);
 		bool mergeRecords(vector<pair<unsigned long, std::vector<unsigned char> >> list, std::vector<unsigned char> &ElementData);
-		pair<seqSpan, std::vector<assembledElements>> assembleBlockRecords(std::string transGuid, std::string id, std::vector<assembledElements> &recElements);
+		bool assembleBlockRecords(std::string transGuid, std::string id, std::vector<assembledElements> &recElements,  std::list< pair<seqSpan, std::vector<assembledElements>> > &listOfAssembledAttributes);
 		bool addAttributFromBFiToList(ptree pt, std::list< pair<seqSpan, std::vector<assembledElements>> > &listOfAssembledAttributes);
 		pair<std::string, std::vector<unsigned char>> findAndAssembleAttributFromBFiFiles( std::string attributpath, boost::filesystem::path _targetDir );
 

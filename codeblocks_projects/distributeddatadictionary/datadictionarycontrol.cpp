@@ -763,6 +763,7 @@ std::vector<assembledElements> CDataDictionaryControl::readBlockRecordElements(b
 						/// new Element
 						Element.strElementID = _chunk.entity_chunk_id;
 						Element.ElementData.clear();
+						Element.seqNumbers.clear();
 						prevchunkid = _chunk.entity_chunk_id;
 						cout << endl; 
 					}
@@ -772,13 +773,14 @@ std::vector<assembledElements> CDataDictionaryControl::readBlockRecordElements(b
 						/// new Element
 						Element.strElementID = _chunk.entity_chunk_id;
 						Element.ElementData.clear();
+						Element.seqNumbers.clear();
 						prevchunkid = _chunk.entity_chunk_id;
 					}
+					Element.seqNumbers.push_back(_chunk.entity_chunk_seq);
 					cout << "- attribut : " << _chunk.entity_chunk_id << endl << "-- entity_chunk_seq : ";
+					cout << "," << _chunk.entity_chunk_seq;
 				}
 
-				Element.seqNumbers.push_back(_chunk.entity_chunk_seq);
-				cout << "," << _chunk.entity_chunk_seq;
 
 				/// this will, chunk by chunk, assemble the data
 				std::copy(_chunk.entity_chunk_data.begin(), _chunk.entity_chunk_data.end(), std::back_inserter(Element.ElementData));
@@ -898,6 +900,7 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::findAndAss
 bool CDataDictionaryControl::addAttributFromBFiToList(ptree pt, std::list< pair<seqSpan, std::vector<assembledElements>> > &listOfAssembledAttributes)
 {
 	bool bResult=false;
+	std::vector<assembledElements> recElements;
 	std::string transGuid="";
 	std::string id="";
 	boost::property_tree::ptree _empty_tree;
@@ -915,10 +918,8 @@ bool CDataDictionaryControl::addAttributFromBFiToList(ptree pt, std::list< pair<
 			if(child.first == "chunk_data")
 			{
 				cout << "+" << endl;
-
-				std::vector<assembledElements> recElements = readBlockRecordElements(child);
-				listOfAssembledAttributes.push_back(assembleBlockRecords(transGuid, id, recElements));
-				bResult=true;
+				recElements = readBlockRecordElements(child);
+				bResult = assembleBlockRecords(transGuid, id, recElements, listOfAssembledAttributes);
 			}
 		}
 	}
@@ -926,16 +927,21 @@ bool CDataDictionaryControl::addAttributFromBFiToList(ptree pt, std::list< pair<
 	return bResult;
 }
 
-pair<seqSpan, std::vector<assembledElements>> CDataDictionaryControl::assembleBlockRecords(std::string transGuid, std::string id, std::vector<assembledElements> &recElements)
+
+bool CDataDictionaryControl::assembleBlockRecords(std::string transGuid, std::string id, std::vector<assembledElements> &recElements, std::list< pair<seqSpan, std::vector<assembledElements>> > &listOfAssembledAttributes)
 {
+	bool bResult=false;
 	seqSpan ss;
 	ss.attributPath="<empty>";
 
 	cout << "*{{{" << endl;
+	try {
 	BOOST_FOREACH(assembledElements &_element, recElements)
 	{
+		bResult=false;
 		ss.seqNumbers = _element.seqNumbers;	
 
+		cout << "---------------------" << endl;
 		cout << "element seq : ";
 		BOOST_FOREACH( auto &seqnumber, _element.seqNumbers )
 		{
@@ -950,8 +956,10 @@ pair<seqSpan, std::vector<assembledElements>> CDataDictionaryControl::assembleBl
 		if( ss.attributPath == "<empty>")
 			ss.attributPath = _element.strElementID;
 		else {
-			if(ss.attributPath != _element.strElementID)
-				cout << "FAIL: individual sequence element differs in name -- this is SERIOUS ERROR ";
+			if(ss.attributPath != _element.strElementID) {
+				cout << "FAIL: individual sequence element differs in name -- this is SERIOUS ERROR " << endl;
+				cout << " -- attributPath = " << ss.attributPath << endl;
+			}
 		}
 
 		cout << "-element id : " << _element.strElementID << endl;
@@ -961,14 +969,19 @@ pair<seqSpan, std::vector<assembledElements>> CDataDictionaryControl::assembleBl
 			std::string str(_element.ElementData.begin(), _element.ElementData.end());
 			cout << "element value : " << str << endl;
 		}
+		std::vector<assembledElements> vae;
+		vae.push_back(_element);
+		listOfAssembledAttributes.push_back(pair<seqSpan, std::vector<assembledElements>> (ss, vae) ); 
+		bResult=true;
 	}
+	}
+	catch (const std::exception& e)  // catch any exceptions
+	{ cerr << endl << "Exception: " << e.what() << endl; }
+
 	cout << "*}}}" << endl;
 
-	pair<seqSpan, std::vector<assembledElements>> assembledBlockRecordElement = make_pair(ss,recElements);
-
-	return assembledBlockRecordElement;
+	return bResult;
 }
-
 
 /**
  * Sort the BlockRecords according to attributpathname and sequence numbers of chunks

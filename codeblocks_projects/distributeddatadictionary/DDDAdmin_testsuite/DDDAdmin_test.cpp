@@ -3358,7 +3358,7 @@ BOOST_AUTO_TEST_CASE( fetchAttributFrom3BFi)
 	bool bFoundError=false;
 	for(int n=0;n<pairAttribut.second.size(); n++)
 	{
-		if( pairAttribut.second[n] != attributValue[n] ){
+		if( pairAttribut.second[n] != FotoAttributValue[n] ){
 			cout << "FAIL:";	
 			bFoundError=true;
 		}
@@ -3589,8 +3589,10 @@ BOOST_AUTO_TEST_CASE( fetchAttributFrom3BFi_diff_order)
 	bool bFoundError=false;
 	for(int n=0;n<pairAttribut.second.size(); n++)
 	{
-		if( pairAttribut.second[n] != attributValue[n] ){
-			cout << "FAIL:";	
+		if( pairAttribut.second[n] != FotoAttributValue[n] ){
+			cout << "FAIL:";
+			fprintf(stdout, "%02X%s", FotoAttributValue[n], ( n + 1 ) % 16 == 0 ? "\r\n" : "" );
+			cout << "!=";	
 			bFoundError=true;
 		}
 		fprintf(stdout, "%02X%s", pairAttribut.second[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
