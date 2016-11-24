@@ -952,15 +952,7 @@ bool CDataDictionaryControl::assembleBlockRecords(std::string transGuid, std::st
 
 		// add padding for element
 		_element.strElementID = transGuid + "./" + id + "/" + _element.strElementID;
-
-		if( ss.attributPath == "<empty>")
-			ss.attributPath = _element.strElementID;
-		else {
-			if(ss.attributPath != _element.strElementID) {
-				cout << "FAIL: individual sequence element differs in name -- this is SERIOUS ERROR " << endl;
-				cout << " -- attributPath = " << ss.attributPath << endl;
-			}
-		}
+		ss.attributPath = _element.strElementID;
 
 		cout << "-element id : " << _element.strElementID << endl;
 		cout << "element size of value : " << _element.ElementData.size() << endl;
@@ -969,6 +961,8 @@ bool CDataDictionaryControl::assembleBlockRecords(std::string transGuid, std::st
 			std::string str(_element.ElementData.begin(), _element.ElementData.end());
 			cout << "element value : " << str << endl;
 		}
+		cout << "---------------------" << endl;
+
 		std::vector<assembledElements> vae;
 		vae.push_back(_element);
 		listOfAssembledAttributes.push_back(pair<seqSpan, std::vector<assembledElements>> (ss, vae) ); 
