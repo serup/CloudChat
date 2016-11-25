@@ -1014,14 +1014,16 @@ bool CDataDictionaryControl::mergeRecords(vector<pair<unsigned long, std::vector
 	BOOST_FOREACH( auto &assembledElements, list )
 	{
 		std::vector<unsigned char> chunkdata = assembledElements.second;
-		if(chunkdata.size()>0) bResult=true;
-
-		cout << "chunk data fetched from BlockEntity.BlockRecords : " << endl;
-		cout << "- lastSeq of assembled record : " << assembledElements.first;
-		utls.showDataBlock(true,true,chunkdata);
-		
-		/// this will, chunk by chunk, assemble the attribut data
-		std::copy(chunkdata.begin(), chunkdata.end(), std::back_inserter(ElementData));
+		if(chunkdata.size()>0) { 
+			cout << "chunk data fetched from BlockEntity.BlockRecords : " << endl;
+			cout << "- lastSeq of assembled record : " << assembledElements.first;
+			utls.showDataBlock(true,true,chunkdata);
+			/// this will, chunk by chunk, assemble the attribut data
+			std::copy(chunkdata.begin(), chunkdata.end(), std::back_inserter(ElementData));
+			bResult=true;
+		}
+		else
+			cout << "WARNING: no chunkdata to merge; size : " << assembledElements.second.size() << endl;
 	}
 	return bResult;
 }
