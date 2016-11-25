@@ -248,12 +248,9 @@ std::vector< pair<std::vector<unsigned char>, int> > CDataDictionaryControl::spl
 			vdata.assign(pCompressedData, pCompressedData + sizeofCompressedData);  
 
 			//+test
-			cout << endl << "/*{{{*/" << endl;
-			cout << "internal test of data - before DED : " << endl;
-			for(int n=0;n<chunkdata.size(); n++)
-			{ 
-				fprintf(stdout, "%02X%s", chunkdata[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
-			}
+			cout << endl << "/*{{{*/";
+			cout << "INFO: internal test of data - before DED : " << endl;
+			CUtils::showDataBlock(true,true,chunkdata);
 
 			EntityChunkDataInfo _chunk;
 			// decode data ...
@@ -266,20 +263,12 @@ std::vector< pair<std::vector<unsigned char>, int> > CDataDictionaryControl::spl
 			DED_GET_STDVECTOR	( decoder_ptr, "attribut_chunk_data", _chunk.entity_chunk_data ); //
 			DED_GET_STRUCT_END( decoder_ptr, "chunk_record" );
 
-			cout << endl << "internal test of data - after DED : " << endl;
-			cout << endl << "/*{{{*/" << endl;
-			for(int n=0;n<_chunk.entity_chunk_data.size(); n++)
-			{
-				if( chunkdata[n] != _chunk.entity_chunk_data[n] )
-					cout << "FAIL:";	
-				fprintf(stdout, "%02X%s", _chunk.entity_chunk_data[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
-			}
-			cout << "/*}}}*/" << endl;
+			cout << endl << "INFO: internal test of data - after DED : ";
+			CUtils::showDataBlockDiff(true,true, chunkdata, _chunk.entity_chunk_data);
 
 			cout << "/*}}}*/" << endl;
-
-
 			//-test
+			
 			listOfDEDchunks.push_back(make_pair(vdata,sizeofCompressedData));
 	
 
@@ -441,11 +430,12 @@ bool CDataDictionaryControl::appendChunkRecordToLastBlockRecordsChunkData(boost:
 
 			if(v2.first == "BlockRecord")
 			{ 
-				cout << "- OK: Found Last BlockRecord " << endl;
+				//cout << "- OK: Found Last BlockRecord " << endl;
+				cout <<"<";
 				BOOST_REVERSE_FOREACH(boost::property_tree::ptree::value_type &v3, v2.second)
 				{
 					if(v3.first == "chunk_data"){
-						cout << "- append new chunk_record inside chunk_data " << endl;
+						//cout << "- append new chunk_record inside chunk_data " << endl;
 						v3.second.add_child("chunk_record", subpt.get_child("chunk_record", _empty_tree));
 						bResult=true;
 						break;	
@@ -1018,6 +1008,8 @@ vector<pair<unsigned long, std::vector<unsigned char> >> CDataDictionaryControl:
 bool CDataDictionaryControl::mergeRecords(vector<pair<unsigned long, std::vector<unsigned char> >> list, std::vector<unsigned char> &ElementData)
 {
 	bool bResult=false;
+	CUtils utls;
+
 	// assemble acros multible .BFi files
 	BOOST_FOREACH( auto &assembledElements, list )
 	{
@@ -1026,17 +1018,12 @@ bool CDataDictionaryControl::mergeRecords(vector<pair<unsigned long, std::vector
 
 		cout << "chunk data fetched from BlockEntity.BlockRecords : " << endl;
 		cout << "- lastSeq of assembled record : " << assembledElements.first;
-
-		cout << "/*{{{*/" << endl;
-		for(int n=0;n<chunkdata.size(); n++)
-		{
-			fprintf(stdout, "%02X%s", chunkdata[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
-		}
-		cout << "/*}}}*/" << endl;
+		utls.showDataBlock(true,true,chunkdata);
 		
 		/// this will, chunk by chunk, assemble the attribut data
 		std::copy(chunkdata.begin(), chunkdata.end(), std::back_inserter(ElementData));
 	}
 	return bResult;
 }
+
 

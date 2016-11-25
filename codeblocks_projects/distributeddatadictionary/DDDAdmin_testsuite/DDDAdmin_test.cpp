@@ -595,7 +595,7 @@ BOOST_AUTO_TEST_CASE( splitAttributIntoDEDchunks)
   cout << "/*{{{*/" << endl;
   for(int n=0;n<FileDataBytesInVector.size(); n++)
   { 
-          fprintf(stdout, "%02X%s", FileDataBytesInVector[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
+          fprintf(stdout, "%02X%s", FileDataBytesInVector[n], ( n + 1 ) % 16 == 0 ? "\n" : " " );
   }
   cout << "/*}}}*/" << endl;
 
@@ -640,7 +640,7 @@ BOOST_AUTO_TEST_CASE( splitAttributIntoDEDchunks)
 				fails++;
 			}
 
-			fprintf(stdout, "%02X%s", _chunk.entity_chunk_data[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
+			fprintf(stdout, "%02X%s", _chunk.entity_chunk_data[n], ( n + 1 ) % 16 == 0 ? "\n" : " " );
 			_offset++;
 		}
 		offset+=_offset;
@@ -660,9 +660,9 @@ BOOST_AUTO_TEST_CASE( splitAttributIntoDEDchunks)
 			if(assembledData[i] != FileDataBytesInVector[i]) {
 				cout << "WARNING: diff@("<< i << ")";
 				cout <<  ": orig [hex]: "; 
-				fprintf(stdout, "%02X%s", FileDataBytesInVector[i], ( i + 1 ) % 16 == 0 ? "\r\n" : " " );
+				fprintf(stdout, "%02X%s", FileDataBytesInVector[i], ( i + 1 ) % 16 == 0 ? "\n" : " " );
 				cout << ": returned [hex]: "; 
-				fprintf(stdout, "%02X%s",assembledData[i], ( i + 1 ) % 16 == 0 ? "\r\n" : " " );
+				fprintf(stdout, "%02X%s",assembledData[i], ( i + 1 ) % 16 == 0 ? "\n" : " " );
 				cout  << endl;
 			}
 		}
@@ -1477,9 +1477,9 @@ BOOST_AUTO_TEST_CASE( reassembleOneSmallAndOneLargeAttributFromBlockEntity )
 			if(attributValue[i] != rv[i]) {
 				cout << "WARNING: diff@("<< i << ")";
 				cout <<  ": orig [hex]: "; 
-				fprintf(stdout, "%02X%s", attributValue[i], ( i + 1 ) % 16 == 0 ? "\r\n" : " " );
+				fprintf(stdout, "%02X%s", attributValue[i], ( i + 1 ) % 16 == 0 ? "\n" : " " );
 				cout << ": returned [hex]: "; 
-				fprintf(stdout, "%02X%s", rv[i], ( i + 1 ) % 16 == 0 ? "\r\n" : " " );
+				fprintf(stdout, "%02X%s", rv[i], ( i + 1 ) % 16 == 0 ? "\n" : " " );
 				cout  << endl;
 			}
 		}
@@ -1492,7 +1492,7 @@ BOOST_AUTO_TEST_CASE( reassembleOneSmallAndOneLargeAttributFromBlockEntity )
 		{
 			if(attributValue[n] != rv[n]) 
 				cout << "FAIL:";
-			fprintf(stdout, "%02X%s", attributValue[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
+			fprintf(stdout, "%02X%s", attributValue[n], ( n + 1 ) % 16 == 0 ? "\n" : " " );
 		}
 		cout << "/*}}}*/" << endl;
 
@@ -1502,7 +1502,7 @@ BOOST_AUTO_TEST_CASE( reassembleOneSmallAndOneLargeAttributFromBlockEntity )
 		{
 			if(attributValue[n] != rv[n]) 
 				cout << "FAIL:";
-			fprintf(stdout, "%02X%s", rv[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
+			fprintf(stdout, "%02X%s", rv[n], ( n + 1 ) % 16 == 0 ? "\n" : " " );
 		}
 		cout << "/*}}}*/" << endl;
 	}
@@ -1650,7 +1650,7 @@ BOOST_AUTO_TEST_CASE( reassembleAndVerifyAttributFromMultipleBlockRecords)
 		cout << "/*{{{*/" << endl;
 		for(int n=0;n<chunkdata.size(); n++)
 		{
-			fprintf(stdout, "%02X%s", chunkdata[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
+			fprintf(stdout, "%02X%s", chunkdata[n], ( n + 1 ) % 16 == 0 ? "\n" : " " );
 		}
 		cout << "/*}}}*/" << endl;
 		
@@ -1663,7 +1663,7 @@ BOOST_AUTO_TEST_CASE( reassembleAndVerifyAttributFromMultipleBlockRecords)
 	cout << "/*{{{*/" << endl;
 	for(int n=0;n<FileDataBytesInVector.size(); n++)
 	{
-		fprintf(stdout, "%02X%s", FileDataBytesInVector[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
+		fprintf(stdout, "%02X%s", FileDataBytesInVector[n], ( n + 1 ) % 16 == 0 ? "\n" : " " );
 	}
 	cout << "/*}}}*/" << endl;
 
@@ -1671,7 +1671,7 @@ BOOST_AUTO_TEST_CASE( reassembleAndVerifyAttributFromMultipleBlockRecords)
 	cout << "/*{{{*/" << endl;
 	for(int n=0;n<assembledFoto.size(); n++)
 	{
-		fprintf(stdout, "%02X%s", assembledFoto[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
+		fprintf(stdout, "%02X%s", assembledFoto[n], ( n + 1 ) % 16 == 0 ? "\n" : " " );
 	}
 	cout << "/*}}}*/" << endl;
 
@@ -1681,7 +1681,7 @@ BOOST_AUTO_TEST_CASE( reassembleAndVerifyAttributFromMultipleBlockRecords)
 	{
 		if( FileDataBytesInVector[n] != assembledFoto[n] )
 			cout << "FAIL:";	
-		fprintf(stdout, "%02X%s", assembledFoto[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
+		fprintf(stdout, "%02X%s", assembledFoto[n], ( n + 1 ) % 16 == 0 ? "\n" : " " );
 	}
 	cout << "/*}}}*/" << endl;
 
@@ -2919,26 +2919,34 @@ BOOST_AUTO_TEST_CASE( fetchAttributFrom2BFi)
 	cout << "Attribut name : " << pairAttribut.first << endl;
 
 	cout << "Original data : " << endl;
-	cout << "/*{{{*/" << endl;
-	for(int n=0;n<attributValue.size(); n++)
-	{
-		fprintf(stdout, "%02X%s", attributValue[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
-	}
-	cout << "/*}}}*/" << endl;
+	CUtils::showDataBlock(true,true,attributValue);
+
+//	// DEPRECATED
+//	cout << "/*{{{*/" << endl;
+//	for(int n=0;n<attributValue.size(); n++)
+//	{
+//		fprintf(stdout, "%02X%s", attributValue[n], ( n + 1 ) % 16 == 0 ? "\n" : " " );
+//	}
+//	cout << "/*}}}*/" << endl;
 
 	cout << "Result data : " << endl;
-	cout << "/*{{{*/" << endl;
-	bool bFoundError=false;
-	for(int n=0;n<pairAttribut.second.size(); n++)
-	{
-		if( pairAttribut.second[n] != attributValue[n] ){
-			cout << "FAIL:";	
-			bFoundError=true;
-		}
-		fprintf(stdout, "%02X%s", pairAttribut.second[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
-	}
-	cout << "/*}}}*/" << endl;
-	if(!bFoundError) cout << "INFO: bytes assembled and retrieved had no errors " << endl;
+	bool bFoundError = CUtils::showDataBlockDiff(true,true,pairAttribut.second, attributValue);
+
+//	// DEPRECATED
+//	cout << "/*{{{*/" << endl;
+//	bool bFoundError=false;
+//	for(int n=0;n<pairAttribut.second.size(); n++)
+//	{
+//		if( pairAttribut.second[n] != attributValue[n] ){
+//			cout << "FAIL:";	
+//			bFoundError=true;
+//		}
+//		fprintf(stdout, "%02X%s", pairAttribut.second[n], ( n + 1 ) % 16 == 0 ? "\n" : " " );
+//	}
+//	cout << "/*}}}*/" << endl;
+
+	if(!bFoundError) cout << "INFO: bytes assembled are equal to original " << endl;
+	BOOST_CHECK(bFoundError == false);
 
 	cout << "size of Original : " << attributValue.size() << " size of result : " << pairAttribut.second.size() << endl;
 	int missingbytes = (attributValue.size() - pairAttribut.second.size());
@@ -3346,26 +3354,31 @@ BOOST_AUTO_TEST_CASE( fetchAttributFrom3BFi)
 	cout << "Attribut name : " << pairAttribut.first << endl;
 
 	cout << "Original data : " << endl;
-	cout << "/*{{{*/" << endl;
-	for(int n=0;n<FotoAttributValue.size(); n++)
-	{
-		fprintf(stdout, "%02X%s", FotoAttributValue[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
-	}
-	cout << "/*}}}*/" << endl;
+	CUtils::showDataBlock(true,true,FotoAttributValue);
+//	//DEPRECATED
+//	cout << "/*{{{*/" << endl;
+//	for(int n=0;n<FotoAttributValue.size(); n++)
+//	{
+//		fprintf(stdout, "%02X%s", FotoAttributValue[n], ( n + 1 ) % 16 == 0 ? "\n" : " " );
+//	}
+//	cout << "/*}}}*/" << endl;
 
 	cout << "Result data : " << endl;
-	cout << "/*{{{*/" << endl;
-	bool bFoundError=false;
-	for(int n=0;n<pairAttribut.second.size(); n++)
-	{
-		if( pairAttribut.second[n] != FotoAttributValue[n] ){
-			cout << "FAIL:";	
-			bFoundError=true;
-		}
-		fprintf(stdout, "%02X%s", pairAttribut.second[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
-	}
-	cout << "/*}}}*/" << endl;
-	if(!bFoundError) cout << "INFO: bytes assembled and retrieved had no errors " << endl;
+	bool bFoundError = CUtils::showDataBlockDiff(true,true,pairAttribut.second, FotoAttributValue);
+//	//DEPRECATED
+//	cout << "/*{{{*/" << endl;
+//	bool bFoundError=false;
+//	for(int n=0;n<pairAttribut.second.size(); n++)
+//	{
+//		if( pairAttribut.second[n] != FotoAttributValue[n] ){
+//			cout << "FAIL:";	
+//			bFoundError=true;
+//		}
+//		fprintf(stdout, "%02X%s", pairAttribut.second[n], ( n + 1 ) % 16 == 0 ? "\n" : " " );
+//	}
+//	cout << "/*}}}*/" << endl;
+	if(!bFoundError) cout << "INFO: bytes assembled are equal to original " << endl;
+	BOOST_CHECK(bFoundError == false);
 
 	cout << "size of Original : " << FotoAttributValue.size() << " size of result : " << pairAttribut.second.size() << endl;
 	int missingbytes = (FotoAttributValue.size() - pairAttribut.second.size());
@@ -3577,28 +3590,33 @@ BOOST_AUTO_TEST_CASE( fetchAttributFrom3BFi_diff_order)
 	cout << "Attribut name : " << pairAttribut.first << endl;
 
 	cout << "Original data : " << endl;
-	cout << "/*{{{*/" << endl;
-	for(int n=0;n<FotoAttributValue.size(); n++)
-	{
-		fprintf(stdout, "%02X%s", FotoAttributValue[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
-	}
-	cout << "/*}}}*/" << endl;
+	CUtils::showDataBlock(true,true,FotoAttributValue);
+//	//DEPRECATED
+//	cout << "/*{{{*/" << endl;
+//	for(int n=0;n<FotoAttributValue.size(); n++)
+//	{
+//		fprintf(stdout, "%02X%s", FotoAttributValue[n], ( n + 1 ) % 16 == 0 ? "\n" : " " );
+//	}
+//	cout << "/*}}}*/" << endl;
 
 	cout << "Result data : " << endl;
-	cout << "/*{{{*/" << endl;
-	bool bFoundError=false;
-	for(int n=0;n<pairAttribut.second.size(); n++)
-	{
-		if( pairAttribut.second[n] != FotoAttributValue[n] ){
-			cout << "FAIL:";
-			fprintf(stdout, "%02X%s", FotoAttributValue[n], ( n + 1 ) % 16 == 0 ? "\r\n" : "" );
-			cout << "!=";	
-			bFoundError=true;
-		}
-		fprintf(stdout, "%02X%s", pairAttribut.second[n], ( n + 1 ) % 16 == 0 ? "\r\n" : " " );
-	}
-	cout << "/*}}}*/" << endl;
-	if(!bFoundError) cout << "INFO: bytes assembled and retrieved had no errors " << endl;
+	bool bFoundError = CUtils::showDataBlockDiff(true,true,pairAttribut.second, FotoAttributValue);
+//	//DEPRECATED
+//	cout << "/*{{{*/" << endl;
+//	bool bFoundError=false;
+//	for(int n=0;n<pairAttribut.second.size(); n++)
+//	{
+//		if( pairAttribut.second[n] != FotoAttributValue[n] ){
+//			cout << "FAIL:";
+//			fprintf(stdout, "%02X%s", FotoAttributValue[n], ( n + 1 ) % 16 == 0 ? "\n" : "" );
+//			cout << "!=";	
+//			bFoundError=true;
+//		}
+//		fprintf(stdout, "%02X%s", pairAttribut.second[n], ( n + 1 ) % 16 == 0 ? "\n" : " " );
+//	}
+//	cout << "/*}}}*/" << endl;
+	if(!bFoundError) cout << "INFO: bytes assembled are equal to original " << endl;
+	BOOST_CHECK(bFoundError == false);
 
 	cout << "size of Original : " << FotoAttributValue.size() << " size of result : " << pairAttribut.second.size() << endl;
 	int missingbytes = (FotoAttributValue.size() - pairAttribut.second.size());

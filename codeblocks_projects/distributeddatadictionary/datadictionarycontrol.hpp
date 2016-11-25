@@ -21,6 +21,7 @@
 #include "md5.h"
 #include "../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.h"
 #include "../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.h"
+#include "utils.hpp"
 
 using namespace std;
 using boost::optional;

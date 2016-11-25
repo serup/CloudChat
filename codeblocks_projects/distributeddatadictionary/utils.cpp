@@ -26,4 +26,3 @@ std::list<std::string> CUtils::handle_cmdline_input(std::string cmd)
 	return listResult;	
 }
 
-
