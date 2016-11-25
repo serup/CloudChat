@@ -46,6 +46,8 @@ class CUtils
 			{
 				if( chunkdata[n] != diffchunkdata[n] ) {
 					cout << "FAIL:";	
+					fprintf(stdout, "%02X%s", diffchunkdata[n], ( n + 1 ) % 16 == 0 ? "\n" : " " );
+					cout << "!=";	
 					bFoundError=true;
 				}
 				if(usecolor) {
