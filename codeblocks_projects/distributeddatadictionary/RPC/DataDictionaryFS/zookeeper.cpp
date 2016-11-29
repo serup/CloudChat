@@ -709,6 +709,16 @@ void ZooKeeperStorageProcess::initialize() {
 	zk = new ZooKeeper(servers, timeout, watcher);
 }
 
+int ZooKeeperStorageProcess::getState() {
+
+	int iResult = zk->getState();
+	return iResult;
+}
+
+int64_t ZooKeeperStorageProcess::getSessionId() {
+	return zk->getSessionId();
+}
+
 void ZooKeeperStorageProcess::connected(int64_t sessionId, bool reconnect)
 {
 	if (sessionId != zk->getSessionId()) {
