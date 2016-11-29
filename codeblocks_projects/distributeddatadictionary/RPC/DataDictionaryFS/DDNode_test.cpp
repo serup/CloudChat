@@ -27,6 +27,7 @@
 #include "dummyrequest.h"
 #include "ServerRequestHandling.h"
 #include "ClientRequestHandling.h"
+#include <errno.h>
 
 using namespace std;
 using namespace boost::unit_test;
@@ -471,21 +472,99 @@ BOOST_AUTO_TEST_CASE(CHandlingServerRequestToClients_request)
 	cout << "}" << endl;
 }
 
-BOOST_AUTO_TEST_CASE(zookeeper_listZNodes)
-{
-	cout << "BOOST_AUTO_TEST( zookeeper_listZNodes )\n{" << endl;
+/** integrationTest_connectTo_zookeeper_basic :
+ * for a better example please see : https://apache.googlesource.com/zookeeper/+/trunk/src/c/src/cli.c
+ *
+ *  In this example this method gets the cert for your
+ *  environment -- you must provide
+ */
+char *foo_get_cert_once(char* id) { return 0; }
 
-	string servers;
-	Duration timeout;
-	string znode;
+/** Watcher function -- empty for this example, not something you should
+ *  do in real code */
+void watcher(zhandle_t *zzh, int type, int state, const char *path,
+		void *watcherCtx) {}
+
+BOOST_AUTO_TEST_CASE(integrationTest_connectTo_zookeeper_basic)
+{
+	cout << "BOOST_AUTO_TEST( integrationTest_connectTo_zookeeper_basic )\n{" << endl;
+
+	bool bResult=true;
+
+	static zhandle_t *zh;
+
+
+	char buffer[512];
+	char p[2048];
+	char *cert=0;
+	char appId[64];
+
+	strcpy(appId, "example.foo_test");
+	cert = foo_get_cert_once(appId);
+	if(cert!=0) {
+		fprintf(stdout,
+				"Certificate for appid [%s] is [%s]\n",appId,cert);
+		strncpy(p,cert, sizeof(p)-1);
+		free(cert);
+	} else {
+		fprintf(stdout, "Certificate for appid [%s] not found\n",appId);
+		strcpy(p, "dummy");
+	}
+
+	//zoo_set_debug_level(ZOO_LOG_LEVEL_WARN);
+	zoo_set_log_stream(fopen("NULL", "w"));
+
+	zh = zookeeper_init("localhost:2181", watcher, 10000, 0, 0, 0);
+	if (!zh) {
+		cout << "Error number: " << errno << endl;
+		bResult=false;
+	}
+	else {
+		if(zoo_add_auth(zh,"foo",p,strlen(p),0,0)!=ZOK)
+			bResult=false;
+		else {
+			struct ACL CREATE_ONLY_ACL[] = {{ZOO_PERM_CREATE, ZOO_AUTH_IDS}};
+			struct ACL_vector CREATE_ONLY = {1, CREATE_ONLY_ACL};
+			int rc = zoo_create(zh,"/xyz","value", 5, &CREATE_ONLY, ZOO_EPHEMERAL,
+					buffer, sizeof(buffer)-1);
+
+			int buflen= sizeof(buffer);
+			struct Stat stat;
+			rc = zoo_get(zh, "/xyz", 0, buffer, &buflen, &stat);
+			if (rc) {
+				fprintf(stdout, "Error %d for %s [%d] - could NOT get /xyz \n", rc, __FILE__, __LINE__);
+				bResult=false;
+			}
+			zookeeper_close(zh);
+		}
+	}
+	BOOST_CHECK(bResult==true);
+
+	cout << "}" << endl;
+}
+
+BOOST_AUTO_TEST_CASE(integrationTest_connectTo_zookeeper_advanced)
+{
+	cout << "BOOST_AUTO_TEST( integrationTest_connectTo_zookeeper )\n{" << endl;
+	
+	zoo_set_debug_level(ZOO_LOG_LEVEL_DEBUG);
+	//zoo_set_debug_level(ZOO_LOG_LEVEL_WARN);
+	//zoo_set_log_stream(fopen("NULL", "w"));
+
+	string servers = "localhost:2181";
+	Duration timeout = Seconds(1);
+	string znode = "/";
 	Option<Authentication> auth;
 	ZooKeeperStorageProcess zkstorageprocess(servers,timeout,znode,auth);
 
+	//cout<<"/*{{{*/"<<endl;   
+	zkstorageprocess.initialize();
+	zkstorageprocess.connected(1234, false);
+	cout << "zk sessionId : " << zkstorageprocess.getSessionId() << endl;
+	cout << "zk state : " << zkstorageprocess.getState() << endl;
+	//cout<<"/*}}}*/"<<endl;   
 
-
-
-
-	BOOST_CHECK(true == false);
+	BOOST_CHECK(zkstorageprocess.getState() == ZooKeeperStorageProcess::State::CONNECTED);
 
 	cout << "}" << endl;
 }

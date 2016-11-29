@@ -221,6 +221,18 @@ class ZooKeeperStorageProcess : public Process<ZooKeeperStorageProcess>
 		void deleted(int64_t sessionId, const string& path);
 
 
+		
+		// ZooKeeper connection state.
+		enum State
+		{
+			DISCONNECTED,
+			CONNECTING,
+			CONNECTED,
+		} state;
+	
+		int getState();
+		int64_t getSessionId();
+
 	private:
 		Watcher* watcher;
 		ZooKeeper* zk;
@@ -231,14 +243,7 @@ class ZooKeeperStorageProcess : public Process<ZooKeeperStorageProcess>
 		const ACL_vector acl; // Default ACL to use.
 		
 
-		// ZooKeeper connection state.
-		enum State
-		{
-			DISCONNECTED,
-			CONNECTING,
-			CONNECTED,
-		} state;
-		
+	
 		Option<string> error;
 
 };
