@@ -280,7 +280,7 @@ OperatorfilterPage.prototype.update = function() {
                 clearInterval(timeout_sendforwardinforeq);
                 timeout_sendforwardinforeq=setInterval(function(){
                     // keep telling supervisor that you are ready
-                    SendForwardInfoRequest(settings_controller_this.fetchSupervisorID()); // inside mvc_chat.js
+                    SendForwardInfoRequest(this.settings_controller_this.fetchSupervisorID()); // inside mvc_chat.js
                 }, 4000);
                 
             }

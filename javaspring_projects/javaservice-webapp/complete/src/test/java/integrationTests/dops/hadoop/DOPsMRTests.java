@@ -26,33 +26,59 @@ public class DOPsMRTests {
 
     private DOPsHDFSHandler fshandlerDriver;
     private final IntegrationEnvironmentSetup env = new IntegrationEnvironmentSetup();
+    private boolean bSetupOK=true;
+
 
     @SuppressWarnings("unused")
     @Before
     public void setUp() {
         assertEquals(true,env.setupHadoopIntegrationEnvironment());
         try {
-        fshandlerDriver = new DOPsHDFSHandler();
+            fshandlerDriver = new DOPsHDFSHandler();
 
-        File directory = new File("/tmp/output/findprofile");
-        //make sure directory exists
-        if (!directory.exists()) {
-            // Directory does not exist
-            if(!directory.mkdir())
+            File directory = new File("/tmp/output/findprofile");
+            //make sure directory exists
+            if (!directory.exists()) {
+                // Directory does not exist
+                if(!directory.mkdirs())
                     throw new IOException("Could NOT create folder: /tmp/output/findprofile");
-        }
-        else {
+            }
+            else {
                 env.delete(directory); // clean out old
-                if(!directory.mkdir())
+                if(!directory.mkdirs())
                     throw new IOException("Could NOT create folder: /tmp/output/findprofile"); // create for this test
-        }
+            }
+            directory = new File("/tmp/input/findprofile");
+            if (directory.exists()) { // if this does not work, then manually try this on one node: hadoop fs -rmr /tmp/input/findprofile
+                env.delete(directory); // clean out, since this must have been from a previous faulty run of the tests
+            }
         } catch (Exception e) {
+            bSetupOK=false;
             e.printStackTrace();
         }
+        assertEquals(true,bSetupOK);
     }
 
+    /**
+     * This test could fail if ulimit for noproc is too low
+     * suggest setting following in /etc/security/limits.conf
+     *
+
+     *          soft     nproc          1048570
+     *          hard     nproc          1048570
+     *          soft     nofile         1048570
+     *          hard     nofile         1048570
+     *          soft     nproc          1048570
+     *          hard     nproc          1048570
+     *          soft     nofile         1048570
+     *          hard     nofile         1048570
+
+     * This is done in the setupUlimit.sh file which is run in the install.sh script
+     */
     @Test
     public void testFindProfileFile() {
+
+        boolean bTestOK=true;
 
         try {
             Configuration conf = new Configuration();
@@ -81,18 +107,22 @@ public class DOPsMRTests {
             FileInputFormat.addInputPath(job, new Path("hdfs://one.cluster:8020/tmp/input/findprofile/*.xml"));
             FileOutputFormat.setOutputPath(job, new Path("/tmp/output/findprofile/result/"));
 
-            // copy the internal resource file watson.txt to remote hadoop hdfs system
+            // copy the internal resource file to remote hadoop hdfs system
             String fileResource1 = "DataDictionary/Database/ENTITIEs/355760fb6afaf9c41d17ac5b9397fd45.xml"; // This is a profile database file
             String fileResource2 = "DataDictionary/Database/TOASTs/355760fb6afaf9c41d17ac5b9397fd45_toast.xml"; // This is a profile toast database file
             String destFolder="tmp/input/findprofile";
             URL fileResourceUrl = this.getClass().getClassLoader().getResource(fileResource1);
             URL fileResourceUrl2 = this.getClass().getClassLoader().getResource(fileResource2);
             if(fileResourceUrl!=null) {
-                fshandlerDriver.copyTo(fileResourceUrl.getPath(), "/" + destFolder + "/355760fb6afaf9c41d17ac5b9397fd45.xml");
-                if (fileResourceUrl2 != null)
-                    fshandlerDriver.copyTo(fileResourceUrl2.getPath(), "/" + destFolder + "/toast" + "/355760fb6afaf9c41d17ac5b9397fd45_toast.xml");
+                if (fshandlerDriver.copyTo(fileResourceUrl.getPath(), "/" + destFolder + "/355760fb6afaf9c41d17ac5b9397fd45.xml"))
+                {
+                    if (fileResourceUrl2 != null)
+                        fshandlerDriver.copyTo(fileResourceUrl2.getPath(), "/" + destFolder + "/toast" + "/355760fb6afaf9c41d17ac5b9397fd45_toast.xml");
+                    else
+                        throw new IOException("Resource file NOT present");
+                }
                 else
-                    throw new IOException("Resource file NOT present");
+                    throw new IOException("could NOT copy file to HDFS - this could be because input folder is existing, created by other user - PLEASE remove it first; do following on one.cluster: vagrant ssh one; hadoop fs -mv /tmp/input /tmp/garbage ");
             }
             else
                 throw new IOException("Resource file NOT present");
@@ -125,7 +155,10 @@ public class DOPsMRTests {
             System.out.println("FindProfileFile - mapreduce job finished - status : SUCCESS");
         } catch (Exception e) {
             e.printStackTrace();
+            bTestOK=false;
         }
+
+        assertEquals(true,bTestOK);
     }
 
 }

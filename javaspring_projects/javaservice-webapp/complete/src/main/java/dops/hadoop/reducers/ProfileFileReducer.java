@@ -12,6 +12,11 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * Created by serup on 21-04-16.
@@ -50,17 +55,22 @@ public class ProfileFileReducer extends Reducer<Text, Text, Text, Text> {
         context.write(new Text("<result>"), new Text(""));
     }
 
+    public void reduce(Text fileNameOfFileBeingProcessed, Iterable<Text> lineFromFile, Context context) throws IOException, InterruptedException {
+
+        setupContextConfigurationElements(context);
+        if(parseLineFromFileToFindElementOfInterest(lineFromFile))
+            writeReducerContext(fileNameOfFileBeingProcessed, context);
+    }
+
     @Override
     protected void cleanup(Context context) throws IOException, InterruptedException {
         context.write(new Text("</result>"), new Text(""));
     }
 
     private final Text outputKey = new Text();
-
     public void setElementOfInterest(String elementOfInterest) {
         this.elementOfInterest = elementOfInterest;
     }
-
     private String elementOfInterest;
 
     public void setElementOfInterestValue(String elementOfInterestValue) {
@@ -68,7 +78,6 @@ public class ProfileFileReducer extends Reducer<Text, Text, Text, Text> {
     }
 
     private String elementOfInterestValue;
-
     private void setupContextConfigurationElements(Context context) {
         if(context.getConfiguration().get("dops.entities.database.dir") != null) {
             elementOfInterest = context.getConfiguration().get("dops.elementofinterest");
@@ -78,6 +87,7 @@ public class ProfileFileReducer extends Reducer<Text, Text, Text, Text> {
 
     private boolean isElementOfInterest(Node nNode) {
         boolean bFound=false;
+        assert(nNode != null);
         if (nNode.getNodeType() == Node.ELEMENT_NODE) {
             Element eElement = (Element) nNode;
             String id = eElement.getElementsByTagName("id").item(0).getTextContent();
@@ -106,13 +116,14 @@ public class ProfileFileReducer extends Reducer<Text, Text, Text, Text> {
     {
         boolean bFound=false;
         NodeList nList = doc.getElementsByTagName("entity");
-        for (int index = 0; index < nList.getLength(); index++) {
-            Node nNode = nList.item(index);
-            bFound = isElementOfInterest(nNode);
-            if (bFound)
-                break;
-        }
-        return bFound;
+
+        // since NodeList does not have stream implemented, then use this hack
+        Stream<Node> nodeStream = IntStream.range(0, nList.getLength()).mapToObj(nList::item);
+        // search for element of interest in the NodeList
+        if(nodeStream.parallel().filter(this::isElementOfInterest).collect(Collectors.toList()).size() > 0)
+            bFound=true;
+
+       return bFound;
     }
 
     private boolean parseXMLToFindElementOfInterest(Text xmlElement) {
@@ -151,13 +162,4 @@ public class ProfileFileReducer extends Reducer<Text, Text, Text, Text> {
         }
         return bFound;
     }
-
-    public void reduce(Text fileNameOfFileBeingProcessed, Iterable<Text> lineFromFile, Context context) throws IOException, InterruptedException {
-
-        setupContextConfigurationElements(context);
-        if(parseLineFromFileToFindElementOfInterest(lineFromFile))
-             writeReducerContext(fileNameOfFileBeingProcessed, context);
-    }
-
-
 }

@@ -27,6 +27,7 @@ list :
 	@ ./listUnitTestcases.sh
 
 all: compile test
+total: compile test
 
 compile:
 	@ echo "***********************************************"

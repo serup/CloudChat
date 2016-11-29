@@ -1,16 +1,43 @@
-#!/usr/bin/env bash -l
+#!/usr/bin/env bash
 cat DOPS_outline.txt
 echo "********************************************************"
 echo "** Installing vagrant, puppetlabs, virtualbox, docker **"
 echo "********************************************************"
-echo "MUST run as '. ./install.sh' or as 'sudo bash ./install.sh' otherwise it will fail !!!"
+echo "if issues then run as '. ./install.sh' or as 'sudo bash ./install.sh'  "
+
+echo "setting up alias"
+alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+alias egrep='egrep --color=auto'
+alias ff='find . -type f -name '
+alias fgrep='fgrep --color=auto'
+alias findfile='find . -type f -name '
+#alias gitlog='git log --pretty=format:"%C(yellow)%h %Cred%ad %Cblue%an%Cgreen%d %Creset%s" --date=short'
+alias gitlog='git log --graph --decorate --abbrev-commit --all --oneline --color | nowrap | head -$(($(tput lines) - 1))' 
+alias gitshow='function _blah(){ git show "$(git annotate $1 | grep $2 | head -1| cut -f1)"; };_blah'
+alias grep='grep --color=auto'
+alias gvm='sdk'
+alias l='ls -CF'
+alias la='ls -A'
+alias ll='ls -alF'
+alias ls='ls --color=auto'
+alias vimstart='vim --cmd "let g:startify_disable_at_vimenter = 1" -S Session.vim'
+# nb! use '\'' for each '  inside an alias
+alias ks='function _blabla(){ kill "$(ps -aux|grep $1|head -1|awk '\''{print $2}'\'')"; }; _blabla'
+
+echo "Setup ULIMIT -- IMPORTANT - this is needed to avoid too many handles or processes, which will freeze system"
+sudo bash setupUlimit.sh
 
 function set-title() {
   if [[ -z "$ORIG" ]]; then
     ORIG=$PS1
   fi
   TITLE="\[\e]2;$@\a\]"
-  PS1=${ORIG}${TITLE}
+  #PS1=${ORIG}${TITLE}
+  #export PS1='\e[01;33m\w>\[\033[00m\] '
+  export PS1='\[\033[01;32m\]\u:\[\033[00m\]\W\$ '
+
+  echo "put PS1 statement in ~/.bashrc : "
+  #export PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
 }
 
 set-title environment for DOPS ok
@@ -77,13 +104,114 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- oracle-java already installed"
 fi
-PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 lib32stdc* |grep "install ok installed")
+
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 rpcbind* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install RPC - remote procedure call  "
+  sudo apt-fast install -yq rpcbind 
+  echo " - make sure portmapper is running"
+  sudo systemctl add-wants multi-user.target rpcbind
+  echo " - done."
+else
+  echo "- RPC already installed - if issues, then do following:"
+  echo "--  sudo systemctl add-wants multi-user.target rpcbind"
+  echo "--  this will restart portmapper and your server should then work"
+fi
+
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 uuid-dev* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install uuid-dev - used in libminify project"
+  sudo apt-fast install -yq uuid-dev 
+  echo " - done."
+else
+  echo "- uuid-dev already installed"
+fi
+
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 w3m* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install w3m google access from terminal ; see info: https://www.youtube.com/watch?v=wlR1oa7uePg"
+  sudo apt-fast install -yq w3m 
+  echo " - done."
+else
+  echo "- w3m already installed"
+fi
+
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 dstat* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install dstat: Monitoring Linux Systems performance "
+  sudo apt-fast install -yq dstat
+  echo " - done."
+else
+  echo "- dstat already installed"
+fi
+
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 idle* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install idle - python editor "
+  sudo apt-fast install -yq idle 
+  echo " - done."
+else
+  echo "- idle python editor already installed"
+fi
+
+# could not get this to work ---
+#PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 gpointing* |grep "install ok installed")
+#if [ "" == "$PKG_OK" ]; then
+#  echo -n "- install gpointing-device-settings on ubuntu, to enable middlemouse button copy / past "
+##  sudo add-apt-repository ppa:gpointing-device-settings
+##  sudo apt-get update
+##  sudo apt-fast install -yq gpointing-device-settings
+#  sudo dpkg -i gpointing-device-settings_1.5.1-6ubuntu2_amd64.deb
+#  echo " - done."
+#else
+#  echo "- gpointing already installed"
+#fi
+
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 *stdc* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install lib32stdc on ubuntu, to use for mksdcard SDK tool in android-studio "
   sudo apt-fast install -yq lib32stdc++6 
   echo " - done."
 else
   echo "- lib32stdc already installed"
+fi
+
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 *libxml2-utils* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install xmllint on ubuntu, to use for pretty format xml output; xmllint --format <file> "
+  sudo apt-fast install -yq libxml2-utils 
+  echo " - done."
+else
+  echo "- xmllint already installed"
+fi
+
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 *libprocess-cpp-dev* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- libprocess library <file> "
+  sudo apt-fast install -yq libprocess-cpp-dev
+  echo " - done."
+else
+  echo "- libprocess library already installed"
+fi
+
+
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 highlight* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install highlight - to help with colorize xml output from xmllint "
+  sudo apt-fast install -yq highlight 
+  echo " - done."
+else
+  echo "- highlight already installed"
+fi
+
+
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 *libncurses* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install  libcurses on ubuntu, to use for screen handling in terminals "
+  sudo apt-fast install -yq libncurses5-dev
+  echo " - done."
+else
+  echo "- curses already installed"
 fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 gitk* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
@@ -93,6 +221,14 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- gitk already installed"
 fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 kdiff3* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install kdiff3 on ubuntu, to use when comparing files "
+  sudo apt-fast install -yq kdiff3 
+  echo " - done."
+else
+  echo "- kdiff3 already installed"
+fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 wireshark |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install wireshark on ubuntu, to use when monitoring tcp trafic "
@@ -101,13 +237,57 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- wireshark already installed"
 fi
-PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 vim* |grep "install ok installed")
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 vim |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
+  echo "install pathogen.vim"
+  mkdir -p ~/.vim/autoload ~/.vim/bundle && \
+  echo -n "- install curl"
+  sudo apt-fast install -yq curl 
+  curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
   echo -n "- install vim on ubuntu "
   sudo apt-fast install -yq vim 
+  echo 'set mouse=a' >> ~/.vimrc 
+  # maximize vertical and horizontal with <Ctrl-W>M and restore with <Ctrl-W>m
+  echo 'noremap <C-W>M <C-W>\| <C-W>_'  >> ~/.vimrc 
+  echo 'noremap <C-W>m <C-W>=' >> ~/.vimrc  
+  echo 'execute pathogen#infect()' >> ~/.vimrc
+  echo 'syntax on' >> ~/.vimrc
+  echo 'filetype plugin indent on' >> ~/.vimrc
+  # unfortunately links to helpfile does not work - so copy instead
+  #sudo ln -s vimhelpfile_build_commands.txt ~/.vim/doc/build_commands.txt 
+  sudo cp vimhelpfile_build_commands.txt ~/.vim/doc/build_commands.txt
+  echo "- to setup vimhelpfiles run following command; :helptags ~/.vim/doc"
+  sudo apt-fast install -yq vim-addon-manager
+  vam install youcompleteme
+  echo "NO need to use linux-install-vim-intellisense.sh script"
+  echo "- install window-swap plugin"
+  git clone https://github.com/wesQ3/vim-windowswap ~/.vim/bundle/vim-windowswap
+  echo "- install :Linediff plugin"
+  git clone git://github.com/AndrewRadev/linediff.vim.git ~/.vim/bundle/linediff
   echo " - done."
 else
-  echo "- vim already installed"
+  echo "- vim already installed - consider adding set mouse=a   ;to enable mouse handling of splits"
+fi
+
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 *brew* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install brew on ubuntu : example: brew install ctags"
+  sudo apt-fast install -yq linuxbrew-wrapper 
+  brew install ctags
+  sudo apt-fast install -yq exuberant-ctags
+  echo "- add to .vimrc -- Plug 'craigemery/vim-autotag'"
+  echo " - done."
+else
+  echo "- brew already installed"
+fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 *exuberant-ctags* |grep "ok")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install ctags"
+  sudo apt-fast install -yq exuberant-ctags
+  echo "- add to .vimrc -- Plug 'craigemery/vim-autotag'"
+  echo " - done."
+else
+  echo "- ctags already installed"
 fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 sysstat |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
@@ -152,6 +332,16 @@ else
   echo "- eclipse dependencies already installed"
 fi
 
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 libjpeg* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install jpeg dependencies on ubuntu "
+  sudo apt-fast install -yq libjpeg-dev 
+  echo " - done."
+else
+  echo "- libjpeg-dev dependencies already installed"
+fi
+
+
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 scene* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install javaFX Scene builder "
@@ -166,6 +356,7 @@ if [ "" == "$PKG_OK" ]; then
    #sudo dpkg -i javafx_scenebuilder-2_0-linux-x64.deb && \
    # find it using this command: dpkg-query  -S scene*
    # then add in intellij under settings/language.../JavaFX/path to scenebuilder
+   #   it could be here : /opt/JavaFXSceneBuilder2.0/JavaFXSceneBuilder2.0
    sudo apt-fast install -yq  scenebuilder
    #sudo apt-get update 
   echo " - done."
@@ -240,7 +431,8 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 mono-complete* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
-  echo "deb http://download.mono-project.com/repo/debian wheezy main" | sudo tee /etc/apt/sources.list.d/mono-xamarin.list
+  #echo "deb http://download.mono-project.com/repo/debian wheezy main" | sudo tee /etc/apt/sources.list.d/mono-xamarin.list
+  echo "deb http://download.mono-project.com/repo/debian nightly main" | sudo tee /etc/apt/sources.list.d/mono-nightly.list
   sudo apt-get update
   echo -n "- install mono-complete for C# on ubuntu "
   sudo apt-fast install -yq mono-complete 
@@ -320,7 +512,7 @@ fi
 #  echo "- python-hdfs already installed"
 #fi
 
-PIPPKG_OK=$(pip list | grep webhdfs*)
+PIPPKG_OK=$(pip list | grep -i WebHDFS*)
 if [ "" == "$PIPPKG_OK" ]; then
   echo -n "- install python webhdfs on ubuntu "
   sudo easy_install webhdfs 
@@ -434,6 +626,15 @@ else
   echo "- g++ already installed"
 fi
 
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 npm* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install npm "
+  sudo apt-fast install -yq npm 
+  echo " - done."
+else
+  echo "- npm already installed"
+fi
+
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 lcov* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo "install LCOV for code coverage"
@@ -456,11 +657,19 @@ PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 libboost-all* |grep "inst
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install libboost "
   sudo apt-fast install -yq libboost-all-dev 
-  echo " - done."
+  echo "- install missing hpp file -- ignored until decided weather or not to use gil extension in backend"
+  #sudo mkdir -p /usr/include/boost/gil/extension/numeric; sudo cp pixel_numeric_operations.hpp /usr/include/boost/gil/extension/numeric/.
+  #sudo cp channel_numeric_operations.hpp /usr/include/boost/gil/extension/numeric/.
+  #sudo cp affine.hpp /usr/include/boost/gil/extension/numeric/.
+  #echo " - done."
 else
   echo "- libbost already installed"
-fi
-PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 virtualbox |grep "install ok installed")
+  echo "- install missing hpp file"
+  #sudo mkdir -p /usr/include/boost/gil/extension/numeric; sudo cp pixel_numeric_operations.hpp /usr/include/boost/gil/extension/numeric/.
+  #sudo cp channel_numeric_operations.hpp /usr/include/boost/gil/extension/numeric/.
+  #sudo cp affine.hpp /usr/include/boost/gil/extension/numeric/.
+ fi
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 virtualbox |grep "ok")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install Virtualbox -- PARAMOUNT DO NOT HAVE SECURE BOOT ENABLED otherwise install of virtualbox will fail"
 
@@ -474,6 +683,23 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- Virtualbox installed"
 fi
+
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 maven* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install maven"
+   sudo apt-fast install -yq maven 
+else
+  echo "- maven installed"
+fi
+
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 autoconf* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install autoconf"
+   sudo apt-fast install -yq autoconf
+else
+  echo "- autoconf installed"
+fi
+
 
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 virtualbox-guest* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
@@ -529,6 +755,15 @@ if [ "" == "$MODULE_OK" ]; then
   echo " - done."
 else
   echo "- maestrodev-bamboo puppet module installed"
+fi
+
+MODULE_OK=$(puppet module list --modulepath ./hadoop_projects/hadoopServices/modules | grep vzach-ambari*)
+if [ "" == "$MODULE_OK" ]; then
+  echo -n "- install vzach-ambari puppet module"
+  puppet module install vzach-ambari --modulepath ./hadoop_projects/hadoopServices/modules
+  echo " - done."
+else
+  echo "- vzach-ambari puppet module installed"
 fi
 
 #MODULE_OK=$(puppet module list --modulepath ./hadoop_projects/hadoopServices/modules | grep bcarpio-hadoop*)

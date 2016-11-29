@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProjectGuid>{E0E53F98-15BF-4248-8055-5CD67C986DAD}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>csharpServices</RootNamespace>
+    <AssemblyName>csharpServices</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <StartupObject>csharpServices.MainClass</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <SpecificVersion>False</SpecificVersion>
+      <Package>gtk-sharp-2.0</Package>
+    </Reference>
+    <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <SpecificVersion>False</SpecificVersion>
+      <Package>gtk-sharp-2.0</Package>
+    </Reference>
+    <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <SpecificVersion>False</SpecificVersion>
+      <Package>glib-sharp-2.0</Package>
+    </Reference>
+    <Reference Include="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <SpecificVersion>False</SpecificVersion>
+      <Package>glade-sharp-2.0</Package>
+    </Reference>
+    <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+      <SpecificVersion>False</SpecificVersion>
+      <Package>gtk-sharp-2.0</Package>
+    </Reference>
+    <Reference Include="Mono.Posix" />
+    <Reference Include="System.Core" />
+    <Reference Include="Xwt, Version=0.1.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756">
+      <Package>monodevelop</Package>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="YamlDotNet">
+      <HintPath>..\packages\YamlDotNet.3.8.0\lib\net35\YamlDotNet.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Numerics" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="gtk-gui\gui.stetic">
+      <LogicalName>gui.stetic</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="gtk-gui\generated.cs" />
+    <Compile Include="MainWindow.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Interfaces\IHandler.cs" />
+    <Compile Include="Interfaces\ISocket.cs" />
+    <Compile Include="WebSocket\WebSocketConnection.cs" />
+    <Compile Include="WebSocket\WebSocketHttpRequest.cs" />
+    <Compile Include="Interfaces\IWebSocketConnection.cs" />
+    <Compile Include="Interfaces\IWebSocketConnectionInfo.cs" />
+    <Compile Include="Interfaces\IWebSocketServer.cs" />
+    <Compile Include="Log\FleckLog.cs" />
+    <Compile Include="Log\ConnectionNotAvailableException.cs" />
+    <Compile Include="Log\WebSocketStatusCodes.cs" />
+    <Compile Include="WebSocket\WebSocketConnectionInfo.cs" />
+    <Compile Include="WebSocket\HandshakeException.cs" />
+    <Compile Include="WebSocket\WebSocketException.cs" />
+    <Compile Include="WebSocket\SubProtocolNegotiationFailureException.cs" />
+    <Compile Include="DEDEncoderDecoder.cs" />
+    <Compile Include="LZSS.cs" />
+    <Compile Include="StreamExtensions.cs" />
+    <Compile Include="WebSocket\WebSocketServer.cs" />
+    <Compile Include="Helpers\MonoHelper.cs" />
+    <Compile Include="WebSocket\SocketWrapper.cs" />
+    <Compile Include="WebSocket\HandlerFactory.cs" />
+    <Compile Include="WebSocket\RequestParser.cs" />
+    <Compile Include="Handlers\ComposableHandler.cs" />
+    <Compile Include="Handlers\Draft76Handler.cs" />
+    <Compile Include="Handlers\FlashSocketPolicyRequestHandler.cs" />
+    <Compile Include="Handlers\Hybi13Handler.cs" />
+    <Compile Include="WebSocket\FrameType.cs" />
+    <Compile Include="IntExtensions.cs" />
+    <Compile Include="WebSocket\QueuedStream.cs" />
+    <Compile Include="WebSocket\ReadState.cs" />
+    <Compile Include="WebSocket\SubProtocolNegotiator.cs" />
+    <Compile Include="WebSocket\Client.cs" />
+    <Compile Include="ByteArrayOutputStream.cs" />
+    <Compile Include="Arrays.cs" />
+    <Compile Include="Math.cs" />
+    <Compile Include="InputStream.cs" />
+    <Compile Include="ByteArrayInputStream.cs" />
+    <Compile Include="OutputStream.cs" />
+    <Compile Include="WebHDFS.cs" />
+    <Compile Include="BetterWebClient.cs" />
+    <Compile Include="gtk-gui\MainWindow.cs" />
+    <Compile Include="Handlers\DOPSHandler.cs" />
+    <Compile Include="changeUniqueID.cs" />
+    <Compile Include="gtk-gui\csharpServices.changeUniqueID.cs" />
+    <Compile Include="Handlers\handleManagerTreeView.cs" />
+    <Compile Include="Handlers\handleCustomerTreeView.cs" />
+    <Compile Include="Handlers\AARHandler.cs" />
+    <Compile Include="Handlers\cloudChatPacketHandler.cs" />
+    <Compile Include="Handlers\TreeViewTools.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <None Include="testtemplate.txt" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="WebSocket\" />
+    <Folder Include="Log\" />
+    <Folder Include="Helpers\" />
+    <Folder Include="Handlers\" />
+  </ItemGroup>
+</Project>

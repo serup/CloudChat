@@ -143,7 +143,7 @@ public:
 
     /// tools
     std::string requestProfileFromHadoop(std::string elementOfInterest, std::string elementOfInterestValue);
-    bool extractUpdateImageUrl(FetchProfileInfo datastream, std::vector<Elements> record_value);
+    bool extractUpdateImageUrl(FetchProfileInfo datastream, std::vector<Elements> &record_value);
     bool isHadoopJavaServiceAppOnline();
     bool SendBinarydataframe(unsigned char *pCompressedData,unsigned int sizeofCompressedData);
     bool SendDataframe(wsclient::dataframe frame);

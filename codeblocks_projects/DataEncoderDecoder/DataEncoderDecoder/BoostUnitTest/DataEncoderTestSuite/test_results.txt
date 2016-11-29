@@ -10,13 +10,14 @@
  OK:   get_encoded_data 
  OK:   put_in_dataencoder 
  OK:   encoder_get 
- OK:   data_protocol 
+ OK:   data_protocol_with_whitspace 
  OK:   encode_decode_large_toast 
  OK:   encode_decode_Xlarge_toast 
- OK:   encode_decode_toast
+ OK:   encode_decode_toast 
+ OK:   encodeImagefile
 --------------
 Tests Complete
 --------------
-Passed: 13
+Passed: 14
 Failed: 0
 --------------

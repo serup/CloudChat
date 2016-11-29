@@ -4,12 +4,19 @@ class ambari_server ($ownhostname) {
 
   # Ambari Repo
   exec { 'get-ambari-server-repo':
-    command => "wget http://public-repo-1.hortonworks.com/ambari/centos6/1.x/updates/1.2.3.7/ambari.repo", 
     #command => "wget http://public-repo-1.hortonworks.com/ambari/centos6/1.x/GA/ambari.repo",
+    command => "wget http://public-repo-1.hortonworks.com/ambari/centos6/1.x/updates/1.2.3.7/ambari.repo",
     cwd     => '/etc/yum.repos.d/',
     creates => '/etc/yum.repos.d/ambari.repo',
     user    => root
   }
+
+  # Fix an error in that repo reference
+  #  exec { ‘fix-ambari-server-repo’:
+  #  command => “sed -i ‘s/centos6\\/1.x\\/updates\\w*$/centos6\\/1.x\\/updates\\/1.6.0/g’ ambari.repo”, cwd => ‘/etc/yum.repos.d/’,
+  #  user => root,
+  #  require => Exec[get-ambari-server-repo]
+  #}
 
   # Ambari Server
   package { 'ambari-server':

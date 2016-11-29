@@ -100,6 +100,7 @@ namespace WebSocketTests
 
 			// Fetch the return data from the Server - in this case it should be an echo
 			byte[] ReceiveBuffer = Client.FetchReceived (_handles);
+//			byte[] ReceiveBuffer = Client.FetchReceived();
 
 			// verify 
 			Assert.IsNotNull (ReceiveBuffer);

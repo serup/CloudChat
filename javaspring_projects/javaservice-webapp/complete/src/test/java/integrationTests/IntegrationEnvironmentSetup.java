@@ -14,19 +14,25 @@ import static org.junit.Assert.assertEquals;
  */
 public class IntegrationEnvironmentSetup {
 
-    boolean bIntegrationEnvironmentAlreadySetup=false;
-    boolean bHadoopIntegrationEnvironmentAlreadySetup=false;
+    private static boolean bIntegrationEnvironmentAlreadySetup=false;
+    private static boolean bHadoopIntegrationEnvironmentAlreadySetup=false;
+    private static boolean bEnvironmentOK=true;
+    private static boolean bHadoopEnvironmentOK=true;
 
-    public static boolean containsAny(String str, String[] words)
+    private static boolean containsAny(String str, String[] words)
     {
         boolean bResult=false; // if any of the words are found, this will be set true
         //String[] words = {"word1", "word2", "word3", "word4", "word5"};
 
         List<String> list = Arrays.asList(words);
+// did not work - why?
+//        if(!str.isEmpty() && list.stream().filter(d -> d.contains(str)).count() > 0)
+//            bResult=true;
         for (String word: list ) {
             boolean bFound = str.contains(word);
             if (bFound) {bResult=bFound; break;}
         }
+
         return bResult;
     }
 
@@ -72,7 +78,7 @@ public class IntegrationEnvironmentSetup {
     public boolean setupIntegrationEnvironment()
     {
         boolean bResult=true;
-        if (!bIntegrationEnvironmentAlreadySetup) {
+        if (bEnvironmentOK && !bIntegrationEnvironmentAlreadySetup) {
             try {
                 System.out.println("Check if backend is running...");
                 String path = new File(".").getCanonicalPath();
@@ -89,9 +95,15 @@ public class IntegrationEnvironmentSetup {
                     assertEquals(true, result.contains("Vagrant"));
 
                     cmd = "vagrant up backend";
-                    result = executeCommand(cmd, path);
-                    assertEquals(true, containsAny(result, new String[]{"VM is already running", "Machine booted and ready"}));
-
+                    try {
+                        result = executeCommand(cmd, path);
+                        assertEquals(true, containsAny(result, new String[]{"VM is already running", "Machine booted and ready"}));
+                    }catch (Exception e)
+                    {
+                        cmd = "vagrant resume backend";
+                        result = executeCommand(cmd, path);
+                        assertEquals(true, containsAny(result, new String[]{"VM is already running", "Machine booted and ready"}));
+                    }
                     System.out.println("VM is started - Integration Environment ready");
                 }
             }catch(Exception e){
@@ -100,18 +112,32 @@ public class IntegrationEnvironmentSetup {
             }
             bIntegrationEnvironmentAlreadySetup = bResult;
         }
-        else
-            System.out.println("- Integration Environment already setup");
-
+        else {
+            if(bEnvironmentOK)
+                System.out.println("- Integration Environment already setup - SUCCESS");
+            else {
+                System.out.println("- Integration Environment already setup - However ERROR occurred !!");
+                return false;
+            }
+        }
         return bResult;
     }
 
     public boolean setupHadoopIntegrationEnvironment()
     {
         boolean bResult=true;
-        if (!bHadoopIntegrationEnvironmentAlreadySetup) {
+        if (bHadoopEnvironmentOK && !bHadoopIntegrationEnvironmentAlreadySetup) {
             try {
                 System.out.println("Check if main node in hadoop cluster is running...");
+                System.out.println("* if cluster is corrupt then do following: ");
+                System.out.println("* vagrant ssh one ");
+                System.out.println("* sudo -su hdfs ");
+                System.out.println("* hadoop  fsck /");
+                System.out.println("* hadoop  dfsadmin -safemode leave");
+                System.out.println("* hadoop  fs -rmr -skipTrash /tmp/input");
+                System.out.println("* hadoop  fsck -files delete /");
+                System.out.println("* hadoop  fsck /");
+                System.out.println("*  - status should be HEALTHY now - then manually restart everything in Ambari one.cluster:8080 admin admin");
                 String path = new File(".").getCanonicalPath();
                 path = trimOffLastFileSeperator(path, 3);
                 String cmd = "ping one.cluster -c 1";
@@ -133,14 +159,34 @@ public class IntegrationEnvironmentSetup {
                     cmd = "vagrant status one.cluster";
                     result = executeCommand(cmd, path);
                     if (result.isEmpty() || !result.contains("running")) {
+                        System.out.println("VM hadoop cluster was not present - now if vagrant up takes too long time, then perhaps nodes needs to be started manually and ambari installed againg");
                         // cmd = "vagrant up"; // will start all nodes described in Vagrantfile
                         cmd = "vagrant up one"; // will start 1 nodes
                         result = executeCommand(cmd, path);
-                        assertEquals(true, containsAny(result, new String[]{"VM is already running", "Machine booted and ready"}));
-                        cmd = "vagrant up two"; // will start 1 nodes
+                        if(result.isEmpty() || !containsAny(result, new String[]{"VM is already running", "Machine booted and ready"})) {
+                            cmd = "vagrant resume one two three";
+                            result = executeCommand(cmd, path);
+                            if(!containsAny(result, new String[]{"VM is already running", "Machine booted and ready"})) bHadoopEnvironmentOK=false;
+                        }
+                        else {
+                            cmd = "vagrant up two"; // will start 1 nodes
+                            result = executeCommand(cmd, path);
+                            if(!containsAny(result, new String[]{"VM is already running", "Machine booted and ready"})) bHadoopEnvironmentOK=false;
+                            //assertEquals(true, containsAny(result, new String[]{"VM is already running", "Machine booted and ready"}));
+                            cmd = "vagrant up three"; // will start 1 nodes
+                            result = executeCommand(cmd, path);
+                            if(!containsAny(result, new String[]{"VM is already running", "Machine booted and ready"})) bHadoopEnvironmentOK=false;
+                            //assertEquals(true, containsAny(result, new String[]{"VM is already running", "Machine booted and ready"}));
+                        }
+                        cmd = "ping one.cluster -c 1";
                         result = executeCommand(cmd, path);
-                        assertEquals(true, containsAny(result, new String[]{"VM is already running", "Machine booted and ready"}));
-                        System.out.println("VM hadoop cluster is started - now run test");
+                        if(result.contains("1 received"))
+                            System.out.println("VM hadoop cluster is started - now run test");
+                        else {
+                            System.out.println("ERROR: VM hadoop cluster could NOT be started - please start it manually");
+                            bResult = false;
+                            bHadoopEnvironmentOK=false;
+                        }
                     } else {
                         System.out.println("VM hadoop cluster already started - now run test");
                     }
@@ -150,13 +196,18 @@ public class IntegrationEnvironmentSetup {
 
             }catch(Exception e){
                 e.printStackTrace();
+                System.out.println("ERROR : Integration environment could NOT be established - please do it manually !!");
                 bResult = false;
             }
             bHadoopIntegrationEnvironmentAlreadySetup = bResult;
         }
         else
-            System.out.println("- Hadoop Integration Environment already setup");
-
+            if(bHadoopEnvironmentOK)
+                System.out.println("- Hadoop Integration Environment already setup - SUCCESS");
+            else {
+                System.out.println("- Hadoop Integration Environment already setup - However ERROR occurred !!");
+                return false;
+            }
         return bResult;
     }
 
