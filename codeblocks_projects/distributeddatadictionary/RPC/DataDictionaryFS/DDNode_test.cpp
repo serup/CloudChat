@@ -14,6 +14,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/foreach.hpp>
 #define BOOST_FILESYSTEM_NO_DEPRECATED
+#include "zookeeper.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/thread.hpp>
 #include <rpc/pmap_clnt.h>
@@ -464,6 +465,25 @@ BOOST_AUTO_TEST_CASE(CHandlingServerRequestToClients_request)
 
 	cout << "TODO: RPCclient node will perform a status update and send back to server as response" << endl;
 	CHandlingServerRequestToClients SRC;	
+
+	BOOST_CHECK(true == false);
+
+	cout << "}" << endl;
+}
+
+BOOST_AUTO_TEST_CASE(zookeeper_listZNodes)
+{
+	cout << "BOOST_AUTO_TEST( zookeeper_listZNodes )\n{" << endl;
+
+	string servers;
+	Duration timeout;
+	string znode;
+	Option<Authentication> auth;
+	ZooKeeperStorageProcess zkstorageprocess(servers,timeout,znode,auth);
+
+
+
+
 
 	BOOST_CHECK(true == false);
 

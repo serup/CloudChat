@@ -27,6 +27,33 @@ using std::string;
 using std::tuple;
 using std::vector;
 
+namespace zookeeper {                                          
+
+	ACL _EVERYONE_READ_CREATOR_ALL_ACL[] = {                       
+		{ ZOO_PERM_READ, ZOO_ANYONE_ID_UNSAFE },                     
+		{ ZOO_PERM_ALL, ZOO_AUTH_IDS }                               
+	};                                                             
+
+
+	const ACL_vector EVERYONE_READ_CREATOR_ALL = {                 
+		2, _EVERYONE_READ_CREATOR_ALL_ACL                          
+	};                                                             
+
+
+	ACL _EVERYONE_CREATE_AND_READ_CREATOR_ALL_ACL[] = {            
+		{ ZOO_PERM_CREATE, ZOO_ANYONE_ID_UNSAFE },                   
+		{ ZOO_PERM_READ, ZOO_ANYONE_ID_UNSAFE },                     
+		{ ZOO_PERM_ALL, ZOO_AUTH_IDS }                               
+	};                                                             
+
+
+	const ACL_vector EVERYONE_CREATE_AND_READ_CREATOR_ALL = {      
+		3, _EVERYONE_CREATE_AND_READ_CREATOR_ALL_ACL               
+	};                                                             
+
+} // namespace zookeeper {                                     
+
+
 class ZooKeeperProcess : public Process<ZooKeeperProcess>
 {
 public:
@@ -649,3 +676,103 @@ bool ZooKeeper::retryable(int code)
 			UNREACHABLE(); // Make compiler happy.
 	}
 }
+
+//
+//ZooKeeperStorageProcess
+//
+ZooKeeperStorageProcess::ZooKeeperStorageProcess(
+		const string& _servers,
+		const Duration& _timeout,
+		const string& _znode,
+		const Option<Authentication>& _auth)
+	: ProcessBase(process::ID::generate("zookeeper-storage")),
+	servers(_servers),
+	timeout(_timeout),
+	znode(strings::remove(_znode, "/", strings::SUFFIX)),
+	auth(_auth),
+	acl(_auth.isSome()
+			? zookeeper::EVERYONE_READ_CREATOR_ALL
+			: ZOO_OPEN_ACL_UNSAFE),
+	watcher(nullptr),
+	zk(nullptr),
+	state(DISCONNECTED)
+{}
+
+ZooKeeperStorageProcess::~ZooKeeperStorageProcess()
+{
+	delete zk;
+	delete watcher;
+}
+
+void ZooKeeperStorageProcess::initialize() {
+	watcher = new ProcessWatcher<ZooKeeperStorageProcess>(self());
+	zk = new ZooKeeper(servers, timeout, watcher);
+}
+
+void ZooKeeperStorageProcess::connected(int64_t sessionId, bool reconnect)
+{
+	if (sessionId != zk->getSessionId()) {
+		return;
+	}
+
+	if (!reconnect) {
+		// Authenticate if necessary (and we are connected for the first
+		// time, or after a session expiration).
+		if (auth.isSome()) {
+			LOG(INFO) << "Authenticating with ZooKeeper using " << auth.get().scheme;
+
+			int code = zk->authenticate(auth.get().scheme, auth.get().credentials);
+
+			if (code != ZOK) { 
+				error = "Failed to authenticate with ZooKeeper: " + zk->message(code);
+				return;
+			}
+		}
+	}
+
+	state = CONNECTED;
+}
+				
+
+void ZooKeeperStorageProcess::reconnecting(int64_t sessionId)
+{
+	if (sessionId != zk->getSessionId()) {
+		return;
+	}
+
+	state = CONNECTING;
+}
+
+
+void ZooKeeperStorageProcess::expired(int64_t sessionId)
+{
+	if (sessionId != zk->getSessionId()) {
+		return;
+	}
+
+	state = DISCONNECTED;
+
+	delete zk;
+	zk = new ZooKeeper(servers, timeout, watcher);
+
+	state = CONNECTING;
+}
+
+
+void ZooKeeperStorageProcess::updated(int64_t sessionId, const string& path)
+{
+	LOG(FATAL) << "Unexpected ZooKeeper event";
+}
+
+
+void ZooKeeperStorageProcess::created(int64_t sessionId, const string& path)
+{
+	LOG(FATAL) << "Unexpected ZooKeeper event";
+}
+
+
+void ZooKeeperStorageProcess::deleted(int64_t sessionId, const string& path)
+{
+	LOG(FATAL) << "Unexpected ZooKeeper event";
+}
+
