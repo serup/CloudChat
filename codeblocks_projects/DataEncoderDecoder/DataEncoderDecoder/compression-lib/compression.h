@@ -21,6 +21,8 @@
 //#define u_int32_t unsigned _int32
 
 #include <cstring>
+#include <iostream>
+using namespace std;
 
 #define RtlZeroMemory(Destination,Length) memset((Destination),0,(Length))
 #define bzero RtlZeroMemory

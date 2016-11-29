@@ -14,8 +14,8 @@ public final class JavaWebSocketClientMessageHandler implements MessageHandler.W
     @Override
     public void onMessage(byte[] message) {
         System.out.println("Received message of length : "+message.length);
-        this.messageLatch.countDown();
         receivedData = message;
+        this.messageLatch.countDown();
     }
 
 }

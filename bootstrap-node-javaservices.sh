@@ -53,6 +53,10 @@ else
     echo "fetch g++ since somehow gcc default install does not get it"
     sudo apt-get install -yq g++
 
+    echo "install libraries so X11 forwarding will work for javaFX applications"
+    sudo apt-get install libgtk2.0-0 libgdk-pixbuf2.0-0 libfontconfig1 libxrender1 libx11-6 libglib2.0-0  libxft2 libfreetype6 libc6 zlib1g libpng12-0 libstdc++6-4.8-dbg-arm64-cross libgcc1 
+    sudo apt-get install libcanberra-gtk3-module
+
     echo "Fetch latest version of CloudChat"
     if [ -d "CloudChat" ]; then
       echo "CloudChat already installed"
@@ -65,6 +69,11 @@ else
       cd CloudChat
       git checkout serup
       echo "CloudChat installed"
+      echo "copy commit-msg - to enable git push from this entity"
+      curl -Lo .git/hooks/commit-msg http://review.gerrithub.io/tools/hooks/commit-msg
+#incase above fails - use old version of commit-msg script      
+#cp commit-msg .git/hooks/.
+      chmod u+x .git/hooks/commit-msg
       echo "Set up swapfile"
       sudo bash addswapfile.sh
       echo "build javaspring project"
@@ -72,7 +81,7 @@ else
       ./gradlew
       echo "********************************************************************************************************************"
       echo "use intellij idea editor - NB! inorder for x11 forward to work, then start like this: vagrant -XY ssh javaservices"
-      echo " start idea when loged in: /usr/bin/idea"
+      echo " start idea when loged in: /usr/bin/idea or sudo idea"
       echo "********************************************************************************************************************"
       sudo ln -s /opt/idea-2016.2/idea-IC-162.1121.32/bin/idea.sh /usr/bin/idea
     fi

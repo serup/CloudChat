@@ -27,6 +27,7 @@ info:
 	@ echo "websocketserver -- builds the scanvaserver"
 	@ echo "ringbuf         -- builds the Ringbuffer project"
 	@ echo "dfdfunc         -- builds DFDFunctions projects"
+	@ echo "dict            -- builds the DataDictionary project"
 	@ echo "total           -- builds ALL projects"
 	@ echo "------------------------"
 	@ echo " ex. : screen -m -d -S codeblocks make -f makefile_ubuntu.mak total &"
@@ -35,8 +36,8 @@ info:
 	@ echo "------------------------"
 
 
-all:	msgbegin compress2 dataencoder2 database2 websocketserver2 ringbuf2 dfdfunc2 dfdfunc3 dfdfunc4 dfdfunc5 msgend 	
-total:	msgbegin compress2 dataencoder2 database2 websocketserver2 ringbuf2 dfdfunc2 dfdfunc3 dfdfunc4 dfdfunc5 msgend 	
+all:	msgbegin compress2 dataencoder2 database2 websocketserver2 ringbuf2 dfdfunc2 dfdfunc3 dfdfunc4 dfdfunc5 dict2 msgend 	
+total:	msgbegin compress2 dataencoder2 database2 websocketserver2 ringbuf2 dfdfunc2 dfdfunc3 dfdfunc4 dfdfunc5 dict2 msgend 	
 
 clean:
 	@ echo "Cleaning..."
@@ -59,7 +60,7 @@ compress3:
 dataencoder: msgbegin dataencoder2 msgend	
 dataencoder2:
 	@ cd DataEncoderDecoder/DataEncoderDecoder/BoostUnitTest/DataEncoderTestSuite;\
-	make -f makefile_ubuntu.mak > ../../../../output2.txt
+	make -f makefile_ubuntu.mak _total > ../../../../output2.txt
 database: msgbegin database2 msgend
 database2:
 	@ cd DataBaseControl/BoostUnitTest/databasecontrol_testsuite;\
@@ -87,14 +88,20 @@ dfdfunc4:
 dfdfunc5:
 	@ cd DFDFunctions/1_1/BoostUnitTest/1_1_9_ProfileLogTestsuite;\
         make -f makefile_ubuntu.mak total > ../../../../output10.txt
+dict: msgbegin dict2 msgend
+dict2:
+	@ cd distributeddatadictionary;\
+        make -f makefile_ubuntu.mak depend > ../output11.txt;\
+		cd DDDAdmin_testsuite;\
+		make -f makefile_ubuntu.mak all > ../../output12.txt
 msgend:
 	@ echo "Build ended --"
 	@ echo "------------------------"
 	@ cat output*.txt > output.txt
 	@ (cat output.txt | grep 'Failed\|Passed\|---\|Test of\|OK\|FAIL' > result.txt; cat result.txt; (cat result.txt|grep -c 'OK';printf "")>pass.txt; (cat result.txt|grep -c 'FAIL';printf "")>fail.txt; echo Total; printf "Passed: ";cat pass.txt; printf "Failed: "; cat fail.txt ; echo ---------)>_total_result.txt; rm result.txt; rm fail.txt; rm pass.txt ; rm output.txt
 	@ cat _total_result.txt | sed '$$!N; /^\(.*\)\n\1$$/!P; D' > total_result.txt
-	@ rm _total_result.txt
-	@ rm output*.txt
+	-@ rm _total_result.txt
+	-@ rm output*.txt
 	@ cat total_result.txt
 
 
