@@ -601,9 +601,9 @@ BOOST_AUTO_TEST_CASE(integrationTest_connectTo_zookeeper_basic)
 	else {
 		cout << "check if watcher assigned new sessionId: " << endl;
 		//cout << "state : " << state2String(zoo_state(zh)) << endl;
-		//BOOST_CHECK(zoo_state(zh) == ZOO_CONNECTED_STATE);
 
 		bResult = WaitForEvent(2000);
+		BOOST_CHECK(zoo_state(zh) == ZOO_CONNECTED_STATE);
 		
 		zookeeper_close(zh);
 	}
