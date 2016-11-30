@@ -113,6 +113,7 @@ class ProcessWatcher : public Watcher
 				if (state == ZOO_CONNECTED_STATE) {
 					process::dispatch(pid, &T::connected, sessionId, reconnect);
 					reconnect = false;
+					fprintf(stdout,"ZOO_CONNECTED\n");
 				} else if (state == ZOO_CONNECTING_STATE) {
 					process::dispatch(pid, &T::reconnecting, sessionId);
 					reconnect = true;
