@@ -741,6 +741,7 @@ void ZooKeeperStorageProcess::connected(int64_t sessionId, bool reconnect)
 	}
 
 	state = CONNECTED;
+	cout << "Connection to zookeeper is established: " << zk->getSessionId() << endl;
 }
 				
 

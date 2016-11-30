@@ -484,19 +484,25 @@ BOOST_AUTO_TEST_CASE(integrationTest_connectTo_zookeeper_advanced)
 	zoo_set_log_stream(stdout); // redirect from stderr to stdout - meaning output will be within the output scope of this test, not outside as when using stderr
 
 	string servers = "localhost:2181";
-	Duration timeout = Seconds(2);
+	Duration timeout = Seconds(3);
 	string znode = "/";
 	Option<Authentication> auth;
 	ZooKeeperStorageProcess zkstorageprocess(servers,timeout,znode,auth);
 
-	cout<<"/*{{{*/"<<endl;   
 	zkstorageprocess.initialize();
-	zkstorageprocess.connected(1234, false);
-	cout<<"/*}}}*/"<<endl;   
 	
-	cout << "zk sessionId : " << zkstorageprocess.getSessionId() << endl;
-	cout << "zk state : " << zkstorageprocess.getState() << endl;
+	int c=0;
+	while(zkstorageprocess.getState() != ZooKeeperStorageProcess::State::CONNECTED) {
+		c++;
+		usleep(100);
+		if(c>10) break;
+	}
+	if(zkstorageprocess.getState() == ZooKeeperStorageProcess::State::CONNECTED)
+		cout << "Connected to ZooKeeper" << endl;
+	else
+		cout << "FAIL: Connection to ZooKeeper failed"<< endl;
 
+	
 	BOOST_CHECK(zkstorageprocess.getState() == ZooKeeperStorageProcess::State::CONNECTED);
 
 	cout << "}" << endl;

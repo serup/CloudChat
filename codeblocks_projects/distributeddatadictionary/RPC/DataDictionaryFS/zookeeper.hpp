@@ -23,6 +23,8 @@
 #include <process/pid.hpp>
 #include <process/future.hpp>
 #include <process/deferred.hpp>
+#include <boost/thread/condition.hpp>
+#include <boost/thread/mutex.hpp>
 
 class ZooKeeper;
 class ZooKeeperProcess;
@@ -111,9 +113,9 @@ class ProcessWatcher : public Watcher
 		{
 			if (type == ZOO_SESSION_EVENT) {
 				if (state == ZOO_CONNECTED_STATE) {
+					fprintf(stdout,"ZOO_CONNECTED\n");
 					process::dispatch(pid, &T::connected, sessionId, reconnect);
 					reconnect = false;
-					fprintf(stdout,"ZOO_CONNECTED\n");
 				} else if (state == ZOO_CONNECTING_STATE) {
 					process::dispatch(pid, &T::reconnecting, sessionId);
 					reconnect = true;
@@ -214,13 +216,12 @@ class ZooKeeperStorageProcess : public Process<ZooKeeperStorageProcess>
 
 
 		void initialize();
-		void connected(int64_t sessionId, bool reconnect);
+		virtual void connected(int64_t sessionId, bool reconnect);
 		void reconnecting(int64_t sessionId);
 		void expired(int64_t sessionId);
 		void updated(int64_t sessionId, const string& path);
 		void created(int64_t sessionId, const string& path);
 		void deleted(int64_t sessionId, const string& path);
-
 
 		
 		// ZooKeeper connection state.
@@ -234,6 +235,27 @@ class ZooKeeperStorageProcess : public Process<ZooKeeperStorageProcess>
 		int getState();
 		int64_t getSessionId();
 
+		bool waitforZooKeeperConnection(long timeout) 
+		{
+			bool bResult=false;
+			int c=0;
+			while(getState() != ZooKeeperStorageProcess::State::CONNECTED) {
+				c++;
+				usleep(1);
+				if(c>timeout) break;
+
+				if(getState() == ZooKeeperStorageProcess::State::CONNECTED) {
+					cout << "Connected to ZooKeeper" << endl;
+					bResult=true;
+					break;
+				}
+			}
+
+			if(getState() != ZooKeeperStorageProcess::State::CONNECTED) 
+				cout << "FAIL: Connection to ZooKeeper failed"<< endl;
+			return bResult;
+		}
+
 	private:
 		Watcher* watcher;
 		ZooKeeper* zk;
@@ -242,11 +264,7 @@ class ZooKeeperStorageProcess : public Process<ZooKeeperStorageProcess>
 		const string znode;
 		Option<Authentication> auth; // ZooKeeper authentication.
 		const ACL_vector acl; // Default ACL to use.
-		
-
-	
 		Option<string> error;
-
 };
 
 
