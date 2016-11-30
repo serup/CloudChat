@@ -474,6 +474,35 @@ BOOST_AUTO_TEST_CASE(CHandlingServerRequestToClients_request)
 	cout << "}" << endl;
 }
 
+BOOST_AUTO_TEST_CASE(integrationTest_connectTo_zookeeper_advanced)
+{
+	cout << "BOOST_AUTO_TEST( integrationTest_connectTo_zookeeper_advanced)\n{" << endl;
+	
+	//zoo_set_debug_level(ZOO_LOG_LEVEL_DEBUG);
+	zoo_set_debug_level(ZOO_LOG_LEVEL_WARN);
+	//zoo_set_log_stream(fopen("NULL", "w")); // no output
+	zoo_set_log_stream(stdout); // redirect from stderr to stdout - meaning output will be within the output scope of this test, not outside as when using stderr
+
+	string servers = "localhost:2181";
+	Duration timeout = Seconds(2);
+	string znode = "/";
+	Option<Authentication> auth;
+	ZooKeeperStorageProcess zkstorageprocess(servers,timeout,znode,auth);
+
+	cout<<"/*{{{*/"<<endl;   
+	zkstorageprocess.initialize();
+	zkstorageprocess.connected(1234, false);
+	cout<<"/*}}}*/"<<endl;   
+	
+	cout << "zk sessionId : " << zkstorageprocess.getSessionId() << endl;
+	cout << "zk state : " << zkstorageprocess.getState() << endl;
+
+	BOOST_CHECK(zkstorageprocess.getState() == ZooKeeperStorageProcess::State::CONNECTED);
+
+	cout << "}" << endl;
+}
+
+
 /** integrationTest_connectTo_zookeeper_basic :
  * for a better example please see : https://apache.googlesource.com/zookeeper/+/trunk/src/c/src/cli.c
  *
@@ -601,9 +630,9 @@ BOOST_AUTO_TEST_CASE(integrationTest_connectTo_zookeeper_basic)
 	else {
 		cout << "check if watcher assigned new sessionId: " << endl;
 		//cout << "state : " << state2String(zoo_state(zh)) << endl;
-		//BOOST_CHECK(zoo_state(zh) == ZOO_CONNECTED_STATE);
 
 		bResult = WaitForEvent(2000);
+		BOOST_CHECK(zoo_state(zh) == ZOO_CONNECTED_STATE);
 		
 		zookeeper_close(zh);
 	}
@@ -672,32 +701,6 @@ BOOST_AUTO_TEST_CASE(integrationTest_createZNode_zookeeper_basic)
 		//}
 	}
 	BOOST_CHECK(bResult==true);
-
-	cout << "}" << endl;
-}
-
-BOOST_AUTO_TEST_CASE(integrationTest_connectTo_zookeeper_advanced)
-{
-	cout << "BOOST_AUTO_TEST( integrationTest_connectTo_zookeeper )\n{" << endl;
-	
-	zoo_set_debug_level(ZOO_LOG_LEVEL_DEBUG);
-	//zoo_set_debug_level(ZOO_LOG_LEVEL_WARN);
-	//zoo_set_log_stream(fopen("NULL", "w"));
-
-	string servers = "localhost:2181";
-	Duration timeout = Seconds(1);
-	string znode = "/";
-	Option<Authentication> auth;
-	ZooKeeperStorageProcess zkstorageprocess(servers,timeout,znode,auth);
-
-	//cout<<"/*{{{*/"<<endl;   
-	zkstorageprocess.initialize();
-	zkstorageprocess.connected(1234, false);
-	cout << "zk sessionId : " << zkstorageprocess.getSessionId() << endl;
-	cout << "zk state : " << zkstorageprocess.getState() << endl;
-	//cout<<"/*}}}*/"<<endl;   
-
-	BOOST_CHECK(zkstorageprocess.getState() == ZooKeeperStorageProcess::State::CONNECTED);
 
 	cout << "}" << endl;
 }
