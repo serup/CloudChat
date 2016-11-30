@@ -474,6 +474,34 @@ BOOST_AUTO_TEST_CASE(CHandlingServerRequestToClients_request)
 	cout << "}" << endl;
 }
 
+BOOST_AUTO_TEST_CASE(integrationTest_connectTo_zookeeper_advanced)
+{
+	cout << "BOOST_AUTO_TEST( integrationTest_connectTo_zookeeper_advanced)\n{" << endl;
+	
+	zoo_set_debug_level(ZOO_LOG_LEVEL_DEBUG);
+	//zoo_set_debug_level(ZOO_LOG_LEVEL_WARN);
+	//zoo_set_log_stream(fopen("NULL", "w"));
+	zoo_set_log_stream(stdout);
+
+	string servers = "localhost:2181";
+	Duration timeout = Seconds(2);
+	string znode = "/";
+	Option<Authentication> auth;
+	ZooKeeperStorageProcess zkstorageprocess(servers,timeout,znode,auth);
+
+	//cout<<"/*{{{*/"<<endl;   
+	zkstorageprocess.initialize();
+	zkstorageprocess.connected(1234, false);
+	cout << "zk sessionId : " << zkstorageprocess.getSessionId() << endl;
+	cout << "zk state : " << zkstorageprocess.getState() << endl;
+	//cout<<"/*}}}*/"<<endl;   
+
+	BOOST_CHECK(zkstorageprocess.getState() == ZooKeeperStorageProcess::State::CONNECTED);
+
+	cout << "}" << endl;
+}
+
+
 /** integrationTest_connectTo_zookeeper_basic :
  * for a better example please see : https://apache.googlesource.com/zookeeper/+/trunk/src/c/src/cli.c
  *
@@ -672,32 +700,6 @@ BOOST_AUTO_TEST_CASE(integrationTest_createZNode_zookeeper_basic)
 		//}
 	}
 	BOOST_CHECK(bResult==true);
-
-	cout << "}" << endl;
-}
-
-BOOST_AUTO_TEST_CASE(integrationTest_connectTo_zookeeper_advanced)
-{
-	cout << "BOOST_AUTO_TEST( integrationTest_connectTo_zookeeper )\n{" << endl;
-	
-	zoo_set_debug_level(ZOO_LOG_LEVEL_DEBUG);
-	//zoo_set_debug_level(ZOO_LOG_LEVEL_WARN);
-	//zoo_set_log_stream(fopen("NULL", "w"));
-
-	string servers = "localhost:2181";
-	Duration timeout = Seconds(1);
-	string znode = "/";
-	Option<Authentication> auth;
-	ZooKeeperStorageProcess zkstorageprocess(servers,timeout,znode,auth);
-
-	//cout<<"/*{{{*/"<<endl;   
-	zkstorageprocess.initialize();
-	zkstorageprocess.connected(1234, false);
-	cout << "zk sessionId : " << zkstorageprocess.getSessionId() << endl;
-	cout << "zk state : " << zkstorageprocess.getState() << endl;
-	//cout<<"/*}}}*/"<<endl;   
-
-	BOOST_CHECK(zkstorageprocess.getState() == ZooKeeperStorageProcess::State::CONNECTED);
 
 	cout << "}" << endl;
 }
