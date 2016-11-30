@@ -13,8 +13,10 @@
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/foreach.hpp>
-#define BOOST_FILESYSTEM_NO_DEPRECATED
+#include <boost/thread/condition.hpp>
+#include <boost/thread/mutex.hpp>
 #include "zookeeper.hpp"
+#define BOOST_FILESYSTEM_NO_DEPRECATED
 #include <boost/filesystem.hpp>
 #include <boost/thread.hpp>
 #include <rpc/pmap_clnt.h>
@@ -482,8 +484,85 @@ char *foo_get_cert_once(char* id) { return 0; }
 
 /** Watcher function -- empty for this example, not something you should
  *  do in real code */
-void watcher(zhandle_t *zzh, int type, int state, const char *path,
-		void *watcherCtx) {}
+//void watcher(zhandle_t *zzh, int type, int state, const char *path,
+//		void *watcherCtx) {}
+
+#define _LL_CAST_ (long long)
+static zhandle_t *zh;
+static clientid_t myid;
+static const char *clientIdFile = 0;
+static const char* state2String(int state){
+	if (state == 0) //ZOO_CLOSED_STATE
+		return "CLOSED_STATE";
+	if (state == ZOO_CONNECTING_STATE)
+		return "CONNECTING_STATE";
+	if (state == ZOO_ASSOCIATING_STATE)
+		return "ASSOCIATING_STATE";
+	if (state == ZOO_CONNECTED_STATE)
+		return "CONNECTED_STATE";
+	//if (state == ZOO_READONLY_STATE)
+	//	return "READONLY_STATE";
+	if (state == ZOO_EXPIRED_SESSION_STATE)
+		return "EXPIRED_SESSION_STATE";
+	if (state == ZOO_AUTH_FAILED_STATE)
+		return "AUTH_FAILED_STATE";
+	return "INVALID_STATE";
+}
+static const char* type2String(int state){
+	if (state == ZOO_CREATED_EVENT)
+		return "CREATED_EVENT";
+	if (state == ZOO_DELETED_EVENT)
+		return "DELETED_EVENT";
+	if (state == ZOO_CHANGED_EVENT)
+		return "CHANGED_EVENT";
+	if (state == ZOO_CHILD_EVENT)
+		return "CHILD_EVENT";
+	if (state == ZOO_SESSION_EVENT)
+		return "SESSION_EVENT";
+	if (state == ZOO_NOTWATCHING_EVENT)
+		return "NOTWATCHING_EVENT";
+	return "UNKNOWN_EVENT_TYPE";
+}
+
+boost::condition cndSignalEvent;
+boost::mutex mtxEventWait;
+bool WaitForEvent(long milliseconds)
+{
+	boost::mutex::scoped_lock mtxWaitLock(mtxEventWait);
+	boost::posix_time::time_duration wait_duration = boost::posix_time::milliseconds(milliseconds); 
+	boost::system_time const timeout=boost::get_system_time()+wait_duration; 
+	return cndSignalEvent.timed_wait(mtxEventWait,timeout); // wait until signal Event 
+}
+
+// Watcher function -- basic handling
+void watcher(zhandle_t *zzh, int type, int state, const char *path, void* context)
+{
+	/* Be careful using zh here rather than zzh - as this may be mt code
+	 * the client lib may call the watcher before zookeeper_init returns */
+	fprintf(stdout, "Watcher %s state = %s", type2String(type), state2String(state));
+	if (path && strlen(path) > 0) {
+		fprintf(stderr, " for path %s", path);
+	}
+	fprintf(stdout, "\n");
+	if (type == ZOO_SESSION_EVENT) {
+		if (state == ZOO_CONNECTED_STATE) {
+			const clientid_t *id = zoo_client_id(zzh);
+			if (myid.client_id == 0 || myid.client_id != id->client_id) {
+				myid = *id;
+				fprintf(stdout, "Got a new session id: 0x%llx\n", _LL_CAST_ myid.client_id);
+				cndSignalEvent.notify_one(); // signal that connection was established
+			}
+		} else if (state == ZOO_AUTH_FAILED_STATE) {
+			fprintf(stdout, "Authentication failure. Shutting down...\n");
+			zookeeper_close(zzh);
+			zh=0;
+		} else if (state == ZOO_EXPIRED_SESSION_STATE) {
+			fprintf(stdout, "Session expired. Shutting down...\n");
+			zookeeper_close(zzh);
+			zh=0;
+		}
+	}
+}
 
 BOOST_AUTO_TEST_CASE(integrationTest_connectTo_zookeeper_basic)
 {
@@ -513,30 +592,84 @@ BOOST_AUTO_TEST_CASE(integrationTest_connectTo_zookeeper_basic)
 
 	//zoo_set_debug_level(ZOO_LOG_LEVEL_WARN);
 	zoo_set_log_stream(fopen("NULL", "w"));
-
+	zoo_deterministic_conn_order(1); // enable deterministic order
 	zh = zookeeper_init("localhost:2181", watcher, 10000, 0, 0, 0);
 	if (!zh) {
 		cout << "Error number: " << errno << endl;
 		bResult=false;
 	}
 	else {
-		if(zoo_add_auth(zh,"foo",p,strlen(p),0,0)!=ZOK)
-			bResult=false;
-		else {
+		cout << "check if watcher assigned new sessionId: " << endl;
+		//cout << "state : " << state2String(zoo_state(zh)) << endl;
+		//BOOST_CHECK(zoo_state(zh) == ZOO_CONNECTED_STATE);
+
+		bResult = WaitForEvent(2000);
+		
+		zookeeper_close(zh);
+	}
+	BOOST_CHECK(bResult==true);
+
+	cout << "}" << endl;
+}
+
+BOOST_AUTO_TEST_CASE(integrationTest_createZNode_zookeeper_basic)
+{
+	cout << "BOOST_AUTO_TEST( integrationTest_createZNode_zookeeper_basic )\n{" << endl;
+
+	bool bResult=true;
+
+	static zhandle_t *zh;
+
+
+	char buffer[512];
+	char p[2048];
+	char *cert=0;
+	char appId[64];
+
+	strcpy(appId, "example.foo_test");
+	cert = foo_get_cert_once(appId);
+	if(cert!=0) {
+		fprintf(stdout,
+				"Certificate for appid [%s] is [%s]\n",appId,cert);
+		strncpy(p,cert, sizeof(p)-1);
+		free(cert);
+	} else {
+		fprintf(stdout, "Certificate for appid [%s] not found\n",appId);
+		strcpy(p, "dummy");
+	}
+
+	//zoo_set_debug_level(ZOO_LOG_LEVEL_WARN);
+	zoo_set_log_stream(fopen("NULL", "w"));
+	zoo_deterministic_conn_order(1); // enable deterministic order
+	zh = zookeeper_init("localhost:2181", watcher, 10000, 0, 0, 0);
+	if (!zh) {
+		cout << "Error number: " << errno << endl;
+		bResult=false;
+	}
+	else {
+		//if(zoo_add_auth(zh,"foo",p,strlen(p),0,0)!=ZOK)
+		//	bResult=false;
+		//else {
 			struct ACL CREATE_ONLY_ACL[] = {{ZOO_PERM_CREATE, ZOO_AUTH_IDS}};
 			struct ACL_vector CREATE_ONLY = {1, CREATE_ONLY_ACL};
-			int rc = zoo_create(zh,"/xyz","value", 5, &CREATE_ONLY, ZOO_EPHEMERAL,
-					buffer, sizeof(buffer)-1);
-
-			int buflen= sizeof(buffer);
-			struct Stat stat;
-			rc = zoo_get(zh, "/xyz", 0, buffer, &buflen, &stat);
+			int rc = zoo_create(zh,"/xyz","value", 5, &CREATE_ONLY, ZOO_EPHEMERAL, buffer, sizeof(buffer)-1);
 			if (rc) {
-				fprintf(stdout, "Error %d for %s [%d] - could NOT get /xyz \n", rc, __FILE__, __LINE__);
+				fprintf(stdout, "Error %d for %s [%d] - could NOT create /xyz \n", rc, __FILE__, __LINE__);
 				bResult=false;
 			}
+			else {
+				cout << "Created /xyc znode" << endl;
+
+				int buflen= sizeof(buffer);
+				struct Stat stat;
+				rc = zoo_get(zh, "/xyz", 0, buffer, &buflen, &stat);
+				if (rc) {
+					fprintf(stdout, "Error %d for %s [%d] - could NOT get /xyz \n", rc, __FILE__, __LINE__);
+					bResult=false;
+				}
+			}
 			zookeeper_close(zh);
-		}
+		//}
 	}
 	BOOST_CHECK(bResult==true);
 
