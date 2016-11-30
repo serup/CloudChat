@@ -97,6 +97,18 @@ gitinfo:
 	@echo "  git apply --check fix_bug.patch"
 	@echo "third, if no errors during check, then apply patch with a signof : "
 	@echo "  git am --signoff < fix_bug.patch"
+	@echo ""
+	@echo "--------------------------------------"
+	@echo "Incase of replication stop towards GitHub from GerritHub then do following: "
+	@echo "How can I resume replication to GitHub ?"
+	@echo "If you pushed directly on GitHub, in order to allow Gerrit catching-up with the new commits on GitHub follow the steps below:"
+	@echo "--------------------------------------"
+	@echo "Clone the repository from Gerrit (git clone <GerritHub URL> master)"
+	@echo "Pull and merge the latest GitHub changes (git pull <GitHub URL> master)"
+	@echo "Push the merged branch to Gerrit (git push <GerritHub URL> master)"
+	@echo "NB! or do this : git remote add https://github.com/serup/CloudChat"
+	@echo "    then git pull upstream <branch>  and then git push origin <branch> - now replication should work again"
+	@echo "--------------------------------------"
 
 
 test:
