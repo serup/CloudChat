@@ -478,10 +478,10 @@ BOOST_AUTO_TEST_CASE(integrationTest_connectTo_zookeeper_advanced)
 {
 	cout << "BOOST_AUTO_TEST( integrationTest_connectTo_zookeeper_advanced)\n{" << endl;
 	
-	zoo_set_debug_level(ZOO_LOG_LEVEL_DEBUG);
-	//zoo_set_debug_level(ZOO_LOG_LEVEL_WARN);
-	//zoo_set_log_stream(fopen("NULL", "w"));
-	zoo_set_log_stream(stdout);
+	//zoo_set_debug_level(ZOO_LOG_LEVEL_DEBUG);
+	zoo_set_debug_level(ZOO_LOG_LEVEL_WARN);
+	//zoo_set_log_stream(fopen("NULL", "w")); // no output
+	zoo_set_log_stream(stdout); // redirect from stderr to stdout - meaning output will be within the output scope of this test, not outside as when using stderr
 
 	string servers = "localhost:2181";
 	Duration timeout = Seconds(2);
@@ -489,12 +489,13 @@ BOOST_AUTO_TEST_CASE(integrationTest_connectTo_zookeeper_advanced)
 	Option<Authentication> auth;
 	ZooKeeperStorageProcess zkstorageprocess(servers,timeout,znode,auth);
 
-	//cout<<"/*{{{*/"<<endl;   
+	cout<<"/*{{{*/"<<endl;   
 	zkstorageprocess.initialize();
 	zkstorageprocess.connected(1234, false);
+	cout<<"/*}}}*/"<<endl;   
+	
 	cout << "zk sessionId : " << zkstorageprocess.getSessionId() << endl;
 	cout << "zk state : " << zkstorageprocess.getState() << endl;
-	//cout<<"/*}}}*/"<<endl;   
 
 	BOOST_CHECK(zkstorageprocess.getState() == ZooKeeperStorageProcess::State::CONNECTED);
 
