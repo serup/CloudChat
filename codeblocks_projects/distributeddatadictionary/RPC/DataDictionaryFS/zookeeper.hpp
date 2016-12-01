@@ -25,7 +25,7 @@
 #include <process/deferred.hpp>
 #include <boost/thread/condition.hpp>
 #include <boost/thread/mutex.hpp>
-//#include "entry.pb.h"
+#include <boost/foreach.hpp>
 
 class ZooKeeper;
 class ZooKeeperProcess;
@@ -203,7 +203,6 @@ using std::queue;
 using std::string;
 using std::vector;
 
-//using internal::state::Entry;
 using zookeeper::Authentication;
 
 class ZooKeeperStorageProcess : public Process<ZooKeeperStorageProcess>
@@ -237,6 +236,7 @@ class ZooKeeperStorageProcess : public Process<ZooKeeperStorageProcess>
 		int getState();
 		int64_t getSessionId();
 
+		//DEPRECATED
 		bool waitforZooKeeperConnection(long timeout) 
 		{
 			bool bResult=false;
@@ -258,6 +258,7 @@ class ZooKeeperStorageProcess : public Process<ZooKeeperStorageProcess>
 			return bResult;
 		}
 
+		void showZNodes();
 
 		boost::condition cndSignalConnectionEstablished;
 		boost::mutex mtxConnectionWait;
@@ -292,6 +293,8 @@ class ZooKeeperStorage
 			return process->cndSignalConnectionEstablished.timed_wait(process->mtxConnectionWait,timeout); // wait until signal Event 
 		};
 
+
+		void showZNodes() { process->showZNodes(); };
 
 	private:
 		ZooKeeperStorageProcess* process;

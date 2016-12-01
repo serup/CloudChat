@@ -20,6 +20,8 @@
 #include <stout/unreachable.hpp>
 #include <stout/os/wait.hpp>
 
+#include <boost/algorithm/string.hpp> 
+
 using namespace process;
 
 using std::map;
@@ -707,13 +709,8 @@ ZooKeeperStorageProcess::~ZooKeeperStorageProcess()
 
 void ZooKeeperStorageProcess::initialize() {
 	boost::mutex::scoped_lock mtxWaitLock(mtxConnectionWait);
-	//boost::posix_time::time_duration wait_duration =  boost::posix_time::milliseconds(static_cast<long>(timeout.ms())); 
-	//boost::posix_time::time_duration wait_duration =  boost::posix_time::milliseconds(3000); 
-	//boost::system_time const _timeout=boost::get_system_time()+wait_duration; 
-
 	watcher = new ProcessWatcher<ZooKeeperStorageProcess>(self());
 	zk = new ZooKeeper(servers, timeout, watcher);
-
 }
 
 int ZooKeeperStorageProcess::getState() {
@@ -752,8 +749,7 @@ void ZooKeeperStorageProcess::connected(int64_t sessionId, bool reconnect)
 	state = CONNECTED;
 	cout << "Connection to zookeeper is established: " << zk->getSessionId() << endl;
 
-	cndSignalConnectionEstablished.notify_one();
-
+	cndSignalConnectionEstablished.notify_one(); // will signal to waitForConnection method - mutex 
 }
 				
 
@@ -781,6 +777,23 @@ void ZooKeeperStorageProcess::expired(int64_t sessionId)
 	state = CONNECTING;
 }
 
+void ZooKeeperStorageProcess::showZNodes()
+{
+	std::vector<std::string> results;
+
+	int rc = zk->getChildren("/", false, &results);
+	if (rc) {
+		fprintf(stderr, "Error %d for %s[%d]\n", rc, __FILE__, __LINE__);
+	}
+	else
+	{
+
+		BOOST_FOREACH(auto &child, results)
+		{
+			cout << "znode : " << child << endl;
+		}
+	}
+}
 
 void ZooKeeperStorageProcess::updated(int64_t sessionId, const string& path)
 {

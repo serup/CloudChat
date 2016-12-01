@@ -494,6 +494,25 @@ BOOST_AUTO_TEST_CASE(integrationTest_connectTo_zookeeper_advanced)
 	cout << "}" << endl;
 }
 
+BOOST_AUTO_TEST_CASE(integrationTest_listZNodes_zookeeper_advanced)
+{
+	cout << "BOOST_AUTO_TEST( integrationTest_listZNodes_zookeeper_advanced)\n{" << endl;
+	
+	zoo_set_log_stream(fopen("NULL", "w")); // no output
+	//zoo_set_log_stream(stdout); // redirect from stderr to stdout 
+
+	string servers = "localhost:2181";
+	Duration timeout = Seconds(4);
+	string znode = "/";
+	ZooKeeperStorage* storage = new ZooKeeperStorage(servers, timeout, znode);
+	BOOST_CHECK(storage->waitForConnection(1000) == true);
+
+	// now make a list of ZNodes
+	storage->showZNodes();
+
+	cout << "}" << endl;
+}
+
 
 /** integrationTest_connectTo_zookeeper_basic :
  * for a better example please see : https://apache.googlesource.com/zookeeper/+/trunk/src/c/src/cli.c
