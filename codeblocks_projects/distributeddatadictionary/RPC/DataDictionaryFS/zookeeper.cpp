@@ -519,6 +519,7 @@ ZooKeeper::ZooKeeper(
 {
 	process = new ZooKeeperProcess(this, servers, sessionTimeout, watcher);
 	spawn(process);
+
 }
 
 
@@ -705,8 +706,14 @@ ZooKeeperStorageProcess::~ZooKeeperStorageProcess()
 }
 
 void ZooKeeperStorageProcess::initialize() {
+	boost::mutex::scoped_lock mtxWaitLock(mtxConnectionWait);
+	//boost::posix_time::time_duration wait_duration =  boost::posix_time::milliseconds(static_cast<long>(timeout.ms())); 
+	//boost::posix_time::time_duration wait_duration =  boost::posix_time::milliseconds(3000); 
+	//boost::system_time const _timeout=boost::get_system_time()+wait_duration; 
+
 	watcher = new ProcessWatcher<ZooKeeperStorageProcess>(self());
 	zk = new ZooKeeper(servers, timeout, watcher);
+
 }
 
 int ZooKeeperStorageProcess::getState() {
@@ -721,7 +728,9 @@ int64_t ZooKeeperStorageProcess::getSessionId() {
 
 void ZooKeeperStorageProcess::connected(int64_t sessionId, bool reconnect)
 {
+	fprintf(stdout,"[ZooKeeperStorageProcess] connected called \n");
 	if (sessionId != zk->getSessionId()) {
+		fprintf(stdout,"FAIL: sessionid was not correct \n");
 		return;
 	}
 
@@ -742,6 +751,9 @@ void ZooKeeperStorageProcess::connected(int64_t sessionId, bool reconnect)
 
 	state = CONNECTED;
 	cout << "Connection to zookeeper is established: " << zk->getSessionId() << endl;
+
+	cndSignalConnectionEstablished.notify_one();
+
 }
 				
 
@@ -785,5 +797,49 @@ void ZooKeeperStorageProcess::created(int64_t sessionId, const string& path)
 void ZooKeeperStorageProcess::deleted(int64_t sessionId, const string& path)
 {
 	LOG(FATAL) << "Unexpected ZooKeeper event";
+}
+
+// ZooKeeperStorage - uses ZooKeeperStorageProcess
+//
+ZooKeeperStorage::ZooKeeperStorage(
+		const string& servers,
+		const Duration& timeout,
+		const string& znode,
+		const Option<Authentication>& auth)
+{
+	process = new ZooKeeperStorageProcess(servers, timeout, znode, auth);
+	spawn(process);
+}
+
+
+ZooKeeperStorage::~ZooKeeperStorage()
+{
+	terminate(process);
+	wait(process);
+	delete process;
+}
+
+
+Future<Option<Entry>> ZooKeeperStorage::get(const string& name)
+{
+	return dispatch(process, &ZooKeeperStorageProcess::get, name);
+}
+
+
+Future<bool> ZooKeeperStorage::set(const Entry& entry, const UUID& uuid)
+{
+	return dispatch(process, &ZooKeeperStorageProcess::set, entry, uuid);
+}
+
+
+Future<bool> ZooKeeperStorage::expunge(const Entry& entry)
+{
+	return dispatch(process, &ZooKeeperStorageProcess::expunge, entry);
+}
+
+
+Future<std::set<string>> ZooKeeperStorage::names()
+{
+	return dispatch(process, &ZooKeeperStorageProcess::names);
 }
 

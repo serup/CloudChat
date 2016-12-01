@@ -25,6 +25,7 @@
 #include <process/deferred.hpp>
 #include <boost/thread/condition.hpp>
 #include <boost/thread/mutex.hpp>
+#include "entry.pb.h"
 
 class ZooKeeper;
 class ZooKeeperProcess;
@@ -113,8 +114,9 @@ class ProcessWatcher : public Watcher
 		{
 			if (type == ZOO_SESSION_EVENT) {
 				if (state == ZOO_CONNECTED_STATE) {
-					fprintf(stdout,"ZOO_CONNECTED\n");
+					fprintf(stdout,"[ProcessWatcher] before ZOO_CONNECTED_STATE\n");
 					process::dispatch(pid, &T::connected, sessionId, reconnect);
+					fprintf(stdout,"[ProcessWatcher] after ZOO_CONNECTED_STATE\n");
 					reconnect = false;
 				} else if (state == ZOO_CONNECTING_STATE) {
 					process::dispatch(pid, &T::reconnecting, sessionId);
@@ -201,7 +203,7 @@ using std::queue;
 using std::string;
 using std::vector;
 
-//using internal::state::Entry;
+using internal::state::Entry;
 using zookeeper::Authentication;
 
 class ZooKeeperStorageProcess : public Process<ZooKeeperStorageProcess>
@@ -216,7 +218,7 @@ class ZooKeeperStorageProcess : public Process<ZooKeeperStorageProcess>
 
 
 		void initialize();
-		virtual void connected(int64_t sessionId, bool reconnect);
+		void connected(int64_t sessionId, bool reconnect);
 		void reconnecting(int64_t sessionId);
 		void expired(int64_t sessionId);
 		void updated(int64_t sessionId, const string& path);
@@ -256,6 +258,10 @@ class ZooKeeperStorageProcess : public Process<ZooKeeperStorageProcess>
 			return bResult;
 		}
 
+
+		boost::condition cndSignalConnectionEstablished;
+		boost::mutex mtxConnectionWait;
+
 	private:
 		Watcher* watcher;
 		ZooKeeper* zk;
@@ -267,6 +273,42 @@ class ZooKeeperStorageProcess : public Process<ZooKeeperStorageProcess>
 		Option<string> error;
 };
 
+
+class Storage
+{
+	public:
+		  Storage() {}
+		    virtual ~Storage() {}
+
+			virtual process::Future<Option<internal::state::Entry>> get( const std::string& name) = 0;
+			virtual process::Future<bool> set( const internal::state::Entry& entry, const UUID& uuid) = 0;
+
+			// Returns true if successfully expunged the variable from the state.
+			virtual process::Future<bool> expunge( const internal::state::Entry& entry) = 0;
+
+			// Returns the collection of variable names in the state.
+			virtual process::Future<std::set<std::string>> names() = 0;
+};
+
+class ZooKeeperStorage : public Storage
+{
+	public:
+		ZooKeeperStorage(
+				const std::string& servers,
+				const Duration& timeout,
+				const std::string& znode,
+				const Option<zookeeper::Authentication>& auth = None());
+		virtual ~ZooKeeperStorage();
+
+		// Storage implementation.
+		virtual process::Future<Option<internal::state::Entry>> get( const std::string& name);
+		virtual process::Future<bool> set( const internal::state::Entry& entry, const UUID& uuid);
+		virtual process::Future<bool> expunge(const internal::state::Entry& entry);
+		virtual process::Future<std::set<std::string>> names();
+
+	private:
+		ZooKeeperStorageProcess* process;
+};
 
 #endif /* __DDD_ZOOKEEPER_HPP__ */
 
