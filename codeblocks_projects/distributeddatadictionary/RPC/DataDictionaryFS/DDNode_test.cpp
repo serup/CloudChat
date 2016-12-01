@@ -486,20 +486,10 @@ BOOST_AUTO_TEST_CASE(integrationTest_connectTo_zookeeper_advanced)
 	string servers = "localhost:2181";
 	Duration timeout = Seconds(3);
 	string znode = "/";
-	Option<Authentication> auth;
-	ZooKeeperStorage zkstorage(servers,timeout,znode,auth);
+	Storage* storage = new ZooKeeperStorage(servers, timeout, znode);
+	//State* state = new State(storage);
 
-	//boost::posix_time::time_duration wait_duration =  boost::posix_time::milliseconds(10000); 
-	//boost::system_time const _timeout=boost::get_system_time()+wait_duration; 
-
-	//zkstorageprocess.initialize();
-	
-	// wait for connection to be signaled or timeout
-	//if(zkstorageprocess.cndSignalConnectionEstablished.timed_wait(zkstorageprocess.mtxConnectionWait, _timeout) == false)
-	//	fprintf(stdout, "FAIL: connection to zookeeper timed out - something is wrong [%s:%d] \n", __FILE__, __LINE__);
-	
-	//zkstorageprocess.waitforZooKeeperConnection(5000);
-	usleep(10000);
+	usleep(1000);
 
 //	BOOST_CHECK(zkstorageprocess.getState() == ZooKeeperStorageProcess::State::CONNECTED);
 

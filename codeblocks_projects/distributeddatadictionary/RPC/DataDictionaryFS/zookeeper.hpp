@@ -25,7 +25,7 @@
 #include <process/deferred.hpp>
 #include <boost/thread/condition.hpp>
 #include <boost/thread/mutex.hpp>
-#include "entry.pb.h"
+//#include "entry.pb.h"
 
 class ZooKeeper;
 class ZooKeeperProcess;
@@ -203,7 +203,7 @@ using std::queue;
 using std::string;
 using std::vector;
 
-using internal::state::Entry;
+//using internal::state::Entry;
 using zookeeper::Authentication;
 
 class ZooKeeperStorageProcess : public Process<ZooKeeperStorageProcess>
@@ -280,14 +280,14 @@ class Storage
 		  Storage() {}
 		    virtual ~Storage() {}
 
-			virtual process::Future<Option<internal::state::Entry>> get( const std::string& name) = 0;
-			virtual process::Future<bool> set( const internal::state::Entry& entry, const UUID& uuid) = 0;
+//			virtual process::Future<Option<internal::state::Entry>> get( const std::string& name) = 0;
+//			virtual process::Future<bool> set( const internal::state::Entry& entry, const UUID& uuid) = 0;
 
 			// Returns true if successfully expunged the variable from the state.
-			virtual process::Future<bool> expunge( const internal::state::Entry& entry) = 0;
+//			virtual process::Future<bool> expunge( const internal::state::Entry& entry) = 0;
 
 			// Returns the collection of variable names in the state.
-			virtual process::Future<std::set<std::string>> names() = 0;
+//			virtual process::Future<std::set<std::string>> names() = 0;
 };
 
 class ZooKeeperStorage : public Storage
@@ -301,10 +301,10 @@ class ZooKeeperStorage : public Storage
 		virtual ~ZooKeeperStorage();
 
 		// Storage implementation.
-		virtual process::Future<Option<internal::state::Entry>> get( const std::string& name);
-		virtual process::Future<bool> set( const internal::state::Entry& entry, const UUID& uuid);
-		virtual process::Future<bool> expunge(const internal::state::Entry& entry);
-		virtual process::Future<std::set<std::string>> names();
+//		virtual process::Future<Option<internal::state::Entry>> get( const std::string& name);
+//		virtual process::Future<bool> set( const internal::state::Entry& entry, const UUID& uuid);
+//		virtual process::Future<bool> expunge(const internal::state::Entry& entry);
+//		virtual process::Future<std::set<std::string>> names();
 
 	private:
 		ZooKeeperStorageProcess* process;

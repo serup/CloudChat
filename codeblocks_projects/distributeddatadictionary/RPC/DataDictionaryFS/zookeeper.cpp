@@ -819,7 +819,7 @@ ZooKeeperStorage::~ZooKeeperStorage()
 	delete process;
 }
 
-
+/*
 Future<Option<Entry>> ZooKeeperStorage::get(const string& name)
 {
 	return dispatch(process, &ZooKeeperStorageProcess::get, name);
@@ -837,9 +837,9 @@ Future<bool> ZooKeeperStorage::expunge(const Entry& entry)
 	return dispatch(process, &ZooKeeperStorageProcess::expunge, entry);
 }
 
-
 Future<std::set<string>> ZooKeeperStorage::names()
 {
 	return dispatch(process, &ZooKeeperStorageProcess::names);
 }
+*/
 
