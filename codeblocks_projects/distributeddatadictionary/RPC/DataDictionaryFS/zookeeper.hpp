@@ -274,23 +274,7 @@ class ZooKeeperStorageProcess : public Process<ZooKeeperStorageProcess>
 };
 
 
-class Storage
-{
-	public:
-		  Storage() {}
-		    virtual ~Storage() {}
-
-//			virtual process::Future<Option<internal::state::Entry>> get( const std::string& name) = 0;
-//			virtual process::Future<bool> set( const internal::state::Entry& entry, const UUID& uuid) = 0;
-
-			// Returns true if successfully expunged the variable from the state.
-//			virtual process::Future<bool> expunge( const internal::state::Entry& entry) = 0;
-
-			// Returns the collection of variable names in the state.
-//			virtual process::Future<std::set<std::string>> names() = 0;
-};
-
-class ZooKeeperStorage : public Storage
+class ZooKeeperStorage 
 {
 	public:
 		ZooKeeperStorage(
@@ -300,11 +284,14 @@ class ZooKeeperStorage : public Storage
 				const Option<zookeeper::Authentication>& auth = None());
 		virtual ~ZooKeeperStorage();
 
-		// Storage implementation.
-//		virtual process::Future<Option<internal::state::Entry>> get( const std::string& name);
-//		virtual process::Future<bool> set( const internal::state::Entry& entry, const UUID& uuid);
-//		virtual process::Future<bool> expunge(const internal::state::Entry& entry);
-//		virtual process::Future<std::set<std::string>> names();
+		bool waitForConnection(long milliseconds)
+		{
+			boost::mutex::scoped_lock mtxWaitLock(process->mtxConnectionWait);
+			boost::posix_time::time_duration wait_duration = boost::posix_time::milliseconds(milliseconds); 
+			boost::system_time const timeout=boost::get_system_time()+wait_duration; 
+			return process->cndSignalConnectionEstablished.timed_wait(process->mtxConnectionWait,timeout); // wait until signal Event 
+		};
+
 
 	private:
 		ZooKeeperStorageProcess* process;

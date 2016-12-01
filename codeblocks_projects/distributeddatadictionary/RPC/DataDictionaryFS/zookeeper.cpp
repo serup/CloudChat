@@ -819,27 +819,3 @@ ZooKeeperStorage::~ZooKeeperStorage()
 	delete process;
 }
 
-/*
-Future<Option<Entry>> ZooKeeperStorage::get(const string& name)
-{
-	return dispatch(process, &ZooKeeperStorageProcess::get, name);
-}
-
-
-Future<bool> ZooKeeperStorage::set(const Entry& entry, const UUID& uuid)
-{
-	return dispatch(process, &ZooKeeperStorageProcess::set, entry, uuid);
-}
-
-
-Future<bool> ZooKeeperStorage::expunge(const Entry& entry)
-{
-	return dispatch(process, &ZooKeeperStorageProcess::expunge, entry);
-}
-
-Future<std::set<string>> ZooKeeperStorage::names()
-{
-	return dispatch(process, &ZooKeeperStorageProcess::names);
-}
-*/
-

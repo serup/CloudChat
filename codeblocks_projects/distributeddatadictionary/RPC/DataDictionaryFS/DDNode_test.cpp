@@ -478,20 +478,18 @@ BOOST_AUTO_TEST_CASE(integrationTest_connectTo_zookeeper_advanced)
 {
 	cout << "BOOST_AUTO_TEST( integrationTest_connectTo_zookeeper_advanced)\n{" << endl;
 	
-	zoo_set_debug_level(ZOO_LOG_LEVEL_DEBUG);
+	//zoo_set_debug_level(ZOO_LOG_LEVEL_DEBUG);
 	//zoo_set_debug_level(ZOO_LOG_LEVEL_WARN);
-	//zoo_set_log_stream(fopen("NULL", "w")); // no output
-	zoo_set_log_stream(stdout); // redirect from stderr to stdout - meaning output will be within the output scope of this test, not outside as when using stderr
+	//zoo_set_debug_level(ZOO_LOG_LEVEL_INFO);
+	zoo_set_log_stream(fopen("NULL", "w")); // no output
+	//zoo_set_log_stream(stdout); // redirect from stderr to stdout - meaning output will be within the output scope of this test, not outside as when using stderr
 
 	string servers = "localhost:2181";
-	Duration timeout = Seconds(3);
+	Duration timeout = Seconds(4);
 	string znode = "/";
-	Storage* storage = new ZooKeeperStorage(servers, timeout, znode);
-	//State* state = new State(storage);
+	ZooKeeperStorage* storage = new ZooKeeperStorage(servers, timeout, znode);
 
-	usleep(1000);
-
-//	BOOST_CHECK(zkstorageprocess.getState() == ZooKeeperStorageProcess::State::CONNECTED);
+	BOOST_CHECK(storage->waitForConnection(1000) == true);
 
 	cout << "}" << endl;
 }
