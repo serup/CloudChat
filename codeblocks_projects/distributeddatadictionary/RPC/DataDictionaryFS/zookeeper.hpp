@@ -259,6 +259,7 @@ class ZooKeeperStorageProcess : public Process<ZooKeeperStorageProcess>
 		}
 
 		void showZNodes();
+		std::string ls(std::string path);
 
 		boost::condition cndSignalConnectionEstablished;
 		boost::mutex mtxConnectionWait;
@@ -295,6 +296,7 @@ class ZooKeeperStorage
 
 
 		void showZNodes() { process->showZNodes(); };
+		std::string ls(std::string path) { return process->ls(path); };
 
 	private:
 		ZooKeeperStorageProcess* process;

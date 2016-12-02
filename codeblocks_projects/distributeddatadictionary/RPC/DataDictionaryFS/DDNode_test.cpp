@@ -508,7 +508,10 @@ BOOST_AUTO_TEST_CASE(integrationTest_listZNodes_zookeeper_advanced)
 	BOOST_CHECK(storage->waitForConnection(1000) == true);
 
 	// now make a list of ZNodes
-	storage->showZNodes();
+	//storage->showZNodes();
+	std::string result = storage->ls("/");
+	cout << result;
+	BOOST_CHECK(result.find("zookeeper") == true); // zookeeper is default znode unless deleted it should be there
 
 	cout << "}" << endl;
 }

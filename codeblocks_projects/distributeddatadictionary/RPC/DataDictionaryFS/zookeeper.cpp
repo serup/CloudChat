@@ -787,12 +787,40 @@ void ZooKeeperStorageProcess::showZNodes()
 	}
 	else
 	{
-
+		cout << "[";
+		bool bfirst=true;
+		std::string tmp = "";
 		BOOST_FOREACH(auto &child, results)
 		{
-			cout << "znode : " << child << endl;
+			if(!bfirst) cout << ",";
+			cout << child;
+			tmp += child;
+			bfirst=false;
 		}
+		cout << "]" << endl;
 	}
+}
+
+
+std::string ZooKeeperStorageProcess::ls(std::string path)
+{
+	std::vector<std::string> results;
+	int rc = zk->getChildren(path, false, &results);
+	if (rc) {
+		fprintf(stderr, "Error %d for %s[%d]\n", rc, __FILE__, __LINE__);
+	}
+
+	std::string strResult="";
+	strResult += "[";
+	bool bfirst=true;
+	BOOST_FOREACH(auto &child, results)
+	{
+		if(!bfirst) strResult += ",";
+		strResult += child;
+		bfirst=false;
+	}
+	strResult += "]\n";
+	return strResult; 
 }
 
 void ZooKeeperStorageProcess::updated(int64_t sessionId, const string& path)
