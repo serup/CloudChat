@@ -40,8 +40,8 @@ NB! To develop on the server, then make changes ONLY to DDNode.cpp
 ----
 
 INTERNAL :
-A list with connected RPCclients with message ques (ringbuffers)                                  
-a RPCclient will connect to server and ask for requests from its message que                                  
+ZooKeeper is used to keep track of clients data - it contains metadata on where and what
+
 this construction is to allow RPCclients to be unflexible in their connection to server                       
 in other words a RPCclient should be able to die and others should together with server be able               
 to reestablish data lying on the downed RPCclient - this is done from redundant replicas of .BFi files        
@@ -52,6 +52,12 @@ read as :
   node1 backup on node2 and node3                                                                             
   node2 backup on node3 and node1                                                                             
   node3 backup on node1 and node2                                                                             
-	                                                                                                                
+
+NB! consider using redox/redis database cache together with zookeeper to handle transfer of bulk data between RPCnodes
+    info on redox : https://github.com/hmartiro/redox
+	                Redox is a C++ interface to the Redis key-value store that makes it easy to write applications that are both elegant and high-performance.
+	info on redis : https://redis.io/topics/introduction  
+	                Redis is an open source (BSD licensed), in-memory data structure store, used as a database, cache and message broker. 
+					It supports data structures such as strings, hashes, lists, sets, sorted sets with range queries, bitmaps, hyperloglogs and geospatial indexes with radius queries.
 ----
 

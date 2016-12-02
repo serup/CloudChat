@@ -112,6 +112,9 @@ The DDDAdmin will communicate with DDNode's using small DDDfs servers listening 
 </BlockEntity>   
 </BFi>
 -----
+
+NB! reconsider below necessity:
+
 definitions are in following dictionary files
 
 DD_<realmname>.xml      -- this is a total description of all attributes belonging to a specific realm
