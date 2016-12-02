@@ -104,6 +104,18 @@ if exists('$TMUX')
 	set title
 endif
 
+" use C-v to mark a column of numbers, then use C-a to increment them
+function! Incr()
+	let a = line('.') - line("'<")
+	let c = virtcol("'<")
+	if a > 0
+		execute 'normal! '.c.'|'.a."\<C-a>"
+	endif
+	normal `<
+endfunction
+vnoremap <C-a> :call Incr()<CR>
+
+
 let g:ConqueTerm_Color = 2         " 1: strip color after 200 lines, 2: always with color
 let g:ConqueTerm_CloseOnEnd = 1    " close conque when program ends running
 let g:ConqueTerm_StartMessages = 0 " display warning messages if conqueTerm is configured incorrectly 
