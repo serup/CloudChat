@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 echo "Clone stout library "
+mkdir -p ~/GitHub/mesos
 #cd ~GitHub; git clone https://github.com/3rdparty/stout.git
 cd ~/GitHub; git clone https://github.com/apache/mesos.git
 echo "- prereq - needed to build"

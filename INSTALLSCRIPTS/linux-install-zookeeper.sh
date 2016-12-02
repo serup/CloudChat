@@ -45,4 +45,5 @@ else
 	echo "- libgoogle-glog-dev already installed"
 fi
 
+echo "NB! also stout lib must be installed inorder for zookeeper to work!"
 
