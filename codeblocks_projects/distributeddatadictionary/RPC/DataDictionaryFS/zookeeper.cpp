@@ -823,6 +823,24 @@ std::string ZooKeeperStorageProcess::ls(std::string path)
 	return strResult; 
 }
 
+int ZooKeeperStorageProcess::create(const std::string& path,
+				const std::string& data,
+				const ACL_vector* acl,
+				int flags,
+				std::string* result,
+				bool recursive)
+{
+	if (path[0] != '/') {
+		fprintf(stderr, "Path must start with /, found: %s\n", path.c_str());
+		return -1;
+	}
+	
+	int resultCode = zk->create(path, data, *acl, flags, result, recursive);
+	if (resultCode<0)
+		cout << "FAIL: " << zk->message(resultCode) << endl;
+	return resultCode;
+}
+
 void ZooKeeperStorageProcess::updated(int64_t sessionId, const string& path)
 {
 	LOG(FATAL) << "Unexpected ZooKeeper event";
