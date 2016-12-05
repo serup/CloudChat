@@ -650,11 +650,12 @@ BOOST_AUTO_TEST_CASE(integrationTest_createZNode_zookeeper_basic)
 		//if(zoo_add_auth(zh,"foo",p,strlen(p),0,0)!=ZOK)
 		//	bResult=false;
 		//else {
-			struct ACL CREATE_ONLY_ACL[] = {{ZOO_PERM_CREATE, ZOO_AUTH_IDS}};
+			//struct ACL CREATE_ONLY_ACL[] = {{ZOO_PERM_CREATE, ZOO_AUTH_IDS}};
+			struct ACL CREATE_ONLY_ACL[] = {{ZOO_PERM_ALL, ZOO_ANYONE_ID_UNSAFE}};
 			struct ACL_vector CREATE_ONLY = {1, CREATE_ONLY_ACL};
 			int rc = zoo_create(zh,"/xyz","value", 5, &CREATE_ONLY, ZOO_EPHEMERAL, buffer, sizeof(buffer)-1);
 			if (rc) {
-				fprintf(stdout, "Error %d for %s [%d] - could NOT create /xyz \n", rc, __FILE__, __LINE__);
+				fprintf(stdout, "Error %d, %s for %s [%d] - could NOT create /xyz \n", rc, zerror(rc), __FILE__, __LINE__);
 				bResult=false;
 			}
 			else {
@@ -664,7 +665,7 @@ BOOST_AUTO_TEST_CASE(integrationTest_createZNode_zookeeper_basic)
 				struct Stat stat;
 				rc = zoo_get(zh, "/xyz", 0, buffer, &buflen, &stat);
 				if (rc) {
-					fprintf(stdout, "Error %d for %s [%d] - could NOT get /xyz \n", rc, __FILE__, __LINE__);
+					fprintf(stdout, "Error %d, %s  for %s [%d] - could NOT get /xyz \n", rc, zerror(rc), __FILE__, __LINE__);
 					bResult=false;
 				}
 			}
@@ -723,9 +724,9 @@ BOOST_AUTO_TEST_CASE(integrationTest_CreateZNode_zookeeper_advanced)
 {
 	cout << "BOOST_AUTO_TEST( integrationTest_CreateZNode_zookeeper_advanced)\n{" << endl;
 	
-	zoo_set_debug_level(ZOO_LOG_LEVEL_DEBUG);
-	//zoo_set_log_stream(fopen("NULL", "w")); // no output
-	zoo_set_log_stream(stdout); // redirect from stderr to stdout 
+	//zoo_set_debug_level(ZOO_LOG_LEVEL_DEBUG);
+	zoo_set_log_stream(fopen("NULL", "w")); // no output
+	//zoo_set_log_stream(stdout); // redirect from stderr to stdout 
 
 	// First connect to a local running ZooKeeper
 	string servers = "localhost:2181";
@@ -735,13 +736,14 @@ BOOST_AUTO_TEST_CASE(integrationTest_CreateZNode_zookeeper_advanced)
 	BOOST_CHECK(storage->waitForConnection(1000) == true);
 
 	// Second create a znode
-	struct ACL CREATE_ONLY_ACL[] = {{ZOO_PERM_CREATE, ZOO_AUTH_IDS}};
+	struct ACL CREATE_ONLY_ACL[] = {{ZOO_PERM_ALL, ZOO_ANYONE_ID_UNSAFE}};
 	struct ACL_vector CREATE_ONLY = {1, CREATE_ONLY_ACL};
 	//ACL_vector& acl;
 	int flags;
 	std::string* _result;
 	bool recursive=false;
-	int iResult = storage->create("/testNode123", "my_data", &CREATE_ONLY, ZOO_EPHEMERAL,_result,recursive);
+	std::string data = "my_data";
+	int iResult = storage->create("/testNode123", data, &CREATE_ONLY, ZOO_EPHEMERAL,_result,recursive);
 	cout << "create ZNode : " << iResult << endl;
 
 	// Third list znodes
