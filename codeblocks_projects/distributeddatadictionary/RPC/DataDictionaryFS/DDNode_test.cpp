@@ -740,19 +740,23 @@ BOOST_AUTO_TEST_CASE(integrationTest_CreateZNode_zookeeper_advanced)
 	struct ACL_vector CREATE_ONLY = {1, CREATE_ONLY_ACL};
 	//ACL_vector& acl;
 	int flags;
-	std::string* _result;
+	std::string _result = "";
 	bool recursive=false;
 	std::string data = "my_data";
-	int iResult = storage->create("/testNode123", data, &CREATE_ONLY, ZOO_EPHEMERAL,_result,recursive);
+	int iResult = storage->create("/testNode123", data, &CREATE_ONLY, ZOO_EPHEMERAL,&_result,recursive);
 	cout << "create ZNode : " << iResult << endl;
 
 	// Third list znodes
 	std::string result = storage->ls("/");
-	cout << result;
-	BOOST_CHECK(result.find("zookeeper") == true); // zookeeper is default znode unless deleted it should be there
+	cout << result << endl;
+	cout << "zookeeper found at pos: " << result.find("zookeeper") << endl;
+
+	BOOST_CHECK(result.find("zookeeper") > 0); // zookeeper is default znode unless deleted it should be there
+
+	cout << "testNode123 found at pos: " << result.find("testNode123") << endl;
 
 	// Fourth verify that created znode exists
-	BOOST_CHECK(result.find("testNode123") == true); // zookeeper is default znode unless deleted it should be there
+	BOOST_CHECK(result.find("testNode123") > 0); // zookeeper is default znode unless deleted it should be there
 	
 	cout << "}" << endl;
 }

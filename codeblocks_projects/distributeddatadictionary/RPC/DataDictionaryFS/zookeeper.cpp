@@ -815,7 +815,7 @@ std::string ZooKeeperStorageProcess::ls(std::string path)
 	bool bfirst=true;
 	BOOST_FOREACH(auto &child, results)
 	{
-		if(!bfirst) strResult += ",";
+		if(!bfirst) strResult += ", ";
 		strResult += child;
 		bfirst=false;
 	}
@@ -836,6 +836,8 @@ int ZooKeeperStorageProcess::create(const std::string& path,
 	}
 	
 	int resultCode = zk->create(path, data, *acl, flags, result, recursive);
+	//string tmpresult = "";
+	//int resultCode = zk->create(path, data, *acl, flags, &tmpresult, recursive);
 	if (resultCode<0)
 		cout << "FAIL: " << zk->message(resultCode) << endl;
 	return resultCode;
