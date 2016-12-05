@@ -236,30 +236,9 @@ class ZooKeeperStorageProcess : public Process<ZooKeeperStorageProcess>
 		int getState();
 		int64_t getSessionId();
 
-		//DEPRECATED
-		bool waitforZooKeeperConnection(long timeout) 
-		{
-			bool bResult=false;
-			int c=0;
-			while(getState() != ZooKeeperStorageProcess::State::CONNECTED) {
-				c++;
-				usleep(1);
-				if(c>timeout) break;
-
-				if(getState() == ZooKeeperStorageProcess::State::CONNECTED) {
-					cout << "Connected to ZooKeeper" << endl;
-					bResult=true;
-					break;
-				}
-			}
-
-			if(getState() != ZooKeeperStorageProcess::State::CONNECTED) 
-				cout << "FAIL: Connection to ZooKeeper failed"<< endl;
-			return bResult;
-		}
-
 		void showZNodes();
 		std::string ls(std::string path);
+		int create(const std::string& path,const std::string& data,const ACL_vector* acl,int flags,std::string* result,bool recursive = false); 
 
 		boost::condition cndSignalConnectionEstablished;
 		boost::mutex mtxConnectionWait;
@@ -297,6 +276,10 @@ class ZooKeeperStorage
 
 		void showZNodes() { process->showZNodes(); };
 		std::string ls(std::string path) { return process->ls(path); };
+		int create(const std::string& path,const std::string& data,const ACL_vector* acl,int flags,std::string* result,bool recursive) 
+		{
+			return process->create(path,data,acl,flags,result,recursive); 
+		};
 
 	private:
 		ZooKeeperStorageProcess* process;

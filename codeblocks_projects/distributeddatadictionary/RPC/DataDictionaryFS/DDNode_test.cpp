@@ -474,49 +474,6 @@ BOOST_AUTO_TEST_CASE(CHandlingServerRequestToClients_request)
 	cout << "}" << endl;
 }
 
-BOOST_AUTO_TEST_CASE(integrationTest_connectTo_zookeeper_advanced)
-{
-	cout << "BOOST_AUTO_TEST( integrationTest_connectTo_zookeeper_advanced)\n{" << endl;
-	
-	//zoo_set_debug_level(ZOO_LOG_LEVEL_DEBUG);
-	//zoo_set_debug_level(ZOO_LOG_LEVEL_WARN);
-	//zoo_set_debug_level(ZOO_LOG_LEVEL_INFO);
-	zoo_set_log_stream(fopen("NULL", "w")); // no output
-	//zoo_set_log_stream(stdout); // redirect from stderr to stdout - meaning output will be within the output scope of this test, not outside as when using stderr
-
-	string servers = "localhost:2181";
-	Duration timeout = Seconds(4);
-	string znode = "/";
-	ZooKeeperStorage* storage = new ZooKeeperStorage(servers, timeout, znode);
-
-	BOOST_CHECK(storage->waitForConnection(1000) == true);
-
-	cout << "}" << endl;
-}
-
-BOOST_AUTO_TEST_CASE(integrationTest_listZNodes_zookeeper_advanced)
-{
-	cout << "BOOST_AUTO_TEST( integrationTest_listZNodes_zookeeper_advanced)\n{" << endl;
-	
-	zoo_set_log_stream(fopen("NULL", "w")); // no output
-	//zoo_set_log_stream(stdout); // redirect from stderr to stdout 
-
-	string servers = "localhost:2181";
-	Duration timeout = Seconds(4);
-	string znode = "/";
-	ZooKeeperStorage* storage = new ZooKeeperStorage(servers, timeout, znode);
-	BOOST_CHECK(storage->waitForConnection(1000) == true);
-
-	// now make a list of ZNodes
-	//storage->showZNodes();
-	std::string result = storage->ls("/");
-	cout << result;
-	BOOST_CHECK(result.find("zookeeper") == true); // zookeeper is default znode unless deleted it should be there
-
-	cout << "}" << endl;
-}
-
-
 /** integrationTest_connectTo_zookeeper_basic :
  * for a better example please see : https://apache.googlesource.com/zookeeper/+/trunk/src/c/src/cli.c
  *
@@ -719,4 +676,82 @@ BOOST_AUTO_TEST_CASE(integrationTest_createZNode_zookeeper_basic)
 	cout << "}" << endl;
 }
 
+
+BOOST_AUTO_TEST_CASE(integrationTest_connectTo_zookeeper_advanced)
+{
+	cout << "BOOST_AUTO_TEST( integrationTest_connectTo_zookeeper_advanced)\n{" << endl;
+	
+	zoo_set_debug_level(ZOO_LOG_LEVEL_DEBUG);
+	//zoo_set_debug_level(ZOO_LOG_LEVEL_WARN);
+	//zoo_set_debug_level(ZOO_LOG_LEVEL_INFO);
+	//zoo_set_log_stream(fopen("NULL", "w")); // no output
+	zoo_set_log_stream(stdout); // redirect from stderr to stdout - meaning output will be within the output scope of this test, not outside as when using stderr
+
+	string servers = "localhost:2181";
+	Duration timeout = Seconds(4);
+	string znode = "/";
+	ZooKeeperStorage* storage = new ZooKeeperStorage(servers, timeout, znode);
+
+	BOOST_CHECK(storage->waitForConnection(1000) == true);
+
+	cout << "}" << endl;
+}
+
+BOOST_AUTO_TEST_CASE(integrationTest_listZNodes_zookeeper_advanced)
+{
+	cout << "BOOST_AUTO_TEST( integrationTest_listZNodes_zookeeper_advanced)\n{" << endl;
+	
+	zoo_set_log_stream(fopen("NULL", "w")); // no output
+	//zoo_set_log_stream(stdout); // redirect from stderr to stdout 
+
+	string servers = "localhost:2181";
+	Duration timeout = Seconds(4);
+	string znode = "/";
+	ZooKeeperStorage* storage = new ZooKeeperStorage(servers, timeout, znode);
+	BOOST_CHECK(storage->waitForConnection(1000) == true);
+
+	// now make a list of ZNodes
+	//storage->showZNodes();
+	std::string result = storage->ls("/");
+	cout << result;
+	BOOST_CHECK(result.find("zookeeper") == true); // zookeeper is default znode unless deleted it should be there
+
+	cout << "}" << endl;
+}
+
+BOOST_AUTO_TEST_CASE(integrationTest_CreateZNode_zookeeper_advanced)
+{
+	cout << "BOOST_AUTO_TEST( integrationTest_CreateZNode_zookeeper_advanced)\n{" << endl;
+	
+	zoo_set_debug_level(ZOO_LOG_LEVEL_DEBUG);
+	//zoo_set_log_stream(fopen("NULL", "w")); // no output
+	zoo_set_log_stream(stdout); // redirect from stderr to stdout 
+
+	// First connect to a local running ZooKeeper
+	string servers = "localhost:2181";
+	Duration timeout = Seconds(4);
+	string znode = "/";
+	ZooKeeperStorage* storage = new ZooKeeperStorage(servers, timeout, znode);
+	BOOST_CHECK(storage->waitForConnection(1000) == true);
+
+	// Second create a znode
+	struct ACL CREATE_ONLY_ACL[] = {{ZOO_PERM_CREATE, ZOO_AUTH_IDS}};
+	struct ACL_vector CREATE_ONLY = {1, CREATE_ONLY_ACL};
+	//ACL_vector& acl;
+	int flags;
+	std::string* _result;
+	bool recursive=false;
+	int iResult = storage->create("/testNode123", "my_data", &CREATE_ONLY, ZOO_EPHEMERAL,_result,recursive);
+	cout << "create ZNode : " << iResult << endl;
+
+	// Third list znodes
+	std::string result = storage->ls("/");
+	cout << result;
+	BOOST_CHECK(result.find("zookeeper") == true); // zookeeper is default znode unless deleted it should be there
+
+	// Fourth verify that created znode exists
+	BOOST_CHECK(result.find("testNode123") == true); // zookeeper is default znode unless deleted it should be there
+	
+	cout << "}" << endl;
+}
 
