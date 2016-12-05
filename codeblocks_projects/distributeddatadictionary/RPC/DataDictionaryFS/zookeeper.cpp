@@ -748,7 +748,6 @@ void ZooKeeperStorageProcess::connected(int64_t sessionId, bool reconnect)
 
 	state = CONNECTED;
 	cout << "Connection to zookeeper is established: " << zk->getSessionId() << endl;
-
 	cndSignalConnectionEstablished.notify_one(); // will signal to waitForConnection method - mutex 
 }
 				
@@ -758,7 +757,6 @@ void ZooKeeperStorageProcess::reconnecting(int64_t sessionId)
 	if (sessionId != zk->getSessionId()) {
 		return;
 	}
-
 	state = CONNECTING;
 }
 
@@ -768,12 +766,9 @@ void ZooKeeperStorageProcess::expired(int64_t sessionId)
 	if (sessionId != zk->getSessionId()) {
 		return;
 	}
-
 	state = DISCONNECTED;
-
 	delete zk;
 	zk = new ZooKeeper(servers, timeout, watcher);
-
 	state = CONNECTING;
 }
 
@@ -836,8 +831,6 @@ int ZooKeeperStorageProcess::create(const std::string& path,
 	}
 	
 	int resultCode = zk->create(path, data, *acl, flags, result, recursive);
-	//string tmpresult = "";
-	//int resultCode = zk->create(path, data, *acl, flags, &tmpresult, recursive);
 	if (resultCode<0)
 		cout << "FAIL: " << zk->message(resultCode) << endl;
 	return resultCode;
