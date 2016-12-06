@@ -60,7 +60,7 @@ establish lost .BFi files on a NEW node (when a new RPCclient is added with requ
 
 
                                                  DDDAdmin           [zookeeper Server]
-												    | zkClient
+                                                    | zkClient
      +------------------+---------------------------+-----------------------------------------------------------+
 	 |                  |                
    [RPCclient]      [RPCclient]
@@ -85,6 +85,23 @@ orders copy and move of these .BFi files ( it is important that the redundant re
 The DDDAdmin can ask via zookeeper a RPCclient to connect to it, it can then use this connection to handle request/reponses comming to and from the client.
 the zookeeper tells the RPCclient where to connect to DDDAdmin. The reason for this is to avoid having ALL clients connected to DDDAdmin at the same time,
 it is only necessary to have a tcp "pipe" from/to DDDAdmin and RPCclient when a transfer of administrative request/responses is handled
+
+Scenario: lets say that multiple DDDAdmin's are connected to zookeeper and asking RPCclients to do various things - inorder for this to work, then
+it must be zookeeper that decides when access is given and when a certain action is to be performed by the RPCclient
+
+
+NB! consider creating a virtual filehandle vector, meaning a vector containing filehandle from each .BFi file - this filehandle vector should be able to be used
+via a function in DDDAdmin library, as a normal filehandle would be used; example :
+
+[RPC]    [RPC]    [RPC]
+h--------h----^---h----------------------------------
+
+h = handle start of file in session on RPCclient 
+
+- a file could be inside a .BFi, however the RPC makes a session and creates a virtual file and h is handle to that file, so whenever user of that open session file is moving it, then RPCclient will move it and if it goes over current .BFi in current RPCclient, then it will tell zookeeper where next handle is and on which RPCclient and this is done in the virtual filehandle vector, so user can read from file as if it was a normal contiquous file
+
+^ = the virtual file handle for the large file
+
 
 
 
