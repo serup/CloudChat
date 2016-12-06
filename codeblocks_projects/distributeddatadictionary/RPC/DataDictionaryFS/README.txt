@@ -90,7 +90,8 @@ Scenario: lets say that multiple DDDAdmin's are connected to zookeeper and askin
 it must be zookeeper that decides when access is given and when a certain action is to be performed by the RPCclient
 
 
-NB! consider creating a virtual filehandle vector, meaning a vector containing filehandle from each .BFi file - this filehandle vector should be able to be used
+NB! consider creating a virtual filehandle vector, meaning a vector containing filehandle from each .BFi file 
+- this filehandle vector should be able to be used
 via a function in DDDAdmin library, as a normal filehandle would be used; example :
 
 [RPC]    [RPC]    [RPC]
@@ -98,9 +99,13 @@ h--------h----^---h----------------------------------
 
 h = handle start of file in session on RPCclient 
 
-- a file could be inside a .BFi, however the RPC makes a session and creates a virtual file and h is handle to that file, so whenever user of that open session file is moving it, then RPCclient will move it and if it goes over current .BFi in current RPCclient, then it will tell zookeeper where next handle is and on which RPCclient and this is done in the virtual filehandle vector, so user can read from file as if it was a normal contiquous file
+- a file could be inside a .BFi, however the RPC makes a session and creates a virtual file and h is 
+handle to that file, so whenever user of that open session file is moving it, then RPCclient will move
+it and if it goes over current .BFi in current RPCclient, then it will tell zookeeper where next handle is
+and on which RPCclient and this is done in the virtual filehandle vector, so user can read from file 
+as if it was a normal contiquous file
 
-^ = the virtual file handle for the large file
+^ = position of the virtual file handle for the large file
 
 
 
