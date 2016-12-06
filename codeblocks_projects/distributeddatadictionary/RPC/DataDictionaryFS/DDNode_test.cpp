@@ -757,3 +757,49 @@ BOOST_AUTO_TEST_CASE(integrationTest_CreateZNode_zookeeper_advanced)
 	cout << "}" << endl;
 }
 
+BOOST_AUTO_TEST_CASE(integrationTest_getZNode_zookeeper_advanced)
+{
+	cout << "BOOST_AUTO_TEST( integrationTest_getZNode_zookeeper_advanced)\n{" << endl;
+	
+	//zoo_set_debug_level(ZOO_LOG_LEVEL_DEBUG);
+	zoo_set_log_stream(fopen("NULL", "w")); // no output
+	//zoo_set_log_stream(stdout); // redirect from stderr to stdout 
+
+	// First connect to a local running ZooKeeper
+	string servers = "localhost:2181";
+	Duration timeout = Seconds(4);
+	string znode = "/";
+	ZooKeeperStorage* storage = new ZooKeeperStorage(servers, timeout, znode);
+	BOOST_CHECK(storage->waitForConnection(1000) == true);
+
+	// Second create a znode
+	int flags;
+	std::string _result = "";
+	bool recursive=false;
+	std::string data = "this is the data in the znode";
+	int iResult = storage->create("/testNode", data, &EVERYONE_CREATE_READ, ZOO_EPHEMERAL,&_result,recursive);
+	if(iResult>=0) {
+		// Third list znodes
+		std::string result = storage->ls("/");
+		cout << result << endl;
+		cout << "OK: zookeeper found at pos: " << result.find("zookeeper") << endl;
+		BOOST_CHECK(result.find("zookeeper") > 0); // zookeeper is default znode unless deleted it should be there
+		cout << "OK: testNode found at pos: " << result.find("testNode") << endl;
+		// Fourth verify that created znode exists
+		BOOST_CHECK(result.find("testNode") > 0); // zookeeper is default znode unless deleted it should be there
+		// Fifth get the znode
+		std::string resultData = "";
+		Stat status;
+		storage->get("/testNode", false, &resultData, &status);
+		BOOST_CHECK(resultData == data);
+		if(resultData == data)
+			cout << "OK: get from znode : " << resultData << endl;
+		else
+			cout << "FAIL: get from znode : " << resultData << " is not equal to " << data << endl;
+	}
+	else {
+		cout << "FAIL: could NOT create a ZNODE " << endl;
+		BOOST_CHECK(true == false);
+	}
+	cout << "}" << endl;
+}
