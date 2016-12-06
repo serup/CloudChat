@@ -85,6 +85,8 @@ extern const ACL_vector EVERYONE_READ_CREATOR_ALL;
 // we're the only authenticated user to mutate our nodes.
 extern const ACL_vector EVERYONE_CREATE_AND_READ_CREATOR_ALL;
 
+extern const ACL_vector EVERYONE_CREATE_READ;
+
 inline std::ostream& operator<<(
 		std::ostream& stream,
 		const Authentication& authentication)
