@@ -53,6 +53,41 @@ read as :
   node2 backup on node3 and node1                                                                             
   node3 backup on node1 and node2                                                                             
 
+when a RPCclient connects to DDDAdmin, then it also connects to ZooKeeper and adds itself in EPHEMERAL mode, with information on which files it has, this
+means when it disconnects other nodes will no longer see info in ZooKeeper about that client, and a new leader of ZooKeeper nodes will be elected and an
+event will cause a warning, and if node (RPCclient) does not come back, then a recovery should be atomatically started, where replicas will be used to re-
+establish lost .BFi files on a NEW node (when a new RPCclient is added with request to takeover old RPCclient)
+
+
+                                                 DDDAdmin           [zookeeper Server]
+												    | zkClient
+     +------------------+---------------------------+-----------------------------------------------------------+
+	 |                  |                
+   [RPCclient]      [RPCclient]
+      zkClient         zkClient
+
+
+each file on a RPCclient node is accessed via zookeeper, when creating, updating, moving or deleting - the zookeeper
+keeps track of where the file is and this info is stored in the zookeeper filesystem - minimum metadata
+
+When a RPCclient wants to create a file it does so using connection with DDDAdmin and via zookeeper connection to zookeeper Server
+The RPCclient registers to DDDAmin and DDDAdmin stores info in zookeeper about the registration. The DDDAdmin monitors all
+RPCclients via zookeeper, and so it is the DDDAdmin's responsibility to make sure that the integrity of the system is without errors
+
+When Distributed Data Dictionary is running, then it is possible to use a DDDAdmin to connect to zookeeper and ask info about the integrity of the 
+Distributed Data Dictionary (all the RPCclient nodes and their data files .BFi) - also it is possible to manually move .BFi files around, however
+it is DDDAdmin's prime function to move these files around - each RPCclient will give info to DDDAdmin via zookeeper or via Request/Response tcp calls
+
+Scenario: lets say that a large file is stored in multiple .BFi files, then the DDDAdmin is notified about this new creation and orders some of the files 
+to be distributed to other nodes (RPCclients), thereby making sure that the replica area and footprint of file on nodes is handled, meaning that it
+orders copy and move of these .BFi files ( it is important that the redundant replicas of .BFi is put in correct places, and that zookeeper is updated )
+
+The DDDAdmin can ask via zookeeper a RPCclient to connect to it, it can then use this connection to handle request/reponses comming to and from the client.
+the zookeeper tells the RPCclient where to connect to DDDAdmin. The reason for this is to avoid having ALL clients connected to DDDAdmin at the same time,
+it is only necessary to have a tcp "pipe" from/to DDDAdmin and RPCclient when a transfer of administrative request/responses is handled
+
+
+
 NB! consider using redox/redis database cache together with zookeeper to handle transfer of bulk data between RPCnodes
     info on redox : https://github.com/hmartiro/redox
 	                Redox is a C++ interface to the Redis key-value store that makes it easy to write applications that are both elegant and high-performance.
