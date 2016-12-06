@@ -241,6 +241,8 @@ class ZooKeeperStorageProcess : public Process<ZooKeeperStorageProcess>
 		void showZNodes();
 		std::string ls(std::string path);
 		int create(const std::string& path,const std::string& data,const ACL_vector* acl,int flags,std::string* result,bool recursive = false); 
+		int get( const std::string& path, bool watch, std::string* result, Stat* stat);
+
 
 		boost::condition cndSignalConnectionEstablished;
 		boost::mutex mtxConnectionWait;
@@ -282,6 +284,11 @@ class ZooKeeperStorage
 		{
 			return process->create(path,data,acl,flags,result,recursive); 
 		};
+
+		int get( const std::string& path, bool watch, std::string* result, Stat* stat)
+		{
+			return process->get(path,watch,result,stat);
+		}
 
 	private:
 		ZooKeeperStorageProcess* process;

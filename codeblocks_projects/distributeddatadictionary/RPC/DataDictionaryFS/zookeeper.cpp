@@ -52,7 +52,7 @@ namespace zookeeper {
 		3, _EVERYONE_CREATE_AND_READ_CREATOR_ALL_ACL               
 	};                                                             
 
-    ACL _CREATE_READ_ACL[] = {{ZOO_PERM_ALL, ZOO_ANYONE_ID_UNSAFE}};
+	ACL _CREATE_READ_ACL[] = {{ZOO_PERM_ALL, ZOO_ANYONE_ID_UNSAFE}};
 	
 	const ACL_vector EVERYONE_CREATE_READ = {
 		1, _CREATE_READ_ACL
@@ -840,6 +840,19 @@ int ZooKeeperStorageProcess::create(const std::string& path,
 		cout << "FAIL: " << zk->message(resultCode) << endl;
 	return resultCode;
 }
+		
+int ZooKeeperStorageProcess::get( const std::string& path, bool watch, std::string* result, Stat* stat)
+{
+	if (path[0] != '/') {
+		fprintf(stderr, "Path must start with /, found: %s\n", path.c_str());
+		return -1;
+	}
+	int resultCode = zk->get(path, watch, result, stat);
+	if (resultCode<0)
+		cout << "FAIL: " << zk->message(resultCode) << endl;
+	return resultCode;
+}
+
 
 void ZooKeeperStorageProcess::updated(int64_t sessionId, const string& path)
 {
