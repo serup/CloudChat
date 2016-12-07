@@ -18,8 +18,8 @@ class RPCclient
 	public:
 		DDRequest request;
 
-		RPCclient() { };
-		~RPCclient() { };
+		RPCclient() { pZkStorage = NULL; };
+		~RPCclient() { delete pZkStorage; };
 		DDRequest createDDRequest(std::unique_ptr<CDataEncoder> &encoder_ptr, int transID, enum requestType reqtype);
 		bool sendRequestTo(DDRequest req, string host);
 		bool sendRequestTo(string host);
@@ -32,6 +32,7 @@ class RPCclient
 
 	private:
 		bool handleServerRequest(DDRequest req); // response from server could be a request
+		ZooKeeperStorage* pZkStorage;
 
 
 };
