@@ -1,5 +1,4 @@
 #include "RPCclient.h"
-#include "zookeeper.hpp"
 
 // based upon automatic generated DDDfs_client.cpp <-- generated from DDDfs.x
 
