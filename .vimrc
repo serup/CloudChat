@@ -79,6 +79,7 @@ noremap <silent> <leader>ld :Linediff<CR>
 noremap <silent> <leader>lc `.
 noremap <silent> <leader>li `^
 noremap <silent> <leader>db :ConqueGdb<CR>
+noremap <silent> <leader>nw :set nowrap<CR>
 noremap <leader>xml :so xml_project_output.vim<CR>
 noremap <leader>M <C-W>\| <C-W>_
 noremap <leader>m <C-W>=
