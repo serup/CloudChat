@@ -808,7 +808,7 @@ BOOST_AUTO_TEST_CASE(integrationTest_RPCclient_connectTo_ZooKeeper)
 {
 	cout << "BOOST_AUTO_TEST( integrationTest_RPCclient_connectTo_ZooKeeper )\n{" << endl;
 
-	long TIMEOUT_IN_SECONDS = 4;
+	long TIMEOUT_IN_SECONDS = 8;
 
 	// instanciate RPCclient
 	RPCclient client;

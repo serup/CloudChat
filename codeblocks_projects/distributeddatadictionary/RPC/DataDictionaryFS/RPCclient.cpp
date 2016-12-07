@@ -149,8 +149,20 @@ bool RPCclient::connectToZooKeeper(std::string servers, long timeoutseconds, std
 	string _servers = servers;
 	Duration timeout = Seconds(timeoutseconds);
 	string znode = znodepath;
-	ZooKeeperStorage* storage = new ZooKeeperStorage(_servers, timeout, znode);
-	bIsConnected = storage->waitForConnection(timeoutseconds); 	
+	if(pZkStorage!=NULL) {
+		fprintf(stderr, "WARNING %s,%d ZooKeeper Instance already present - it will be overwritten - try again \n", __FILE__, __LINE__);
+	    delete pZkStorage;
+		pZkStorage = NULL;
+	}
+
+	pZkStorage = new ZooKeeperStorage(_servers, timeout, znode);
+	bIsConnected = pZkStorage->waitForConnection(timeoutseconds); 	
+	if(!bIsConnected) {
+		fprintf(stdout, "INFO: ZooKeeper not connected yet, wait one more time %s,%d \n", __FILE__, __LINE__);
+		bIsConnected = pZkStorage->waitForConnection(timeoutseconds); 	
+		if(!bIsConnected)
+			fprintf(stderr, "ERROR: Time out! failed to connect to a ZooKeeper Server, %s,%d - try again \n", __FILE__, __LINE__);
+	}
 
 	return bIsConnected;
 }
