@@ -847,44 +847,52 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::
 
 pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::findAndAssembleAttributFromBFiFiles( std::string attributpath, boost::filesystem::path _targetDir) 
 {
-	bool bResult=false;
+	bool bFound=false;
 	std::list< pair<seqSpan, std::vector<assembledElements>> > listOfAssembledAttributes;
 	std::vector<unsigned char> ElementData;
 	pair<std::string, std::vector<unsigned char>> resultAttributPair;
 
+	listOfAssembledAttributes = fetchAttributBlocksFromBFiFiles(attributpath, _targetDir);
+	bFound = (listOfAssembledAttributes.size() > 0 ) ? true : false;
+	if(bFound==true) {
+		if(mergeRecords(filterAndSortAssembledRecords(attributpath, listOfAssembledAttributes), ElementData))
+			resultAttributPair = make_pair(attributpath,ElementData); // create assemble data result pair
+	}
+	return resultAttributPair;
+}
+
+std::list< pair<seqSpan, std::vector<assembledElements>> > CDataDictionaryControl::fetchAttributBlocksFromBFiFiles(std::string attributpath, boost::filesystem::path _targetDir)
+{
+	bool bFound=false;
+	std::list< pair<seqSpan, std::vector<assembledElements>> > listOfAssembledAttributes;
 	boost::filesystem::path targetDir( _targetDir );
 	boost::filesystem::recursive_directory_iterator iter(targetDir), eod;
 
 	BOOST_FOREACH(boost::filesystem::path const& i, make_pair(iter, eod))
 	{
 		if (is_regular_file(i)){
-
 			bool bExtBFi=false;
 			bExtBFi = (boost::filesystem::extension(i.string()) == ".BFi");
 			if(bExtBFi) {
 				cout << "file : " << i << endl;
 				cout << "*{{{" << endl;
-
 				std::ifstream is (i.string());
 				ptree pt;
 				try{
 					read_xml(is, pt);
 					if(addAttributFromBFiToList(pt, listOfAssembledAttributes))
-						bResult=true;
+						bFound=true;
 
 				}catch(...) { cout << "FAIL: EXCEPTION trying to read xml file : " << i.string(); }
-
 				cout << "*}}}" << endl;
 			}
-			
 		}
 	}
-	if(bResult==true) {
-		if(mergeRecords(filterAndSortAssembledRecords(attributpath, listOfAssembledAttributes), ElementData))
-			resultAttributPair = make_pair(attributpath,ElementData); // create assemble data result pair
 
-	}
-	return resultAttributPair;
+	if(!bFound)
+		cout << "WARNING: no attributs found in .BFi files : " << __FILE__ << __LINE__ << endl;
+
+	return listOfAssembledAttributes;
 }
 
 bool CDataDictionaryControl::addAttributFromBFiToList(ptree pt, std::list< pair<seqSpan, std::vector<assembledElements>> > &listOfAssembledAttributes)
