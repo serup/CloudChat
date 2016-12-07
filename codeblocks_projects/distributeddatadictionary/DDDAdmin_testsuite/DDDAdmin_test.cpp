@@ -2911,7 +2911,6 @@ BOOST_AUTO_TEST_CASE( fetchAttributFrom2BFi)
 
 
 	cout << "________________________________________" << endl;
-
 	cout << "Fetch attribut from .BFi file " << endl;
 
 	cout << "INFO: ftgt should beable to assemble across multiple .BFi files " << endl;
@@ -2921,29 +2920,8 @@ BOOST_AUTO_TEST_CASE( fetchAttributFrom2BFi)
 	cout << "Original data : " << endl;
 	CUtils::showDataBlock(true,true,attributValue);
 
-//	// DEPRECATED
-//	cout << "/*{{{*/" << endl;
-//	for(int n=0;n<attributValue.size(); n++)
-//	{
-//		fprintf(stdout, "%02X%s", attributValue[n], ( n + 1 ) % 16 == 0 ? "\n" : " " );
-//	}
-//	cout << "/*}}}*/" << endl;
-
 	cout << "Result data : " << endl;
 	bool bFoundError = CUtils::showDataBlockDiff(true,true,pairAttribut.second, attributValue);
-
-//	// DEPRECATED
-//	cout << "/*{{{*/" << endl;
-//	bool bFoundError=false;
-//	for(int n=0;n<pairAttribut.second.size(); n++)
-//	{
-//		if( pairAttribut.second[n] != attributValue[n] ){
-//			cout << "FAIL:";	
-//			bFoundError=true;
-//		}
-//		fprintf(stdout, "%02X%s", pairAttribut.second[n], ( n + 1 ) % 16 == 0 ? "\n" : " " );
-//	}
-//	cout << "/*}}}*/" << endl;
 
 	if(!bFoundError) cout << "INFO: bytes assembled are equal to original " << endl;
 	BOOST_CHECK(bFoundError == false);
@@ -2953,11 +2931,7 @@ BOOST_AUTO_TEST_CASE( fetchAttributFrom2BFi)
 	if(missingbytes > 0) cout << "FAIL: Missing byte(s) : " << missingbytes << endl;
 	BOOST_CHECK(attributValue.size() == pairAttribut.second.size());
 
-	//sort before compare
-	//std::sort(attributValue.begin(), attributValue.end());
-
 	BOOST_CHECK(attributValue == pairAttribut.second); // verify that retrieved value is same as stored
-
 	cout << "________________________________________" << endl;
 
 	// Clean up section - must be in bottom
