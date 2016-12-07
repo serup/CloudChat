@@ -1,4 +1,5 @@
 #include "RPCclient.h"
+#include "zookeeper.hpp"
 
 // based upon automatic generated DDDfs_client.cpp <-- generated from DDDfs.x
 
@@ -142,4 +143,16 @@ bool RPCclient::handleResponse(std::unique_ptr<CDataEncoder> &decoder_ptr)
 	return bDecoded;
 }
 
+bool RPCclient::connectToZooKeeper(std::string servers, long timeoutseconds, std::string znodepath)
+{
+	bool bIsConnected=false;
+
+	string _servers = servers;
+	Duration timeout = Seconds(timeoutseconds);
+	string znode = znodepath;
+	ZooKeeperStorage* storage = new ZooKeeperStorage(_servers, timeout, znode);
+	bIsConnected = storage->waitForConnection(timeoutseconds); 	
+
+	return bIsConnected;
+}
 

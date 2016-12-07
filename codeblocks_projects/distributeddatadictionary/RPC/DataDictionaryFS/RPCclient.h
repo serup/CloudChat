@@ -1,5 +1,6 @@
 #ifndef RPCCLIENT_H
 #define RPCCLIENT_H
+#include "zookeeper.hpp"
 #include "DDDfs.h"
 #include "DED.h"
 #include <memory>
@@ -26,7 +27,9 @@ class RPCclient
 		bool sendRequestTo(string host, std::unique_ptr<CDataEncoder> &encoder_ptr, int transID, enum requestType reqtype);
 		bool sendRequestTo(DDRequest req, const char *host,  void(*fptr)(std::unique_ptr<CDataEncoder> &decoder_ptr), std::string tcpORudp );
 		bool handleResponse(std::unique_ptr<CDataEncoder> &decoder_ptr);	
-		
+	
+		bool connectToZooKeeper(std::string servers, long timeoutseconds, std::string znodepath);
+
 	private:
 		bool handleServerRequest(DDRequest req); // response from server could be a request
 
