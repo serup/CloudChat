@@ -803,3 +803,22 @@ BOOST_AUTO_TEST_CASE(integrationTest_getZNode_zookeeper_advanced)
 	}
 	cout << "}" << endl;
 }
+
+BOOST_AUTO_TEST_CASE(integrationTest_RPCclient_connectTo_ZooKeeper)
+{
+	cout << "BOOST_AUTO_TEST( integrationTest_RPCclient_connectTo_ZooKeeper )\n{" << endl;
+
+	long TIMEOUT_IN_SECONDS = 4;
+
+	// instanciate RPCclient
+	RPCclient client;
+
+	// connect to ZooKeeper
+	bool bIsConnected = client.connectToZooKeeper("localhost:2181", TIMEOUT_IN_SECONDS, "/");
+
+
+	BOOST_CHECK(bIsConnected);
+
+	cout << "}" << endl;
+}
+
