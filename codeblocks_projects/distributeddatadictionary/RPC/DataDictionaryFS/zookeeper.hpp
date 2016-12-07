@@ -1,8 +1,42 @@
 /**
- * basic client zookeeper handling
+ * client zookeeper handling
  *
  * ZooKeeper C++ API.
+ * 
+ * example usage :
  *
+ *	zoo_set_log_stream(stdout); // redirect from stderr to stdout 
+ *
+ *	// First connect to a local running ZooKeeper
+ *	string servers = "localhost:2181";
+ *	Duration timeout = Seconds(4);
+ *	string znode = "/";
+ *	ZooKeeperStorage* storage = new ZooKeeperStorage(servers, timeout, znode);
+ *	BOOST_CHECK(storage->waitForConnection(1000) == true);
+ *
+ *	// Second create a znode
+ *	int flags;
+ *	std::string _result = "";
+ *	bool recursive=false;
+ *	std::string data = "my_data";
+ *	int iResult = storage->create("/testNode123", data, &EVERYONE_CREATE_READ, ZOO_EPHEMERAL,&_result,recursive);
+ *	if(iResult>=0) {
+ *		// Third list znodes
+ *		std::string result = storage->ls("/");
+ *		cout << result << endl;
+ *		cout << "OK: zookeeper found at pos: " << result.find("zookeeper") << endl;
+ *		BOOST_CHECK(result.find("zookeeper") > 0); // zookeeper is default znode unless deleted it should be there
+ *		cout << "OK: testNode123 found at pos: " << result.find("testNode123") << endl;
+ *		// Fourth verify that created znode exists
+ *		BOOST_CHECK(result.find("testNode123") > 0); // zookeeper is default znode unless deleted it should be there
+ *	}
+ *	else {
+ *		cout << "FAIL: could NOT create a ZNODE " << endl;
+ *		BOOST_CHECK(true == false);
+ *	}
+ *
+ *	more info:
+ *	http://advancedlinuxprogramming.com/alp-folder/
  */
 #ifndef __DDD_ZOOKEEPER_HPP__
 #define __DDD_ZOOKEEPER_HPP__
