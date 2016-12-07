@@ -439,8 +439,6 @@ BOOST_AUTO_TEST_CASE(RPCclient_connect_to_Server)
 	cout<<"/*}}}*/"<<endl;   
 
 
-	BOOST_CHECK(true == false);
-
 	cout << "}" << endl;
 }
 
@@ -462,17 +460,24 @@ BOOST_AUTO_TEST_CASE(CHandlingServerRequestToClients_init)
 	cout << "}" << endl;
 }
 
-BOOST_AUTO_TEST_CASE(CHandlingServerRequestToClients_request)
+BOOST_AUTO_TEST_CASE(RPCclient_fetch_partial_attribut_from_BFi_file)
 {
-	cout << "BOOST_AUTO_TEST( CHandlingServerRequestToClients_request )\n{" << endl;
+	cout << "BOOST_AUTO_TEST( RPCclient_fetch_partial_attribut_from_BFi_file )\n{" << endl;
 
-	cout << "TODO: RPCclient node will perform a status update and send back to server as response" << endl;
-	CHandlingServerRequestToClients SRC;	
+	cout << "INFO: " << endl;
+	cout <<"/*{{{*/"<<endl;   
+	cout << "Scenario: one RPCclient gets a request from DDDAdmin asking it to fetch an attribute" << endl;
+	cout << " it then searches for the attribut in .BFi files, and finds it, however since this RPCclient is a node" << endl;
+	cout << " then it does NOT have all .BFi files, thus the need for transfer of partial result to DDDAdmin, and then " << endl;
+	cout << " the DDDAdmin will be able to merge from various RPCclient nodes the complete attribut " << endl;
+	cout <<"/*}}}*/"<<endl;   
 
 	BOOST_CHECK(true == false);
 
 	cout << "}" << endl;
 }
+
+
 
 /** integrationTest_connectTo_zookeeper_basic :
  * for a better example please see : https://apache.googlesource.com/zookeeper/+/trunk/src/c/src/cli.c
@@ -815,8 +820,6 @@ BOOST_AUTO_TEST_CASE(integrationTest_RPCclient_connectTo_ZooKeeper)
 
 	// connect to ZooKeeper
 	bool bIsConnected = client.connectToZooKeeper("localhost:2181", TIMEOUT_IN_SECONDS, "/");
-
-
 	BOOST_CHECK(bIsConnected);
 
 	cout << "}" << endl;
