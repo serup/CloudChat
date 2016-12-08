@@ -919,7 +919,7 @@ BOOST_AUTO_TEST_CASE( fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 		cout << "virtual RPCclient 1 : " << endl;
 		cout << "  Fetch attribut from .BFi file " << endl;
 	
-		std::list<pair<seqSpan, std::vector<assembledElements>>> AttributInblockSequenceFromBFifile = ptestDataDictionaryControl->fetchAttributBlocksFromBFiFiles(attributToFetch, boost::filesystem::current_path());
+		std::list<pair<seqSpan, std::vector<assembledElements>>> AttributInblockSequenceFromBFifile = ptestDataDictionaryControl->fetchAttributBlocksFromBFiFiles(boost::filesystem::current_path());
 		
 		cout << "  prepare result in a BLOB " << endl;
 

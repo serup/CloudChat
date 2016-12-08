@@ -853,7 +853,7 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::findAndAss
 	std::vector<unsigned char> ElementData;
 	pair<std::string, std::vector<unsigned char>> resultAttributPair;
 
-	listOfAssembledAttributes = fetchAttributBlocksFromBFiFiles(attributpath, _targetDir);
+	listOfAssembledAttributes = fetchAttributBlocksFromBFiFiles(_targetDir); //TODO: fetchAttributBlocksFromBFiFiles() should be fetching from all RPCclients and merge into listOfAssembledAttributes 
 	bFound = (listOfAssembledAttributes.size() > 0 ) ? true : false;
 	if(bFound==true) {
 		if(mergeRecords(filterAndSortAssembledRecords(attributpath, listOfAssembledAttributes), ElementData))
@@ -862,7 +862,7 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::findAndAss
 	return resultAttributPair;
 }
 
-std::list< pair<seqSpan, std::vector<assembledElements>> > CDataDictionaryControl::fetchAttributBlocksFromBFiFiles(std::string attributpath, boost::filesystem::path _targetDir)
+std::list< pair<seqSpan, std::vector<assembledElements>> > CDataDictionaryControl::fetchAttributBlocksFromBFiFiles(boost::filesystem::path _targetDir)
 {
 	bool bFound=false;
 	std::list< pair<seqSpan, std::vector<assembledElements>> > listOfAssembledAttributes;
