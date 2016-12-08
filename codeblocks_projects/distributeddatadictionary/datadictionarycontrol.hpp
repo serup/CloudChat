@@ -27,6 +27,11 @@ using namespace std;
 using boost::optional;
 using boost::property_tree::ptree;
 	
+const string BFI_FILE_EXTENSION = ".BFi";
+const string BFI_BLOCK_ENTITY = "BFi";
+const string DATADICTIONARY_ID = "ddid";
+const string FILENAME_SEPERATOR = "_";
+
 struct BlockRecordEntry{
 	std::string TransGUID;
 	std::string chunk_id;
@@ -73,6 +78,7 @@ class CDataDictionaryControl
 
 		bool CreateBlockFile(std::string filename);
 		int splitFileIntoBlocks(std::string filename);
+		string generateBlockFileName(string filename, int filenumber);
 	  	boost::property_tree::ptree createBFiBlockRecord(bool bfirst,long aiid, long seq, std::string transGuid,std::string ddid, std::string realmName, char* blob, int size);
 	  	std::vector< pair<std::vector<unsigned char>,int> > splitAttributIntoDEDchunks(long &aiid, std::string attributName, std::vector<unsigned char>& attributValue, long maxDEDchunkSize);
 	  	boost::property_tree::ptree addDEDchunksToBlockRecords(long &aiid, std::string realmName, std::string ddid, std::vector<pair<std::vector<unsigned char>,int>>listOfDEDchunks, long maxBlockRecordSize);
@@ -92,6 +98,7 @@ class CDataDictionaryControl
 		long _maxDEDchunkSize;
 
     private:
+
 		vector< pair<char*, int> > readFile(const char* fn);
 		std::vector<unsigned char> readFile(std::string fn);
 		long totalSizeOf(std::vector<pair<std::vector<unsigned char>, int>> vectorPairList);

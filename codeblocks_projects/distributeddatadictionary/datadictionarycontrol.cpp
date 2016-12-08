@@ -32,33 +32,41 @@ bool CDataDictionaryControl::CreateBlockFile(std::string filename)
  */
 int CDataDictionaryControl::splitFileIntoBlocks(std::string filename)
 {
-	int amountOfBlocks=-1;
-	long aiid=0; // automatic id, increased for every record thru out the .BFi files
-	long seq=0;
-	std::string strTransGUID;
+	int    amountOfBlocks=-1;
+	int    filenumber=0;
+    int    NEXT_FILENUMBER;
+    int    NEXT_AIID;
+    int    NEXT_SEQUENCE;
+	long   aiid=0; // automatic id, increased for every record thru out the .BFi files
+	long   seq=0;
+	bool   bIsfirstBlock=true;
+	string strTransGUID;
 
 	vector< pair<char*, int> > vp = readFile(filename.c_str());
 	if(vp.size()>0) {
 		amountOfBlocks = vp.size();
-		int filenumber=0;
-		pair <char*,int> block;
-		bool bfirst=true;
-		BOOST_FOREACH( block, vp )
+		BOOST_FOREACH( auto &block, vp )
 		{
-			if(aiid==0)
-				strTransGUID = CMD5((const char*)block.first).GetMD5s();
+			if(bIsfirstBlock) strTransGUID = CMD5((const char*)block.first).GetMD5s();
 
-			filenumber++;
-			boost::property_tree::ptree pt = createBFiBlockRecord(bfirst, ++aiid, ++seq, strTransGUID, "ddid", filename.c_str(),block.first, block.second);
-			bfirst=false;
-			std::string blockfilename = filename + "_" + std::to_string(filenumber) + ".BFi";
-			ofstream blockFile (blockfilename.c_str(), ios::out | ios::binary);
-
-			write_xml(blockFile, pt);
+			// step
+			NEXT_FILENUMBER = ++filenumber; NEXT_AIID = aiid++; NEXT_SEQUENCE = seq++;
+			
+			ofstream blockFile (generateBlockFileName(filename, NEXT_FILENUMBER).c_str(), ios::out | ios::binary);
+			write_xml(blockFile, createBFiBlockRecord(bIsfirstBlock, NEXT_AIID, NEXT_SEQUENCE, strTransGUID, DATADICTIONARY_ID, filename.c_str(),block.first, block.second));
+			
+			bIsfirstBlock=false;
 		}
 		assert(filenumber == amountOfBlocks);
 	}
 	return amountOfBlocks;
+}
+
+string CDataDictionaryControl::generateBlockFileName(string filename, int filenumber) 
+{
+	string blockfilename = "";
+	blockfilename = filename + FILENAME_SEPERATOR + std::to_string(filenumber) + BFI_FILE_EXTENSION;
+	return blockfilename;
 }
 
 vector< pair<char*, int> > CDataDictionaryControl::readFile(const char* fn)
@@ -559,12 +567,12 @@ std::vector< pair<std::string ,int> > CDataDictionaryControl::writeBlockEntityTo
 	BOOST_FOREACH(ptree::value_type &v2, ptBlockEntities.get_child("listOfBlockEntities", _empty_tree))
 	{
 		filenumber++;
-		ptree &node = blkEntity.add("BFi", "");
+		ptree &node = blkEntity.add(BFI_BLOCK_ENTITY, "");
 		node.add_child("BlockEntity", v2.second);
 		
 		std::string filename =  v2.second.get_child("TransGUID").data();
 
-		std::string blockfilename = filename + "_" + std::to_string(filenumber) + ".BFi";
+		std::string blockfilename = filename + "_" + std::to_string(filenumber) + BFI_FILE_EXTENSION;
 		{
 		ofstream blockFile (blockfilename.c_str(), ios::out | ios::binary);
 		write_xml(blockFile, blkEntity);
@@ -640,7 +648,7 @@ std::list<std::string> CDataDictionaryControl::ls()
 		if (is_regular_file(i)){
 
 			bool bExtBFi=false;
-			bExtBFi = (boost::filesystem::extension(i.string()) == ".BFi");
+			bExtBFi = (boost::filesystem::extension(i.string()) == BFI_FILE_EXTENSION);
 			if(bExtBFi) {
 				std::ifstream is (i.string());
 				ptree pt;
@@ -648,7 +656,7 @@ std::list<std::string> CDataDictionaryControl::ls()
 						read_xml(is, pt);
 				}catch(...) {}
 
-				optional< ptree& > child = pt.get_child_optional("BFi");
+				optional< ptree& > child = pt.get_child_optional(BFI_BLOCK_ENTITY);
 				if(child) 
 				{
 					BOOST_FOREACH(const boost::property_tree::ptree::value_type & child, pt.get_child("BFi.BlockEntity.BlockRecord", _empty_tree)) 
@@ -872,7 +880,7 @@ std::list< pair<seqSpan, std::vector<assembledElements>> > CDataDictionaryContro
 	{
 		if (is_regular_file(i)){
 			bool bExtBFi=false;
-			bExtBFi = (boost::filesystem::extension(i.string()) == ".BFi");
+			bExtBFi = (boost::filesystem::extension(i.string()) == BFI_FILE_EXTENSION);
 			if(bExtBFi) {
 				cout << "file : " << i << endl;
 				cout << "*{{{" << endl;
@@ -902,7 +910,7 @@ bool CDataDictionaryControl::addAttributFromBFiToList(ptree pt, std::list< pair<
 	std::string transGuid="";
 	std::string id="";
 	boost::property_tree::ptree _empty_tree;
-	optional< ptree& > child = pt.get_child_optional("BFi");
+	optional< ptree& > child = pt.get_child_optional(BFI_BLOCK_ENTITY);
 	if(child) 
 	{
 		cout << "searching for chunk_data ";
