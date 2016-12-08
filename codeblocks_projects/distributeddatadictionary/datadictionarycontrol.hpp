@@ -96,6 +96,7 @@ class CDataDictionaryControl
 		bool findElement(std::vector<assembledElements>& _Elements, std::string strElementID);
 		std::vector<unsigned char> fetchElement(std::vector<assembledElements>& _Elements, std::string strElementID);
 		pair<std::string, std::vector<unsigned char>> ftgt(std::string attributpath);
+		std::list< pair<seqSpan, std::vector<assembledElements>> > fetchAttributBlocksFromBFiFiles(std::string attributpath, boost::filesystem::path _targetDir);
 	
     protected:
 		long _maxDEDchunkSize;
@@ -113,7 +114,6 @@ class CDataDictionaryControl
 		bool mergeRecords(vector<pair<unsigned long, std::vector<unsigned char> >> list, std::vector<unsigned char> &ElementData);
 		bool assembleBlockRecords(std::string transGuid, std::string id, std::vector<assembledElements> &recElements,  std::list< pair<seqSpan, std::vector<assembledElements>> > &listOfAssembledAttributes);
 		pair<std::string, std::vector<unsigned char>> findAndAssembleAttributFromBFiFiles( std::string attributpath, boost::filesystem::path _targetDir );
-		std::list< pair<seqSpan, std::vector<assembledElements>> > fetchAttributBlocksFromBFiFiles(std::string attributpath, boost::filesystem::path _targetDir);
 		bool addAttributFromBFiToList(ptree pt, std::list< pair<seqSpan, std::vector<assembledElements>> > &listOfAssembledAttributes);
 
 };
