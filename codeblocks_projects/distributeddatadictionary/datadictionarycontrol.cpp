@@ -34,9 +34,9 @@ int CDataDictionaryControl::splitFileIntoBlocks(std::string filename)
 {
 	int    amountOfBlocks=-1;
 	int    filenumber=0;
-    int    NEXT_FILENUMBER;
-    int    NEXT_AIID;
-    int    NEXT_SEQUENCE;
+	int    NEXT_FILENUMBER;
+	int    NEXT_AIID;
+	int    NEXT_SEQUENCE;
 	long   aiid=0; // automatic id, increased for every record thru out the .BFi files
 	long   seq=0;
 	bool   bIsfirstBlock=true;
@@ -77,26 +77,26 @@ vector< pair<char*, int> > CDataDictionaryControl::readFile(const char* fn)
 	ifstream file;
 	file.open(fn,ios::in|ios::binary|ios::ate);
 	if (file.is_open()) {
-			size = boost::filesystem::file_size(fn);
-			file.seekg (0, ios::beg);
-			int bs = size/3; //TODO: use maxBlockSize to determine how many blocks a file should be split into 
-			int ws = 0;
-			int i = 0;
-			cout<<"size:"<<size<<" bs:"<<bs<<endl;
-			for(i = 0; i < size; i+=bs){
-					if(i+bs > size)
-							ws = size%bs;
-					else
-							ws = bs;
-					cout<<"read:"<<ws<<endl;
-					memblock = new char [ws];
-					file.read (memblock, ws);
-					vpair.push_back(make_pair(memblock,ws));
-			}
+		size = boost::filesystem::file_size(fn);
+		file.seekg (0, ios::beg);
+		int bs = size/3; //TODO: use maxBlockSize to determine how many blocks a file should be split into 
+		int ws = 0;
+		int i = 0;
+		cout<<"size:"<<size<<" bs:"<<bs<<endl;
+		for(i = 0; i < size; i+=bs){
+			if(i+bs > size)
+				ws = size%bs;
+			else
+				ws = bs;
+			cout<<"read:"<<ws<<endl;
+			memblock = new char [ws];
+			file.read (memblock, ws);
+			vpair.push_back(make_pair(memblock,ws));
+		}
 	}
 	else{
-			std::string filename(fn);
-			throw std::runtime_error("Error: Could NOT read file: " + filename );
+		std::string filename(fn);
+		throw std::runtime_error("Error: Could NOT read file: " + filename );
 	}
 	return vpair;
 }
@@ -108,15 +108,10 @@ std::vector<unsigned char> readFile(std::string fn)
 	if (is)
 	{
 		long length = boost::filesystem::file_size(fn);
-		//std::cout << "[readFile] Reading file: " << fn << " ; amount " << length << " characters... \n";
         FileDataBytesInVector.resize(length,0); // Make sure receipient has room
 		
 		//read content of infile
 		is.read ((char*)&FileDataBytesInVector[0],length);
-
-		//std::cout << "[readFile] size: " << (int) FileDataBytesInVector.size() << '\n';
-		//std::cout << "[readFile] capacity: " << (int) FileDataBytesInVector.capacity() << '\n';
-		//std::cout << "[readFile] max_size: " << (int) FileDataBytesInVector.max_size() << '\n';
 
 		is.close();
 	}
@@ -158,7 +153,6 @@ boost::property_tree::ptree CDataDictionaryControl::createBFiBlockRecord(bool bf
 	nSizeOfHex = strtmp.size();
 
 	if(bfirst){
-			//cout << "ADD first BlockRecord entry" << endl;
 			ptree &node = pt.add("BlockRecord", "");
 			node.put("TransGUID",transGuid);
 			node.put("chunk_id",realmName);
@@ -174,7 +168,6 @@ boost::property_tree::ptree CDataDictionaryControl::createBFiBlockRecord(bool bf
 			bfirst=false;
 	}
 	else {
-//			cout << "ADD node chunk_record" << endl;
 			ptree &node = pt.add("chunk_record", "");
 			node.put("chunk_ddid", ddid); 
 			node.put("DataSize", nSizeOfHex); //TODO: consider dropping transfer to HEX, since it is making size bigger and only needed for Debug
@@ -211,46 +204,46 @@ std::vector< pair<std::vector<unsigned char>, int> > CDataDictionaryControl::spl
 		chunkdata.clear();  
 
 		if(iTotalSize>iMaxChunkSize){
-				if(iMaxChunkSize>iBytesLeft){
-					std::copy(attributValue.begin()+(n*iMaxChunkSize), attributValue.begin()+(n*iMaxChunkSize)+iBytesLeft, std::back_inserter(chunkdata));
-				}
-				else {
-					std::copy(attributValue.begin()+(n*iMaxChunkSize), attributValue.begin()+(n*iMaxChunkSize)+iMaxChunkSize, std::back_inserter(chunkdata));
-				}
+			if(iMaxChunkSize>iBytesLeft){
+				std::copy(attributValue.begin()+(n*iMaxChunkSize), attributValue.begin()+(n*iMaxChunkSize)+iBytesLeft, std::back_inserter(chunkdata));
+			}
+			else {
+				std::copy(attributValue.begin()+(n*iMaxChunkSize), attributValue.begin()+(n*iMaxChunkSize)+iMaxChunkSize, std::back_inserter(chunkdata));
+			}
 		}
 		else {
 			std::copy(attributValue.begin(), attributValue.end(), std::back_inserter(chunkdata));
 		}
 
 		if(chunkdata.size()<=0){
-				BOOST_LOG_TRIVIAL(error) << "[splitAttributIntoDEDchunks] ERROR: NO data inserted in chunkdata, default <empty> added to field : " << attributName  << "\n";
-				std::string strtmp="<empty>";
-				std::copy(strtmp.begin(), strtmp.end(), std::back_inserter(chunkdata));
-				strangeCount++;
-				if(strangeCount>10) {
-					bError=true; // avoid deadlock, due to errornous attribut
-					BOOST_LOG_TRIVIAL(fatal) << "[splitAttributIntoDEDchunks] ERROR: Aborting function !!!!" << "\n";
-				}
+			BOOST_LOG_TRIVIAL(error) << "[splitAttributIntoDEDchunks] ERROR: NO data inserted in chunkdata, default <empty> added to field : " << attributName  << "\n";
+			std::string strtmp="<empty>";
+			std::copy(strtmp.begin(), strtmp.end(), std::back_inserter(chunkdata));
+			strangeCount++;
+			if(strangeCount>10) {
+				bError=true; // avoid deadlock, due to errornous attribut
+				BOOST_LOG_TRIVIAL(fatal) << "[splitAttributIntoDEDchunks] ERROR: Aborting function !!!!" << "\n";
+			}
 		}
 
 		n++;
 		aiid++;
 		entity_chunk_seq++;
-	
+
 		cout << "," << entity_chunk_seq;
-    
+
 
 		{ /// defined in DD_ATTRIBUT_TOAST.xml in datadictionary
 			DED_START_ENCODER(encoder_ptr);
 			DED_PUT_STRUCT_START( encoder_ptr, "chunk_record" );
-				DED_PUT_STDSTRING	( encoder_ptr, "attribut_chunk_id", attributName ); // key of particular item
-				DED_PUT_ULONG   	( encoder_ptr, "attribut_aiid", (unsigned long)aiid ); // this number is continuesly increasing all thruout the entries in this table
-				DED_PUT_ULONG   	( encoder_ptr, "attribut_chunk_seq", (unsigned long)entity_chunk_seq ); // sequence number of particular item
-				DED_PUT_STDVECTOR	( encoder_ptr, "attribut_chunk_data", chunkdata );
+			DED_PUT_STDSTRING	( encoder_ptr, "attribut_chunk_id", attributName ); // key of particular item
+			DED_PUT_ULONG   	( encoder_ptr, "attribut_aiid", (unsigned long)aiid ); // this number is continuesly increasing all thruout the entries in this table
+			DED_PUT_ULONG   	( encoder_ptr, "attribut_chunk_seq", (unsigned long)entity_chunk_seq ); // sequence number of particular item
+			DED_PUT_STDVECTOR	( encoder_ptr, "attribut_chunk_data", chunkdata );
 			DED_PUT_STRUCT_END( encoder_ptr, "chunk_record" );
 			DED_GET_ENCODED_DATA(encoder_ptr,data_ptr,iLengthOfTotalData,pCompressedData,sizeofCompressedData);
 			if(sizeofCompressedData==0) sizeofCompressedData = iLengthOfTotalData; // if sizeofcompresseddata is 0 then compression was not possible and size is the same as for uncompressed
-				iBytesLeft = iTotalSize-iMaxChunkSize*n;
+			iBytesLeft = iTotalSize-iMaxChunkSize*n;
 
 			std::vector<unsigned char> vdata;
 			vdata.assign(pCompressedData, pCompressedData + sizeofCompressedData);  
@@ -276,9 +269,9 @@ std::vector< pair<std::vector<unsigned char>, int> > CDataDictionaryControl::spl
 
 			cout << "/*}}}*/" << endl;
 			//-test
-			
+
 			listOfDEDchunks.push_back(make_pair(vdata,sizeofCompressedData));
-	
+
 
 		}
 	}while(iBytesLeft>0 && !bError);
@@ -339,8 +332,8 @@ boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(l
 
 	//DEBUG	
 	// write test xml file
-	ofstream blockFile ("xmlresult.xml", ios::out | ios::binary);
-	write_xml(blockFile, pt);
+	//ofstream blockFile ("xmlresult.xml", ios::out | ios::binary);
+	//write_xml(blockFile, pt);
 	cout << "/*}}}*/" << endl;
 
 	return pt;		
@@ -897,8 +890,8 @@ std::list< pair<seqSpan, std::vector<assembledElements>> > CDataDictionaryContro
 		}
 	}
 
-	if(!bFound)
-		cout << "WARNING: no attributs found in .BFi files : " << __FILE__ << __LINE__ << endl;
+	//if(!bFound)
+	//	cout << "WARNING: no attributs found in .BFi files : " << __FILE__ << __LINE__ << endl;
 
 	return listOfAssembledAttributes;
 }
