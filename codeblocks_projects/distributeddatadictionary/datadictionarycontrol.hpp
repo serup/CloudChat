@@ -19,8 +19,11 @@
 #include <boost/algorithm/hex.hpp>
 #include <boost/log/trivial.hpp>
 #include "md5.h"
+#ifndef DED
+#define DED
 #include "../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.h"
 #include "../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.h"
+#endif
 #include "utils.hpp"
 
 using namespace std;
