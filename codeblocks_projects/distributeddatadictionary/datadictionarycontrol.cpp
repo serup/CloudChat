@@ -866,34 +866,46 @@ std::list< pair<seqSpan, std::vector<assembledElements>> > CDataDictionaryContro
 {
 	bool bFound=false;
 	std::list< pair<seqSpan, std::vector<assembledElements>> > listOfAssembledAttributes;
-	boost::filesystem::path targetDir( _targetDir );
-	boost::filesystem::recursive_directory_iterator iter(targetDir), eod;
+	boost::filesystem::path currentSearchDirectory( _targetDir );
+	boost::filesystem::recursive_directory_iterator directoryIterator(currentSearchDirectory), eod;
 
-	BOOST_FOREACH(boost::filesystem::path const& i, make_pair(iter, eod))
+	BOOST_FOREACH(boost::filesystem::path const& currentfile, make_pair(directoryIterator, eod))
 	{
-		if (is_regular_file(i)){
-			bool bExtBFi=false;
-			bExtBFi = (boost::filesystem::extension(i.string()) == BFI_FILE_EXTENSION);
-			if(bExtBFi) {
-				cout << "file : " << i << endl;
-				cout << "*{{{" << endl;
-				std::ifstream is (i.string());
-				ptree pt;
-				try{
-					read_xml(is, pt);
-					if(addAttributFromBFiToList(pt, listOfAssembledAttributes))
-						bFound=true;
+		if((boost::filesystem::extension(currentfile.string()) == BFI_FILE_EXTENSION)) 
+			fetchAttributsFromFile(currentfile, listOfAssembledAttributes);
+	}
 
-				}catch(...) { cout << "FAIL: EXCEPTION trying to read xml file : " << i.string(); }
-				cout << "*}}}" << endl;
-			}
+	return listOfAssembledAttributes;
+}
+
+bool CDataDictionaryControl::fetchAttributsFromFile(boost::filesystem::path const& filepathname, std::list< pair<seqSpan, std::vector<assembledElements>>> &listOfAssembledAttributes)
+{
+	bool bFoundFile=false;
+	bool bFoundAttributsInFile=false;
+
+	if (is_regular_file(filepathname)){
+		if((boost::filesystem::extension(filepathname.string()) == BFI_FILE_EXTENSION)) 
+		{
+			bFoundFile=true;
+			cout << "file : " << filepathname << endl;
+			cout << "*{{{" << endl;
+			
+			std::ifstream is (filepathname.string());
+			ptree pt;
+			try{
+				read_xml(is, pt);
+				if(addAttributFromBFiToList(pt, listOfAssembledAttributes))
+					bFoundAttributsInFile=true;
+
+			}catch(...) { cout << "FAIL: EXCEPTION trying to read xml file : " << filepathname.string(); }
+			cout << "*}}}" << endl;
 		}
 	}
 
-	//if(!bFound)
-	//	cout << "WARNING: no attributs found in .BFi files : " << __FILE__ << __LINE__ << endl;
+	if(!bFoundAttributsInFile && bFoundFile)
+		cout << "WARNING: No attributs found in file " << filepathname << " : " << __FILE__ << ", " << __LINE__ << endl;
 
-	return listOfAssembledAttributes;
+	return bFoundFile;
 }
 
 bool CDataDictionaryControl::addAttributFromBFiToList(ptree pt, std::list< pair<seqSpan, std::vector<assembledElements>> > &listOfAssembledAttributes)

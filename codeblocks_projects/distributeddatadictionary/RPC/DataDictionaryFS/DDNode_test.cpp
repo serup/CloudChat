@@ -15,6 +15,7 @@
 #include <boost/foreach.hpp>
 #include <boost/thread/condition.hpp>
 #include <boost/thread/mutex.hpp>
+#include <boost/filesystem.hpp>
 #include "zookeeper.hpp"
 #define BOOST_FILESYSTEM_NO_DEPRECATED
 #include <boost/filesystem.hpp>
@@ -60,7 +61,6 @@ BOOST_GLOBAL_FIXTURE(ReportRedirector)
 #endif
 
 BOOST_AUTO_TEST_SUITE (DDNode_Test) // name of the test suite
-BOOST_AUTO_TEST_SUITE_END( )
 
 /**
  * RPCclient request to Server
@@ -919,12 +919,27 @@ BOOST_AUTO_TEST_CASE( fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 		cout << "virtual RPCclient 1 : " << endl;
 		cout << "  Fetch attribut from .BFi file " << endl;
 	
-		std::list<pair<seqSpan, std::vector<assembledElements>>> AttributInblockSequenceFromBFifile = ptestDataDictionaryControl->fetchAttributBlocksFromBFiFiles(boost::filesystem::current_path());
-		
-		cout << "  prepare result in a BLOB " << endl;
+	
+		std::list< pair<seqSpan, std::vector<assembledElements>> > listOfAssembledAttributes;
+	
+		boost::filesystem::path currentSearchDirectory( boost::filesystem::current_path() );
+		boost::filesystem::recursive_directory_iterator directoryIterator(currentSearchDirectory), eod;
 
-		cout << "  simulate transfer from RPCclient to server " << endl;
-		
+		BOOST_FOREACH(boost::filesystem::path const& currentfile, make_pair(directoryIterator, eod))
+		{
+			std::list<pair<seqSpan, std::vector<assembledElements>>> AttributInblockSequenceFromBFifile;
+
+			if((boost::filesystem::extension(currentfile.string()) == BFI_FILE_EXTENSION)) { 
+				ptestDataDictionaryControl->fetchAttributsFromFile(currentfile, AttributInblockSequenceFromBFifile); 
+
+
+				cout << "  prepare result in a BLOB " << endl;
+
+				cout << "  simulate transfer from RPCclient to server " << endl;
+
+				cout << "  convert result in BLOB to list pair<seq,vector<assembledElements>> " << endl;
+			}
+		}
 
 
 		BOOST_CHECK(true == false);
@@ -1319,4 +1334,6 @@ BOOST_AUTO_TEST_CASE(integrationTest_RPCclient_connectTo_ZooKeeper)
 
 	cout << "}" << endl;
 }
+
+BOOST_AUTO_TEST_SUITE_END( )
 

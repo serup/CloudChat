@@ -97,6 +97,7 @@ class CDataDictionaryControl
 		std::vector<unsigned char> fetchElement(std::vector<assembledElements>& _Elements, std::string strElementID);
 		pair<std::string, std::vector<unsigned char>> ftgt(std::string attributpath);
 		std::list< pair<seqSpan, std::vector<assembledElements>>> fetchAttributBlocksFromBFiFiles(boost::filesystem::path _targetDir);
+		bool fetchAttributsFromFile(boost::filesystem::path const& filepathname, std::list< pair<seqSpan, std::vector<assembledElements>>> &listOfAssembledAttributes);
 	
     protected:
 		long _maxDEDchunkSize;
