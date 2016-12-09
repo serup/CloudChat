@@ -14,6 +14,7 @@ init:
 	@echo "------------------------------------------------------"
 	@echo " - make setup    : will generate and rename files"
 	@echo " - make all      : build all"
+	@echo " - make test     : build all and run unittests"
 	@echo " - make patch    : create a patch file containing current changes "
 	@echo " - make patchForMaster : create a patch from current branch to master"
 	@echo " - make clean    : remove all object files"
