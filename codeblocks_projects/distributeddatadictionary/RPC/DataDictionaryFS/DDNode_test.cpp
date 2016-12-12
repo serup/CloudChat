@@ -916,33 +916,68 @@ BOOST_AUTO_TEST_CASE( fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 		cout << "TODO: SIMULATE that parsing result of .BFi files comes from 3 different RPCclients" << endl;
 		std::string attributToFetch = transGuid + "./profile/foto";
 		
-		cout << "virtual RPCclient 1 : " << endl;
-		cout << "  Fetch attribut from .BFi file " << endl;
-	
-	
-		std::list< pair<seqSpan, std::vector<assembledElements>> > listOfAssembledAttributes;
+		std::vector<std::list< pair<seqSpan, std::vector<assembledElements>>>> vectorlistOfAssembledAttributes (3); // testcase has only 3 virtual RPCclients delivering results
 	
 		boost::filesystem::path currentSearchDirectory( boost::filesystem::current_path() );
 		boost::filesystem::recursive_directory_iterator directoryIterator(currentSearchDirectory), eod;
 
+		int n=0;
 		BOOST_FOREACH(boost::filesystem::path const& currentfile, make_pair(directoryIterator, eod))
 		{
 			std::list<pair<seqSpan, std::vector<assembledElements>>> AttributInblockSequenceFromBFifile;
 
-			if((boost::filesystem::extension(currentfile.string()) == BFI_FILE_EXTENSION)) { 
-				ptestDataDictionaryControl->fetchAttributsFromFile(currentfile, AttributInblockSequenceFromBFifile); 
 
+			if((boost::filesystem::extension(currentfile.string()) == BFI_FILE_EXTENSION)) { 
+				cout << "virtual RPCclient " << n+1 << " : " << endl;
+				cout << "  Fetch attribut from .BFi file " << endl;
+				ptestDataDictionaryControl->fetchAttributsFromFile(currentfile, AttributInblockSequenceFromBFifile); 
 
 				cout << "  prepare result in a BLOB " << endl;
 
 				cout << "  simulate transfer from RPCclient to server " << endl;
 
 				cout << "  convert result in BLOB to list pair<seq,vector<assembledElements>> " << endl;
+				vectorlistOfAssembledAttributes[n++] = AttributInblockSequenceFromBFifile;
 			}
 		}
 
+		cout << "*** Merge retrieved RPCclient results with others " << endl;
+		std::list< pair<seqSpan, std::vector<assembledElements>> > totallistOfAssembledAttributes;
 
-		BOOST_CHECK(true == false);
+/*
+		totallistOfAssembledAttributes.insert(totallistOfAssembledAttributes.end(), vectorlistOfAssembledAttributes[0].begin(),vectorlistOfAssembledAttributes[0].end());
+		totallistOfAssembledAttributes.insert(totallistOfAssembledAttributes.end(), vectorlistOfAssembledAttributes[1].begin(),vectorlistOfAssembledAttributes[1].end());
+		totallistOfAssembledAttributes.insert(totallistOfAssembledAttributes.end(), vectorlistOfAssembledAttributes[2].begin(),vectorlistOfAssembledAttributes[2].end());
+*/
+
+/* which performs best? above or this?
+		BOOST_FOREACH(auto &pair, vectorlistOfAssembledAttributes[0]) { totallistOfAssembledAttributes.push_back( pair ); }
+		BOOST_FOREACH(auto &pair, vectorlistOfAssembledAttributes[1]) { totallistOfAssembledAttributes.push_back( pair ); }
+		BOOST_FOREACH(auto &pair, vectorlistOfAssembledAttributes[2]) { totallistOfAssembledAttributes.push_back( pair ); }
+*/
+		
+		BOOST_FOREACH(auto &list, vectorlistOfAssembledAttributes) { totallistOfAssembledAttributes.insert(totallistOfAssembledAttributes.end(), list.begin(),list.end()); }
+
+		pair<std::string, std::vector<unsigned char>> resultAttributPair = 	ptestDataDictionaryControl->mergeAndSort(attributToFetch, totallistOfAssembledAttributes);
+		cout << "Attribut name : " << resultAttributPair.first << endl;
+		BOOST_CHECK("F9C23762ED2823A27E62A64B95C024FF./profile/foto" == resultAttributPair.first);
+
+
+		cout << "Original data : " << endl;
+		CUtils::showDataBlock(true,true,FotoAttributValue);
+
+		cout << "Result data : " << endl;
+		bool bFoundError = CUtils::showDataBlockDiff(true,true,resultAttributPair.second, FotoAttributValue);
+		if(!bFoundError) cout << "INFO: bytes assembled are equal to original " << endl;
+		BOOST_CHECK(bFoundError == false);
+
+		cout << "size of Original : " << FotoAttributValue.size() << " size of result : " << resultAttributPair.second.size() << endl;
+		int missingbytes = (FotoAttributValue.size() - resultAttributPair.second.size());
+
+		if(missingbytes > 0) cout << "FAIL: Missing byte(s) : " << missingbytes << endl;
+		BOOST_CHECK(FotoAttributValue.size() == resultAttributPair.second.size());
+
+		BOOST_CHECK(FotoAttributValue == resultAttributPair.second); // verify that retrieved value is same as stored
 
 
 //		cout << "Fetch attribut from .BFi file " << endl;
