@@ -73,6 +73,12 @@ struct seqSpan {
 	std::string attributPath;
 };
 
+struct transferBLOB {
+	enum enumType { null, PLAIN_DATA, ATTRIBUTS_LIST } eType;
+	long size;
+	std::vector<unsigned char> data;
+};
+
 class CDataDictionaryControl
 {
     public:
@@ -99,7 +105,8 @@ class CDataDictionaryControl
 		std::list< pair<seqSpan, std::vector<assembledElements>>> fetchAttributBlocksFromBFiFiles(boost::filesystem::path _targetDir);
 		pair<std::string, std::vector<unsigned char>> mergeAndSort(std::string attributpath, std::list< pair<seqSpan, std::vector<assembledElements>>> listOfAssembledAttributes);
 		bool fetchAttributsFromFile(boost::filesystem::path const& filepathname, std::list< pair<seqSpan, std::vector<assembledElements>>> &listOfAssembledAttributes);
-	
+		transferBLOB convertToBLOB(std::list<pair<seqSpan, std::vector<assembledElements>>> listOfPairsOfAssembledAttributs);
+
     protected:
 		long _maxDEDchunkSize;
 
