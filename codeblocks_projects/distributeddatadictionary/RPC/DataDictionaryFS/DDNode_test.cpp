@@ -913,7 +913,8 @@ BOOST_AUTO_TEST_CASE( fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 
 		cout << "________________________________________" << endl;
 
-		cout << "TODO: SIMULATE that parsing result of .BFi files comes from 3 different RPCclients" << endl;
+		cout << "*** SIMULATE that parsing result of .BFi files comes from 3 different RPCclients" << endl;
+		cout << "*{{{" << endl;
 		std::string attributToFetch = transGuid + "./profile/foto";
 		
 		std::vector<std::list< pair<seqSpan, std::vector<assembledElements>>>> vectorlistOfAssembledAttributes (3); // testcase has only 3 virtual RPCclients delivering results
@@ -940,7 +941,7 @@ BOOST_AUTO_TEST_CASE( fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 				vectorlistOfAssembledAttributes[n++] = AttributInblockSequenceFromBFifile;
 			}
 		}
-
+		cout << "*}}}" << endl;
 		cout << "*** Merge retrieved RPCclient results with others " << endl;
 		std::list< pair<seqSpan, std::vector<assembledElements>> > totallistOfAssembledAttributes;
 
