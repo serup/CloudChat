@@ -848,21 +848,10 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::
 
 pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::findAndAssembleAttributFromBFiFiles( std::string attributpath, boost::filesystem::path _targetDir) 
 {
-	bool bFound=false;
-	std::list< pair<seqSpan, std::vector<assembledElements>> > listOfAssembledAttributes;
-	std::vector<unsigned char> ElementData;
-	pair<std::string, std::vector<unsigned char>> resultAttributPair;
-
-	listOfAssembledAttributes = fetchAttributBlocksFromBFiFiles(_targetDir); //TODO: fetchAttributBlocksFromBFiFiles() should be fetching from all RPCclients and merge into listOfAssembledAttributes 
-	bFound = (listOfAssembledAttributes.size() > 0 ) ? true : false;
-	if(bFound==true) {
-		if(mergeRecords(filterAndSortAssembledRecords(attributpath, listOfAssembledAttributes), ElementData))
-			resultAttributPair = make_pair(attributpath,ElementData); // create assemble data result pair
-	}
-	return resultAttributPair;
+	return mergeAndSort(attributpath, fetchAttributBlocksFromBFiFiles(_targetDir));
 }
 
-std::list< pair<seqSpan, std::vector<assembledElements>> > CDataDictionaryControl::fetchAttributBlocksFromBFiFiles(boost::filesystem::path _targetDir)
+std::list< pair<seqSpan, std::vector<assembledElements>>> CDataDictionaryControl::fetchAttributBlocksFromBFiFiles(boost::filesystem::path _targetDir)
 {
 	bool bFound=false;
 	std::list< pair<seqSpan, std::vector<assembledElements>> > listOfAssembledAttributes;
@@ -876,6 +865,18 @@ std::list< pair<seqSpan, std::vector<assembledElements>> > CDataDictionaryContro
 	}
 
 	return listOfAssembledAttributes;
+}
+
+pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::mergeAndSort(std::string attributpath, std::list< pair<seqSpan, std::vector<assembledElements>>> listOfAssembledAttributes)
+{
+	std::vector<unsigned char> ElementData;
+	pair<std::string, std::vector<unsigned char>> resultAttributPair;
+	bool bFound = (listOfAssembledAttributes.size() > 0 ) ? true : false;
+	if(bFound==true) {
+		if(mergeRecords(filterAndSortAssembledRecords(attributpath, listOfAssembledAttributes), ElementData))
+			resultAttributPair = make_pair(attributpath,ElementData); // create assemble data result pair
+	}
+	return resultAttributPair;
 }
 
 bool CDataDictionaryControl::fetchAttributsFromFile(boost::filesystem::path const& filepathname, std::list< pair<seqSpan, std::vector<assembledElements>>> &listOfAssembledAttributes)
