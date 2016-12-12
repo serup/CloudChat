@@ -1050,4 +1050,14 @@ bool CDataDictionaryControl::mergeRecords(vector<pair<unsigned long, std::vector
 	return bResult;
 }
 
+transferBLOB CDataDictionaryControl::convertToBLOB(std::list<pair<seqSpan, std::vector<assembledElements>>> listOfPairsOfAssembledAttributs)
+{
+	transferBLOB stblob;
+	stblob.eType = transferBLOB::enumType::ATTRIBUTS_LIST;
+
+	
+
+	return stblob;
+}
+
 

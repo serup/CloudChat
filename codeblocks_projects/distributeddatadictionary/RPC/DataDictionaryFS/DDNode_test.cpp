@@ -934,7 +934,9 @@ BOOST_AUTO_TEST_CASE( fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 				ptestDataDictionaryControl->fetchAttributsFromFile(currentfile, AttributInblockSequenceFromBFifile); 
 
 				cout << "  prepare result in a BLOB " << endl;
-
+				transferBLOB stBlob = ptestDataDictionaryControl->convertToBLOB(AttributInblockSequenceFromBFifile);
+				BOOST_CHECK(stBlob.eType == transferBLOB::enumType::ATTRIBUTS_LIST);
+				
 				cout << "  simulate transfer from RPCclient to server " << endl;
 
 				cout << "  convert result in BLOB to list pair<seq,vector<assembledElements>> " << endl;
