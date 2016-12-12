@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 echo "Clone stout library "
 mkdir -p ~/GitHub/mesos
-#cd ~GitHub; git clone https://github.com/3rdparty/stout.git
+cd ~/GitHub; git clone https://github.com/3rdparty/stout.git
 cd ~/GitHub; git clone https://github.com/apache/mesos.git
 echo "- prereq - needed to build"
 # Install autotools (Only necessary if building from git repository).
@@ -17,6 +17,7 @@ cd ~/GitHub/mesos; make
 
 echo "- install into /usr/include/stout - do NOT overwrite"
 sudo cp -ir ~/GitHub/mesos/3rdparty/stout/include/stout/ /usr/include/
+sudo cp -r ~/GitHub/stout/include/stout/ /usr/include/
 echo "- copy static library libprocess to default /usr/lib"
 sudo cp -ir ~/GitHub/mesos/3rdparty/libprocess/.libs/libprocess.a /usr/lib/
 echo "- Done."
