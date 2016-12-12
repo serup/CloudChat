@@ -917,7 +917,7 @@ BOOST_AUTO_TEST_CASE( fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 		cout << "*{{{" << endl;
 		std::string attributToFetch = transGuid + "./profile/foto";
 		
-		std::vector<std::list< pair<seqSpan, std::vector<assembledElements>>>> vectorlistOfAssembledAttributes (3); // testcase has only 3 virtual RPCclients delivering results
+		std::vector<std::list< pair<seqSpan, std::vector<assembledElements>>>> resultFromRPCclients (3); // testcase has only 3 virtual RPCclients delivering results
 	
 		boost::filesystem::path currentSearchDirectory( boost::filesystem::current_path() );
 		boost::filesystem::recursive_directory_iterator directoryIterator(currentSearchDirectory), eod;
@@ -938,14 +938,14 @@ BOOST_AUTO_TEST_CASE( fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 				cout << "  simulate transfer from RPCclient to server " << endl;
 
 				cout << "  convert result in BLOB to list pair<seq,vector<assembledElements>> " << endl;
-				vectorlistOfAssembledAttributes[n++] = AttributInblockSequenceFromBFifile;
+				resultFromRPCclients[n++] = AttributInblockSequenceFromBFifile;
 			}
 		}
 		cout << "*}}}" << endl;
 		cout << "*** Merge retrieved RPCclient results with others " << endl;
 		std::list< pair<seqSpan, std::vector<assembledElements>> > totallistOfAssembledAttributes;
 
-		BOOST_FOREACH(auto &list, vectorlistOfAssembledAttributes) { totallistOfAssembledAttributes.insert(totallistOfAssembledAttributes.end(), list.begin(),list.end()); }
+		BOOST_FOREACH(auto &list, resultFromRPCclients) { totallistOfAssembledAttributes.insert(totallistOfAssembledAttributes.end(), list.begin(),list.end()); }
 
 		pair<std::string, std::vector<unsigned char>> resultAttributPair = 	ptestDataDictionaryControl->mergeAndSort(attributToFetch, totallistOfAssembledAttributes);
 		cout << "Attribut name : " << resultAttributPair.first << endl;
