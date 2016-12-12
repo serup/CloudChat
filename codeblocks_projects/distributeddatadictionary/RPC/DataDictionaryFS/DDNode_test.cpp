@@ -944,23 +944,11 @@ BOOST_AUTO_TEST_CASE( fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 		cout << "*** Merge retrieved RPCclient results with others " << endl;
 		std::list< pair<seqSpan, std::vector<assembledElements>> > totallistOfAssembledAttributes;
 
-/*
-		totallistOfAssembledAttributes.insert(totallistOfAssembledAttributes.end(), vectorlistOfAssembledAttributes[0].begin(),vectorlistOfAssembledAttributes[0].end());
-		totallistOfAssembledAttributes.insert(totallistOfAssembledAttributes.end(), vectorlistOfAssembledAttributes[1].begin(),vectorlistOfAssembledAttributes[1].end());
-		totallistOfAssembledAttributes.insert(totallistOfAssembledAttributes.end(), vectorlistOfAssembledAttributes[2].begin(),vectorlistOfAssembledAttributes[2].end());
-*/
-
-/* which performs best? above or this?
-		BOOST_FOREACH(auto &pair, vectorlistOfAssembledAttributes[0]) { totallistOfAssembledAttributes.push_back( pair ); }
-		BOOST_FOREACH(auto &pair, vectorlistOfAssembledAttributes[1]) { totallistOfAssembledAttributes.push_back( pair ); }
-		BOOST_FOREACH(auto &pair, vectorlistOfAssembledAttributes[2]) { totallistOfAssembledAttributes.push_back( pair ); }
-*/
-		
 		BOOST_FOREACH(auto &list, vectorlistOfAssembledAttributes) { totallistOfAssembledAttributes.insert(totallistOfAssembledAttributes.end(), list.begin(),list.end()); }
 
 		pair<std::string, std::vector<unsigned char>> resultAttributPair = 	ptestDataDictionaryControl->mergeAndSort(attributToFetch, totallistOfAssembledAttributes);
 		cout << "Attribut name : " << resultAttributPair.first << endl;
-		BOOST_CHECK("F9C23762ED2823A27E62A64B95C024FF./profile/foto" == resultAttributPair.first);
+		BOOST_CHECK(attributToFetch == resultAttributPair.first);
 
 
 		cout << "Original data : " << endl;
@@ -978,30 +966,6 @@ BOOST_AUTO_TEST_CASE( fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 		BOOST_CHECK(FotoAttributValue.size() == resultAttributPair.second.size());
 
 		BOOST_CHECK(FotoAttributValue == resultAttributPair.second); // verify that retrieved value is same as stored
-
-
-//		cout << "Fetch attribut from .BFi file " << endl;
-//
-//		cout << "INFO: ftgt should beable to assemble across multiple .BFi files " << endl;
-//		std::string attributToFetch = transGuid + "./profile/foto";
-//		pair<std::string, std::vector<unsigned char>> pairAttribut = ptestDataDictionaryControl->ftgt(attributToFetch);
-//		cout << "Attribut name : " << pairAttribut.first << endl;
-//
-//		cout << "Original data : " << endl;
-//		CUtils::showDataBlock(true,true,FotoAttributValue);
-//
-//		cout << "Result data : " << endl;
-//		bool bFoundError = CUtils::showDataBlockDiff(true,true,pairAttribut.second, FotoAttributValue);
-//		if(!bFoundError) cout << "INFO: bytes assembled are equal to original " << endl;
-//		BOOST_CHECK(bFoundError == false);
-//
-//		cout << "size of Original : " << FotoAttributValue.size() << " size of result : " << pairAttribut.second.size() << endl;
-//		int missingbytes = (FotoAttributValue.size() - pairAttribut.second.size());
-//
-//		if(missingbytes > 0) cout << "FAIL: Missing byte(s) : " << missingbytes << endl;
-//		BOOST_CHECK(FotoAttributValue.size() == pairAttribut.second.size());
-//
-//		BOOST_CHECK(FotoAttributValue == pairAttribut.second); // verify that retrieved value is same as stored
 
 		cout << "________________________________________" << endl;
 
