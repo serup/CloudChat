@@ -6,6 +6,8 @@ has to be done:
 2. open intellij python project
 3. go to file->project structure->Modules
 4. add under python_projects a Python Interpreter --> ref: /usr/bin/python2.7
+5. go to files->settings->Plugins->"Install plugin from disk"
+6. choose your downloaded .zip file - it should look like this : python-162.37.zip
 
 if python SDK is not in /usr/bin  then download it from here:
 https://www.python.org/downloads/
