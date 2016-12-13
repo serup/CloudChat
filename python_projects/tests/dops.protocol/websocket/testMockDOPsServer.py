@@ -58,6 +58,7 @@ class DOPsServerTest(unittest.TestCase):
     def testInitDOPsServer(self):
         _bool = True
         number = 9223372036854775807
+        number = 1223372036854775807
 
         print "Testing echo of sending DED datapacket to mock DOPsServer"
         print "---------------------------------------------------------"
@@ -82,6 +83,7 @@ class DOPsServerTest(unittest.TestCase):
         ws.close()
 
         DED2 = ded.DEDEncoder()
+        DED2.endianness = 'be';
         DED2.PUT_DATA_IN_DECODER(result)
         # verify that data is inside decoder, and that it has been decompressed correct
         self.assertTrue(DED2.ptotaldata, DEDobj.uncompresseddata)
