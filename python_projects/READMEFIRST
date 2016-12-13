@@ -1,0 +1,16 @@
+In order to get intellij to work with python then following
+has to be done:
+
+1. download the pyCharm plugin for intellij
+   https://plugins.jetbrains.com/plugin/download?pr=&updateId=27053     //should be compatible with intellij versions 162.1121+ 
+2. open intellij python project
+3. go to file->project structure->Modules
+4. add under python_projects a Python Interpreter --> ref: /usr/bin/python2.7
+
+if python SDK is not in /usr/bin  then download it from here:
+https://www.python.org/downloads/
+
+if python in not installed then do followingi (http://askubuntu.com/questions/798123/how-do-i-install-python-3-5-2) :
+
+sudo apt-get update
+sudo apt-get install python3
