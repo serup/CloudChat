@@ -126,6 +126,15 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- uuid-dev already installed"
 fi
+  
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 unzip* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install unzip"
+  sudo apt-fast install -yq unzip
+  echo " - done."
+else
+  echo "- unzip already installed"
+fi
 
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 w3m* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
@@ -489,6 +498,8 @@ fi
 
 # somehow not working on ubuntu 15.04 vivid  -- use pyCharm in intellij instead : https://confluence.jetbrains.com/display/PYH/PyCharm+IDE+and+Python+Plugin+for+IntelliJ+IDEA
 # install the http://plugins.jetbrains.com/plugin/631
+#  https://plugins.jetbrains.com/plugin/download?pr=&updateId=23775
+#  https://plugins.jetbrains.com/plugin/download?pr=&updateId=27053     //should be compatible with intellij versions 162.1121+
 #
 #PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 monodevelop-python* |grep "install ok installed")
 #if [ "" == "$PKG_OK" ]; then
@@ -630,6 +641,9 @@ PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 npm* |grep "install ok in
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install npm "
   sudo apt-fast install -yq npm 
+  echo " - done."
+  echo -n "- install WebSocket (ws)"
+  npm install ws
   echo " - done."
 else
   echo "- npm already installed"
@@ -1023,6 +1037,7 @@ if [ "" == "$VBOX_OK" ]; then
 else
   echo "- vbox installed"
 fi
+
 echo "******************************************************************************************************************"
 echo "environment is now ready! you may run vagrant up and then vagrant up cloudchatmanager, vagrant up cloudchatclient"
 echo "******************************************************************************************************************"
