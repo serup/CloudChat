@@ -9,3 +9,4 @@ cd /usr/local/src/node-v0.8.21; sudo make install
 which node
 
 echo "Install WebSocket (ws)"
+npm install ws
