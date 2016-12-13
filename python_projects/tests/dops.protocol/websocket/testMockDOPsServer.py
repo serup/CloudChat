@@ -58,7 +58,6 @@ class DOPsServerTest(unittest.TestCase):
     def testInitDOPsServer(self):
         _bool = True
         number = 9223372036854775807
-        number = 1223372036854775807
 
         print "Testing echo of sending DED datapacket to mock DOPsServer"
         print "---------------------------------------------------------"
