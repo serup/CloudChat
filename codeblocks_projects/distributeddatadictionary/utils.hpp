@@ -63,6 +63,7 @@ class CUtils
 
 			}
 			if(positionOnLine<16){
+				if(usecolor) cout << "\e[1;35m" ;
 				for(int l=0;l<(16-positionOnLine);l++)
 					cout << "   ";
 				for(int c=0;c<16;c++)
@@ -138,6 +139,7 @@ class CUtils
 			}
 			
 			if(positionOnLine<16){
+				if(usecolor) cout << "\e[1;35m" ;
 				for(int l=0;l<(16-positionOnLine);l++)
 					cout << "   ";
 				for(int c=0;c<16;c++)
