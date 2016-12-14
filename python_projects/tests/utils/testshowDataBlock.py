@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 import sys
+
 from array import array
 
 import six
@@ -48,8 +49,9 @@ class showDataBlockTest(unittest.TestCase):
 
     def testShowDataBlock(self):
         util = utils.CUtils()
-        s = array('B', 'AabB\0cdeeeeeeeeeeefffffffffggggggggg')
+        s = array('B', 'RAabB\0\0\0cdeeeeeeeeeeefffffffffggggggggggggggggggggggggggggggggssdfasdfaseaadfdssfsbbbbBBBBB')
 
         util.showdatablock(s, len(s))
+
         self.assertEqual(True, len(s) > 0)
 

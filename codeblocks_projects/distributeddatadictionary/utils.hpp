@@ -22,6 +22,7 @@ class CUtils
 			if(usefold) cout << "/*{{{*/" << endl;
 			if(usecolor) fprintf(stdout,"%s", "\e[1;35m"); 
 			bool flipflop=false;
+			int offset=0;
 			for(int n=0;n<chunkdata.size(); n++)
 			{
 				if(( n + 1 ) % 16 == 0) {
@@ -32,11 +33,12 @@ class CUtils
 					cout << " ";
 					for(int c=0;c<16;c++)
 					{
-						if(isalpha(chunkdata[c]))
-							cout << chunkdata[c];
+						if(isalpha(chunkdata[c+offset]))
+							cout << chunkdata[c+offset];
 						else
 							cout << ".";
 					}
+					offset+=16;
 					cout << endl;
 				}
 				else {
@@ -67,6 +69,7 @@ class CUtils
 			if(usefold) cout << "/*{{{*/" << endl;
 			if(usecolor) fprintf(stdout,"%s", "\e[1;35m"); 
 			bool flipflop=false;
+			int offset=0;
 			for(int n=0;n<chunkdata.size(); n++)
 			{
 				if(( n + 1 ) % 16 == 0) {
@@ -77,11 +80,12 @@ class CUtils
 					cout << " ";
 					for(int c=0;c<16;c++)
 					{
-						if(isalpha(chunkdata[c]))
-							cout << chunkdata[c];
+						if(isalpha(chunkdata[c+offset]))
+							cout << chunkdata[c+offset];
 						else
 							cout << ".";
 					}
+					offset+=16;
 					cout << endl;
 				}
 				else {
