@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
+from array import array
 
 
 class CUtils:
@@ -133,3 +134,21 @@ class CUtils:
                         output += "."
         output += "</pre></html>"
         return output
+
+    def hexdump_file_to_string(self, filepathname):
+        output = ""
+        with open(filepathname, 'rb') as infile:
+            while True:
+                chunk = infile.read(16)
+                if len(chunk) == 0:
+                    break
+
+                s = array('B', chunk)
+                output += self.hexdump_to_string(s)
+
+        # remove end of file marker
+        # return output[:-1]
+        return output
+
+
+

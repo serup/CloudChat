@@ -4,6 +4,7 @@ from dops.protocol.utils import utils
 import sys
 import unittest
 from array import array
+import os
 
 sys.path[0:0] = [""]
 
@@ -20,6 +21,15 @@ class showDataBlockTest(unittest.TestCase):
         print
         str = util.hexdump_to_html_string(s)
         print str
+        print
+
+        cwd = os.getcwd()
+        print cwd
+        print
+        filepathname = cwd+"/datafile.binary"
+        strfile = util.hexdump_file_to_string(filepathname)
+        # NB! this will have 0A at the end for end of file marker
+        print strfile
 
         self.assertEqual(True, len(s) > 0)
 
