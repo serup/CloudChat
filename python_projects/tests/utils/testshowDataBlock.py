@@ -45,7 +45,7 @@ class showDataBlockTest(unittest.TestCase):
         util = utils.CUtils()
         s = array('B', 'RAabB\0\0\0cdeeeeeeeeeeefffffffffgggggggggggä½ å¥½å•Šä¸–ç•ŒgggggggggggggggggggggssdfasdfaseaadfdssfsbbbbBBBBB')
 
-        util.showdatablock(s, len(s))
+        util.showdatablock(s)
 
         self.assertEqual(True, len(s) > 0)
 

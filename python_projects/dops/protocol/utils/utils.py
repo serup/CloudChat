@@ -18,7 +18,8 @@ class CUtils:
 
         return alpha
 
-    def showdatablock(self, chunkdata, length):
+    def showdatablock(self, chunkdata):
+        length = len(chunkdata)
         position_on_line = 0
         offset = 0
         for n in range(0, length):
