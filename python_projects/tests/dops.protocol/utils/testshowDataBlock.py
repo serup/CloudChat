@@ -28,8 +28,12 @@ class showDataBlockTest(unittest.TestCase):
         print
         filepathname = cwd+"/datafile.binary"
         strfile = util.hexdump_file_to_string(filepathname)
+
         # NB! this will have 0A at the end for end of file marker
         print strfile
+        print
+        strfilehtml = util.hexdump_file_to_html_string(filepathname)
+        print strfilehtml
 
         self.assertEqual(True, len(s) > 0)
 

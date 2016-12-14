@@ -150,5 +150,28 @@ class CUtils:
         # return output[:-1]
         return output
 
+    def hexdump_file_to_html_string(self, filepathname):
+        output = "<html><pre>"
+        flipflop = False
+        with open(filepathname, 'rb') as infile:
+            while True:
+                chunk = infile.read(16)
+                if len(chunk) == 0:
+                    break
+
+                if flipflop:
+                    output += "<font size=\"2\" face=\"courier new\" color=\"green\">"
+                    flipflop = False
+                else:
+                    output += "<font size=\"2\" face=\"courier new\" color=\"orange\">"
+                    flipflop = True
+
+                s = array('B', chunk)
+                output += self.hexdump_to_string(s)
+
+        # remove end of file marker
+        # return output[:-1]
+        output += "</pre></html>"
+        return output
 
 
