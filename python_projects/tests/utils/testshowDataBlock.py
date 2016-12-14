@@ -39,17 +39,11 @@ class showDataBlockTest(unittest.TestCase):
         sDecoded = lzss.decode(sEncoded, 0, len(sEncoded))
         print 'After decompress : ' + sDecoded.tostring()
 
-        #
-        # NB! pt. unicode encoding does NOT work
-        #        s = lzss.encode(array('B', codecs.encode('ä½ å¥½å•Šä¸–ç•Œ','gbk')), 2, 8)
-        #        s = lzss.encode(array('B', codecs.encode('Hej med dig Unicode','gbk')), 2, 8)
-        #        print codecs.decode(lzss.decode(s, 0, len(s)).tostring(), 'gbk')
-
         self.assertEqual(True, s == sDecoded)
 
     def testShowDataBlock(self):
         util = utils.CUtils()
-        s = array('B', 'RAabB\0\0\0cdeeeeeeeeeeefffffffffggggggggggggggggggggggggggggggggssdfasdfaseaadfdssfsbbbbBBBBB')
+        s = array('B', 'RAabB\0\0\0cdeeeeeeeeeeefffffffffgggggggggggä½ å¥½å•Šä¸–ç•ŒgggggggggggggggggggggssdfasdfaseaadfdssfsbbbbBBBBB')
 
         util.showdatablock(s, len(s))
 

@@ -3,70 +3,50 @@
 
 import sys
 
-from array import array
-
 
 class CUtils:
-
     def __init__(self):
+        # noinspection PyStatementEffect
         self
 
-    def isalpha(self, byte):
-        if ord(byte) < 128 and ord(byte) > 32:
-            bResult = True
+    @staticmethod
+    def isalpha(byte):
+        if 128 > ord(byte) > 32:
+            alpha = True
         else:
-            bResult = False
+            alpha = False
 
-        return bResult
+        return alpha
 
     def showdatablock(self, chunkdata, length):
-        usecolor = False
-        flipflop = False
-        positionOnLine = 0
-        offset=0
+        position_on_line = 0
+        offset = 0
         for n in range(0, length):
             if (n + 1) % 16 == 0:
-                if usecolor:
-                    sys.stdout.write("%02X%s" % (chunkdata[n]," ") )
-                else:
-                    sys.stdout.write("%02X%s" % (chunkdata[n]," ") )
+                sys.stdout.write("%02X%s" % (chunkdata[n], " "))
                 print " ",
                 for c in range(0, 16):
-                    if self.isalpha(chr(chunkdata[c+offset])):
-                        sys.stdout.write("%s" % chr(chunkdata[c+offset]))
+                    if self.isalpha(chr(chunkdata[c + offset])):
+                        sys.stdout.write("%s" % chr(chunkdata[c + offset]))
                     else:
                         sys.stdout.write(".")
-                offset=offset+16
-                positionOnLine = 16
+                offset += 16
+                position_on_line = 16
                 print
             else:
-                if positionOnLine == 16:
-                    positionOnLine = 0
-                positionOnLine = positionOnLine + 1
-                if usecolor:
-                    sys.stdout.write("%02X%s" % (chunkdata[n]," ") )
-                else:
-                    sys.stdout.write("%02X%s" % (chunkdata[n]," ") )
+                if position_on_line == 16:
+                    position_on_line = 0
+                position_on_line += 1
+                sys.stdout.write("%02X%s" % (chunkdata[n], " "))
                 if (n + 1) % 16 == 0:
                     print " "
 
-            if usecolor:
-                if ( n + 1 ) % 16 == 0:
-                    if flipflop == True:
-                        flipflop=False
-                    else:
-                        flipflop=True
-                    if flipflop:
-                        print("%s" % "\e[0m")
-                    else:
-                        print("%02X%s" % chunkdata[n] )
-
-        if positionOnLine < 16:
-            for l in range(0, 16-positionOnLine):
+        if position_on_line < 16:
+            for l in range(0, 16 - position_on_line):
                 sys.stdout.write("   ")
             sys.stdout.write(" ")
             for c in range(0, 16):
-                pos = c+length-positionOnLine
+                pos = c + length - position_on_line
                 if pos < length:
                     if self.isalpha(chr(chunkdata[pos])):
                         sys.stdout.write("%s" % chr(chunkdata[pos]))
