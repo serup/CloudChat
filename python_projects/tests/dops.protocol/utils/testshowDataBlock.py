@@ -15,8 +15,10 @@ class showDataBlockTest(unittest.TestCase):
         s = array('B', 'RAabB\0\0\0cdeeeeeeeeeeefffffffffgggggggggggä½ å¥½å•Šä¸–ç•ŒgggggggggggggggggggggssdfasdfaseaadfdssfsbbbbBBBBB')
 
         #util.showdatablock(s)
-
         str = util.hexdump_to_string(s)
+        print str
+        print
+        str = util.hexdump_to_html_string(s)
         print str
 
         self.assertEqual(True, len(s) > 0)
