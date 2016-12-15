@@ -1050,12 +1050,34 @@ bool CDataDictionaryControl::mergeRecords(vector<pair<unsigned long, std::vector
 	return bResult;
 }
 
+/**
+ * convert list of pairs with assembled elements to BLOB, using DED
+ */
 transferBLOB CDataDictionaryControl::convertToBLOB(std::list<pair<seqSpan, std::vector<assembledElements>>> listOfPairsOfAssembledAttributs)
 {
 	transferBLOB stblob;
 	stblob.eType = transferBLOB::enumType::ATTRIBUTS_LIST;
 
+	// use DED for data, inorder to add seqSpan, sizeOfdata	
+/*TODO:
+	DED_START_ENCODER(dedptr);
+	DED_PUT_STRUCT_START( dedptr, "DDNodeTransferBLOB" );
+		DED_PUT_STDSTRING	( dedptr, "enumType", (std::string)"ATTRIBUTS_LIST" );
+		DED_PUT_LONG        ( dedptr, "pairs", listOfPairsOfAssembledAttributs.size() )
+	    // iterate thru all pairs and add them to DED	
+		BOOST_FOREACH(auto &pair, listOfPairsOfAssembledAttributs) 
+		{
+			seqSpan ss = pair.first;
+			string sequnceNumbers = "";
+			BOOST_FOREACH(auto &seqNumber, ss.seqNumbers) { sequenceNumbers += std::to_string(seqNumber) + ","; }
+
+			DED_PUT_STDSTRING   ( dedptr, "seqSpan.seqNumbers", sequenceNumbers ); 
+			DED_PUT_STDSTRING   ( dedptr, "seqSpan.attributPath", ss.attributPath ); 
+			DED_PUT_STDVECTOR   ( dedptr, "data", pair.second.data() );
+		}
 	
+	DED_PUT_STRUCT_END( dedptr, "DDNodeTransferBLOB" );
+*/
 
 	return stblob;
 }
