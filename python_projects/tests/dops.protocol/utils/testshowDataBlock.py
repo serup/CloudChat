@@ -13,7 +13,7 @@ class showDataBlockTest(unittest.TestCase):
 
     def testShowDataBlock(self):
         util = utils.CUtils()
-        s = array('B', 'RAabB\0\0\0cdeeeeeeeeeeefffffffffgggggggggggä½ å¥½å•Šä¸–ç•ŒgggggggggggggggggggggssdfasdfaseaadfdssfsbbbbBBBBB')
+        s = array('B', 'RAabB\0\0\0cdeeeeeeeeeeefffffffffgggggggggggä½ å¥½å•Šä¸–ç•Œgggggggggggggggg<gggggssdfasdfaseaadfdssfsbbbbBBBB<B')
 
         #util.showdatablock(s)
         str = util.hexdump_to_string(s)

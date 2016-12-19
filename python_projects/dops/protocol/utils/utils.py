@@ -19,6 +19,13 @@ class CUtils:
 
         return alpha
 
+    @staticmethod
+    def escape_html_tags(chunkdata):
+        chunkdata = chunkdata.replace(">","&gt;")
+        chunkdata = chunkdata.replace("<","&lt;")
+        chunkdata = chunkdata.replace("\"","&quot;")
+        return chunkdata
+
     def showdatablock(self, chunkdata):
         length = len(chunkdata)
         position_on_line = 0
@@ -28,7 +35,7 @@ class CUtils:
                 sys.stdout.write("%02X%s" % (chunkdata[n], " "))
                 print " ",
                 for c in range(0, 16):
-                    if self.isalpha(chr(chunkdata[c + offset])):
+                    if self.isalpha(str(chr(chunkdata[c + offset]))):
                         sys.stdout.write("%s" % chr(chunkdata[c + offset]))
                     else:
                         sys.stdout.write(".")
@@ -55,6 +62,47 @@ class CUtils:
                     else:
                         sys.stdout.write(".")
         return
+
+    def hexdump_to_string_escaped_html(self, chunkdata):
+        length = len(chunkdata)
+        position_on_line = 0
+        offset = 0
+        output = ""
+        for n in range(0, length):
+            if (n + 1) % 16 == 0:
+                output += "{:02X}".format(chunkdata[n]) + " "
+                for c in range(0, 16):
+                    if self.isalpha(chr(chunkdata[c + offset])):
+                        tmp = chr(chunkdata[c + offset])
+                        tmp = self.escape_html_tags(tmp)
+                        output += tmp
+                    else:
+                        output += "."
+                offset += 16
+                position_on_line = 16
+                output += "\n"
+            else:
+                if position_on_line == 16:
+                    position_on_line = 0
+                position_on_line += 1
+                output += "{:02X}".format(chunkdata[n]) + " "
+                if (n + 1) % 16 == 0:
+                    output += " "
+
+        if position_on_line < 16:
+            for l in range(0, 16 - position_on_line):
+                output += "   "
+            for c in range(0, 16):
+                pos = c + length - position_on_line
+                if pos < length:
+                    if self.isalpha(chr(chunkdata[pos])):
+                        tmp = chr(chunkdata[pos])
+                        tmp = self.escape_html_tags(tmp)
+                        output += tmp
+                    else:
+                        output += "."
+        return output
+
 
     def hexdump_to_string(self, chunkdata):
         length = len(chunkdata)
@@ -103,7 +151,9 @@ class CUtils:
                 output += "{:02X}".format(chunkdata[n]) + " "
                 for c in range(0, 16):
                     if self.isalpha(chr(chunkdata[c + offset])):
-                        output += chr(chunkdata[c + offset])
+                        tmp = chr(chunkdata[c + offset])
+                        tmp = self.escape_html_tags(tmp)
+                        output += tmp
                     else:
                         output += "."
                 offset += 16
@@ -129,7 +179,9 @@ class CUtils:
                 pos = c + length - position_on_line
                 if pos < length:
                     if self.isalpha(chr(chunkdata[pos])):
-                        output += chr(chunkdata[pos])
+                        tmp = chr(chunkdata[pos])
+                        tmp = self.escape_html_tags(tmp)
+                        output += tmp
                     else:
                         output += "."
         output += "</pre></html>"
@@ -167,7 +219,7 @@ class CUtils:
                     flipflop = True
 
                 s = array('B', chunk)
-                output += self.hexdump_to_string(s)
+                output += self.hexdump_to_string_escaped_html(s)
 
         # remove end of file marker
         # return output[:-1]
