@@ -37,3 +37,26 @@ class showDataBlockTest(unittest.TestCase):
 
         self.assertEqual(True, len(s) > 0)
 
+    def testWritePNG(self):
+        util = utils.CUtils()
+
+        buf = b'RAabB\0\0\0cdeeeeeeeeeeefffffffffgggggggggggä½ å¥½å•Šä¸–ç•Œgggggggggggggggg<gggggssdfasdfaseaadfdssfsbbbbBBBB<B<8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b>'
+
+        #buf = b'<8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b><8b>'
+
+        data = util.write_png(buf, 64, 64)
+        with open("my_image.png", 'wb') as fd:
+            fd.write(data)
+
+        print " my_image.png filesize %d " % os.stat("my_image.png").st_size
+
+    def testWriteBinFileAsPNG(self):
+        util = utils.CUtils()
+
+        with open('datafile.binary', 'rb') as infile:
+             buf = infile.read(os.stat("datafile.binary").st_size)
+
+        data = util.write_png(buf, 128, 128)
+        with open('my_image.png', 'wb') as fd:
+             fd.write(data)
+
