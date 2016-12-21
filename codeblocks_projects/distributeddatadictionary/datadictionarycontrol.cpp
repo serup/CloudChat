@@ -1120,8 +1120,14 @@ bool CDataDictionaryControl::convertFromBLOBToPair(transferBLOB tblob, std::list
 					for(int n=0; n < amountOfPairs; n++)
 					{
 						string seqNumbers;
+						string attributPath;
 						DED_GET_STDSTRING( decoder_ptr, "seqSpan.seqNumbers", seqNumbers );
 						cout << " - seqSpan.seqNumbers : " << seqNumbers << endl;
+						DED_GET_STDSTRING( decoder_ptr, "seqSpan.attributPath", attributPath );
+						cout << " - seqSpan.attributPath : " << attributPath << endl;
+						std::vector<unsigned char> chunkdata;
+						DED_GET_STDVECTOR( decoder_ptr, "data", chunkdata );
+						CUtils::showDataBlock(true,true,chunkdata);
 					}
 
 					
