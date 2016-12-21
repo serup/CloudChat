@@ -106,6 +106,7 @@ class CDataDictionaryControl
 		pair<std::string, std::vector<unsigned char>> mergeAndSort(std::string attributpath, std::list< pair<seqSpan, std::vector<assembledElements>>> listOfAssembledAttributes);
 		bool fetchAttributsFromFile(boost::filesystem::path const& filepathname, std::list< pair<seqSpan, std::vector<assembledElements>>> &listOfAssembledAttributes);
 		transferBLOB convertToBLOB(std::list<pair<seqSpan, std::vector<assembledElements>>> listOfPairsOfAssembledAttributs);
+		bool convertFromBLOBToPair(transferBLOB tblob, std::list<pair<seqSpan, std::vector<assembledElements>>> &listOfPairsOfAssembledAttributs);
 
     protected:
 		long _maxDEDchunkSize;

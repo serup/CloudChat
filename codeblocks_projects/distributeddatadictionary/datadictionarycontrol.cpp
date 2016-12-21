@@ -249,25 +249,25 @@ std::vector< pair<std::vector<unsigned char>, int> > CDataDictionaryControl::spl
 			vdata.assign(pCompressedData, pCompressedData + sizeofCompressedData);  
 
 			//+test
-			cout << endl << "/*{{{*/";
-			cout << "INFO: internal test of data - before DED : " << endl;
-			CUtils::showDataBlock(true,true,chunkdata);
+			// cout << endl << "/*{{{*/";
+			// cout << "INFO: internal test of data - before DED : " << endl;
+			// CUtils::showDataBlock(true,true,chunkdata);
 
-			EntityChunkDataInfo _chunk;
-			// decode data ...
-			DED_PUT_DATA_IN_DECODER(decoder_ptr,pCompressedData,sizeofCompressedData);
+			// EntityChunkDataInfo _chunk;
+			// // decode data ...
+			// DED_PUT_DATA_IN_DECODER(decoder_ptr,pCompressedData,sizeofCompressedData);
 
-			DED_GET_STRUCT_START( decoder_ptr, "chunk_record" );
-			DED_GET_STDSTRING	( decoder_ptr, "attribut_chunk_id", _chunk.entity_chunk_id ); // key of particular item
-			DED_GET_ULONG   	( decoder_ptr, "attribut_aiid", _chunk.aiid ); // this number is continuesly increasing all thruout the entries in this table
-			DED_GET_ULONG   	( decoder_ptr, "attribut_chunk_seq", _chunk.entity_chunk_seq ); // sequence number of particular item
-			DED_GET_STDVECTOR	( decoder_ptr, "attribut_chunk_data", _chunk.entity_chunk_data ); //
-			DED_GET_STRUCT_END( decoder_ptr, "chunk_record" );
+			// DED_GET_STRUCT_START( decoder_ptr, "chunk_record" );
+			// DED_GET_STDSTRING	( decoder_ptr, "attribut_chunk_id", _chunk.entity_chunk_id ); // key of particular item
+			// DED_GET_ULONG   	( decoder_ptr, "attribut_aiid", _chunk.aiid ); // this number is continuesly increasing all thruout the entries in this table
+			// DED_GET_ULONG   	( decoder_ptr, "attribut_chunk_seq", _chunk.entity_chunk_seq ); // sequence number of particular item
+			// DED_GET_STDVECTOR	( decoder_ptr, "attribut_chunk_data", _chunk.entity_chunk_data ); //
+			// DED_GET_STRUCT_END( decoder_ptr, "chunk_record" );
 
-			cout << endl << "INFO: internal test of data - after DED : ";
-			CUtils::showDataBlockDiff(true,true, chunkdata, _chunk.entity_chunk_data);
+			// cout << endl << "INFO: internal test of data - after DED : ";
+			// CUtils::showDataBlockDiff(true,true, chunkdata, _chunk.entity_chunk_data);
 
-			cout << "/*}}}*/" << endl;
+			// cout << "/*}}}*/" << endl;
 			//-test
 
 			listOfDEDchunks.push_back(make_pair(vdata,sizeofCompressedData));
@@ -1058,28 +1058,78 @@ transferBLOB CDataDictionaryControl::convertToBLOB(std::list<pair<seqSpan, std::
 	transferBLOB stblob;
 	stblob.eType = transferBLOB::enumType::ATTRIBUTS_LIST;
 
+	cout << "INFO: convertToBLOB : " << endl;
 	// use DED for data, inorder to add seqSpan, sizeOfdata	
-/*TODO:
-	DED_START_ENCODER(dedptr);
-	DED_PUT_STRUCT_START( dedptr, "DDNodeTransferBLOB" );
-		DED_PUT_STDSTRING	( dedptr, "enumType", (std::string)"ATTRIBUTS_LIST" );
-		DED_PUT_LONG        ( dedptr, "pairs", listOfPairsOfAssembledAttributs.size() )
+	{
+	DED_START_ENCODER(encoder_ptr);
+	DED_PUT_STRUCT_START( encoder_ptr, "DDNodeTransferBLOB" );
+		DED_PUT_STDSTRING	( encoder_ptr, "enumType", (std::string)"ATTRIBUTS_LIST" );
+		DED_PUT_LONG        ( encoder_ptr, "pairs", listOfPairsOfAssembledAttributs.size() );
 	    // iterate thru all pairs and add them to DED	
 		BOOST_FOREACH(auto &pair, listOfPairsOfAssembledAttributs) 
 		{
 			seqSpan ss = pair.first;
-			string sequnceNumbers = "";
+			string sequenceNumbers = "";
 			BOOST_FOREACH(auto &seqNumber, ss.seqNumbers) { sequenceNumbers += std::to_string(seqNumber) + ","; }
+			cout << "- INFO: sequence in list pair element : " << sequenceNumbers << endl; 
+			cout << "- INFO: attribut path : " << ss.attributPath << endl; 
 
-			DED_PUT_STDSTRING   ( dedptr, "seqSpan.seqNumbers", sequenceNumbers ); 
-			DED_PUT_STDSTRING   ( dedptr, "seqSpan.attributPath", ss.attributPath ); 
-			DED_PUT_STDVECTOR   ( dedptr, "data", pair.second.data() );
+			DED_PUT_STDSTRING   ( encoder_ptr, "seqSpan.seqNumbers", sequenceNumbers ); 
+			DED_PUT_STDSTRING   ( encoder_ptr, "seqSpan.attributPath", ss.attributPath ); 
+			
+			std::vector<unsigned char> chunkdata = fetchElement(pair.second, ss.attributPath);
+			CUtils::showDataBlock(true,true,chunkdata);
+			
+			DED_PUT_STDVECTOR   ( encoder_ptr, "data", chunkdata );
 		}
 	
-	DED_PUT_STRUCT_END( dedptr, "DDNodeTransferBLOB" );
-*/
+	DED_PUT_STRUCT_END( encoder_ptr, "DDNodeTransferBLOB" );
+	DED_GET_ENCODED_DATA(encoder_ptr,data_ptr,iLengthOfTotalData,pCompressedData,sizeofCompressedData);
+
+	if(sizeofCompressedData==0) sizeofCompressedData = iLengthOfTotalData; // if sizeofcompresseddata is 0 then compression was not possible and size is the same as for uncompressed
+	stblob.size = sizeofCompressedData;
+	stblob.data.assign(pCompressedData, pCompressedData + sizeofCompressedData);  
+	}
 
 	return stblob;
 }
 
+bool CDataDictionaryControl::convertFromBLOBToPair(transferBLOB tblob, std::list<pair<seqSpan, std::vector<assembledElements>>> &listOfPairsOfAssembledAttributs)
+{
+	bool bConversionOK = false;
+	transferBLOB::enumType eType = transferBLOB::enumType::PLAIN_DATA;
+	long amountOfPairs=0;
 
+	if(tblob.eType != transferBLOB::enumType::ATTRIBUTS_LIST)
+		cout << "FAIL: blob is not a valid type" << endl;
+	else {
+		if(tblob.data.size() != tblob.size)
+			cout << "FAIL: blob size differs - SERIOUS ERROR - blob is NOT of type transferBLOB structure " << endl;
+		else {
+			//DED_PUT_DATA_IN_DECODER(decoder_ptr,&tblob.data[0], tblob.data.size());
+			DED_PUT_DATA_IN_DECODER( decoder_ptr,tblob.data.data(), tblob.data.size() );
+			DED_GET_STRUCT_START( decoder_ptr, "DDNodeTransferBLOB" );
+			string strEnumType = "";
+			DED_GET_STDSTRING( decoder_ptr, "enumType", strEnumType);
+			if(strEnumType == "ATTRIBUTS_LIST") eType = transferBLOB::enumType::ATTRIBUTS_LIST;
+			if(eType !=  transferBLOB::enumType::ATTRIBUTS_LIST)
+				cout << "WARNING: blob type is NOT expected type" << endl;
+			else {
+				DED_GET_LONG( decoder_ptr, "pairs", amountOfPairs );
+				if(amountOfPairs > 0) {	
+					for(int n=0; n < amountOfPairs; n++)
+					{
+						string seqNumbers;
+						DED_GET_STDSTRING( decoder_ptr, "seqSpan.seqNumbers", seqNumbers );
+						cout << " - seqSpan.seqNumbers : " << seqNumbers << endl;
+					}
+
+					
+					
+					bConversionOK = true;
+				}
+			}
+		}
+	}
+	return bConversionOK;
+}

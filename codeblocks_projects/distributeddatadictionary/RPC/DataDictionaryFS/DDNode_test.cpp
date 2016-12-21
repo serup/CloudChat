@@ -938,9 +938,16 @@ BOOST_AUTO_TEST_CASE( fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 				BOOST_CHECK(stBlob.eType == transferBLOB::enumType::ATTRIBUTS_LIST);
 				
 				cout << "  simulate transfer from RPCclient to server " << endl;
+				cout << "..." << endl;
 
 				cout << "  convert result in BLOB to list pair<seq,vector<assembledElements>> " << endl;
-				resultFromRPCclients[n++] = AttributInblockSequenceFromBFifile;
+				cout << "..." << endl;
+				std::list<pair<seqSpan, std::vector<assembledElements>>> listpair;
+				BOOST_CHECK(ptestDataDictionaryControl->convertFromBLOBToPair(stBlob, listpair));
+
+				cout << "  simulate receive from RPCclient " << endl;
+				//resultFromRPCclients[n++] = AttributInblockSequenceFromBFifile;
+				resultFromRPCclients[n++] = listpair;
 			}
 		}
 		cout << "*}}}" << endl;
