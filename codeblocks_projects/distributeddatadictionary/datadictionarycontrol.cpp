@@ -1131,20 +1131,10 @@ bool CDataDictionaryControl::convertFromBLOBToPair(transferBLOB tblob, std::list
 						
 						seqSpan ss;
 						ss.seqNumbers = convertCommaSeperatedNumbersInStringToListOfLongs(seqNumbers);
-
-						cout << "sequence Numbers decoded from DED into std::list :  ";
-						cout << "*{{{" << endl;
-						BOOST_FOREACH(auto &number, ss.seqNumbers)
-						{
-							cout << number << ",";
-						}
-						cout << endl;
-						cout << "*}}}" << endl;
-
 						ss.attributPath = attributPath;
 
 						assembledElements _element;
-						_element.strElementID = ss.attributPath; //TODO: remove padding
+						_element.strElementID = ss.attributPath; 
 						_element.seqNumbers   = ss.seqNumbers;
 						std::copy(chunkdata.begin(), chunkdata.end(), std::back_inserter(_element.ElementData));
 

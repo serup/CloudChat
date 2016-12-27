@@ -930,6 +930,7 @@ BOOST_AUTO_TEST_CASE( fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 
 			if((boost::filesystem::extension(currentfile.string()) == BFI_FILE_EXTENSION)) { 
 				cout << "virtual RPCclient " << n+1 << " : " << endl;
+				cout << "*{{{" << endl;
 				cout << "  Fetch attribut from .BFi file " << endl;
 				ptestDataDictionaryControl->fetchAttributsFromFile(currentfile, AttributInblockSequenceFromBFifile); 
 
@@ -937,23 +938,48 @@ BOOST_AUTO_TEST_CASE( fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 				transferBLOB stBlob = ptestDataDictionaryControl->convertToBLOB(AttributInblockSequenceFromBFifile);
 				BOOST_CHECK(stBlob.eType == transferBLOB::enumType::ATTRIBUTS_LIST);
 				
-				cout << "  simulate transfer from RPCclient to server " << endl;
-				cout << "..." << endl;
-
+				cout << "  simulate transfer / receive from RPCclient to server " << endl;
 				cout << "  convert result in BLOB to list pair<seq,vector<assembledElements>> " << endl;
-				cout << "..." << endl;
+				
 				std::list<pair<seqSpan, std::vector<assembledElements>>> listpair;
 				BOOST_CHECK(ptestDataDictionaryControl->convertFromBLOBToPair(stBlob, listpair));
 				BOOST_CHECK(listpair.size() > 0);
 
-				cout << "  simulate receive from RPCclient " << endl;
-				cout << "  amount of elements in listpair : " << listpair.size() << endl;
+				cout << "  amount of elements in received listpair : " << listpair.size() << endl;
+				cout << "  sequence Numbers decoded from DED into std::list :  ";
+				cout << "*{{{" << endl;
+				BOOST_FOREACH(auto &_pair, listpair)
+				{
+					seqSpan ss;
+					ss = _pair.first;
+					BOOST_FOREACH(auto &number, ss.seqNumbers)
+					{
+						cout << number << ",";
+					}
+					cout << endl;
+						
+					assembledElements _element;
+					_element.strElementID = ss.attributPath; 
+					_element.seqNumbers   = ss.seqNumbers;
+//					_element.ElementData  = _pair.second;
+
+					std::vector<assembledElements> vae = _pair.second;
+
+					BOOST_FOREACH(auto &_element, vae) {
+						CUtils::showDataBlock(true,true,_element.ElementData);
+					}
+				}
+				cout << endl;
+				cout << "*}}}" << endl;
+
 
 				//resultFromRPCclients[n++] = AttributInblockSequenceFromBFifile;
 				resultFromRPCclients[n++] = listpair;
+				cout << "*}}}" << endl;
 			}
 		}
 		cout << "*}}}" << endl;
+		cout << "________________________________________" << endl;
 		cout << "*** Merge retrieved RPCclient results with others " << endl;
 		std::list< pair<seqSpan, std::vector<assembledElements>> > totallistOfAssembledAttributes;
 
