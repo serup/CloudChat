@@ -944,8 +944,11 @@ BOOST_AUTO_TEST_CASE( fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 				cout << "..." << endl;
 				std::list<pair<seqSpan, std::vector<assembledElements>>> listpair;
 				BOOST_CHECK(ptestDataDictionaryControl->convertFromBLOBToPair(stBlob, listpair));
+				BOOST_CHECK(listpair.size() > 0);
 
 				cout << "  simulate receive from RPCclient " << endl;
+				cout << "  amount of elements in listpair : " << listpair.size() << endl;
+
 				//resultFromRPCclients[n++] = AttributInblockSequenceFromBFifile;
 				resultFromRPCclients[n++] = listpair;
 			}

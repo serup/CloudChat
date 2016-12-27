@@ -1128,10 +1128,32 @@ bool CDataDictionaryControl::convertFromBLOBToPair(transferBLOB tblob, std::list
 						std::vector<unsigned char> chunkdata;
 						DED_GET_STDVECTOR( decoder_ptr, "data", chunkdata );
 						CUtils::showDataBlock(true,true,chunkdata);
+						
+						seqSpan ss;
+						ss.seqNumbers = convertCommaSeperatedNumbersInStringToListOfLongs(seqNumbers);
+
+						cout << "sequence Numbers decoded from DED into std::list :  ";
+						cout << "*{{{" << endl;
+						BOOST_FOREACH(auto &number, ss.seqNumbers)
+						{
+							cout << number << ",";
+						}
+						cout << endl;
+						cout << "*}}}" << endl;
+
+						ss.attributPath = attributPath;
+
+						assembledElements _element;
+						_element.strElementID = ss.attributPath; //TODO: remove padding
+						_element.seqNumbers   = ss.seqNumbers;
+						std::copy(chunkdata.begin(), chunkdata.end(), std::back_inserter(_element.ElementData));
+
+						std::vector<assembledElements> vae;
+						vae.push_back(_element);
+						listOfPairsOfAssembledAttributs.push_back(pair<seqSpan, std::vector<assembledElements>> (ss, vae) ); 
+
 					}
 
-					
-					
 					bConversionOK = true;
 				}
 			}
@@ -1139,3 +1161,23 @@ bool CDataDictionaryControl::convertFromBLOBToPair(transferBLOB tblob, std::list
 	}
 	return bConversionOK;
 }
+
+
+std::list<unsigned long> CDataDictionaryControl::convertCommaSeperatedNumbersInStringToListOfLongs(std::string seqNumbers)
+{
+	std::list<unsigned long> resultList;
+
+	std::stringstream ss(seqNumbers);
+
+	long i;
+	while (ss >> i)
+	{
+		resultList.push_back(i);
+		if (ss.peek() == ',' || ss.peek() == ' ')
+			ss.ignore();
+
+	}
+
+	return resultList;
+}
+
