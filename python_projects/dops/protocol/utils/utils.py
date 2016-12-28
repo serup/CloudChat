@@ -319,3 +319,16 @@ class CUtils:
 
         return width, height
 # end of snippet
+
+    @staticmethod
+    def is_binay_file(filepathname):
+        textchars = bytearray([7,8,9,10,12,13,27]) + bytearray(range(0x20, 0x7f)) + bytearray(range(0x80, 0x100))
+        is_binary_string = lambda bytes: bool(bytes.translate(None, textchars))
+
+        if is_binary_string(open(filepathname, 'rb').read(1024)):
+            return True
+        else:
+            return False
+
+
+

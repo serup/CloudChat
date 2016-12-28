@@ -60,3 +60,8 @@ class showDataBlockTest(unittest.TestCase):
         with open('my_image.png', 'wb') as fd:
              fd.write(data)
 
+
+    def testtastefile(self):
+        util = utils.CUtils()
+
+        util.tastefile()
