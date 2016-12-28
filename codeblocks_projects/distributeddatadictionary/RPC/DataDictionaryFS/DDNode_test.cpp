@@ -935,14 +935,14 @@ BOOST_AUTO_TEST_CASE( fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 				ptestDataDictionaryControl->fetchAttributsFromFile(currentfile, AttributInblockSequenceFromBFifile); 
 
 				cout << "  prepare result in a BLOB " << endl;
-				transferBLOB stBlob = ptestDataDictionaryControl->convertToBLOB(AttributInblockSequenceFromBFifile);
+				transferBLOB stBlob = ptestDataDictionaryControl->convertToBLOB(AttributInblockSequenceFromBFifile,true);
 				BOOST_CHECK(stBlob.eType == transferBLOB::enumType::ATTRIBUTS_LIST);
 				
 				cout << "  simulate transfer / receive from RPCclient to server " << endl;
 				cout << "  convert result in BLOB to list pair<seq,vector<assembledElements>> " << endl;
 				
 				std::list<pair<seqSpan, std::vector<assembledElements>>> listpair;
-				BOOST_CHECK(ptestDataDictionaryControl->convertFromBLOBToPair(stBlob, listpair));
+				BOOST_CHECK(ptestDataDictionaryControl->convertFromBLOBToPair(stBlob, listpair,true));
 				BOOST_CHECK(listpair.size() > 0);
 
 				cout << "  amount of elements in received listpair : " << listpair.size() << endl;
@@ -961,8 +961,7 @@ BOOST_AUTO_TEST_CASE( fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 					assembledElements _element;
 					_element.strElementID = ss.attributPath; 
 					_element.seqNumbers   = ss.seqNumbers;
-//					_element.ElementData  = _pair.second;
-
+					
 					std::vector<assembledElements> vae = _pair.second;
 
 					BOOST_FOREACH(auto &_element, vae) {

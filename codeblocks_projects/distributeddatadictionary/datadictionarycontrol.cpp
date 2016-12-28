@@ -1053,13 +1053,13 @@ bool CDataDictionaryControl::mergeRecords(vector<pair<unsigned long, std::vector
 /**
  * convert list of pairs with assembled elements to BLOB, using DED
  */
-transferBLOB CDataDictionaryControl::convertToBLOB(std::list<pair<seqSpan, std::vector<assembledElements>>> listOfPairsOfAssembledAttributs)
+transferBLOB CDataDictionaryControl::convertToBLOB(std::list<pair<seqSpan, std::vector<assembledElements>>> listOfPairsOfAssembledAttributs, bool verbose)
 {
 	transferBLOB stblob;
 	stblob.eType = transferBLOB::enumType::ATTRIBUTS_LIST;
 
-	cout << "INFO: convertToBLOB : " << endl;
-	// use DED for data, inorder to add seqSpan, sizeOfdata	
+	cout << "INFO: convertToBLOB : " << endl; 
+	
 	{
 	DED_START_ENCODER(encoder_ptr);
 	DED_PUT_STRUCT_START( encoder_ptr, "DDNodeTransferBLOB" );
@@ -1094,17 +1094,19 @@ transferBLOB CDataDictionaryControl::convertToBLOB(std::list<pair<seqSpan, std::
 	return stblob;
 }
 
-bool CDataDictionaryControl::convertFromBLOBToPair(transferBLOB tblob, std::list<pair<seqSpan, std::vector<assembledElements>>> &listOfPairsOfAssembledAttributs)
+bool CDataDictionaryControl::convertFromBLOBToPair(transferBLOB tblob, std::list<pair<seqSpan, std::vector<assembledElements>>> &listOfPairsOfAssembledAttributs, bool verbose)
 {
 	bool bConversionOK = false;
 	transferBLOB::enumType eType = transferBLOB::enumType::PLAIN_DATA;
 	long amountOfPairs=0;
 
-	if(tblob.eType != transferBLOB::enumType::ATTRIBUTS_LIST)
-		cout << "FAIL: blob is not a valid type" << endl;
+	if(tblob.eType != transferBLOB::enumType::ATTRIBUTS_LIST) {
+		if(verbose) cout << "FAIL: blob is not a valid type" << endl;
+	}
 	else {
-		if(tblob.data.size() != tblob.size)
-			cout << "FAIL: blob size differs - SERIOUS ERROR - blob is NOT of type transferBLOB structure " << endl;
+		if(tblob.data.size() != tblob.size) {
+			if(verbose) cout << "FAIL: blob size differs - SERIOUS ERROR - blob is NOT of type transferBLOB structure " << endl;
+		}
 		else {
 			//DED_PUT_DATA_IN_DECODER(decoder_ptr,&tblob.data[0], tblob.data.size());
 			DED_PUT_DATA_IN_DECODER( decoder_ptr,tblob.data.data(), tblob.data.size() );
@@ -1112,8 +1114,9 @@ bool CDataDictionaryControl::convertFromBLOBToPair(transferBLOB tblob, std::list
 			string strEnumType = "";
 			DED_GET_STDSTRING( decoder_ptr, "enumType", strEnumType);
 			if(strEnumType == "ATTRIBUTS_LIST") eType = transferBLOB::enumType::ATTRIBUTS_LIST;
-			if(eType !=  transferBLOB::enumType::ATTRIBUTS_LIST)
-				cout << "WARNING: blob type is NOT expected type" << endl;
+			if(eType !=  transferBLOB::enumType::ATTRIBUTS_LIST) {
+				if(verbose) cout << "WARNING: blob type is NOT expected type" << endl;
+			}
 			else {
 				DED_GET_LONG( decoder_ptr, "pairs", amountOfPairs );
 				if(amountOfPairs > 0) {	
@@ -1121,13 +1124,11 @@ bool CDataDictionaryControl::convertFromBLOBToPair(transferBLOB tblob, std::list
 					{
 						string seqNumbers;
 						string attributPath;
-						DED_GET_STDSTRING( decoder_ptr, "seqSpan.seqNumbers", seqNumbers );
-						cout << " - seqSpan.seqNumbers : " << seqNumbers << endl;
-						DED_GET_STDSTRING( decoder_ptr, "seqSpan.attributPath", attributPath );
-						cout << " - seqSpan.attributPath : " << attributPath << endl;
 						std::vector<unsigned char> chunkdata;
+						
+						DED_GET_STDSTRING( decoder_ptr, "seqSpan.seqNumbers", seqNumbers );
+						DED_GET_STDSTRING( decoder_ptr, "seqSpan.attributPath", attributPath );
 						DED_GET_STDVECTOR( decoder_ptr, "data", chunkdata );
-						CUtils::showDataBlock(true,true,chunkdata);
 						
 						seqSpan ss;
 						ss.seqNumbers = convertCommaSeperatedNumbersInStringToListOfLongs(seqNumbers);
@@ -1141,10 +1142,9 @@ bool CDataDictionaryControl::convertFromBLOBToPair(transferBLOB tblob, std::list
 						std::vector<assembledElements> vae;
 						vae.push_back(_element);
 						listOfPairsOfAssembledAttributs.push_back(pair<seqSpan, std::vector<assembledElements>> (ss, vae) ); 
-
 					}
-
-					bConversionOK = true;
+					if(listOfPairsOfAssembledAttributs.size() > 0)
+						bConversionOK = true;
 				}
 			}
 		}
