@@ -997,7 +997,7 @@ BOOST_AUTO_TEST_CASE( fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 		if(!bFoundError) cout << "INFO: bytes assembled are equal to original " << endl;
 		BOOST_CHECK(bFoundError == false);
 
-		cout << "size of Original : " << FotoAttributValue.size() << " size of result : " << resultAttributPair.second.size() << endl;
+		cout << "INFO: size of Original : " << FotoAttributValue.size() << ", size of result : " << resultAttributPair.second.size() << endl;
 		int missingbytes = (FotoAttributValue.size() - resultAttributPair.second.size());
 
 		if(missingbytes > 0) cout << "FAIL: Missing byte(s) : " << missingbytes << endl;

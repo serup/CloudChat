@@ -1058,7 +1058,7 @@ transferBLOB CDataDictionaryControl::convertToBLOB(std::list<pair<seqSpan, std::
 	transferBLOB stblob;
 	stblob.eType = transferBLOB::enumType::ATTRIBUTS_LIST;
 
-	cout << "INFO: convertToBLOB : " << endl; 
+	if(verbose) { cout << "INFO: convertToBLOB : " << endl; } 
 	
 	{
 	DED_START_ENCODER(encoder_ptr);
@@ -1071,14 +1071,16 @@ transferBLOB CDataDictionaryControl::convertToBLOB(std::list<pair<seqSpan, std::
 			seqSpan ss = pair.first;
 			string sequenceNumbers = "";
 			BOOST_FOREACH(auto &seqNumber, ss.seqNumbers) { sequenceNumbers += std::to_string(seqNumber) + ","; }
-			cout << "- INFO: sequence in list pair element : " << sequenceNumbers << endl; 
-			cout << "- INFO: attribut path : " << ss.attributPath << endl; 
+			if(verbose) { 
+				cout << "- INFO: sequence in list pair element : " << sequenceNumbers << endl; 
+				cout << "- INFO: attribut path : " << ss.attributPath << endl; 
+			}
 
 			DED_PUT_STDSTRING   ( encoder_ptr, "seqSpan.seqNumbers", sequenceNumbers ); 
 			DED_PUT_STDSTRING   ( encoder_ptr, "seqSpan.attributPath", ss.attributPath ); 
 			
 			std::vector<unsigned char> chunkdata = fetchElement(pair.second, ss.attributPath);
-			CUtils::showDataBlock(true,true,chunkdata);
+			if(verbose) { CUtils::showDataBlock(true,true,chunkdata); }
 			
 			DED_PUT_STDVECTOR   ( encoder_ptr, "data", chunkdata );
 		}
