@@ -60,8 +60,6 @@ class showDataBlockTest(unittest.TestCase):
         with open('my_image.png', 'wb') as fd:
              fd.write(data)
 
-
     def testtastefile(self):
         util = utils.CUtils()
-
-        util.tastefile()
+        self.assertEqual(True, util.is_binay_file('datafile.binary'))
