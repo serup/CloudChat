@@ -383,7 +383,7 @@ BOOST_AUTO_TEST_CASE(RequestResponseMethod)
 
 BOOST_AUTO_TEST_CASE(ClientRequestHandling_connect)
 {
-	cout << "BOOST_AUTO_TEST( ClientRequestHandling_connect )\n{" << endl;
+	cout << "BOOST_AUTO_TEST_CASE( ClientRequestHandling_connect )\n{" << endl;
 
 	CHandlingRPCclientRequestToServer hcr;
 	CHandlingRPCclientRequestToServer::clientInfo *pclientInfo = hcr.createClientInfoObject();
@@ -463,7 +463,7 @@ BOOST_AUTO_TEST_CASE(CHandlingServerRequestToClients_init)
 
 // BOOST_AUTO_TEST_CASE(RPCclient_fetch_partial_attribut_from_BFi_file)
 // {
-// 	cout << "BOOST_AUTO_TEST( RPCclient_fetch_partial_attribut_from_BFi_file )\n{" << endl;
+// 	cout << "BOOST_AUTO_TEST_CASE( RPCclient_fetch_partial_attribut_from_BFi_file )\n{" << endl;
 // 
 // 	cout << "INFO: " << endl;
 // 	cout <<"/*{{{*/"<<endl;   
@@ -1117,7 +1117,7 @@ void watcher(zhandle_t *zzh, int type, int state, const char *path, void* contex
 
 BOOST_AUTO_TEST_CASE(integrationTest_connectTo_zookeeper_basic)
 {
-	cout << "BOOST_AUTO_TEST( integrationTest_connectTo_zookeeper_basic )\n{" << endl;
+	cout << "BOOST_AUTO_TEST_CASE( integrationTest_connectTo_zookeeper_basic )\n{" << endl;
 
 	bool bResult=true;
 
@@ -1165,7 +1165,7 @@ BOOST_AUTO_TEST_CASE(integrationTest_connectTo_zookeeper_basic)
 
 BOOST_AUTO_TEST_CASE(integrationTest_createZNode_zookeeper_basic)
 {
-	cout << "BOOST_AUTO_TEST( integrationTest_createZNode_zookeeper_basic )\n{" << endl;
+	cout << "BOOST_AUTO_TEST_CASE( integrationTest_createZNode_zookeeper_basic )\n{" << endl;
 
 	bool bResult=true;
 
@@ -1232,7 +1232,7 @@ BOOST_AUTO_TEST_CASE(integrationTest_createZNode_zookeeper_basic)
 
 BOOST_AUTO_TEST_CASE(integrationTest_connectTo_zookeeper_advanced)
 {
-	cout << "BOOST_AUTO_TEST( integrationTest_connectTo_zookeeper_advanced)\n{" << endl;
+	cout << "BOOST_AUTO_TEST_CASE( integrationTest_connectTo_zookeeper_advanced)\n{" << endl;
 	
 	zoo_set_debug_level(ZOO_LOG_LEVEL_DEBUG);
 	//zoo_set_debug_level(ZOO_LOG_LEVEL_WARN);
@@ -1252,7 +1252,7 @@ BOOST_AUTO_TEST_CASE(integrationTest_connectTo_zookeeper_advanced)
 
 BOOST_AUTO_TEST_CASE(integrationTest_listZNodes_zookeeper_advanced)
 {
-	cout << "BOOST_AUTO_TEST( integrationTest_listZNodes_zookeeper_advanced)\n{" << endl;
+	cout << "BOOST_AUTO_TEST_CASE( integrationTest_listZNodes_zookeeper_advanced)\n{" << endl;
 	
 	zoo_set_log_stream(fopen("NULL", "w")); // no output
 	//zoo_set_log_stream(stdout); // redirect from stderr to stdout 
@@ -1273,7 +1273,7 @@ BOOST_AUTO_TEST_CASE(integrationTest_listZNodes_zookeeper_advanced)
 
 BOOST_AUTO_TEST_CASE(integrationTest_CreateZNode_zookeeper_advanced)
 {
-	cout << "BOOST_AUTO_TEST( integrationTest_CreateZNode_zookeeper_advanced)\n{" << endl;
+	cout << "BOOST_AUTO_TEST_CASE( integrationTest_CreateZNode_zookeeper_advanced)\n{" << endl;
 	
 	//zoo_set_debug_level(ZOO_LOG_LEVEL_DEBUG);
 	zoo_set_log_stream(fopen("NULL", "w")); // no output
@@ -1311,7 +1311,7 @@ BOOST_AUTO_TEST_CASE(integrationTest_CreateZNode_zookeeper_advanced)
 
 BOOST_AUTO_TEST_CASE(integrationTest_getZNode_zookeeper_advanced)
 {
-	cout << "BOOST_AUTO_TEST( integrationTest_getZNode_zookeeper_advanced)\n{" << endl;
+	cout << "BOOST_AUTO_TEST_CASE( integrationTest_getZNode_zookeeper_advanced)\n{" << endl;
 	
 	//zoo_set_debug_level(ZOO_LOG_LEVEL_DEBUG);
 	zoo_set_log_stream(fopen("NULL", "w")); // no output
@@ -1358,7 +1358,7 @@ BOOST_AUTO_TEST_CASE(integrationTest_getZNode_zookeeper_advanced)
 
 BOOST_AUTO_TEST_CASE(integrationTest_RPCclient_connectTo_ZooKeeper)
 {
-	cout << "BOOST_AUTO_TEST( integrationTest_RPCclient_connectTo_ZooKeeper )\n{" << endl;
+	cout << "BOOST_AUTO_TEST_CASE( integrationTest_RPCclient_connectTo_ZooKeeper )\n{" << endl;
 
 	long TIMEOUT_IN_SECONDS = 8;
 
