@@ -125,6 +125,16 @@ let g:ConqueTerm_StartMessages = 0 " display warning messages if conqueTerm is c
 let g:ycm_global_ycm_extra_conf = "~/.vim/.bundle/YouCompleteMe/third_party/ycmd/examples/.ycm_extra_conf.py"
 let g:ycm_disable_for_files_larger_than_kb = 1000000
 
+function! s:DiffWithSaved()
+	let filetype=&ft
+	diffthis
+	vnew | r # | normal! 1Gdd
+	diffthis
+	exe "setlocal bt=nofile bh=wipe nobl noswf ro ft=" . filetype
+endfunction
+com! DiffSaved call s:DiffWithSaved()
+
+:command DiffOrig rightbelow vertical new | set bt=nofile | r # | 0d_ | diffthis | wincmd p | diffthis
 
 "disable syntastic on the statusline
 let g:statline_syntastic = 0
