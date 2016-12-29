@@ -4,26 +4,26 @@ echo "Install Facebook folly lib - library for handling Promises and Futures in 
 echo "- info here: https://github.com/facebook/folly"
 echo "*******************************************************************************"
 echo "Fetch dependencies"
-#sudo apt-get install \
-#	g++ \
-#	automake \
-#	autoconf \
-#	autoconf-archive \
-#	libtool \
-#	libboost-all-dev \
-#	libevent-dev \
-#	libdouble-conversion-dev \
-#	libgoogle-glog-dev \
-#	libgflags-dev \
-#	liblz4-dev \
-#	liblzma-dev \
-#	libsnappy-dev \
-#	make \
-#	zlib1g-dev \
-#	binutils-dev \
-#	libjemalloc-dev \
-#	libssl-dev \
-#	libiberty-dev
+sudo apt-get install \
+	g++ \
+	automake \
+	autoconf \
+	autoconf-archive \
+	libtool \
+	libboost-all-dev \
+	libevent-dev \
+	libdouble-conversion-dev \
+	libgoogle-glog-dev \
+	libgflags-dev \
+	liblz4-dev \
+	liblzma-dev \
+	libsnappy-dev \
+	make \
+	zlib1g-dev \
+	binutils-dev \
+	libjemalloc-dev \
+	libssl-dev \
+	libiberty-dev
 
 echo "*******************************************************************************"
 echo "Fetch folly from GitHub"
