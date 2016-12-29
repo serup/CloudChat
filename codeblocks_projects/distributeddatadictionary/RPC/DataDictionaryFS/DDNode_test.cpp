@@ -33,6 +33,16 @@
 #include "../../datadictionarycontrol.hpp"
 #include <errno.h>
 
+#define FOLLY
+#ifdef FOLLY
+#include <folly/futures/Future.h> 
+#include <folly/futures/Promise.h>
+using folly::Future;
+using folly::collect;
+using folly::makeFuture;
+using folly::Promise;
+#endif
+
 using namespace std;
 using namespace boost::unit_test;
 using boost::property_tree::ptree;
@@ -982,6 +992,9 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 /**
  * TODO: create a testcase which creates futures and executers - where executers simulate RPCclients
  * see example : https://code.facebook.com/posts/1661982097368498/futures-for-c-11-at-facebook/
+ *
+ * using: 
+ * https://github.com/facebook/folly/tree/master/folly/futures
  */
 BOOST_AUTO_TEST_CASE(useFuturesToCollectRPCclientsResults)
 {
