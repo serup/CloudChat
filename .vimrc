@@ -33,6 +33,11 @@ Plugin 'vim-scripts/Conque-GDB'
 Plugin 'scrooloose/nerdtree'
 " Install nerdtree git plugin
 Plugin 'Xuyuanp/nerdtree-git-plugin'
+" Install vim-maktaba plugin for plugin developers - used in foldcol
+Plugin 'google/vim-maktaba'
+" Install foldcol - folding columns using <ctrl-v> visual mark, then :VFoldCol  
+Plugin 'paulhybryant/foldcol'
+
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
