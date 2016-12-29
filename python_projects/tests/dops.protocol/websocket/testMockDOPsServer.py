@@ -82,6 +82,7 @@ class DOPsServerTest(unittest.TestCase):
         ws.close()
 
         DED2 = ded.DEDEncoder()
+        DED2.endianness = 'be';
         DED2.PUT_DATA_IN_DECODER(result)
         # verify that data is inside decoder, and that it has been decompressed correct
         self.assertTrue(DED2.ptotaldata, DEDobj.uncompresseddata)

@@ -33,6 +33,16 @@
 #include "../../datadictionarycontrol.hpp"
 #include <errno.h>
 
+#define FOLLY
+#ifdef FOLLY
+#include <folly/futures/Future.h> 
+#include <folly/futures/Promise.h>
+using folly::Future;
+using folly::collect;
+using folly::makeFuture;
+using folly::Promise;
+#endif
+
 using namespace std;
 using namespace boost::unit_test;
 using boost::property_tree::ptree;
@@ -383,7 +393,7 @@ BOOST_AUTO_TEST_CASE(RequestResponseMethod)
 
 BOOST_AUTO_TEST_CASE(ClientRequestHandling_connect)
 {
-	cout << "BOOST_AUTO_TEST( ClientRequestHandling_connect )\n{" << endl;
+	cout << "BOOST_AUTO_TEST_CASE( ClientRequestHandling_connect )\n{" << endl;
 
 	CHandlingRPCclientRequestToServer hcr;
 	CHandlingRPCclientRequestToServer::clientInfo *pclientInfo = hcr.createClientInfoObject();
@@ -461,50 +471,9 @@ BOOST_AUTO_TEST_CASE(CHandlingServerRequestToClients_init)
 	cout << "}" << endl;
 }
 
-// BOOST_AUTO_TEST_CASE(RPCclient_fetch_partial_attribut_from_BFi_file)
-// {
-// 	cout << "BOOST_AUTO_TEST( RPCclient_fetch_partial_attribut_from_BFi_file )\n{" << endl;
-// 
-// 	cout << "INFO: " << endl;
-// 	cout <<"/*{{{*/"<<endl;   
-// 	cout << "Scenario: one RPCclient gets a request from DDDAdmin asking it to fetch an attribute" << endl;
-// 	cout << " it then searches for the attribut in .BFi files, and finds it, however since this RPCclient is a node" << endl;
-// 	cout << " then it does NOT have all .BFi files, thus the need for transfer of partial result to DDDAdmin, and then " << endl;
-// 	cout << " the DDDAdmin will be able to merge from various RPCclient nodes the complete attribut " << endl;
-// 	cout <<"/*}}}*/"<<endl;   
-// 
-// 	// test setup files in different folders representing different RPCclients .BFi files
-// 
-// 
-// 
-// 	// fetch blocks from various RPCclients
-// 	const int AMOUNT_OF_BFI_FILES = 3;
-// 	std::list<pair<seqSpan, std::vector<assembledElements>>> listAssembledBlocksFromRPCclient[] = new std::list<pair<seqSpan, std::vector<assembledElements>>>[AMOUNT_OF_BFI_FILES];
-// 
-// 
-// 	CDataDictionaryControl	ddctrl;
-// 	listAssembledBlocksFromRPCclient[0] = ddctrl.fetchAttributBlocksFromBFiFiles(std::string attributpath, boost::filesystem::path _targetDir) 
-// 
-// 
-// 	// merge blocks 
-// 	
-// 
-// 	// sort blocks
-// 	
-// 	// verify
-// 
-// 	BOOST_CHECK(true == false);
-// 
-// 	// clean up
-// 	
-// 	
-// 	cout << "}" << endl;
-// }
 
 
-
-
-BOOST_AUTO_TEST_CASE( fetchAttributFrom3BFi_diff_order)
+BOOST_AUTO_TEST_CASE(fetchAttributFrom3BFi_diff_order)
 {
 	cout<<"BOOST_AUTO_TEST_CASE( fetchAttributFrom3BFi_diff_order)\n{"<<endl;
 
@@ -731,7 +700,7 @@ BOOST_AUTO_TEST_CASE( fetchAttributFrom3BFi_diff_order)
 }
 
 
-BOOST_AUTO_TEST_CASE( fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
+BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 {
 	cout<<"BOOST_AUTO_TEST_CASE( fetchAttributFrom_3_virtual_RPCclients_BFi_Files)\n{"<<endl;
 
@@ -930,20 +899,55 @@ BOOST_AUTO_TEST_CASE( fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 
 			if((boost::filesystem::extension(currentfile.string()) == BFI_FILE_EXTENSION)) { 
 				cout << "virtual RPCclient " << n+1 << " : " << endl;
+				cout << "*{{{" << endl;
 				cout << "  Fetch attribut from .BFi file " << endl;
 				ptestDataDictionaryControl->fetchAttributsFromFile(currentfile, AttributInblockSequenceFromBFifile); 
 
 				cout << "  prepare result in a BLOB " << endl;
-				transferBLOB stBlob = ptestDataDictionaryControl->convertToBLOB(AttributInblockSequenceFromBFifile);
+				transferBLOB stBlob = ptestDataDictionaryControl->convertToBLOB(AttributInblockSequenceFromBFifile,true);
 				BOOST_CHECK(stBlob.eType == transferBLOB::enumType::ATTRIBUTS_LIST);
 				
-				cout << "  simulate transfer from RPCclient to server " << endl;
-
+				cout << "  simulate transfer / receive from RPCclient to server " << endl;
 				cout << "  convert result in BLOB to list pair<seq,vector<assembledElements>> " << endl;
-				resultFromRPCclients[n++] = AttributInblockSequenceFromBFifile;
+				
+				std::list<pair<seqSpan, std::vector<assembledElements>>> listpair;
+				BOOST_CHECK(ptestDataDictionaryControl->convertFromBLOBToPair(stBlob, listpair,true));
+				BOOST_CHECK(listpair.size() > 0);
+
+				cout << "  amount of elements in received listpair : " << listpair.size() << endl;
+				cout << "  sequence Numbers decoded from DED into std::list :  ";
+				cout << "*{{{" << endl;
+				BOOST_FOREACH(auto &_pair, listpair)
+				{
+					seqSpan ss;
+					ss = _pair.first;
+					BOOST_FOREACH(auto &number, ss.seqNumbers)
+					{
+						cout << number << ",";
+					}
+					cout << endl;
+						
+					assembledElements _element;
+					_element.strElementID = ss.attributPath; 
+					_element.seqNumbers   = ss.seqNumbers;
+					
+					std::vector<assembledElements> vae = _pair.second;
+
+					BOOST_FOREACH(auto &_element, vae) {
+						CUtils::showDataBlock(true,true,_element.ElementData);
+					}
+				}
+				cout << endl;
+				cout << "*}}}" << endl;
+
+
+				//resultFromRPCclients[n++] = AttributInblockSequenceFromBFifile;
+				resultFromRPCclients[n++] = listpair;
+				cout << "*}}}" << endl;
 			}
 		}
 		cout << "*}}}" << endl;
+		cout << "________________________________________" << endl;
 		cout << "*** Merge retrieved RPCclient results with others " << endl;
 		std::list< pair<seqSpan, std::vector<assembledElements>> > totallistOfAssembledAttributes;
 
@@ -962,7 +966,7 @@ BOOST_AUTO_TEST_CASE( fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 		if(!bFoundError) cout << "INFO: bytes assembled are equal to original " << endl;
 		BOOST_CHECK(bFoundError == false);
 
-		cout << "size of Original : " << FotoAttributValue.size() << " size of result : " << resultAttributPair.second.size() << endl;
+		cout << "INFO: size of Original : " << FotoAttributValue.size() << ", size of result : " << resultAttributPair.second.size() << endl;
 		int missingbytes = (FotoAttributValue.size() - resultAttributPair.second.size());
 
 		if(missingbytes > 0) cout << "FAIL: Missing byte(s) : " << missingbytes << endl;
@@ -985,7 +989,21 @@ BOOST_AUTO_TEST_CASE( fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 	cout<<"}"<<endl;
 }
 
+/**
+ * TODO: create a testcase which creates futures and executers - where executers simulate RPCclients
+ * see example : https://code.facebook.com/posts/1661982097368498/futures-for-c-11-at-facebook/
+ *
+ * using: 
+ * https://github.com/facebook/folly/tree/master/folly/futures
+ */
+BOOST_AUTO_TEST_CASE(useFuturesToCollectRPCclientsResults)
+{
+	cout << "BOOST_AUTO_TEST_CASE( useFuturesToCollectRPCclientsResults )\n{" << endl;
 
+	BOOST_CHECK(true == false);
+
+	cout << "}" << endl;
+}
 
 // ******************************************************************************************************************
 // BASIC ZooKeeper connection example :
@@ -1082,7 +1100,7 @@ void watcher(zhandle_t *zzh, int type, int state, const char *path, void* contex
 
 BOOST_AUTO_TEST_CASE(integrationTest_connectTo_zookeeper_basic)
 {
-	cout << "BOOST_AUTO_TEST( integrationTest_connectTo_zookeeper_basic )\n{" << endl;
+	cout << "BOOST_AUTO_TEST_CASE( integrationTest_connectTo_zookeeper_basic )\n{" << endl;
 
 	bool bResult=true;
 
@@ -1130,7 +1148,7 @@ BOOST_AUTO_TEST_CASE(integrationTest_connectTo_zookeeper_basic)
 
 BOOST_AUTO_TEST_CASE(integrationTest_createZNode_zookeeper_basic)
 {
-	cout << "BOOST_AUTO_TEST( integrationTest_createZNode_zookeeper_basic )\n{" << endl;
+	cout << "BOOST_AUTO_TEST_CASE( integrationTest_createZNode_zookeeper_basic )\n{" << endl;
 
 	bool bResult=true;
 
@@ -1197,7 +1215,7 @@ BOOST_AUTO_TEST_CASE(integrationTest_createZNode_zookeeper_basic)
 
 BOOST_AUTO_TEST_CASE(integrationTest_connectTo_zookeeper_advanced)
 {
-	cout << "BOOST_AUTO_TEST( integrationTest_connectTo_zookeeper_advanced)\n{" << endl;
+	cout << "BOOST_AUTO_TEST_CASE( integrationTest_connectTo_zookeeper_advanced)\n{" << endl;
 	
 	zoo_set_debug_level(ZOO_LOG_LEVEL_DEBUG);
 	//zoo_set_debug_level(ZOO_LOG_LEVEL_WARN);
@@ -1217,7 +1235,7 @@ BOOST_AUTO_TEST_CASE(integrationTest_connectTo_zookeeper_advanced)
 
 BOOST_AUTO_TEST_CASE(integrationTest_listZNodes_zookeeper_advanced)
 {
-	cout << "BOOST_AUTO_TEST( integrationTest_listZNodes_zookeeper_advanced)\n{" << endl;
+	cout << "BOOST_AUTO_TEST_CASE( integrationTest_listZNodes_zookeeper_advanced)\n{" << endl;
 	
 	zoo_set_log_stream(fopen("NULL", "w")); // no output
 	//zoo_set_log_stream(stdout); // redirect from stderr to stdout 
@@ -1238,7 +1256,7 @@ BOOST_AUTO_TEST_CASE(integrationTest_listZNodes_zookeeper_advanced)
 
 BOOST_AUTO_TEST_CASE(integrationTest_CreateZNode_zookeeper_advanced)
 {
-	cout << "BOOST_AUTO_TEST( integrationTest_CreateZNode_zookeeper_advanced)\n{" << endl;
+	cout << "BOOST_AUTO_TEST_CASE( integrationTest_CreateZNode_zookeeper_advanced)\n{" << endl;
 	
 	//zoo_set_debug_level(ZOO_LOG_LEVEL_DEBUG);
 	zoo_set_log_stream(fopen("NULL", "w")); // no output
@@ -1276,7 +1294,7 @@ BOOST_AUTO_TEST_CASE(integrationTest_CreateZNode_zookeeper_advanced)
 
 BOOST_AUTO_TEST_CASE(integrationTest_getZNode_zookeeper_advanced)
 {
-	cout << "BOOST_AUTO_TEST( integrationTest_getZNode_zookeeper_advanced)\n{" << endl;
+	cout << "BOOST_AUTO_TEST_CASE( integrationTest_getZNode_zookeeper_advanced)\n{" << endl;
 	
 	//zoo_set_debug_level(ZOO_LOG_LEVEL_DEBUG);
 	zoo_set_log_stream(fopen("NULL", "w")); // no output
@@ -1323,7 +1341,7 @@ BOOST_AUTO_TEST_CASE(integrationTest_getZNode_zookeeper_advanced)
 
 BOOST_AUTO_TEST_CASE(integrationTest_RPCclient_connectTo_ZooKeeper)
 {
-	cout << "BOOST_AUTO_TEST( integrationTest_RPCclient_connectTo_ZooKeeper )\n{" << endl;
+	cout << "BOOST_AUTO_TEST_CASE( integrationTest_RPCclient_connectTo_ZooKeeper )\n{" << endl;
 
 	long TIMEOUT_IN_SECONDS = 8;
 
@@ -1336,6 +1354,8 @@ BOOST_AUTO_TEST_CASE(integrationTest_RPCclient_connectTo_ZooKeeper)
 
 	cout << "}" << endl;
 }
+
+
 
 BOOST_AUTO_TEST_SUITE_END( )
 

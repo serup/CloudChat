@@ -105,7 +105,9 @@ class CDataDictionaryControl
 		std::list< pair<seqSpan, std::vector<assembledElements>>> fetchAttributBlocksFromBFiFiles(boost::filesystem::path _targetDir);
 		pair<std::string, std::vector<unsigned char>> mergeAndSort(std::string attributpath, std::list< pair<seqSpan, std::vector<assembledElements>>> listOfAssembledAttributes);
 		bool fetchAttributsFromFile(boost::filesystem::path const& filepathname, std::list< pair<seqSpan, std::vector<assembledElements>>> &listOfAssembledAttributes);
-		transferBLOB convertToBLOB(std::list<pair<seqSpan, std::vector<assembledElements>>> listOfPairsOfAssembledAttributs);
+		transferBLOB convertToBLOB(std::list<pair<seqSpan, std::vector<assembledElements>>> listOfPairsOfAssembledAttributs, bool verbose=false);
+		bool convertFromBLOBToPair(transferBLOB tblob, std::list<pair<seqSpan, std::vector<assembledElements>>> &listOfPairsOfAssembledAttributs, bool verbose=false);
+		std::list<unsigned long> convertCommaSeperatedNumbersInStringToListOfLongs(std::string seqNumbers); 
 
     protected:
 		long _maxDEDchunkSize;

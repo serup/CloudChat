@@ -249,25 +249,25 @@ std::vector< pair<std::vector<unsigned char>, int> > CDataDictionaryControl::spl
 			vdata.assign(pCompressedData, pCompressedData + sizeofCompressedData);  
 
 			//+test
-			cout << endl << "/*{{{*/";
-			cout << "INFO: internal test of data - before DED : " << endl;
-			CUtils::showDataBlock(true,true,chunkdata);
+			// cout << endl << "/*{{{*/";
+			// cout << "INFO: internal test of data - before DED : " << endl;
+			// CUtils::showDataBlock(true,true,chunkdata);
 
-			EntityChunkDataInfo _chunk;
-			// decode data ...
-			DED_PUT_DATA_IN_DECODER(decoder_ptr,pCompressedData,sizeofCompressedData);
+			// EntityChunkDataInfo _chunk;
+			// // decode data ...
+			// DED_PUT_DATA_IN_DECODER(decoder_ptr,pCompressedData,sizeofCompressedData);
 
-			DED_GET_STRUCT_START( decoder_ptr, "chunk_record" );
-			DED_GET_STDSTRING	( decoder_ptr, "attribut_chunk_id", _chunk.entity_chunk_id ); // key of particular item
-			DED_GET_ULONG   	( decoder_ptr, "attribut_aiid", _chunk.aiid ); // this number is continuesly increasing all thruout the entries in this table
-			DED_GET_ULONG   	( decoder_ptr, "attribut_chunk_seq", _chunk.entity_chunk_seq ); // sequence number of particular item
-			DED_GET_STDVECTOR	( decoder_ptr, "attribut_chunk_data", _chunk.entity_chunk_data ); //
-			DED_GET_STRUCT_END( decoder_ptr, "chunk_record" );
+			// DED_GET_STRUCT_START( decoder_ptr, "chunk_record" );
+			// DED_GET_STDSTRING	( decoder_ptr, "attribut_chunk_id", _chunk.entity_chunk_id ); // key of particular item
+			// DED_GET_ULONG   	( decoder_ptr, "attribut_aiid", _chunk.aiid ); // this number is continuesly increasing all thruout the entries in this table
+			// DED_GET_ULONG   	( decoder_ptr, "attribut_chunk_seq", _chunk.entity_chunk_seq ); // sequence number of particular item
+			// DED_GET_STDVECTOR	( decoder_ptr, "attribut_chunk_data", _chunk.entity_chunk_data ); //
+			// DED_GET_STRUCT_END( decoder_ptr, "chunk_record" );
 
-			cout << endl << "INFO: internal test of data - after DED : ";
-			CUtils::showDataBlockDiff(true,true, chunkdata, _chunk.entity_chunk_data);
+			// cout << endl << "INFO: internal test of data - after DED : ";
+			// CUtils::showDataBlockDiff(true,true, chunkdata, _chunk.entity_chunk_data);
 
-			cout << "/*}}}*/" << endl;
+			// cout << "/*}}}*/" << endl;
 			//-test
 
 			listOfDEDchunks.push_back(make_pair(vdata,sizeofCompressedData));
@@ -1050,14 +1050,126 @@ bool CDataDictionaryControl::mergeRecords(vector<pair<unsigned long, std::vector
 	return bResult;
 }
 
-transferBLOB CDataDictionaryControl::convertToBLOB(std::list<pair<seqSpan, std::vector<assembledElements>>> listOfPairsOfAssembledAttributs)
+/**
+ * convert list of pairs with assembled elements to BLOB, using DED
+ */
+transferBLOB CDataDictionaryControl::convertToBLOB(std::list<pair<seqSpan, std::vector<assembledElements>>> listOfPairsOfAssembledAttributs, bool verbose)
 {
 	transferBLOB stblob;
 	stblob.eType = transferBLOB::enumType::ATTRIBUTS_LIST;
 
+	if(verbose) { cout << "INFO: convertToBLOB : " << endl; } 
 	
+	{
+	DED_START_ENCODER(encoder_ptr);
+	DED_PUT_STRUCT_START( encoder_ptr, "DDNodeTransferBLOB" );
+		DED_PUT_STDSTRING	( encoder_ptr, "enumType", (std::string)"ATTRIBUTS_LIST" );
+		DED_PUT_LONG        ( encoder_ptr, "pairs", listOfPairsOfAssembledAttributs.size() );
+	    // iterate thru all pairs and add them to DED	
+		BOOST_FOREACH(auto &pair, listOfPairsOfAssembledAttributs) 
+		{
+			seqSpan ss = pair.first;
+			string sequenceNumbers = "";
+			BOOST_FOREACH(auto &seqNumber, ss.seqNumbers) { sequenceNumbers += std::to_string(seqNumber) + ","; }
+			if(verbose) { 
+				cout << "- INFO: sequence in list pair element : " << sequenceNumbers << endl; 
+				cout << "- INFO: attribut path : " << ss.attributPath << endl; 
+			}
+
+			DED_PUT_STDSTRING   ( encoder_ptr, "seqSpan.seqNumbers", sequenceNumbers ); 
+			DED_PUT_STDSTRING   ( encoder_ptr, "seqSpan.attributPath", ss.attributPath ); 
+			
+			std::vector<unsigned char> chunkdata = fetchElement(pair.second, ss.attributPath);
+			if(verbose) { CUtils::showDataBlock(true,true,chunkdata); }
+			
+			DED_PUT_STDVECTOR   ( encoder_ptr, "data", chunkdata );
+		}
+	
+	DED_PUT_STRUCT_END( encoder_ptr, "DDNodeTransferBLOB" );
+	DED_GET_ENCODED_DATA(encoder_ptr,data_ptr,iLengthOfTotalData,pCompressedData,sizeofCompressedData);
+
+	if(sizeofCompressedData==0) sizeofCompressedData = iLengthOfTotalData; // if sizeofcompresseddata is 0 then compression was not possible and size is the same as for uncompressed
+	stblob.size = sizeofCompressedData;
+	stblob.data.assign(pCompressedData, pCompressedData + sizeofCompressedData);  
+	}
 
 	return stblob;
 }
 
+bool CDataDictionaryControl::convertFromBLOBToPair(transferBLOB tblob, std::list<pair<seqSpan, std::vector<assembledElements>>> &listOfPairsOfAssembledAttributs, bool verbose)
+{
+	bool bConversionOK = false;
+	transferBLOB::enumType eType = transferBLOB::enumType::PLAIN_DATA;
+	long amountOfPairs=0;
+
+	if(tblob.eType != transferBLOB::enumType::ATTRIBUTS_LIST) {
+		if(verbose) cout << "FAIL: blob is not a valid type" << endl;
+	}
+	else {
+		if(tblob.data.size() != tblob.size) {
+			if(verbose) cout << "FAIL: blob size differs - SERIOUS ERROR - blob is NOT of type transferBLOB structure " << endl;
+		}
+		else {
+			//DED_PUT_DATA_IN_DECODER(decoder_ptr,&tblob.data[0], tblob.data.size());
+			DED_PUT_DATA_IN_DECODER( decoder_ptr,tblob.data.data(), tblob.data.size() );
+			DED_GET_STRUCT_START( decoder_ptr, "DDNodeTransferBLOB" );
+			string strEnumType = "";
+			DED_GET_STDSTRING( decoder_ptr, "enumType", strEnumType);
+			if(strEnumType == "ATTRIBUTS_LIST") eType = transferBLOB::enumType::ATTRIBUTS_LIST;
+			if(eType !=  transferBLOB::enumType::ATTRIBUTS_LIST) {
+				if(verbose) cout << "WARNING: blob type is NOT expected type" << endl;
+			}
+			else {
+				DED_GET_LONG( decoder_ptr, "pairs", amountOfPairs );
+				if(amountOfPairs > 0) {	
+					for(int n=0; n < amountOfPairs; n++)
+					{
+						string seqNumbers;
+						string attributPath;
+						std::vector<unsigned char> chunkdata;
+						
+						DED_GET_STDSTRING( decoder_ptr, "seqSpan.seqNumbers", seqNumbers );
+						DED_GET_STDSTRING( decoder_ptr, "seqSpan.attributPath", attributPath );
+						DED_GET_STDVECTOR( decoder_ptr, "data", chunkdata );
+						
+						seqSpan ss;
+						ss.seqNumbers = convertCommaSeperatedNumbersInStringToListOfLongs(seqNumbers);
+						ss.attributPath = attributPath;
+
+						assembledElements _element;
+						_element.strElementID = ss.attributPath; 
+						_element.seqNumbers   = ss.seqNumbers;
+						std::copy(chunkdata.begin(), chunkdata.end(), std::back_inserter(_element.ElementData));
+
+						std::vector<assembledElements> vae;
+						vae.push_back(_element);
+						listOfPairsOfAssembledAttributs.push_back(pair<seqSpan, std::vector<assembledElements>> (ss, vae) ); 
+					}
+					if(listOfPairsOfAssembledAttributs.size() > 0)
+						bConversionOK = true;
+				}
+			}
+		}
+	}
+	return bConversionOK;
+}
+
+
+std::list<unsigned long> CDataDictionaryControl::convertCommaSeperatedNumbersInStringToListOfLongs(std::string seqNumbers)
+{
+	std::list<unsigned long> resultList;
+
+	std::stringstream ss(seqNumbers);
+
+	long i;
+	while (ss >> i)
+	{
+		resultList.push_back(i);
+		if (ss.peek() == ',' || ss.peek() == ' ')
+			ss.ignore();
+
+	}
+
+	return resultList;
+}
 
