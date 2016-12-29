@@ -461,50 +461,9 @@ BOOST_AUTO_TEST_CASE(CHandlingServerRequestToClients_init)
 	cout << "}" << endl;
 }
 
-// BOOST_AUTO_TEST_CASE(RPCclient_fetch_partial_attribut_from_BFi_file)
-// {
-// 	cout << "BOOST_AUTO_TEST_CASE( RPCclient_fetch_partial_attribut_from_BFi_file )\n{" << endl;
-// 
-// 	cout << "INFO: " << endl;
-// 	cout <<"/*{{{*/"<<endl;   
-// 	cout << "Scenario: one RPCclient gets a request from DDDAdmin asking it to fetch an attribute" << endl;
-// 	cout << " it then searches for the attribut in .BFi files, and finds it, however since this RPCclient is a node" << endl;
-// 	cout << " then it does NOT have all .BFi files, thus the need for transfer of partial result to DDDAdmin, and then " << endl;
-// 	cout << " the DDDAdmin will be able to merge from various RPCclient nodes the complete attribut " << endl;
-// 	cout <<"/*}}}*/"<<endl;   
-// 
-// 	// test setup files in different folders representing different RPCclients .BFi files
-// 
-// 
-// 
-// 	// fetch blocks from various RPCclients
-// 	const int AMOUNT_OF_BFI_FILES = 3;
-// 	std::list<pair<seqSpan, std::vector<assembledElements>>> listAssembledBlocksFromRPCclient[] = new std::list<pair<seqSpan, std::vector<assembledElements>>>[AMOUNT_OF_BFI_FILES];
-// 
-// 
-// 	CDataDictionaryControl	ddctrl;
-// 	listAssembledBlocksFromRPCclient[0] = ddctrl.fetchAttributBlocksFromBFiFiles(std::string attributpath, boost::filesystem::path _targetDir) 
-// 
-// 
-// 	// merge blocks 
-// 	
-// 
-// 	// sort blocks
-// 	
-// 	// verify
-// 
-// 	BOOST_CHECK(true == false);
-// 
-// 	// clean up
-// 	
-// 	
-// 	cout << "}" << endl;
-// }
 
 
-
-
-BOOST_AUTO_TEST_CASE( fetchAttributFrom3BFi_diff_order)
+BOOST_AUTO_TEST_CASE(fetchAttributFrom3BFi_diff_order)
 {
 	cout<<"BOOST_AUTO_TEST_CASE( fetchAttributFrom3BFi_diff_order)\n{"<<endl;
 
@@ -731,7 +690,7 @@ BOOST_AUTO_TEST_CASE( fetchAttributFrom3BFi_diff_order)
 }
 
 
-BOOST_AUTO_TEST_CASE( fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
+BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 {
 	cout<<"BOOST_AUTO_TEST_CASE( fetchAttributFrom_3_virtual_RPCclients_BFi_Files)\n{"<<endl;
 
@@ -1020,7 +979,18 @@ BOOST_AUTO_TEST_CASE( fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 	cout<<"}"<<endl;
 }
 
+/**
+ * TODO: create a testcase which creates futures and executers - where executers simulate RPCclients
+ * see example : https://code.facebook.com/posts/1661982097368498/futures-for-c-11-at-facebook/
+ */
+BOOST_AUTO_TEST_CASE(useFuturesToCollectRPCclientsResults)
+{
+	cout << "BOOST_AUTO_TEST_CASE( useFuturesToCollectRPCclientsResults )\n{" << endl;
 
+	BOOST_CHECK(true == false);
+
+	cout << "}" << endl;
+}
 
 // ******************************************************************************************************************
 // BASIC ZooKeeper connection example :
@@ -1371,6 +1341,8 @@ BOOST_AUTO_TEST_CASE(integrationTest_RPCclient_connectTo_ZooKeeper)
 
 	cout << "}" << endl;
 }
+
+
 
 BOOST_AUTO_TEST_SUITE_END( )
 
