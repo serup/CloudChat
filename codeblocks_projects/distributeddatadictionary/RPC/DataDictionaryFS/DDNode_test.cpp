@@ -989,6 +989,8 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 	cout<<"}"<<endl;
 }
 
+#ifdef FOLLY
+
 /**
  * TODO: create a testcase which creates futures and executers - where executers simulate RPCclients
  * see example : https://code.facebook.com/posts/1661982097368498/futures-for-c-11-at-facebook/
@@ -1004,6 +1006,8 @@ BOOST_AUTO_TEST_CASE(useFuturesToCollectRPCclientsResults)
 
 	cout << "}" << endl;
 }
+
+#endif // FOLLY
 
 // ******************************************************************************************************************
 // BASIC ZooKeeper connection example :
