@@ -118,3 +118,6 @@ NB! consider using redox/redis database cache together with zookeeper to handle 
 					It supports data structures such as strings, hashes, lists, sets, sorted sets with range queries, bitmaps, hyperloglogs and geospatial indexes with radius queries.
 ----
 
+NB! start zookeeper before integration tests - example:
+/opt/zookeeper-3.4.8/bin/zkServer.sh start
+

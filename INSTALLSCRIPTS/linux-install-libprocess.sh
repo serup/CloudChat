@@ -1,22 +1,4 @@
 #!/usr/bin/env bash
-# TODO: Find a way to install all dependencies - MESOS project should be looked at instead - somehow this project fails and mesos as libprocess inside
-# echo "Clone libprocess library "
-# cd ~/GitHub; git clone https://github.com/3rdparty/libprocess.git
-# echo "- install into /usr/include/stout"
-# cd ~/GitHub/libprocess; ./bootstrap
-# cd ~/GitHub/libprocess; mkdir build 
-# cd ~/GitHub/libprocess/build; ../configure
-# cd ~/GitHub/libprocess/build; make 
-# cd ~/GitHub/libprocess/build; make check
-# cd ~/GitHub/libprocess/build; sudo make install 
-# 
-# #echo "- build stout"
-# #cd ~/GitHub/libprocess/3rdparty/stout; ./configure
-# #echo "- install into /usr/include/stout/"
-# #sudo cp -r ~/GitHub/libprocess/3rdparty/stout/include/stout/ /usr/include/
-# #echo "- install into /usr/include/process"
-# #sudo cp -r ~/GitHub/libprocess/include/process/ /usr/include/
-
 # Update the packages.
 sudo apt-get update
 
@@ -41,7 +23,7 @@ cd ~/GitHub/mesos-1.1.0; mkdir -p build;
 cd ~/GitHub/mesos-1.1.0/build; ../configure
 cd ~/GitHub/mesos-1.1.0/build; make
 cd ~/GitHub/mesos-1.1.0/build; make check
-#cd mesos-1.1.0/build; sudo make install
+cd mesos-1.1.0/build; sudo make install
 sudo cp ~/GitHub/mesos-1.1.0/build/3rdparty/libprocess/.libs/libprocess.a /usr/lib/.
 sudo cp ~/GitHub/mesos-1.1.0/build/3rdparty/libprocess/.libs/libprocess.la /usr/lib/. 
 echo "- Done."
