@@ -8,7 +8,7 @@ INC_PATH = -I/usr/local/include
 LIB_PATH = -L"/usr/local/lib/" -L"/usr/include/" 
 SRC = DDNode_test.cpp ClientRequestHandling.cpp ClientRequestHandling.h zookeeper.hpp zookeeper.cpp mockRPCServer.h mockRPCServer.cpp ServerRequestHandling.h ServerRequestHandling.cpp RPCclient.cpp RPCclient.h DDNode.cpp DDDfs_clnt.cpp DDDfs_xdr.cpp  DDDfs_server.cpp ../../../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.h ../../../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.cpp ../../../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.h ../../../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.cpp ../../datadictionarycontrol.hpp ../../datadictionarycontrol.cpp
 CFLAGS = -g -std=gnu++14 -D__DEBUG__ -D__MSABI_LONG=long -DBOOST_LOG_DYN_LINK
-LIBS = -lboost_system -lboost_signals -lboost_thread -lboost_filesystem -lpthread -lrt -lprocess -lglog -lzookeeper_mt -lev -lz -lboost_log -lfolly  
+LIBS = -lboost_system -lboost_signals -lboost_thread -lboost_filesystem -lpthread -lrt -lprocess -lglog -lzookeeper_mt -lev -lz -lboost_log   
 CC = g++
 CCTEST = $(CC) $(CFLAGS) $(INC_PATH) $(LIB_PATH) -o DDNode_test $(SRC) $(LIBS)  
 

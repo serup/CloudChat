@@ -33,7 +33,7 @@
 #include "../../datadictionarycontrol.hpp"
 #include <errno.h>
 
-#define FOLLY
+//#define FOLLY
 #ifdef FOLLY
 #include <folly/futures/Future.h> 
 #include <folly/futures/Promise.h>
@@ -547,7 +547,7 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom3BFi_diff_order)
 
 	cout << "XML output of ALL attributs - the foto attribut will be spanning over 3 .BFi files, however here is shown all attributs together: " << endl;
 	cout << "*{{{" << endl;
-	write_xml(std::cout, ptBlockEntity, boost::property_tree::xml_writer_make_settings<std::string>('\t', 1) );
+	write_xml(std::cout, ptBlockEntity, boost::property_tree::xml_writer_make_settings<char>('\t', 1) );
 	cout << "*}}}" << endl;
 
 	// create BFi files
