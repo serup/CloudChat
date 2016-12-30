@@ -42,5 +42,6 @@ cd ~/GitHub/mesos-1.1.0/build; ../configure
 cd ~/GitHub/mesos-1.1.0/build; make
 cd ~/GitHub/mesos-1.1.0/build; make check
 #cd mesos-1.1.0/build; sudo make install
-sudo cp ~/GitHub/mesos-1.1.0/build/3rdparty/libprocess/.libs/libprocess.* /usr/lib/.
+sudo cp ~/GitHub/mesos-1.1.0/build/3rdparty/libprocess/.libs/libprocess.a /usr/lib/.
+sudo cp ~/GitHub/mesos-1.1.0/build/3rdparty/libprocess/.libs/libprocess.la /usr/lib/. 
 echo "- Done."
