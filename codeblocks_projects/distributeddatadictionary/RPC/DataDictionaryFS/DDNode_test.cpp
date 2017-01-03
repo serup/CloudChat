@@ -33,7 +33,10 @@
 #include "../../datadictionarycontrol.hpp"
 #include <errno.h>
 
+#if defined(_M_X64) || defined(__amd64__)
+// unfortunately FOLLY is pt[2017-01-01]. only working for 64bit architecture
 //#define FOLLY
+#endif
 #ifdef FOLLY
 #include <folly/futures/Future.h> 
 #include <folly/futures/Promise.h>
@@ -48,6 +51,12 @@ using namespace boost::unit_test;
 using boost::property_tree::ptree;
 using namespace DDDfsRPC;
 
+#if defined(_M_X64) || defined(__amd64__)
+#define writer_make_settings boost::property_tree::xml_writer_make_settings<std::string>('\t', 1)
+#else
+#define writer_make_settings boost::property_tree::xml_writer_make_settings<char>('\t', 1) 
+#endif
+	
 #define BOOST_AUTO_TEST_MAIN
 #ifndef NOTESTRESULTFILE
 #ifdef BOOST_AUTO_TEST_MAIN
@@ -547,7 +556,7 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom3BFi_diff_order)
 
 	cout << "XML output of ALL attributs - the foto attribut will be spanning over 3 .BFi files, however here is shown all attributs together: " << endl;
 	cout << "*{{{" << endl;
-	write_xml(std::cout, ptBlockEntity, boost::property_tree::xml_writer_make_settings<char>('\t', 1) );
+	write_xml(std::cout, ptBlockEntity, writer_make_settings );
 	cout << "*}}}" << endl;
 
 	// create BFi files
@@ -989,6 +998,14 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 	cout<<"}"<<endl;
 }
 
+BOOST_AUTO_TEST_CASE(asynchronReadFile)
+{
+	cout << "BOOST_AUTO_TEST_CASE( asynchronReadFile )\n{" << endl;
+
+
+	cout << "}" << endl;
+}
+
 #ifdef FOLLY
 
 /**
@@ -998,6 +1015,51 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
  * using: 
  * https://github.com/facebook/folly/tree/master/folly/futures
  */
+struct Executor {
+	using Func = std::function<void()>;
+	virtual void add(Func) = 0;
+};
+
+std::runtime_error greatScott("Great Scott!");
+double getEnergySync(int year) {
+	if (year == 1955 || year == 1885) throw greatScott;
+	return 1.21e9;
+}
+
+Future<double> getEnergy(int year) {
+	auto promise = make_shared<Promise<double>>();
+
+	std::thread([=]{
+			promise->setWith(std::bind(getEnergySync, year));
+			}).detach();
+
+	return promise->getFuture();
+}
+
+BOOST_AUTO_TEST_CASE(testFollyFutures)
+{
+	cout << "BOOST_AUTO_TEST_CASE( testFollyFutures )\n{" << endl;
+
+	// First create a promise
+	Promise<double> promise;
+	Future<double> future = promise.getFuture();
+
+
+
+	// fullfill the promise
+	promise.setValue(1.21e9);
+	promise.setException(greatScott);
+	promise.setWith([]{ if (year == 1955 || year == 1885) throw greatScott; return 1.21e9; });
+
+
+	//Future<double> future = folly::via(Executor, std::bind(getEnergySync, 2017));
+
+
+	BOOST_CHECK(true == false);
+
+	cout << "}" << endl;
+}
+
 BOOST_AUTO_TEST_CASE(useFuturesToCollectRPCclientsResults)
 {
 	cout << "BOOST_AUTO_TEST_CASE( useFuturesToCollectRPCclientsResults )\n{" << endl;
