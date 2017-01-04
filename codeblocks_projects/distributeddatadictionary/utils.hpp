@@ -90,7 +90,7 @@ class CUtils
 		{
 			char* buf = chunkdata.data();
 			unsigned char* membuf = reinterpret_cast<unsigned char*>(buf);
-			std::vector<unsigned char> vec(membuf, membuf + chunkdata.size());
+			std::vector<unsigned char> vec(std::move(membuf), std::move(membuf) + chunkdata.size());
 			showDataBlock(usefold, usecolor, vec);
 		}
 
