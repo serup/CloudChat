@@ -999,15 +999,6 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 }
 
 
-void process_data(std::vector<char> v)
-{
-	for(unsigned i=0;i<v.size();++i)
-	{
-		std::cout<<v[i];
-	}
-	std::cout<<std::endl;
-} 
-
 BOOST_AUTO_TEST_CASE(asynchronReadFile)
 {
 	cout << "BOOST_AUTO_TEST_CASE( asynchronReadFile )\n{" << endl;
@@ -1018,15 +1009,8 @@ BOOST_AUTO_TEST_CASE(asynchronReadFile)
 	f.open("testImage.png",std::ios::in | std::ios::binary);
 
 	std::future<std::vector<char> > fv=async_io.queue_read(f,1048576);
-
-	//std::vector<char> buffer = fv.get();
-	//std::vector< unsigned char> cpy((unsigned char*)buffer, (unsigned char*)buffer + buffer.size());
-	//CUtils::showDataBlock(true,true,cpy);
-
-	cout << "*{{{" << endl;
-	process_data(fv.get());
-	cout << "*}}}" << endl;
-
+	CUtils::showDataBlock(true,true,fv.get());
+	
 	cout << "}" << endl;
 }
 

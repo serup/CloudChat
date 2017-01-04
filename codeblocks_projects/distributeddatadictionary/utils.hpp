@@ -85,6 +85,22 @@ class CUtils
 			if(usefold) cout << "/*}}}*/" << endl;
 		}
 
+		static void showDataBlock(bool usefold,bool usecolor, std::vector<char> chunkdata)
+		{
+			char* buf = chunkdata.data();
+			unsigned char* membuf = reinterpret_cast<unsigned char*>(buf);
+			std::vector<unsigned char> vec(membuf, membuf + chunkdata.size());
+			showDataBlock(usefold, usecolor, vec);
+		}
+
+		static void showDataBlock(bool usefold,bool usecolor, std::vector<char> &chunkdata)
+		{
+			char* buf = chunkdata.data();
+			unsigned char* membuf = reinterpret_cast<unsigned char*>(buf);
+			std::vector<unsigned char> vec(membuf, membuf + chunkdata.size());
+			showDataBlock(usefold, usecolor, vec);
+		}
+
 		static bool showDataBlockDiff(bool usefold,bool usecolor, std::vector<unsigned char> &chunkdata, std::vector<unsigned char> &diffchunkdata)
 		{
 			bool bFoundError=false;
