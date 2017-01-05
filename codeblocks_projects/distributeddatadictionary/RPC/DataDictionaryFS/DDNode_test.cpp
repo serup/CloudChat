@@ -998,10 +998,299 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 	cout<<"}"<<endl;
 }
 
-
-BOOST_AUTO_TEST_CASE(asynchronReadFile)
+BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_using_Futures)
 {
-	cout << "BOOST_AUTO_TEST_CASE( asynchronReadFile )\n{" << endl;
+	cout<<"BOOST_AUTO_TEST_CASE( fetchAttributFrom_3_virtual_RPCclients_using_Futures)\n{"<<endl;
+
+	using boost::optional;
+	using boost::property_tree::ptree;
+
+	CDataDictionaryControl *pDDC = new CDataDictionaryControl();
+	std::list<std::string> listResult = pDDC->ls();	
+	BOOST_FOREACH(std::string attribut, listResult) { cout << "- OK attribut : " << attribut << endl; }
+	BOOST_CHECK(listResult.size() <= 0);
+	BOOST_WARN_MESSAGE(listResult.size() <= 0, "Failure since - no .BFi file should be present ");
+
+	if(listResult.size() <= 0) {
+
+		CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
+		ptree ptListOfBlockRecords;
+
+		// attribut 3
+		std::string attributName = "name";
+		std::string name = "Johnny Serup";	
+		std::vector<unsigned char> attributValue(name.begin(), name.end());
+
+		// attribut 2
+		std::string attributName2 = "mobil";
+		std::string mobil = "555 - 332 211 900";	
+		std::vector<unsigned char> attributValue2(mobil.begin(), mobil.end());
+
+		// attribut 1 - large
+		std::string FotoAttributName= "foto"; // it should be ddid -- datadictionary id which refers to attribut description
+		std::vector<unsigned char> FotoAttributValue;
+		std::string fn = "testImage.png"; // should be of size 10.5 Kb
+		std::ifstream is (fn, ios::binary);
+		if (is)
+		{
+			long length = boost::filesystem::file_size(fn);
+			std::cout << "[readFile] Reading file: " << fn << " ; amount " << length << " characters... \n";
+			// Make sure receipient has room
+			FotoAttributValue.resize(length,0);
+			//read content of infile
+			is.read ((char*)&FotoAttributValue[0],length);
+			is.close();
+		}
+		BOOST_CHECK(FotoAttributValue.size() > 0);
+
+		std::string realmName = "profile";
+		long maxBlockRecordSize=5456; // should result in multiple BlockRecords inside a BlockEntity	
+
+
+		cout << "BlockRecord size before: " << maxBlockRecordSize << endl;
+		std::string transGuid = "F9C23762ED2823A27E62A64B95C024FF";
+		BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, FotoAttributName, FotoAttributValue)); 
+		cout << "BlockRecord size after 1 attribut add : " << maxBlockRecordSize << endl;
+		BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName2, attributValue2)); 
+		cout << "BlockRecord size after 2 atrribut add : " << maxBlockRecordSize << endl;
+		BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName, attributValue)); 
+		cout << "BlockRecord size after 3 atrribut add : " << maxBlockRecordSize << endl;
+
+		long maxBlockEntitySize=10000; // should result in 3 BlockEntity 	
+		boost::property_tree::ptree ptBlockEntity = ptestDataDictionaryControl->addBlockRecordToBlockEntity(transGuid, ptListOfBlockRecords, maxBlockEntitySize);
+		BOOST_CHECK(ptBlockEntity.size()>0);
+
+		// create BFi files
+		std::vector< pair<std::string ,int> > listOfBlockEntityFiles = ptestDataDictionaryControl->writeBlockEntityToBFiFile(ptBlockEntity);
+		cout << "Created : " << listOfBlockEntityFiles.size() << " .BFi files " << endl;
+		BOOST_CHECK(listOfBlockEntityFiles.size()==3);
+
+		pair <std::string,int> block;
+		std::list<std::string> listBFiFiles;
+		BOOST_FOREACH(block, listOfBlockEntityFiles)
+		{
+			cout << "- OK Created file : " << block.first << " size : " << block.second << endl;
+			listBFiFiles.push_back(block.first);
+		}
+
+		// check that list now contain basic 'listOfBlockRecords' - which is necessary	
+		optional< ptree& > child = ptListOfBlockRecords.get_child_optional( "listOfBlockRecords" );
+		BOOST_CHECK(child);
+
+		// verify that BlockRecord has been added
+		child = ptListOfBlockRecords.get_child_optional( "BlockRecord.chunk_data" );
+		BOOST_CHECK(child);
+
+		child = ptListOfBlockRecords.get_child_optional( "BlockRecord.chunk_data.chunk_record" );
+		BOOST_CHECK(child);
+
+		child = ptListOfBlockRecords.get_child_optional( "BlockRecord.chunk_data.chunk_record.chunk_ddid" );
+		BOOST_CHECK(child);
+
+		cout << "________________________________________" << endl;
+		cout << "attributs added : " << endl;
+
+		int amountOfBlockRecords = 0;
+		int amountOfchunk_records = 0;
+		std::string hexdata_attribut1="";
+		std::string hexdata_attribut2="";
+
+
+		BOOST_FOREACH(ptree::value_type &vt, ptListOfBlockRecords.get_child("listOfBlockRecords"))
+		{
+			cout << " - record id : " << vt.second.get_child("chunk_id").data() << endl;
+			if(vt.first == "BlockRecord")
+			{
+				amountOfBlockRecords++;
+				BOOST_FOREACH(ptree::value_type &vt2 , vt.second)
+				{
+					if(vt2.first == "chunk_data")
+					{
+						cout << " - " << vt2.first << " : "; 
+						std::string attributName="";
+						std::string prevattributName="";
+						BOOST_FOREACH(ptree::value_type &vt3, vt2.second)
+						{
+							if(vt3.first == "chunk_record") {
+								attributName = vt3.second.get_child("chunk_ddid").data();
+								if(prevattributName!=attributName) {
+									cout << endl;
+									cout << " -- chunk_record : " << vt3.second.get_child("chunk_ddid").data() << " "; 
+									prevattributName=attributName;
+								}
+								else
+									cout << ".";
+								amountOfchunk_records++;
+								if(amountOfchunk_records==1) {
+									hexdata_attribut1 = vt3.second.get_child("Data").data();
+								}
+								if(amountOfchunk_records==2) {
+									hexdata_attribut2 = vt3.second.get_child("Data").data();
+								}
+							}
+						}
+					}
+				}
+			}
+			cout << endl;
+		}
+
+		cout << "________________________________________" << endl;
+		if(amountOfBlockRecords==3)
+			cout << "- OK amount of BlockRecords created: " << amountOfBlockRecords << endl;
+		else
+			cout << "- FAIL: amount of BlockRecords created: " << amountOfBlockRecords << endl;
+		BOOST_CHECK(amountOfBlockRecords == 3); // Only one BlockRecord - the attributs should be added to BlockRecord until it is full, then new BlockRecord will be added
+		if(amountOfchunk_records == 37)
+			cout << "- OK amount of chunk records : " << amountOfchunk_records << endl;
+		else
+			cout << "- FAIL: amount of chunk records : " << amountOfchunk_records << endl;
+		BOOST_CHECK(amountOfchunk_records == 37); // 35 for foto, 1 for mobil, and 1 for name
+		cout << "________________________________________" << endl;
+
+		cout << "call ls() - list attributs - validate expected results " << endl;
+		listResult = pDDC->ls();	
+		//expected : reads like this: <GUID> has a profile folder with attribut name, mobil and foto
+		std::string expected1 =  transGuid + "./profile/foto";
+		std::string expected2 =  transGuid + "./profile/mobil";
+		std::string expected3 =  transGuid + "./profile/name";
+
+		BOOST_CHECK(listResult.size() > 0);
+
+		int c=0;
+		BOOST_FOREACH(std::string attribut, listResult)
+		{
+			c++;
+			cout << "- OK attribut : " << attribut << endl;
+			if(c==1) BOOST_CHECK(expected1 == attribut);
+			if(c==2) BOOST_CHECK(expected2 == attribut);
+			if(c==3) BOOST_CHECK(expected3 == attribut);
+		}
+
+		cout << "TODO: ls should show attribut spanning over multiple .BFi files in a different way " << endl;
+
+		cout << "________________________________________" << endl;
+
+		cout << "*** SIMULATE creating Promises for .BFi file's from RPC's and get Future results when ready" << endl;
+		cout << "*{{{" << endl;
+		std::string attributToFetch = transGuid + "./profile/foto";
+		std::vector<std::list< pair<seqSpan, std::vector<assembledElements>>>> resultFromRPCclients (3); // testcase has only 3 virtual RPCclients delivering results
+
+		cout << "*}}}" << endl;
+
+		/*
+		cout << "*** SIMULATE that parsing result of .BFi files comes from 3 different RPCclients" << endl;
+		cout << "*{{{" << endl;
+		std::string attributToFetch = transGuid + "./profile/foto";
+		
+		std::vector<std::list< pair<seqSpan, std::vector<assembledElements>>>> resultFromRPCclients (3); // testcase has only 3 virtual RPCclients delivering results
+	
+		boost::filesystem::path currentSearchDirectory( boost::filesystem::current_path() );
+		boost::filesystem::recursive_directory_iterator directoryIterator(currentSearchDirectory), eod;
+
+		int n=0;
+		BOOST_FOREACH(boost::filesystem::path const& currentfile, make_pair(directoryIterator, eod))
+		{
+			std::list<pair<seqSpan, std::vector<assembledElements>>> AttributInblockSequenceFromBFifile;
+
+
+			if((boost::filesystem::extension(currentfile.string()) == BFI_FILE_EXTENSION)) { 
+				cout << "virtual RPCclient " << n+1 << " : " << endl;
+				cout << "*{{{" << endl;
+				cout << "  Fetch attribut from .BFi file " << endl;
+				ptestDataDictionaryControl->fetchAttributsFromFile(currentfile, AttributInblockSequenceFromBFifile); 
+
+				cout << "  prepare result in a BLOB " << endl;
+				transferBLOB stBlob = ptestDataDictionaryControl->convertToBLOB(AttributInblockSequenceFromBFifile,true);
+				BOOST_CHECK(stBlob.eType == transferBLOB::enumType::ATTRIBUTS_LIST);
+				
+				cout << "  simulate transfer / receive from RPCclient to server " << endl;
+				cout << "  convert result in BLOB to list pair<seq,vector<assembledElements>> " << endl;
+				
+				std::list<pair<seqSpan, std::vector<assembledElements>>> listpair;
+				BOOST_CHECK(ptestDataDictionaryControl->convertFromBLOBToPair(stBlob, listpair,true));
+				BOOST_CHECK(listpair.size() > 0);
+
+				cout << "  amount of elements in received listpair : " << listpair.size() << endl;
+				cout << "  sequence Numbers decoded from DED into std::list :  ";
+				cout << "*{{{" << endl;
+				BOOST_FOREACH(auto &_pair, listpair)
+				{
+					seqSpan ss;
+					ss = _pair.first;
+					BOOST_FOREACH(auto &number, ss.seqNumbers)
+					{
+						cout << number << ",";
+					}
+					cout << endl;
+						
+					assembledElements _element;
+					_element.strElementID = ss.attributPath; 
+					_element.seqNumbers   = ss.seqNumbers;
+					
+					std::vector<assembledElements> vae = _pair.second;
+
+					BOOST_FOREACH(auto &_element, vae) {
+						CUtils::showDataBlock(true,true,_element.ElementData);
+					}
+				}
+				cout << endl;
+				cout << "*}}}" << endl;
+
+
+				//resultFromRPCclients[n++] = AttributInblockSequenceFromBFifile;
+				resultFromRPCclients[n++] = listpair;
+				cout << "*}}}" << endl;
+			}
+		}
+		cout << "*}}}" << endl;
+		cout << "________________________________________" << endl;
+
+		*/
+
+		cout << "*** Merge retrieved RPCclient results with others " << endl;
+		std::list< pair<seqSpan, std::vector<assembledElements>> > totallistOfAssembledAttributes;
+
+		BOOST_FOREACH(auto &list, resultFromRPCclients) { totallistOfAssembledAttributes.insert(totallistOfAssembledAttributes.end(), list.begin(),list.end()); }
+
+		pair<std::string, std::vector<unsigned char>> resultAttributPair = 	ptestDataDictionaryControl->mergeAndSort(attributToFetch, totallistOfAssembledAttributes);
+		cout << "Attribut name : " << resultAttributPair.first << endl;
+		BOOST_CHECK(attributToFetch == resultAttributPair.first);
+
+
+		cout << "Original data : " << endl;
+		CUtils::showDataBlock(true,true,FotoAttributValue);
+
+		cout << "Result data : " << endl;
+		bool bFoundError = CUtils::showDataBlockDiff(true,true,resultAttributPair.second, FotoAttributValue);
+		if(!bFoundError) cout << "INFO: bytes assembled are equal to original " << endl;
+		BOOST_CHECK(bFoundError == false);
+
+		cout << "INFO: size of Original : " << FotoAttributValue.size() << ", size of result : " << resultAttributPair.second.size() << endl;
+		int missingbytes = (FotoAttributValue.size() - resultAttributPair.second.size());
+
+		if(missingbytes > 0) cout << "FAIL: Missing byte(s) : " << missingbytes << endl;
+		BOOST_CHECK(FotoAttributValue.size() == resultAttributPair.second.size());
+
+		BOOST_CHECK(FotoAttributValue == resultAttributPair.second); // verify that retrieved value is same as stored
+
+		cout << "________________________________________" << endl;
+
+		// Clean up section - must be in bottom
+		BOOST_FOREACH(std::string filename, listBFiFiles)
+		{
+			cout << "- OK Cleanup file : " << filename << endl;
+			boost::filesystem::path p = boost::filesystem::path(filename);
+			boost::filesystem::remove(filename);
+		}
+		delete ptestDataDictionaryControl;
+	}
+	
+	cout<<"}"<<endl;
+}
+BOOST_AUTO_TEST_CASE(usingFuturesAsynchronReadFile)
+{
+	cout << "BOOST_AUTO_TEST_CASE( usingFuturesAsynchronReadFile)\n{" << endl;
 
 	aio async_io;
 
