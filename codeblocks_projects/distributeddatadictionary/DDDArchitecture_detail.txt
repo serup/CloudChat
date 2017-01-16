@@ -16,9 +16,10 @@ DDD - Distributed Data Dictionary
  |         |           |
  |   DDNode+           +-(AL) 'has two connected AL's'
  |                       ||
- |                       |+-(AL)
- |                       |   |
+ |                       |+-(AL) 'has two connected DDNodes'
+ |                       |   ||
  |                       |   +-DDNode
+ |                       |    +-DDNode
  |                       |
  |                       +-(AL)
  |                           |
@@ -79,7 +80,7 @@ example:
    . DDDAdmin receives incomming data blocks
   >. DDDAdmin reads/merges and assemble the attribut requested from the data blocks received from the DDNodes
    . DDDAdmin sends a ERFD (End Request For Data) event to AL, telling it about the success/failure of the RFD
-   . AL receives EFRD from DDDAmin 
+   . AL receives ERFD from DDDAmin 
    . AL sends update to zkRFDobj to zookeeper
    . DDDAdmin disconnect from nearby AL
    . AL informs zookeeper that entity is offline - removing tempory objects from zookeeper database
