@@ -96,6 +96,9 @@ class CUtils
 		{
 			bool bFoundError=false;
 
+			if(diffchunkdata.size() != chunkdata.size())
+				bFoundError=true;
+
 			if(usefold) cout << "/*{{{*/" << endl;
 			if(usecolor) fprintf(stdout,"%s", "\e[1;35m"); 
 			bool flipflop=false;
@@ -166,7 +169,8 @@ class CUtils
 			}
 			if(usecolor) fprintf(stdout,"%s", "\e[0m"); 
 			if(usefold) cout << "/*}}}*/" << endl;
-			
+		
+			return bFoundError;
 		}
 };
 

@@ -1176,6 +1176,8 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_using_Futures)
 		std::string attributToFetch = transGuid + "./profile/foto";
 		std::vector<std::list< pair<seqSpan, std::vector<assembledElements>>>> resultFromRPCclients (3); // testcase has only 3 virtual RPCclients delivering results
 
+
+
 		cout << "*}}}" << endl;
 
 		/*
@@ -1288,6 +1290,8 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_using_Futures)
 	
 	cout<<"}"<<endl;
 }
+
+
 BOOST_AUTO_TEST_CASE(usingFuturesAsynchronReadFile)
 {
 	cout << "BOOST_AUTO_TEST_CASE( usingFuturesAsynchronReadFile)\n{" << endl;
