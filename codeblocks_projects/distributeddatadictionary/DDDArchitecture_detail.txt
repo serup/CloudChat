@@ -60,29 +60,29 @@ example:
 
 * DDDAdmin wants to fetch a specific attribut from dataditionary
 	
-	1. DDDAdmin connects to nearby AL
-	2. AL handles connection of entity and informs zookeeper that entity is online
-	   it sends response to DDDAdmin telling it about its security access level
-	3. DDDAdmin creates a RFD - Request For Data
-	4. DDDAdmin sends RFD to nearby AL
-	5. AL receives RFD and creates a zookeeper RFD session object (zkRFDobj)
-	6. AL sends a RFDconfirm to DDDAmin
-	6. ALL AL's which have DDNodes connected, will send an event [RFDevent] ( a request for data event ) to DDNodes
-	7. DDNodes receives RFDevent and initiates a sweep search for data
-	8. DDNodes which have found the requested data, will send a RFDResponse to nearby AL
-	9. AL receives RFDResponse and updates zookeeper zkRFDobj with info about which DDNode has data
-   10. AL sends an event object about the zkRFDobj in zookeeper to DDDAdmin 
-   11. DDDAdmin receives event about RFD
-   12. DDDAdmin loops list of DDNodes which have responded to RFD and sends them a FAR (Fetch Attribut Request)
-   13. DDNodes receive FAR 
-   14. DDNode fetch .BFi file and send result toward FAR src
-   14. DDDAdmin receives incomming data blocks
-  *15. DDDAdmin reads/merges and assemble the attribut requested from the data blocks received from the DDNodes
-   16. DDDAdmin sends a ERFD (End Request For Data) event to AL, telling it about the success/failure of the RFD
-   17. AL receives EFRD from DDDAmin 
-   18. AL sends update to zkRFDobj to zookeeper
-   19. DDDAdmin disconnect from nearby AL
-   20. AL informs zookeeper that entity is offline - removing tempory objects from zookeeper database
+   . DDDAdmin connects to nearby AL
+   . AL handles connection of entity and informs zookeeper that entity is online
+     it sends response to DDDAdmin telling it about its security access level
+   . DDDAdmin creates a RFD - Request For Data
+   . DDDAdmin sends RFD to nearby AL
+   . AL receives RFD and creates a zookeeper RFD session object (zkRFDobj)
+   . AL sends a RFDconfirm to DDDAmin
+   . ALL AL's which have DDNodes connected, will send an event [RFDevent] ( a request for data event ) to DDNodes
+   . DDNodes receives RFDevent and initiates a sweep search for data
+   . DDNodes which have found the requested data, will send a RFDResponse to nearby AL
+   . AL receives RFDResponse and updates zookeeper zkRFDobj with info about which DDNode has data
+   . AL sends an event object about the zkRFDobj in zookeeper to DDDAdmin 
+   . DDDAdmin receives event about RFD
+   . DDDAdmin loops list of DDNodes which have responded to RFD and sends them a FAR (Fetch Attribut Request)
+   . DDNodes receive FAR 
+   . DDNode fetch .BFi file and send result toward FAR src
+   . DDDAdmin receives incomming data blocks
+  >. DDDAdmin reads/merges and assemble the attribut requested from the data blocks received from the DDNodes
+   . DDDAdmin sends a ERFD (End Request For Data) event to AL, telling it about the success/failure of the RFD
+   . AL receives EFRD from DDDAmin 
+   . AL sends update to zkRFDobj to zookeeper
+   . DDDAdmin disconnect from nearby AL
+   . AL informs zookeeper that entity is offline - removing tempory objects from zookeeper database
 
 
 
