@@ -1,0 +1,89 @@
+Data Dictionary Architecture setup
+
+DDD - Distributed Data Dictionary
+ There are two folders on each node - 'data' and 'dictionary' - inside the dictionary folder lies blockfiles with datadictionary realm file definitions
+ and inside data lies database realm files formatted in according to the dictionary definition files
+
+ DDDAdmin
+ +                +-zookeeper
+ |                |
+ +-----+----+-----+------+-------+------+-------+-------+--------------------------------------+
+ |   ACCESS LAYER - AL's (collection of proactor entities connected in a tree like structure)
+ |   example:
+ |                (AL) 'has two connected AL's'
+ |                 ||
+ |       (AL)+-----++(AL)
+ |         |           |
+ |   DDNode+           +-(AL) 'has two connected AL's'
+ |                       ||
+ |                       |+-(AL)
+ |                       |   |
+ |                       |   +-DDNode
+ |                       |
+ |                       +-(AL)
+ |                           |
+ |                           +DDNode 'DDNode can be connected to any AL' 
+ +-----+----+-----+------+-------+------+-------+-------+-------------------------------+-------
+ |          |            |              |               |                               |
+ [DDNode]   [DDNode]     [DDNode]      [DDNode]    [DDNode]                         [DDNode]     ... 6 node example, it could be many more nodes
+ |                                      |                                           |
+ +-[BFi]                                +-[BFi]                                     +-[BFi]
+     |                                      |                                           |
+     +-[BlockEntity]                        +-[BlockEntity]                             +-[BlockEntity]
+        |                                       |                                           |
+        +-[BlockRecord]                         +-[BlockRecord]                             +-[BlockRecord]
+        +-[BlockRecord]                         +-[BlockRecord]                                 |
+        |  |                                    |  |                                            +-[chunk record aka toast record]
+        |  +-[chunk record aka toast record]    |  +-[chunk record aka toast record]                |   
+        |       |                               |  |    |                                           +-[attribut_chunk_data] 
+        |       +-[attribut_chunk_data]         |  |    +-[attribut_chunk_data]                         - third chunk of an attribut (fx. attribut 'foto')
+        |                                       |  |        - first chunk of an attribut (fx. attribut 'foto')
+        |                                       |  |        
+        |                                       |  +-[chunk record aka toast record]
+        |                                       |     |
+        |                                       |     +-[attribut_chunk_data] 
+        |                                       |           - second chunk of an attribut (fx. attribut 'foto') 
+        +-[BlockRecord]                         +-[BlockRecord]
+        |                                       |
+        + etc...........................        + etc...........................
+
+
+Reason for having ACCESS LAYER is to make sure that DDNodes are loosely coupled, meaning that there is no direct TCPIP port connection from outside
+to any DDNode.
+It is only possible to communicate with the DDNodes via the AL's - sending a datapacket with src and dest toward and from a DDNode.
+The job of the access layer is to take care of all trafic to and from the DDNodes. The zookeeper service will be updated by the AL entity, making 
+sure that data is accessed correctly and with the correct access rights. The ACCESS LAYER is transparent and it is only DDNodes and DDDAdmin which knows
+about its existence and where to connect to it. The ACCESS LAYER then has zookeeper in the background and each AL of the ACCESS LAYER will communicate
+with it to make sure transactions to and from DataDictionary files .BFi is done according to specs.
+
+example:
+
+* DDDAdmin wants to fetch a specific attribut from dataditionary
+	
+	1. DDDAdmin connects to nearby AL
+	2. AL handles connection of entity and informs zookeeper that entity is online
+	   it sends response to DDDAdmin telling it about its security access level
+	3. DDDAdmin creates a RFD - Request For Data
+	4. DDDAdmin sends RFD to nearby AL
+	5. AL receives RFD and creates a zookeeper RFD session object (zkRFDobj)
+	6. AL sends a RFDconfirm to DDDAmin
+	6. ALL AL's which have DDNodes connected, will send an event [RFDevent] ( a request for data event ) to DDNodes
+	7. DDNodes receives RFDevent and initiates a sweep search for data
+	8. DDNodes which have found the requested data, will send a RFDResponse to nearby AL
+	9. AL receives RFDResponse and updates zookeeper zkRFDobj with info about which DDNode has data
+   10. AL sends an event object about the zkRFDobj in zookeeper to DDDAdmin 
+   11. DDDAdmin receives event about RFD
+   12. DDDAdmin loops list of DDNodes which have responded to RFD and sends them a FAR (Fetch Attribut Request)
+   13. DDNodes receive FAR 
+   14. DDNode fetch .BFi file and send result toward FAR src
+   14. DDDAdmin receives incomming data blocks
+  *15. DDDAdmin reads/merges and assemble the attribut requested from the data blocks received from the DDNodes
+   16. DDDAdmin sends a ERFD (End Request For Data) event to AL, telling it about the success/failure of the RFD
+   17. AL receives EFRD from DDDAmin 
+   18. AL sends update to zkRFDobj to zookeeper
+   19. DDDAdmin disconnect from nearby AL
+   20. AL informs zookeeper that entity is offline - removing tempory objects from zookeeper database
+
+
+
+
