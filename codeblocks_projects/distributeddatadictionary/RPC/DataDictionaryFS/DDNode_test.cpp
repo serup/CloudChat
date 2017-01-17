@@ -32,6 +32,7 @@
 #include "ClientRequestHandling.h"
 #include "../../datadictionarycontrol.hpp"
 #include <errno.h>
+#include "../../collectablefutures.hpp"
 
 #if defined(_M_X64) || defined(__amd64__)
 // unfortunately FOLLY is pt[2017-01-01]. only working for 64bit architecture
@@ -78,6 +79,7 @@ struct ReportRedirector
 BOOST_GLOBAL_FIXTURE(ReportRedirector)
 #endif
 #endif
+
 
 BOOST_AUTO_TEST_SUITE (DDNode_Test) // name of the test suite
 
@@ -996,6 +998,24 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 	}
 	
 	cout<<"}"<<endl;
+}
+
+BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
+{
+	cout << "BOOST_AUTO_TEST_CASE( testClass_collectablefutures )\n{" << endl;
+
+	BOOST_TEST_MESSAGE( "Instantiate collectablefutures class" );
+	collectablefutures cf;
+	BOOST_REQUIRE(cf.getstate() == collectablefutures::enumstate::instantiated);
+
+	BOOST_TEST_MESSAGE( "create request" );
+	collectablefutures::request req = cf.createrequest();
+	BOOST_CHECK_MESSAGE(cf.getstate() == collectablefutures::enumstate::preparing, "FAIL: when preparing");
+	BOOST_TEST_MESSAGE( "add executor to request" );	
+	req.addexecutorfunc( [](){ return 7; } );
+	BOOST_CHECK_MESSAGE(cf.getstate() == collectablefutures::enumstate::executoradded, "FAIL: when adding executor");
+	
+	cout << "}" << endl;
 }
 
 BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_using_Futures)
