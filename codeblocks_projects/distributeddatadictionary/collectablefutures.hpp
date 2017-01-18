@@ -66,6 +66,10 @@ class ManualExecutor : public cfExecutor
 	void add(Func callback); 
 	void addWithPriority(Func, int8_t priority);
 
+	int  getAmount() { return funcs.size(); }
+
+
+	void run();
 
 };
 
@@ -151,25 +155,38 @@ class collectablefutures
 				void addexecutorfunc(Func callback)
 				{
 					_executorfunc = std::move(callback);
-					executor.add(callback);
+					cout << "try func before add " << endl;
+					_executorfunc();
+					cout << "now add func to executor" << endl;
+					//executor.add(std::move(callback));
+					executor.add(_executorfunc);
 					pOwner->eState = executoradded;
 				}
 
 				bool runExec()
 				{
 					bool bResult=false;
-					if(_executorfunc!=NULL)
+					if(executor.getAmount() > 0)
 					{
 						pOwner->eState = running;
-						_executorfunc();
+						executor.run();	
 						pOwner->eState = collecting;
-						//TODO: handle the result from executor
-						
-
+						//TODO:
 						pOwner->eState = finishing;
 						bResult=true;
 					}
 					else {
+						if(_executorfunc!=NULL)
+						{
+							pOwner->eState = running;
+							_executorfunc();
+							pOwner->eState = collecting;
+							//TODO: handle the result from executor
+
+
+							pOwner->eState = finishing;
+							bResult=true;
+						}
 					}
 					return bResult;
 				}
