@@ -125,6 +125,17 @@ class collectablefutures
 					pOwner->eState = executoradded;
 				}
 
+				bool runExec()
+				{
+					bool bResult=false;
+					if(_executorfunc!=NULL)
+					{
+						_executorfunc();
+						bResult=true;
+					}
+					return bResult;
+				}
+
 				void process()
 				{
 					// start the Executor - function attached to this request

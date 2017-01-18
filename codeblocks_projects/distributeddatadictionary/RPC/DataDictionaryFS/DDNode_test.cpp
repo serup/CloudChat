@@ -1012,9 +1012,11 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 	collectablefutures::request req = cf.createrequest();
 	BOOST_CHECK_MESSAGE(cf.getstate() == collectablefutures::enumstate::preparing, "FAIL: when preparing");
 	BOOST_TEST_MESSAGE( "add executor to request" );	
-	req.addexecutorfunc( [](){ return 7; } );
+	req.addexecutorfunc( [](){ cout << "Hello from executor" << endl; } );
 	BOOST_CHECK_MESSAGE(cf.getstate() == collectablefutures::enumstate::executoradded, "FAIL: when adding executor");
+	BOOST_CHECK_MESSAGE(req.runExec() == true, "FAIL: when running executor");
 	
+
 	cout << "}" << endl;
 }
 
