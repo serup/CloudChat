@@ -147,18 +147,13 @@ class collectablefutures
 					pOwner = parentclass;
 				}
 
-//				void addexecutor(Executor callback)
-//				{
-//					_executor = std::move(callback);
-//				}
 
 				void addexecutorfunc(Func callback)
 				{
 					_executorfunc = std::move(callback);
-					cout << "try func before add " << endl;
-					_executorfunc();
-					cout << "now add func to executor" << endl;
-					//executor.add(std::move(callback));
+					//cout << "try func before add " << endl;
+					//_executorfunc();
+					//cout << "now add func to executor" << endl;
 					executor.add(_executorfunc);
 					pOwner->eState = executoradded;
 				}
@@ -193,8 +188,8 @@ class collectablefutures
 
 				void process()
 				{
-					// start the Executor - function attached to this request
-					
+					// start the Executor - running ALL functions attached to this request
+					runExec();		
 				}
 		};
 

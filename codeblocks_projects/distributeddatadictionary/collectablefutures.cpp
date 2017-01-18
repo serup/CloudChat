@@ -14,12 +14,10 @@ cfExecutor::~cfExecutor()
 void ManualExecutor::add(Func callback)
 {
     Func _executorfunc = std::move(callback);
-	_executorfunc();
+	//_executorfunc();
 
-	//static const int8_t LO_PRI = SCHAR_MIN;
-	static const int8_t LO_PRI = SCHAR_MAX;
+	static const int8_t LO_PRI = SCHAR_MIN;
 	std::lock_guard<std::mutex> lock(lock_);
-	//funcs.emplace(make_pair(int8_t(LO_PRI), Func(std::move(callback))));
 	funcs.emplace(LO_PRI, _executorfunc);
 }
 
@@ -30,21 +28,21 @@ void ManualExecutor::addWithPriority(Func, int8_t priority)
 
 void ManualExecutor::run()
 {
-	Func funcFromContainer;
+	//Func funcFromContainer;
 	Func func;
 
 	// setup all functions in queue
 	// TODO:
 	for(const auto &p : funcs) {
 		// add to queue for running
-		cout << "priority of func: " << p.first << endl;
-		funcFromContainer = p.second;
-		cout << "try to run func - ";
-		funcFromContainer();
-		cout << endl << "add func to running queue" << endl;
+		cout << "priority of func: " << p.first << ",";
+		//funcFromContainer = p.second;
+		//cout << "try to run func - ";
+		//funcFromContainer();
+		//cout << endl << "add func to running queue" << endl;
 		funcs_.emplace(std::move((Func)p.second));
 	}
-
+	cout << endl;
 	
 	//TODO: run functions in queue
 	func = std::move(funcs_.front());

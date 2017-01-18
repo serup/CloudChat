@@ -1400,6 +1400,11 @@ BOOST_AUTO_TEST_CASE(useFuturesToCollectRPCclientsResults)
 // ******************************************************************************************************************
 // BASIC ZooKeeper connection example :
 // ******************************************************************************************************************
+//
+// to start local zookeeper for running integration tests:
+// /opt/zookeeper-3.4.8/bin/zkServer.sh start
+//
+//
 /** integrationTest_connectTo_zookeeper_basic :
  * for a better example please see : https://apache.googlesource.com/zookeeper/+/trunk/src/c/src/cli.c
  *
@@ -1649,6 +1654,10 @@ BOOST_AUTO_TEST_CASE(integrationTest_listZNodes_zookeeper_advanced)
 BOOST_AUTO_TEST_CASE(integrationTest_CreateZNode_zookeeper_advanced)
 {
 	cout << "BOOST_AUTO_TEST_CASE( integrationTest_CreateZNode_zookeeper_advanced)\n{" << endl;
+	BOOST_TEST_MESSAGE( "NB! to start zookeeper for running this test, do following: " );
+    BOOST_TEST_MESSAGE( "******************************************" ); 	
+	BOOST_TEST_MESSAGE( "/opt/zookeeper-3.4.8/bin/zkServer.sh start" );
+    BOOST_TEST_MESSAGE( "******************************************" ); 	
 	
 	//zoo_set_debug_level(ZOO_LOG_LEVEL_DEBUG);
 	zoo_set_log_stream(fopen("NULL", "w")); // no output
