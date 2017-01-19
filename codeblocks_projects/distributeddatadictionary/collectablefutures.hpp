@@ -137,6 +137,11 @@ class collectablefutures
 					pOwner->eState = executoradded;
 				}
 
+				int8_t getAmountExecutorFunctions()
+				{
+					return executor.getAmount();
+				}
+
 				bool runExec()
 				{
 					bool bResult=false;
@@ -156,8 +161,6 @@ class collectablefutures
 							_executorfunc();
 							pOwner->eState = collecting;
 							//TODO: handle the result from executor
-
-
 							pOwner->eState = finishing;
 							bResult=true;
 						}

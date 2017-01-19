@@ -1021,6 +1021,7 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 	
 	BOOST_TEST_MESSAGE( "add one extra function to executor" );
 	req.addexecutorfunc( [](){ cout << "- Hello again from executor - function 2" << endl; } );
+	BOOST_CHECK_MESSAGE(req.getAmountExecutorFunctions() == 2, "FAIL: when adding extra function to executor");
 	BOOST_CHECK_MESSAGE(req.runExec() == true, "FAIL: when starting executor");
 
 	cout << "}" << endl;
