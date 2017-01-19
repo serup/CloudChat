@@ -3,7 +3,8 @@
 #include <climits>
 #include <map>
 #include "thread_safe_queue.h"
-		
+#include <iostream>
+using namespace std;
 
 // An Executor accepts units of work with add(), which should be
 /// threadsafe.
@@ -42,14 +43,11 @@ class cfExecutor {
 
 
 // Handles container with functions
+//
 // each function is added using add( Func ) or addWithPriority( Func, priority )
-// TODO:when run of executor is called, then functions will be executed according to 
+// when run of executor is called, then functions will be executed according to 
 // the priority given, and default priority is LO_PRI meaning it will be executed 
 // as added order
-// If HI_PRI then function will move to top of container list below already HI_PRI 
-// functions added
-// If MI_PRI then function will move to bottom of already HI_PRI functions, or at
-// the top if no HI_PRI functions exists
 // 
 class ManualExecutor : public cfExecutor
 {
@@ -74,6 +72,9 @@ class ManualExecutor : public cfExecutor
 
 /***
  * General class for handling requests "promises" for results "futures" from RPC clients
+ * 
+ * each request has an executor and inside the executor lies a queue of functions which will be run according to priority
+ * The requests will be 
  *
  * TODO: transform below to follow this description
  */
@@ -137,9 +138,9 @@ class collectablefutures
 					pOwner->eState = executoradded;
 				}
 
-				int8_t getAmountExecutorFunctions()
+				int getAmountExecutorFunctions()
 				{
-					return executor.getAmount();
+					return (int) executor.getAmount();
 				}
 
 				bool runExec()
@@ -150,7 +151,7 @@ class collectablefutures
 						pOwner->eState = running;
 						executor.run();	
 						pOwner->eState = collecting;
-						//TODO:
+						//TODO: wait 
 						pOwner->eState = finishing;
 						bResult=true;
 					}
@@ -170,32 +171,50 @@ class collectablefutures
 
 				void process()
 				{
-					// start the Executor - running ALL functions attached to this request
-					runExec();		
+					// start the Executor - running ALL functions attached to this request, and
+					// results from the priority run functions and appended all the functions results
+					// into the result_buffer
+					try
+					{
+						std::vector<unsigned char> result_buffer;
+						runExec();		
+						p.set_value(std::move(result_buffer));
+					}
+					catch(...)
+					{
+						p.set_exception(std::current_exception());
+					}
 				}
 		};
 
 	private:
 	thread_safe_queue<request> request_queue;
 	std::atomic_bool done;
-//
-//	void req_thread()
-//	{
-//		while(!done)
-//		{
-//			request req = request_queue.pop();
-//			req.process();
-//		}
-//	}
-//
-//	std::thread reqthread;
-//
+
+	void req_thread()
+	{
+		cout << "request thread started - polling request_queue" << endl;
+		while(!done)
+		{
+			//cout << "-- polling" << endl;
+			if(request_queue.size() > 0) {
+				cout << "request received in queue" << endl;
+			request req = request_queue.pop();
+			req.process();
+			}
+
+		}
+		cout << "request thread - stopping " << endl;
+	}
+
+	std::thread reqthread;
+
 
 	public:
 	collectablefutures():
 		done(false),
-		eState(instantiated)
-//		reqthread(&collectablefutures::req_thread,this)
+		eState(instantiated),
+		reqthread(&collectablefutures::req_thread,this)
 	{}
 	
 //
@@ -226,7 +245,7 @@ class collectablefutures
 		done=true;
 		//request req;
 		//request_queue.push(req);
-		//reqthread.join();
+		reqthread.join(); // this is needed otherwise exception will happen when class is destroyed - thread also needs to be closed proper
 	}
 };
 

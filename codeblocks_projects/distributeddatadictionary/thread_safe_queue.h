@@ -1,16 +1,17 @@
 #pragma once
 
-#include <future>
-#include <iostream>
 #include <queue>
-using namespace std;
+#include <boost/thread/condition.hpp>
+#include <boost/thread/mutex.hpp>
 
 template<typename T>
 class thread_safe_queue
 { 
-	queue<T>   m_queue;
+	std::queue<T>   m_queue;
 	pthread_mutex_t m_mutex;
 	pthread_cond_t  m_condv;
+	boost::mutex mtxWait;
+	boost::condition cndSignalQueueHasNewEntry;
 
 	public:
 	thread_safe_queue() {
@@ -21,6 +22,15 @@ class thread_safe_queue
 		pthread_mutex_destroy(&m_mutex);
 		pthread_cond_destroy(&m_condv);
 	}
+	
+	bool WaitForQueueSignal(long milliseconds)
+	{
+		boost::mutex::scoped_lock mtxWaitLock(mtxWait);
+		boost::posix_time::time_duration wait_duration =  boost::posix_time::milliseconds(milliseconds); // http://www.boost.org/doc/libs/1_34_0/doc/html/date_time/posix_time.html
+		boost::system_time const timeout=boost::get_system_time()+wait_duration; // http://www.justsoftwaresolutions.co.uk/threading/condition-variable-spurious-wakes.html
+		return cndSignalQueueHasNewEntry.timed_wait(mtxWait,timeout); // wait until signal notify_one or timeout
+	}
+	
 	void push(T& item) {
 		pthread_mutex_lock(&m_mutex);
 		

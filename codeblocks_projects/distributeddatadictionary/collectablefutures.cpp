@@ -2,7 +2,7 @@
 
 cfExecutor::cfExecutor() 
 {
-// ćtor
+// ctor
 }
 
 cfExecutor::~cfExecutor() 
@@ -30,7 +30,6 @@ void ManualExecutor::run_queue()
 {
 	Func func;
 	size_t amount = getAmount();
-	cout << "running amount: " << amount << " of functions " << endl;
 
 	for(size_t count = 0; count < amount; count++) 
 	{
@@ -53,13 +52,10 @@ void ManualExecutor::run_queue()
 
 void ManualExecutor::run()
 {
-	//Func funcFromContainer;
-
 	// setup all functions in queue
-	// TODO:
 	for(const auto &p : funcs) {
 		// add to queue for running
-		cout << "priority of func: " << p.first << ",";
+		//cout << "priority of func: " << p.first << ",";
 		funcs_.emplace(std::move((Func)p.second));
 	}
 	cout << endl;
