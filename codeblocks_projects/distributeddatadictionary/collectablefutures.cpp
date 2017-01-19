@@ -13,12 +13,12 @@ cfExecutor::~cfExecutor()
 
 void ManualExecutor::add(Func callback)
 {
-    Func _executorfunc = std::move(callback);
-	//_executorfunc();
-
 	static const int8_t LO_PRI = SCHAR_MIN;
+	static int8_t priority = LO_PRI;
+
+	priority++;
 	std::lock_guard<std::mutex> lock(lock_);
-	funcs.emplace(LO_PRI, _executorfunc);
+	funcs.emplace(priority, std::move(callback));
 }
 
 void ManualExecutor::addWithPriority(Func, int8_t priority)
@@ -26,28 +26,44 @@ void ManualExecutor::addWithPriority(Func, int8_t priority)
 
 }
 
+void ManualExecutor::run_queue()
+{
+	Func func;
+	size_t amount = getAmount();
+	cout << "running amount: " << amount << " of functions " << endl;
+
+	for(size_t count = 0; count < amount; count++) 
+	{
+		{
+		std::lock_guard<std::mutex> lock(lock_);
+		if (funcs_.empty()) 
+			break;
+		
+		// fetch function to run
+		func = std::move(funcs_.front());
+		// remove ready to run function from queue
+		funcs_.pop();
+		}
+		
+		// run function from queue
+		func();
+	}
+
+}
+
 void ManualExecutor::run()
 {
 	//Func funcFromContainer;
-	Func func;
 
 	// setup all functions in queue
 	// TODO:
 	for(const auto &p : funcs) {
 		// add to queue for running
 		cout << "priority of func: " << p.first << ",";
-		//funcFromContainer = p.second;
-		//cout << "try to run func - ";
-		//funcFromContainer();
-		//cout << endl << "add func to running queue" << endl;
 		funcs_.emplace(std::move((Func)p.second));
 	}
 	cout << endl;
 	
-	//TODO: run functions in queue
-	func = std::move(funcs_.front());
-	// remove ready to run function from queue
-	funcs_.pop();
-	// run function from queue
-	func();
+	// run functions in queue
+	run_queue();
 }

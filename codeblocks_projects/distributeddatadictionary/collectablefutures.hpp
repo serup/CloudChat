@@ -43,7 +43,7 @@ class cfExecutor {
 
 // Handles container with functions
 // each function is added using add( Func ) or addWithPriority( Func, priority )
-// when run of executor is called, then functions will be executed according to 
+// TODO:when run of executor is called, then functions will be executed according to 
 // the priority given, and default priority is LO_PRI meaning it will be executed 
 // as added order
 // If HI_PRI then function will move to top of container list below already HI_PRI 
@@ -56,8 +56,8 @@ class ManualExecutor : public cfExecutor
 	using Func = std::function<void()>;
 
 	std::map<int8_t, Func> funcs; // Function container (priority,Func) - added functions to this Executors 
-	std::mutex lock_; // avoid multiple entity updating the function container
-	std::queue<Func> funcs_; // functions queued for running
+	std::mutex lock_;             // avoid multiple entity updating the function container
+	std::queue<Func> funcs_;      // functions queued for running
 
 	public:
 	ManualExecutor() {}
@@ -65,12 +65,11 @@ class ManualExecutor : public cfExecutor
 
 	void add(Func callback); 
 	void addWithPriority(Func, int8_t priority);
-
 	int  getAmount() { return funcs.size(); }
-
-
 	void run();
 
+	private:
+	void run_queue();
 };
 
 /***
@@ -91,26 +90,10 @@ class collectablefutures
 			collectablefutures * pOwner;
 
 			public:
-				//			std::streambuf* is;
-				//			unsigned read_count;
-				//
-				// when promise is delivered then it will be in a std::vector<unsigned char> array
 				std::promise<std::vector<unsigned char> > p;
-				//			
-				//			explicit request(std::streambuf& is_,unsigned count_):
-				//				is(&is_),read_count(count_)
-				//		{}
-				//			request(request&& other):
-				//				is(other.is),
-				//				read_count(other.read_count),
-				//				p(std::move(other.p))
-				//		{}
 				request(request&& other):
 					p(std::move(other.p))
 				{}
-
-				//			request():
-				//				is(0),read_count(0)
 				request()
 				{}
 
@@ -150,11 +133,7 @@ class collectablefutures
 
 				void addexecutorfunc(Func callback)
 				{
-					_executorfunc = std::move(callback);
-					//cout << "try func before add " << endl;
-					//_executorfunc();
-					//cout << "now add func to executor" << endl;
-					executor.add(_executorfunc);
+					executor.add(std::move(callback));
 					pOwner->eState = executoradded;
 				}
 
