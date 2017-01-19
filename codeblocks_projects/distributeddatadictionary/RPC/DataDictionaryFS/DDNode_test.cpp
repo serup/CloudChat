@@ -1026,6 +1026,10 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 	BOOST_TEST_MESSAGE( msg ); 
 	BOOST_CHECK_MESSAGE(req.runExec() == true, "FAIL: when starting executor");
 
+	BOOST_TEST_MESSAGE( "add request to collectablefutures request_queue - this should start thread " );
+	cf.addRequestToQueue(req);
+
+	
 	cout << "}" << endl;
 }
 

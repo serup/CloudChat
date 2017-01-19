@@ -177,6 +177,7 @@ class collectablefutures
 					try
 					{
 						std::vector<unsigned char> result_buffer;
+						cout  << "process called" << endl;
 						runExec();		
 						p.set_value(std::move(result_buffer));
 					}
@@ -193,10 +194,10 @@ class collectablefutures
 
 	void req_thread()
 	{
-		cout << "request thread started - wait for signal" << endl;
-		bool bQueueHasEntries = request_queue.WaitForQueueSignal(10000);
-		if(!bQueueHasEntries)
-			cout << "FAIL: timeout for waiting for requests to enter into queue" << endl;
+		cout << "request thread started " << endl;
+//		bool bQueueHasEntries = request_queue.WaitForQueueSignal(10000);
+//		if(!bQueueHasEntries)
+//			cout << "FAIL: timeout for waiting for requests to enter into queue" << endl;
 
 		while(!done)
 		{
@@ -230,6 +231,11 @@ class collectablefutures
 //		return f;
 //	}
 //
+
+	void addRequestToQueue(request &_req)
+	{
+		request_queue.push(_req);
+	}
 
 	enumstate getstate()
 	{
