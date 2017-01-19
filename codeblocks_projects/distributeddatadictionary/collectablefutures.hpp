@@ -193,15 +193,19 @@ class collectablefutures
 
 	void req_thread()
 	{
-		cout << "request thread started - polling request_queue" << endl;
+		cout << "request thread started - wait for signal" << endl;
+		bool bQueueHasEntries = request_queue.WaitForQueueSignal(10000);
+		if(!bQueueHasEntries)
+			cout << "FAIL: timeout for waiting for requests to enter into queue" << endl;
+
 		while(!done)
 		{
 			//cout << "-- polling" << endl;
-			if(request_queue.size() > 0) {
-				cout << "request received in queue" << endl;
+			//if(request_queue.size() > 0) {
+			//	cout << "request received in queue" << endl;
 			request req = request_queue.pop();
 			req.process();
-			}
+			//}
 
 		}
 		cout << "request thread - stopping " << endl;

@@ -38,9 +38,11 @@ class thread_safe_queue
 		m_queue.push(std::move(itemcpy));
 
 		pthread_cond_signal(&m_condv);
+		cndSignalQueueHasNewEntry.notify_one();	
 		pthread_mutex_unlock(&m_mutex);
 	}
 	T pop() {
+			std::cout << "waiting inside pop()" << std::endl;
 		pthread_mutex_lock(&m_mutex);
 		while (m_queue.size() == 0) {
 			pthread_cond_wait(&m_condv, &m_mutex);
