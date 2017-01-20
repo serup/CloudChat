@@ -87,7 +87,7 @@ class collectablefutures
 		class request
 		{
 			ManualExecutor executor;
-		    Func _executorfunc;
+		    Func _executorfunc;  // TBD deprecated
 			collectablefutures * pOwner;
 
 			public:
@@ -165,6 +165,8 @@ class collectablefutures
 							pOwner->eState = finishing;
 							bResult=true;
 						}
+						else
+							cout << "WARNING: no executor functions called" << endl;
 					}
 					return bResult;
 				}
@@ -205,6 +207,9 @@ class collectablefutures
 			//if(request_queue.size() > 0) {
 			//	cout << "request received in queue" << endl;
 			request req = request_queue.pop();
+			cout << "analyze received request : " << endl;
+			cout << " . amount of funcs " << req.getAmountExecutorFunctions() << endl;
+			cout << " . amount of funcs " << req.getAmountExecutorFunctions() << endl;
 			req.process();
 			//}
 
@@ -234,7 +239,16 @@ class collectablefutures
 
 	void addRequestToQueue(request &_req)
 	{
+		cout << "amount before add to request_queue: " << _req.getAmountExecutorFunctions() << endl;
 		request_queue.push(_req);
+		
+
+//		request_queue.push(req);
+
+		//request req = request_queue.pop();
+
+		//cout << "fetch from request_queue - amount : " << req.getAmountExecutorFunctions() << endl;
+
 	}
 
 	enumstate getstate()
@@ -253,8 +267,8 @@ class collectablefutures
 	~collectablefutures()
 	{
 		done=true;
-		//request req;
-		//request_queue.push(req);
+		request req;
+		request_queue.push(req); // make sure a pop() is not waiting when destruction is at hand ;-)
 		reqthread.join(); // this is needed otherwise exception will happen when class is destroyed - thread also needs to be closed proper
 	}
 };
