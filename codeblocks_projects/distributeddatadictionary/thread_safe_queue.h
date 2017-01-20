@@ -12,9 +12,11 @@ class thread_safe_queue
 	pthread_cond_t  m_condv;
 	boost::mutex mtxWait;
 	boost::condition cndSignalQueueHasNewEntry;
+	bool bDestroy;
 
 	public:
 	thread_safe_queue() {
+		bDestroy=false;
 		pthread_mutex_init(&m_mutex, NULL);
 		pthread_cond_init(&m_condv, NULL);
 	}
@@ -22,7 +24,8 @@ class thread_safe_queue
 		//TODO: this does NOT work - find a way to break free of a wait inside pop() - other than doing it from parent class - it should be here
 		//T dummyItem;
 		//push(dummyItem); // make sure a pop() is not waiting when destruction is at hand ;-)
-		
+	
+		bDestroy=true;
 		pthread_mutex_destroy(&m_mutex);
 		pthread_cond_destroy(&m_condv);
 	}
@@ -48,10 +51,10 @@ class thread_safe_queue
 	T pop() {
 			std::cout << "waiting inside pop()" << std::endl;
 		pthread_mutex_lock(&m_mutex);
-		while (m_queue.size() == 0) {
+		while (m_queue.size() == 0 && !bDestroy) {
 			pthread_cond_wait(&m_condv, &m_mutex);
 		}
-		
+	
 		T& _item = m_queue.front();
 		T itemcpy = std::move(_item);
 
