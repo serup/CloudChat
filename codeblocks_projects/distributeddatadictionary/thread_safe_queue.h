@@ -19,6 +19,10 @@ class thread_safe_queue
 		pthread_cond_init(&m_condv, NULL);
 	}
 	~thread_safe_queue() {
+		//TODO: this does NOT work - find a way to break free of a wait inside pop() - other than doing it from parent class - it should be here
+		//T dummyItem;
+		//push(dummyItem); // make sure a pop() is not waiting when destruction is at hand ;-)
+		
 		pthread_mutex_destroy(&m_mutex);
 		pthread_cond_destroy(&m_condv);
 	}
