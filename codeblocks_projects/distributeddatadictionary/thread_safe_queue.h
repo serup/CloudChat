@@ -10,8 +10,10 @@ class thread_safe_queue
 	std::queue<T>   m_queue;
 	pthread_mutex_t m_mutex;
 	pthread_cond_t  m_condv;
-	boost::mutex mtxWait;
-	boost::condition cndSignalQueueHasNewEntry;
+	boost::mutex mtxWaitPush;
+	boost::mutex mtxWaitPop;
+	boost::condition cndSignalQueuePush;
+	boost::condition cndSignalQueuePop;
 	bool bDestroy;
 
 	public:
@@ -30,14 +32,22 @@ class thread_safe_queue
 		pthread_cond_destroy(&m_condv);
 	}
 	
-	bool WaitForQueueSignal(long milliseconds)
+	bool WaitForQueueSignalPush(long milliseconds)
 	{
-		boost::mutex::scoped_lock mtxWaitLock(mtxWait);
+		boost::mutex::scoped_lock mtxWaitLock(mtxWaitPush);
 		boost::posix_time::time_duration wait_duration =  boost::posix_time::milliseconds(milliseconds); // http://www.boost.org/doc/libs/1_34_0/doc/html/date_time/posix_time.html
 		boost::system_time const timeout=boost::get_system_time()+wait_duration; // http://www.justsoftwaresolutions.co.uk/threading/condition-variable-spurious-wakes.html
-		return cndSignalQueueHasNewEntry.timed_wait(mtxWait,timeout); // wait until signal notify_one or timeout
+		return cndSignalQueuePush.timed_wait(mtxWaitPush,timeout); // wait until signal notify_one or timeout
 	}
 	
+	bool WaitForQueueSignalPop(long milliseconds)
+	{
+		boost::mutex::scoped_lock mtxWaitLock(mtxWaitPop);
+		boost::posix_time::time_duration wait_duration =  boost::posix_time::milliseconds(milliseconds); // http://www.boost.org/doc/libs/1_34_0/doc/html/date_time/posix_time.html
+		boost::system_time const timeout=boost::get_system_time()+wait_duration; // http://www.justsoftwaresolutions.co.uk/threading/condition-variable-spurious-wakes.html
+		return cndSignalQueuePop.timed_wait(mtxWaitPop,timeout); // wait until signal notify_one or timeout
+	}
+
 	void push(T& item) {
 		pthread_mutex_lock(&m_mutex);
 		
@@ -45,11 +55,11 @@ class thread_safe_queue
 		m_queue.push(std::move(itemcpy));
 
 		pthread_cond_signal(&m_condv);
-		cndSignalQueueHasNewEntry.notify_one();	
+		cndSignalQueuePush.notify_one();	
 		pthread_mutex_unlock(&m_mutex);
 	}
 	T pop() {
-			std::cout << "waiting inside pop()" << std::endl;
+			//std::cout << "waiting inside pop()" << std::endl;
 		pthread_mutex_lock(&m_mutex);
 		while (m_queue.size() == 0 && !bDestroy) {
 			pthread_cond_wait(&m_condv, &m_mutex);
@@ -59,6 +69,7 @@ class thread_safe_queue
 		T itemcpy = std::move(_item);
 
 		m_queue.pop();
+		cndSignalQueuePop.notify_one();	
 		pthread_mutex_unlock(&m_mutex);
 		return itemcpy;
 	}

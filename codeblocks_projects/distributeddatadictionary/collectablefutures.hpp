@@ -169,8 +169,8 @@ class collectablefutures
 							pOwner->eState = finishing;
 							bResult=true;
 						}
-						else
-							cout << "WARNING: no executor functions called" << endl;
+//						else
+//							cout << "WARNING: no executor functions called" << endl;
 					}
 					return bResult;
 				}
@@ -183,7 +183,7 @@ class collectablefutures
 					try
 					{
 						std::vector<unsigned char> result_buffer;
-						cout  << "process called" << endl;
+						//cout  << "process called" << endl;
 						runExec();		
 						p.set_value(std::move(result_buffer));
 					}
@@ -194,31 +194,23 @@ class collectablefutures
 				}
 		};
 
+	bool WaitForQueueSignalPush(long milliseconds) { return request_queue.WaitForQueueSignalPush(milliseconds); } 
+	bool WaitForQueueSignalPop(long milliseconds) { return request_queue.WaitForQueueSignalPop(milliseconds);  } 
+
 	private:
 	thread_safe_queue<request> request_queue;
 	std::atomic_bool done;
 
+
 	void req_thread()
 	{
-		cout << "request thread started " << endl;
-//		bool bQueueHasEntries = request_queue.WaitForQueueSignal(10000);
-//		if(!bQueueHasEntries)
-//			cout << "FAIL: timeout for waiting for requests to enter into queue" << endl;
-
+		//cout << "request thread started " << endl;
 		while(!done)
 		{
-			//cout << "-- polling" << endl;
-			//if(request_queue.size() > 0) {
-			//	cout << "request received in queue" << endl;
 			request req = request_queue.pop();
-			cout << "analyze received request : " << endl;
-			cout << " . amount of funcs " << req.getAmountExecutorFunctions() << endl;
-			cout << " . amount of funcs " << req.getAmountExecutorFunctions() << endl;
 			req.process();
-			//}
-
 		}
-		cout << "request thread - stopping " << endl;
+		//cout << "request thread - stopping " << endl;
 	}
 
 	std::thread reqthread;
@@ -241,18 +233,16 @@ class collectablefutures
 //	}
 //
 
-	void addRequestToQueue(request &_req)
+	bool addRequestToQueue(request &_req)
 	{
-		cout << "amount before add to request_queue: " << _req.getAmountExecutorFunctions() << endl;
-		request_queue.push(_req);
-		
-
-//		request_queue.push(req);
-
-		//request req = request_queue.pop();
-
-		//cout << "fetch from request_queue - amount : " << req.getAmountExecutorFunctions() << endl;
-
+		bool bResult=true;
+		if(_req.getAmountExecutorFunctions() > 0)
+			request_queue.push(_req);
+		else {
+			cout << "FAIL: trying to add request with NO executors to request_queue; [" << __FILE__ << ":" << __LINE__ << "] " << endl;
+			bResult=false;
+		}
+		return bResult;
 	}
 
 	enumstate getstate()

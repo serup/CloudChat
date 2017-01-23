@@ -1011,33 +1011,28 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 	BOOST_TEST_MESSAGE( "create request" );
 	collectablefutures::request req = cf.createrequest();
 	BOOST_CHECK_MESSAGE(cf.getstate() == collectablefutures::enumstate::preparing, "FAIL: when preparing");
-//	BOOST_CHECK_MESSAGE(req.runExec() == false, "FAIL: when running NULL executor");
+	BOOST_CHECK_MESSAGE(req.runExec() == false, "FAIL: when running NULL executor");
 	BOOST_TEST_MESSAGE( "add executor to request" );	
 	req.addexecutorfunc( [](){ cout << "- Hello from executor - function 1" << endl; } );
 	BOOST_CHECK_MESSAGE(cf.getstate() == collectablefutures::enumstate::executoradded, "FAIL: when adding executor");
-//	BOOST_TEST_MESSAGE( "run executor from request" );	
-//	BOOST_CHECK_MESSAGE(req.runExec() == true, "FAIL: when starting executor");
-//	BOOST_CHECK_MESSAGE(cf.getstate() == collectablefutures::enumstate::finishing, "FAIL: when running executor");
+	BOOST_TEST_MESSAGE( "run executor from request" );	
+	BOOST_CHECK_MESSAGE(req.runExec() == true, "FAIL: when starting executor");
+	BOOST_CHECK_MESSAGE(cf.getstate() == collectablefutures::enumstate::finishing, "FAIL: when running executor");
 	
 	BOOST_TEST_MESSAGE( "add one extra function to executor" );
 	req.addexecutorfunc( [](){ cout << "- Hello again from executor - function 2" << endl; } );
 	BOOST_CHECK_MESSAGE(req.getAmountExecutorFunctions() == 2, "FAIL: when adding extra function to executor");
-//	std::string msg = "starting executor with amount: " + std::to_string(req.getAmountExecutorFunctions()) + ", of functions "; 
-//	BOOST_TEST_MESSAGE( msg ); 
-//	BOOST_CHECK_MESSAGE(req.runExec() == true, "FAIL: when starting executor");
+	std::string msg = "starting executor with amount: " + std::to_string(req.getAmountExecutorFunctions()) + ", of functions "; 
+	BOOST_TEST_MESSAGE( msg ); 
+	BOOST_CHECK_MESSAGE(req.runExec() == true, "FAIL: when starting executor");
 
 	BOOST_TEST_MESSAGE( "add request to collectablefutures request_queue - this should start thread " );
 	cout << "amount of functions in requests executor : " << req.getAmountExecutorFunctions() << endl;
-	cf.addRequestToQueue(req);
-
-//	collectablefutures::request _req = cf.createrequest();
-//	_req.addexecutorfunc( [](){ cout << "- Hello test from executor - function" << endl; } );
-//	cout << " - amount : " << _req.getAmountExecutorFunctions() << " has been put into temp test request " << endl;
-
-	//collectablefutures::request	tstreq = std::move(_req); 
-	//cout << " -- amount : " << tstreq.getAmountExecutorFunctions() << " has been put into temp test request " << endl;
-
-	
+	cout << "Results from functions run from executor : " << endl;
+	BOOST_CHECK_MESSAGE(req.getAmountExecutorFunctions() == 2, "FAIL: adding functions to executor failed");
+	BOOST_CHECK_MESSAGE(cf.addRequestToQueue(req) == true, "FAIL: could not add to request queue");
+	BOOST_CHECK_MESSAGE(cf.WaitForQueueSignalPop(1000) == true, "FAIL: timeout - waiting for functions to be popped from request queue to be run");
+	cout << "..." << endl;
 	cout << "}" << endl;
 }
  
