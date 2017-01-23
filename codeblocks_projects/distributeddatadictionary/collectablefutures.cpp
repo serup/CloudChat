@@ -54,12 +54,8 @@ void ManualExecutor::run()
 {
 	// setup all functions in queue
 	for(const auto &p : funcs) {
-		// add to queue for running
-		//cout << "priority of func: " << p.first << ",";
 		funcs_.emplace(std::move((Func)p.second));
 	}
-	//cout << endl;
-	
 	// run functions in queue
 	run_queue();
 }

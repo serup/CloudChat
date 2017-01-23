@@ -89,7 +89,6 @@ class collectablefutures
 		enum enumstate { instantiated, preparing, executoradded, running, collecting, finishing, error } eState; 
 		class request
 		{
-		    Func _executorfunc;  // TBD deprecated
 			collectablefutures * pOwner;
 
 			public:
@@ -159,19 +158,6 @@ class collectablefutures
 						pOwner->eState = finishing;
 						bResult=true;
 					}
-					else {
-						if(_executorfunc!=NULL)
-						{
-							pOwner->eState = running;
-							_executorfunc();
-							pOwner->eState = collecting;
-							//TODO: handle the result from executor
-							pOwner->eState = finishing;
-							bResult=true;
-						}
-//						else
-//							cout << "WARNING: no executor functions called" << endl;
-					}
 					return bResult;
 				}
 
@@ -183,7 +169,6 @@ class collectablefutures
 					try
 					{
 						std::vector<unsigned char> result_buffer;
-						//cout  << "process called" << endl;
 						runExec();		
 						p.set_value(std::move(result_buffer));
 					}
@@ -204,13 +189,11 @@ class collectablefutures
 
 	void req_thread()
 	{
-		//cout << "request thread started " << endl;
 		while(!done)
 		{
 			request req = request_queue.pop();
 			req.process();
 		}
-		//cout << "request thread - stopping " << endl;
 	}
 
 	std::thread reqthread;
@@ -263,7 +246,7 @@ class collectablefutures
 		done=true;
 		request req;
 		request_queue.push(req); // make sure a pop() is not waiting when destruction is at hand ;-)
-		reqthread.join(); // this is needed otherwise exception will happen when class is destroyed - thread also needs to be closed proper
+		reqthread.join();        // this is needed otherwise exception will happen when class is destroyed - thread also needs to be closed proper
 	}
 };
 
