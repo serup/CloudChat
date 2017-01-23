@@ -67,10 +67,10 @@ class ManualExecutor : public cfExecutor
 	void add(Func callback); 
 	void addWithPriority(Func, int8_t priority);
 	int  getAmount() { return funcs.size(); }
-	void run();
+	std::vector<unsigned char> run(); // result of all functions run in sequence will be in a resulting vector<unsigned char>, meaning func1,func2,func3 --> result1,result2,result3 inside vector
 
 	private:
-	void run_queue();
+	std::vector<unsigned char> run_queue();
 };
 
 /***
@@ -101,11 +101,11 @@ class collectablefutures
 				request()
 				{}
 
-				//			std::future<std::vector<unsigned char> > get_future()
-				//			{
-				//				return p.get_future();
-				//			}
-				//
+				std::future<std::vector<unsigned char> > get_future()
+				{
+					return p.get_future();
+				}
+				
 				//			void process()
 				//			{
 				//				try
@@ -153,8 +153,6 @@ class collectablefutures
 					{
 						pOwner->eState = running;
 						executor.run();	
-						pOwner->eState = collecting;
-						//TODO: wait 
 						pOwner->eState = finishing;
 						bResult=true;
 					}
@@ -170,6 +168,7 @@ class collectablefutures
 					{
 						std::vector<unsigned char> result_buffer;
 						runExec();		
+						pOwner->eState = collecting;
 						p.set_value(std::move(result_buffer));
 					}
 					catch(...)
@@ -226,6 +225,14 @@ class collectablefutures
 			bResult=false;
 		}
 		return bResult;
+	}
+
+	std::future<std::vector<unsigned char>> runRequest(request &_req)
+	{
+		std::future<std::vector<unsigned char> > f(_req.get_future());
+		addRequestToQueue(_req); // will add request to queue and internal thread will start automatic and execute all functions inside the excutor
+								 // results will be placed in future
+		return f;
 	}
 
 	enumstate getstate()

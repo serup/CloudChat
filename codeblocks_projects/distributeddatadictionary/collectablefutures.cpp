@@ -26,9 +26,10 @@ void ManualExecutor::addWithPriority(Func, int8_t priority)
 
 }
 
-void ManualExecutor::run_queue()
+std::vector<unsigned char>  ManualExecutor::run_queue()
 {
 	Func func;
+	std::vector<unsigned char> result_buffer;
 	size_t amount = getAmount();
 
 	for(size_t count = 0; count < amount; count++) 
@@ -48,14 +49,17 @@ void ManualExecutor::run_queue()
 		func();
 	}
 
+	//TODO: collect all functions results into result_buffer
+
+	return result_buffer; 
 }
 
-void ManualExecutor::run()
+std::vector<unsigned char> ManualExecutor::run()
 {
 	// setup all functions in queue
 	for(const auto &p : funcs) {
 		funcs_.emplace(std::move((Func)p.second));
 	}
 	// run functions in queue
-	run_queue();
+	return run_queue();
 }
