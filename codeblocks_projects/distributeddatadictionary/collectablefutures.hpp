@@ -53,12 +53,15 @@ class ManualExecutor : public cfExecutor
 {
 	using Func = std::function<void()>;
 
-	std::map<int8_t, Func> funcs; // Function container (priority,Func) - added functions to this Executors 
 	std::mutex lock_;             // avoid multiple entity updating the function container
 	std::queue<Func> funcs_;      // functions queued for running
 
 	public:
+	std::map<int8_t, Func> funcs; // Function container (priority,Func) - added functions to this Executors 
 	ManualExecutor() {}
+	ManualExecutor(ManualExecutor&& other):
+					funcs(std::move(other.funcs))
+	{}
 	~ManualExecutor() {}
 
 	void add(Func callback); 
@@ -86,14 +89,15 @@ class collectablefutures
 		enum enumstate { instantiated, preparing, executoradded, running, collecting, finishing, error } eState; 
 		class request
 		{
-			ManualExecutor executor;
 		    Func _executorfunc;  // TBD deprecated
 			collectablefutures * pOwner;
 
 			public:
+				ManualExecutor executor;
 				std::promise<std::vector<unsigned char> > p;
 				request(request&& other):
-					p(std::move(other.p))
+					p(std::move(other.p)),
+					executor(std::move(other.executor))
 				{}
 				request()
 				{}

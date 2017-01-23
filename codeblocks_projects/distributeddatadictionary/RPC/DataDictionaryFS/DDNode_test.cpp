@@ -1028,17 +1028,14 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 
 	BOOST_TEST_MESSAGE( "add request to collectablefutures request_queue - this should start thread " );
 	cout << "amount of functions in requests executor : " << req.getAmountExecutorFunctions() << endl;
-//	cf.addRequestToQueue(req);
+	cf.addRequestToQueue(req);
 
-	collectablefutures::request _req = cf.createrequest();
-	_req.addexecutorfunc( [](){ cout << "- Hello test from executor - function" << endl; } );
-	cout << " - amount : " << _req.getAmountExecutorFunctions() << " has been put into temp test request " << endl;
+//	collectablefutures::request _req = cf.createrequest();
+//	_req.addexecutorfunc( [](){ cout << "- Hello test from executor - function" << endl; } );
+//	cout << " - amount : " << _req.getAmountExecutorFunctions() << " has been put into temp test request " << endl;
 
-	//collectablefutures::request& refreq = std::move(_req);
-	//collectablefutures::request	tstreq = std::move(refreq); 
-	collectablefutures::request	tstreq = std::move(_req); 
-
-	cout << " -- amount : " << tstreq.getAmountExecutorFunctions() << " has been put into temp test request " << endl;
+	//collectablefutures::request	tstreq = std::move(_req); 
+	//cout << " -- amount : " << tstreq.getAmountExecutorFunctions() << " has been put into temp test request " << endl;
 
 	
 	cout << "}" << endl;
