@@ -146,13 +146,13 @@ class collectablefutures
 					return (int) executor.getAmount();
 				}
 
-				bool runExec()
+				bool runExec(std::vector<unsigned char> &result_buffer)
 				{
 					bool bResult=false;
 					if(executor.getAmount() > 0)
 					{
 						pOwner->eState = running;
-						executor.run();	
+						result_buffer = executor.run();	
 						pOwner->eState = finishing;
 						bResult=true;
 					}
@@ -167,9 +167,12 @@ class collectablefutures
 					try
 					{
 						std::vector<unsigned char> result_buffer;
-						runExec();		
-						pOwner->eState = collecting;
-						p.set_value(std::move(result_buffer));
+						if(runExec(result_buffer) != false) {		
+							pOwner->eState = collecting;
+							p.set_value(std::move(result_buffer)); // transfere result to promise
+						}
+						else
+							pOwner->eState = error;
 					}
 					catch(...)
 					{
@@ -232,6 +235,7 @@ class collectablefutures
 		std::future<std::vector<unsigned char> > f(_req.get_future());
 		addRequestToQueue(_req); // will add request to queue and internal thread will start automatic and execute all functions inside the excutor
 								 // results will be placed in future
+		f.wait();
 		return f;
 	}
 

@@ -1003,6 +1003,7 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 
 BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 {
+	std::vector<unsigned char> result_buffer;
 	cout << "BOOST_AUTO_TEST_CASE( testClass_collectablefutures )\n{" << endl;
 
 	BOOST_TEST_MESSAGE( "Instantiate collectablefutures class" );
@@ -1012,14 +1013,14 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 	BOOST_TEST_MESSAGE( "create request" );
 	collectablefutures::request req = cf.createrequest();
 	BOOST_CHECK_MESSAGE(cf.getstate() == collectablefutures::enumstate::preparing, "FAIL: when preparing");
-	BOOST_CHECK_MESSAGE(req.runExec() == false, "FAIL: when running NULL executor");
+	BOOST_CHECK_MESSAGE(req.runExec(result_buffer) == false, "FAIL: when running NULL executor");
 	BOOST_TEST_MESSAGE( "add executor to request" );	
 
-	Func f1 = [](){ std::vector<unsigned char> result; cout << "- Hello from executor - function 1" << endl; return result; }; 
+	auto f1 = [](){ std::vector<unsigned char> result; cout << "- Hello from executor - function 1" << endl; return result; }; 
 	req.addexecutorfunc( f1 );
 	BOOST_CHECK_MESSAGE(cf.getstate() == collectablefutures::enumstate::executoradded, "FAIL: when adding executor");
 	BOOST_TEST_MESSAGE( "run executor from request" );	
-	BOOST_CHECK_MESSAGE(req.runExec() == true, "FAIL: when starting executor");
+	BOOST_CHECK_MESSAGE(req.runExec(result_buffer) == true, "FAIL: when starting executor");
 	BOOST_CHECK_MESSAGE(cf.getstate() == collectablefutures::enumstate::finishing, "FAIL: when running executor");
 	
 	BOOST_TEST_MESSAGE( "add one extra function to executor" );
@@ -1028,7 +1029,7 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 	BOOST_CHECK_MESSAGE(req.getAmountExecutorFunctions() == 2, "FAIL: when adding extra function to executor");
 	std::string msg = "starting executor with amount: " + std::to_string(req.getAmountExecutorFunctions()) + ", of functions "; 
 	BOOST_TEST_MESSAGE( msg ); 
-	BOOST_CHECK_MESSAGE(req.runExec() == true, "FAIL: when starting executor");
+	BOOST_CHECK_MESSAGE(req.runExec(result_buffer) == true, "FAIL: when starting executor");
 
 	BOOST_TEST_MESSAGE( "add request to collectablefutures request_queue - this should start thread " );
 	cout << "amount of functions in requests executor : " << req.getAmountExecutorFunctions() << endl;
@@ -1036,7 +1037,27 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 	BOOST_CHECK_MESSAGE(req.getAmountExecutorFunctions() == 2, "FAIL: adding functions to executor failed");
 	BOOST_CHECK_MESSAGE(cf.addRequestToQueue(req) == true, "FAIL: could not add to request queue");
 	BOOST_CHECK_MESSAGE(cf.WaitForQueueSignalPop(1000) == true, "FAIL: timeout - waiting for functions to be popped from request queue to be run");
-	cout << "..." << endl;
+
+	boost::this_thread::sleep( boost::posix_time::milliseconds(1000) ); // above functions should not take longer to complete - this is to avoid cluttering up output
+	
+	BOOST_TEST_MESSAGE( "..." );
+
+
+	std::promise<std::vector<unsigned char> > p;
+	std::future<std::vector<unsigned char> > f(p.get_future());
+
+	//req.get_future();
+	//std::future<std::vector<unsigned char> > f(req.get_future());
+
+//	std::future<std::vector<unsigned char>> future_result_from_executor = cf.runRequest( req );
+	//future_result_from_executor.wait();
+	//auto result = future_result_from_executor.get();
+
+	//example from previous usage:
+	//std::future<std::vector<char> > fv=async_io.queue_read(f,1048576);
+	//CUtils::showDataBlock(true,true,fv.get());
+
+
 	cout << "}" << endl;
 }
  

@@ -69,8 +69,8 @@ class thread_safe_queue
 		T itemcpy = std::move(_item);
 
 		m_queue.pop();
-		cndSignalQueuePop.notify_one();	
 		pthread_mutex_unlock(&m_mutex);
+		cndSignalQueuePop.notify_one();	
 		return itemcpy;
 	}
 	int size() {

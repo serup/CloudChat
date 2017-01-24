@@ -48,7 +48,8 @@ std::vector<unsigned char>  ManualExecutor::run_queue()
 		// run function from queue
 		std::vector<unsigned char> func_result_buffer = func();
 	
-		//TODO: append functions results into result_buffer
+		// append functions results into result_buffer
+		result_buffer.insert(result_buffer.end(), func_result_buffer.begin(), func_result_buffer.end());
 	}
 
 
