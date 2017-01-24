@@ -1041,17 +1041,26 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 	boost::this_thread::sleep( boost::posix_time::milliseconds(1000) ); // above functions should not take longer to complete - this is to avoid cluttering up output
 	
 	BOOST_TEST_MESSAGE( "..." );
+	BOOST_TEST_MESSAGE( "Now testing with future result from executor: " );
 
+	// normal way of handling promise/future
+	//std::promise<std::vector<unsigned char> > p;
+	//std::future<std::vector<unsigned char> > f(p.get_future());
 
-	std::promise<std::vector<unsigned char> > p;
-	std::future<std::vector<unsigned char> > f(p.get_future());
-	
+	// If old above req was used, then a future_error exception would be thrown, given that request future had already been accessed
 	collectablefutures::request req2 = cf.createrequest();
-	Func f3 = [](){ std::vector<unsigned char> result; cout << "- Hello again from NEW executor - function 3" << endl; return result; };
+	Func f3 = [](){ std::vector<unsigned char> result; cout << "- Hello again from NEW executor - function 3" << endl; std::string s("HELLO WORLD"); result.insert(result.end(),s.begin(), s.end()); return result; };
 	req2.addexecutorfunc( f3 );
+	BOOST_TEST_MESSAGE( "1. runRequest will take request and it will take its internal promise and add its future to a result vector buffer" );
 	std::future<std::vector<unsigned char>> future_result_from_executor = cf.runRequest( req2 );
+	BOOST_TEST_MESSAGE( "2. now wait for it to be finished" );
 	future_result_from_executor.wait();
+	BOOST_TEST_MESSAGE( "3. then get its result" );
 	auto result = future_result_from_executor.get();
+	BOOST_TEST_MESSAGE( "4. verify the result" );
+	CUtils::showDataBlock(true,true,result);
+	std::string s(result.begin(), result.end());
+	BOOST_CHECK_MESSAGE(s == "HELLO WORLD", "FAIL: corrupted data from future" );
 
 	cout << "}" << endl;
 }
