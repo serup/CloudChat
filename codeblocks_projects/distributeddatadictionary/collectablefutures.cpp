@@ -46,10 +46,11 @@ std::vector<unsigned char>  ManualExecutor::run_queue()
 		}
 		
 		// run function from queue
-		func();
+		std::vector<unsigned char> func_result_buffer = func();
+	
+		//TODO: append functions results into result_buffer
 	}
 
-	//TODO: collect all functions results into result_buffer
 
 	return result_buffer; 
 }

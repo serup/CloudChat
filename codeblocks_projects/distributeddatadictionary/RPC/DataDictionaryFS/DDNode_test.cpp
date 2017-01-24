@@ -51,6 +51,7 @@ using namespace std;
 using namespace boost::unit_test;
 using boost::property_tree::ptree;
 using namespace DDDfsRPC;
+using Func = std::function<std::vector<unsigned char>()>;
 
 #if defined(_M_X64) || defined(__amd64__)
 #define writer_make_settings boost::property_tree::xml_writer_make_settings<std::string>('\t', 1)
@@ -1013,14 +1014,17 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 	BOOST_CHECK_MESSAGE(cf.getstate() == collectablefutures::enumstate::preparing, "FAIL: when preparing");
 	BOOST_CHECK_MESSAGE(req.runExec() == false, "FAIL: when running NULL executor");
 	BOOST_TEST_MESSAGE( "add executor to request" );	
-	req.addexecutorfunc( [](){ cout << "- Hello from executor - function 1" << endl; } );
+
+	Func f1 = [](){ std::vector<unsigned char> result; cout << "- Hello from executor - function 1" << endl; return result; }; 
+	req.addexecutorfunc( f1 );
 	BOOST_CHECK_MESSAGE(cf.getstate() == collectablefutures::enumstate::executoradded, "FAIL: when adding executor");
 	BOOST_TEST_MESSAGE( "run executor from request" );	
 	BOOST_CHECK_MESSAGE(req.runExec() == true, "FAIL: when starting executor");
 	BOOST_CHECK_MESSAGE(cf.getstate() == collectablefutures::enumstate::finishing, "FAIL: when running executor");
 	
 	BOOST_TEST_MESSAGE( "add one extra function to executor" );
-	req.addexecutorfunc( [](){ cout << "- Hello again from executor - function 2" << endl; } );
+	Func f2 = [](){ std::vector<unsigned char> result; cout << "- Hello again from executor - function 2" << endl; return result; };
+	req.addexecutorfunc( f2 );
 	BOOST_CHECK_MESSAGE(req.getAmountExecutorFunctions() == 2, "FAIL: when adding extra function to executor");
 	std::string msg = "starting executor with amount: " + std::to_string(req.getAmountExecutorFunctions()) + ", of functions "; 
 	BOOST_TEST_MESSAGE( msg ); 
