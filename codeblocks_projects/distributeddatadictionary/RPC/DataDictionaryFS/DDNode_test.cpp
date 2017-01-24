@@ -1045,20 +1045,13 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 
 	std::promise<std::vector<unsigned char> > p;
 	std::future<std::vector<unsigned char> > f(p.get_future());
-
-	req.getfuture();
-
-	//req.get_future();
-	//std::future<std::vector<unsigned char> > f(req.get_future());
-
-//	std::future<std::vector<unsigned char>> future_result_from_executor = cf.runRequest( req );
-	//future_result_from_executor.wait();
-	//auto result = future_result_from_executor.get();
-
-	//example from previous usage:
-	//std::future<std::vector<char> > fv=async_io.queue_read(f,1048576);
-	//CUtils::showDataBlock(true,true,fv.get());
-
+	
+	collectablefutures::request req2 = cf.createrequest();
+	Func f3 = [](){ std::vector<unsigned char> result; cout << "- Hello again from NEW executor - function 3" << endl; return result; };
+	req2.addexecutorfunc( f3 );
+	std::future<std::vector<unsigned char>> future_result_from_executor = cf.runRequest( req2 );
+	future_result_from_executor.wait();
+	auto result = future_result_from_executor.get();
 
 	cout << "}" << endl;
 }
