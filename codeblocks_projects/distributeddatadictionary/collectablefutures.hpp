@@ -101,9 +101,10 @@ class collectablefutures
 				request()
 				{}
 
-				std::future<std::vector<unsigned char> > get_future()
+				std::future<std::vector<unsigned char> > getfuture()
 				{
-					return p.get_future();
+					std::future<std::vector<unsigned char> > f(p.get_future());
+					return f;
 				}
 				
 				//			void process()
@@ -232,10 +233,10 @@ class collectablefutures
 
 	std::future<std::vector<unsigned char>> runRequest(request &_req)
 	{
-		std::future<std::vector<unsigned char> > f(_req.get_future());
+		std::future<std::vector<unsigned char> > f(_req.getfuture());
 		addRequestToQueue(_req); // will add request to queue and internal thread will start automatic and execute all functions inside the excutor
 								 // results will be placed in future
-		f.wait();
+		//f.wait();
 		return f;
 	}
 

@@ -1046,6 +1046,8 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 	std::promise<std::vector<unsigned char> > p;
 	std::future<std::vector<unsigned char> > f(p.get_future());
 
+	req.getfuture();
+
 	//req.get_future();
 	//std::future<std::vector<unsigned char> > f(req.get_future());
 
