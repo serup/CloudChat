@@ -1062,6 +1062,37 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 	std::string s(result.begin(), result.end());
 	BOOST_CHECK_MESSAGE(s == "HELLO WORLD", "FAIL: corrupted data from future" );
 
+
+	BOOST_TEST_MESSAGE( "5. Try new function that reads an image file and returns it as vector buffer" );
+	Func f4 = [](){
+		std::vector<unsigned char> FotoAttributValue;
+		std::string fn = "testImage.png"; // should be of size 10.5 Kb
+		std::ifstream is (fn, ios::binary);
+		if (is)
+		{
+			long length = boost::filesystem::file_size(fn);
+			std::cout << "[readFile] Reading file: " << fn << " ; amount " << length << " characters... \n";
+			// Make sure receipient has room
+			FotoAttributValue.resize(length,0);
+			//read content of infile
+			is.read ((char*)&FotoAttributValue[0],length);
+			//std::cout << "[readFile] size: " << (int) FotoAttributValue.size() << '\n';
+			//std::cout << "[readFile] capacity: " << (int) FotoAttributValue.capacity() << '\n';
+			//std::cout << "[readFile] max_size: " << (int) FotoAttributValue.max_size() << '\n';
+			is.close();
+		}
+		return FotoAttributValue;	
+	};
+	collectablefutures::request req3 = cf.createrequest();
+	req3.addexecutorfunc( f4 );
+	std::future<std::vector<unsigned char>> future_result_image = cf.runRequest( req3 );
+	BOOST_TEST_MESSAGE( "6. now wait for it to be finished" );
+	future_result_image.wait();
+	auto resultimage = future_result_image.get();
+	BOOST_TEST_MESSAGE( "7. verify the result" );
+	CUtils::showDataBlock(true,true,resultimage);
+
+	
 	cout << "}" << endl;
 }
  
