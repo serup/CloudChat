@@ -1122,7 +1122,11 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 	cf.runRequest( req4, collectionOfFutureRequests );
 	cf.runRequest( req5, collectionOfFutureRequests );
 	result_complete = cf.collect(collectionOfFutureRequests);
-	CUtils::showDataBlock(true,true,result_complete);
+
+	std::vector<unsigned char> result_compare;
+	std::string scompare("HELLO EARTHHELLO UNIVERSE"); 
+	result_compare.insert(result_compare.end(),scompare.begin(), scompare.end());
+	BOOST_CHECK_MESSAGE(CUtils::showDataBlockDiff(true,true,result_complete, result_compare) == false, "FAIL: result differs from original");
 
 	cout << "}" << endl;
 
