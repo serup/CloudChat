@@ -1326,6 +1326,80 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_using_Futures)
 		std::string attributToFetch = transGuid + "./profile/foto";
 		std::vector<std::list< pair<seqSpan, std::vector<assembledElements>>>> resultFromRPCclients (3); // testcase has only 3 virtual RPCclients delivering results
 
+		boost::filesystem::path currentSearchDirectory( boost::filesystem::current_path() );
+		boost::filesystem::recursive_directory_iterator directoryIterator(currentSearchDirectory), eod;
+ 
+
+		// iterate .BFi files - create a promise for handling each .BFi file
+			//+ TODO
+/*	std::vector< std::future<std::vector<unsigned char>> >  collectionOfFutureRequests;
+	cf.runRequest( reqFetchAttributFromClientRPC1, collectionOfFutureRequests ); // fetch attribut data from .BFi file (virtual client 1's file)
+	cf.runRequest( reqFetchAttributFromClientRPC2, collectionOfFutureRequests ); // fetch attribut data from .BFi file (virtual client 2's file) 
+	cf.runRequest( reqFetchAttributFromClientRPC3, collectionOfFutureRequests ); // fetch attribut data from .BFi file (virtual client 3's file)
+	auto result_complete = cf.collect(collectionOfFutureRequests); // should contain complete attribut - combined result from the 3 clients
+*/
+		//-	
+
+// 	    int n=0;
+// 		BOOST_FOREACH(boost::filesystem::path const& currentfile, make_pair(directoryIterator, eod))
+// 		{
+// 			std::list<pair<seqSpan, std::vector<assembledElements>>> AttributInblockSequenceFromBFifile;
+// 
+// 
+// 			if((boost::filesystem::extension(currentfile.string()) == BFI_FILE_EXTENSION)) { 
+// 	
+// 			
+// 				
+// 				cout << "virtual RPCclient " << n+1 << " : " << endl;
+// 				cout << "*{{{" << endl;
+// 				cout << "  Fetch attribut from .BFi file " << endl;
+// 				ptestDataDictionaryControl->fetchAttributsFromFile(currentfile, AttributInblockSequenceFromBFifile); 
+// 
+// 				cout << "  prepare result in a BLOB " << endl;
+// 				transferBLOB stBlob = ptestDataDictionaryControl->convertToBLOB(AttributInblockSequenceFromBFifile,true);
+// 				BOOST_CHECK(stBlob.eType == transferBLOB::enumType::ATTRIBUTS_LIST);
+// 				
+// 				cout << "  simulate transfer / receive from RPCclient to server " << endl;
+// 				cout << "  convert result in BLOB to list pair<seq,vector<assembledElements>> " << endl;
+// 				
+// 				std::list<pair<seqSpan, std::vector<assembledElements>>> listpair;
+// 				BOOST_CHECK(ptestDataDictionaryControl->convertFromBLOBToPair(stBlob, listpair,true));
+// 				BOOST_CHECK(listpair.size() > 0);
+// 
+// //				cout << "  amount of elements in received listpair : " << listpair.size() << endl;
+// //				cout << "  sequence Numbers decoded from DED into std::list :  ";
+// //				cout << "*{{{" << endl;
+// //				BOOST_FOREACH(auto &_pair, listpair)
+// //				{
+// //					seqSpan ss;
+// //					ss = _pair.first;
+// //					BOOST_FOREACH(auto &number, ss.seqNumbers)
+// //					{
+// //						cout << number << ",";
+// //					}
+// //					cout << endl;
+// //						
+// //					assembledElements _element;
+// //					_element.strElementID = ss.attributPath; 
+// //					_element.seqNumbers   = ss.seqNumbers;
+// //					
+// //					std::vector<assembledElements> vae = _pair.second;
+// //
+// //					BOOST_FOREACH(auto &_element, vae) {
+// //						CUtils::showDataBlock(true,true,_element.ElementData);
+// //					}
+// //				}
+// //				cout << endl;
+// //				cout << "*}}}" << endl;
+// //
+// 
+// 				//resultFromRPCclients[n++] = AttributInblockSequenceFromBFifile;
+// 				resultFromRPCclients[n++] = listpair;
+// 				cout << "*}}}" << endl;
+// 			}
+// 		}
+// 		cout << "*}}}" << endl;
+// 		cout << "________________________________________" << endl;
 
 
 		cout << "*}}}" << endl;
