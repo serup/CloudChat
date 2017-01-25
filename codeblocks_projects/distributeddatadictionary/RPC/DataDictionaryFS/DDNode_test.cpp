@@ -1064,6 +1064,19 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 
 
 	BOOST_TEST_MESSAGE( "5. Try new function that reads an image file and returns it as vector buffer" );
+	std::vector<unsigned char> origFotoAttributValue;
+	std::string fn = "testImage.png"; // should be of size 10.5 Kb
+	std::ifstream is (fn, ios::binary);
+	if (is)
+	{
+		long length = boost::filesystem::file_size(fn);
+		// Make sure receipient has room
+		origFotoAttributValue.resize(length,0);
+		//read content of infile
+		is.read ((char*)&origFotoAttributValue[0],length);
+		is.close();
+	}
+
 	Func f4 = [](){
 		std::vector<unsigned char> FotoAttributValue;
 		std::string fn = "testImage.png"; // should be of size 10.5 Kb
@@ -1090,10 +1103,29 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 	future_result_image.wait();
 	auto resultimage = future_result_image.get();
 	BOOST_TEST_MESSAGE( "7. verify the result" );
-	CUtils::showDataBlock(true,true,resultimage);
+	BOOST_CHECK_MESSAGE(CUtils::showDataBlockDiff(true,true,resultimage, origFotoAttributValue) == false, "FAIL: result differs from original");
 
+	BOOST_TEST_MESSAGE( "Try to create 2 requests, each having one function,  and waiting for future result : " );
+
+	Func f5 = [](){ std::vector<unsigned char> result; cout << "- Hello from executor - function 5" << endl; std::string s("HELLO EARTH"); result.insert(result.end(),s.begin(), s.end()); return result; };
+
+	collectablefutures::request req4 = cf.createrequest();
+	req4.addexecutorfunc( f5 );
 	
+	Func f6 = [](){ std::vector<unsigned char> result; cout << "- Hello from executor - function 6" << endl; std::string s("HELLO UNIVERSE"); result.insert(result.end(),s.begin(), s.end()); return result; };
+		
+	collectablefutures::request req5 = cf.createrequest();
+	req5.addexecutorfunc( f6 );
+
+	std::vector< std::future<std::vector<unsigned char>> >  collectionOfFutureRequests;
+	std::vector<unsigned char> result_complete;
+	cf.runRequest( req4, collectionOfFutureRequests );
+	cf.runRequest( req5, collectionOfFutureRequests );
+	result_complete = cf.collect(collectionOfFutureRequests);
+	CUtils::showDataBlock(true,true,result_complete);
+
 	cout << "}" << endl;
+
 }
  
 BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_using_Futures)

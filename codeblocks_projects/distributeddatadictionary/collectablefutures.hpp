@@ -107,29 +107,6 @@ class collectablefutures
 					return f;
 				}
 				
-				//			void process()
-				//			{
-				//				try
-				//				{
-				//					std::vector<unsigned char> buffer(read_count);
-				//
-				//					unsigned amount_read=0;
-				//					while((amount_read != read_count) && 
-				//							(is->sgetc()!=std::char_traits<char>::eof()))
-				//					{
-				//						amount_read+=is->sgetn(&buffer[amount_read],read_count-amount_read);
-				//					}
-				//
-				//					buffer.resize(amount_read);
-				//
-				//					p.set_value(std::move(buffer));
-				//				}
-				//				catch(...)
-				//				{
-				//					p.set_exception(std::current_exception());
-				//				}
-				//			}
-
 				void setowner(collectablefutures* parentclass)
 				{
 					pOwner = parentclass;
@@ -209,16 +186,6 @@ class collectablefutures
 		reqthread(&collectablefutures::req_thread,this)
 	{}
 	
-//
-//	std::future<std::vector<unsigned char> > queue_read(std::streambuf& is,unsigned count)
-//	{
-//		request req(is,count);
-//		std::future<std::vector<unsigned char> > f(req.get_future());
-//		request_queue.push(req);
-//		return f;
-//	}
-//
-
 	bool addRequestToQueue(request &_req)
 	{
 		bool bResult=true;
@@ -238,6 +205,33 @@ class collectablefutures
 								 // results will be placed in future
 		//f.wait();
 		return f;
+	}
+
+	bool runRequest(request &_req, std::vector< std::future<std::vector<unsigned char>> >  &collectionOfFutureRequests)
+	{
+		std::future<std::vector<unsigned char> > f(_req.getfuture());
+		bool bResult = addRequestToQueue(_req); // will add request to queue and internal thread will start automatic and execute all functions inside the excutor
+												// results will be placed in future
+		collectionOfFutureRequests.push_back(std::move(f));
+		return bResult;
+	}
+
+	std::vector<unsigned char> collect(std::vector< std::future<std::vector<unsigned char>> >  &collectionOfFutureRequests)
+	{
+		std::vector<unsigned char> result_complete;
+
+		// wait for ALL requests futures to be done
+		for (auto &f : collectionOfFutureRequests)
+		{
+			f.wait(); // wait for future to finish its job
+			// collect the results
+			auto result_request = f.get();
+			result_complete.insert(result_complete.end(), result_request.begin(), result_request.end());	
+		}
+
+		// now all requests future functions have finished, and result is appended to result_complete
+		
+		return result_complete;
 	}
 
 	enumstate getstate()
