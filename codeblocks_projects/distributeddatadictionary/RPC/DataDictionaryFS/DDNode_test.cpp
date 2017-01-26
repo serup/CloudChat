@@ -34,6 +34,14 @@
 #include <errno.h>
 #include "../../collectablefutures.hpp"
 
+
+// tmp
+#include <type_traits>
+#include <vector>
+#include <tuple>
+#include <iostream>
+
+
 #if defined(_M_X64) || defined(__amd64__)
 // unfortunately FOLLY is pt[2017-01-01]. only working for 64bit architecture
 //#define FOLLY
@@ -1127,7 +1135,8 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 	collectablefutures::request req4 = cf.createrequest();
 	req4.addexecutorfunc( f5 );
 	
-	Func f6 = [](){ std::vector<unsigned char> result; cout << "- Hello from executor - function 6" << endl; std::string s("HELLO UNIVERSE"); result.insert(result.end(),s.begin(), s.end()); return result; };
+	//Func f6 = [](){ std::vector<unsigned char> result; cout << "- Hello from executor - function 6" << endl; std::string s("HELLO UNIVERSE"); result.insert(result.end(),s.begin(), s.end()); return result; };
+	auto f6 = [](auto... args){ std::vector<unsigned char> result; cout << "- Hello from executor - function 6" << endl; std::string s("HELLO UNIVERSE"); result.insert(result.end(),s.begin(), s.end()); return result; };
 		
 	collectablefutures::request req5 = cf.createrequest();
 	req5.addexecutorfunc( f6 );
@@ -1147,7 +1156,169 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 	cout << "}" << endl;
 
 }
- 
+
+template<typename ...Args>
+void gFunc(Args... args)
+{
+}
+
+template<typename T>
+void boring_template_fn(T t){
+	auto identity = [](decltype(t) t){ return t;};
+	std::cout << identity(t) << std::endl;
+}
+
+
+
+
+//#include <type_traits>
+//#include <vector>
+//#include <tuple>
+//#include <iostream>
+
+// indices are a classic
+
+template< std::size_t... Ns >
+struct indices
+{
+	using next = indices< Ns..., sizeof...( Ns ) >;
+};
+
+
+template< std::size_t N >
+struct make_indices
+{
+	using type = typename make_indices< N - 1 >::type::next;
+};
+
+
+template<>
+struct make_indices< 0 >
+{
+	using type = indices<>;
+};
+
+
+
+// we need something to find a type's index within a list of types
+template<typename T, typename U, std::size_t=0>
+struct index {};
+
+
+template<typename T, typename... Us, std::size_t N>
+struct index<T,std::tuple<T,Us...>,N>
+: std::integral_constant<std::size_t, N> {};
+
+template<typename T, typename U, typename... Us, std::size_t N>
+struct index<T,std::tuple<U,Us...>,N>
+: index<T,std::tuple<Us...>,N+1> {};
+
+
+// we need a way to remove duplicate types from a list of types
+template<typename T,typename I=void> struct unique;
+
+// step 1: generate indices
+template<typename... Ts>
+struct unique< std::tuple<Ts...>, void >
+: unique< std::tuple<Ts...>, typename make_indices<sizeof...(Ts)>::type >
+{
+
+};
+
+
+// step 2: remove duplicates. Note: No recursion here!
+template<typename... Ts, std::size_t... Is>
+struct unique< std::tuple<Ts...>, indices<Is...> >
+{
+	using type = decltype( std::tuple_cat( std::declval<
+				typename std::conditional<index<Ts,std::tuple<Ts...>>::value==Is,std::tuple<Ts>,std::tuple<>>::type >()... ) );
+};
+
+
+
+// a helper to turn Ts... into std::vector<Ts>...
+template<typename> struct vectorize;
+
+template<typename... Ts>
+struct vectorize<std::tuple<Ts...>>
+{
+	using type = std::tuple< std::vector<Ts>... >;
+};
+
+// now you can easily use it to define your Store
+template<typename... Ts> class Store
+{
+	using Storage = typename vectorize<typename unique<std::tuple<Ts...>>::type>::type;
+	Storage storage;
+
+	template<typename T>
+		decltype(std::get<index<T,typename unique<std::tuple<Ts...>>::type>::value>(storage))
+		slot()
+		{
+			return std::get<index<T,typename unique<std::tuple<Ts...>>::type>::value>(storage);
+		}
+
+	public:
+
+	template<typename T> void add(T mValue) { 
+		slot<T>().push_back(mValue); 
+	}
+
+	template<typename T> std::vector<T>& get() { 
+		return slot<T>();
+	}    
+};
+
+
+BOOST_AUTO_TEST_CASE(lambdaWithParameters)
+{
+	cout << "BOOST_AUTO_TEST_CASE( lambdaWithParameters )\n{" << endl;
+
+	//auto lambda = [](auto... args) { cout << "hello world" << ... << endl; };
+	//auto lambda = [](...) { int a=1; va_list args; va_start(args,0); auto b = va_arg(args, int); cout << "hello world " << b << endl; va_end(args); };
+	auto lambda = [](...) 
+	{ 
+		va_list args; 
+		va_start(args,0); 
+		auto b = va_arg(args, const char*);
+		cout << "hello world " << b << endl; 
+		va_end(args);
+	};
+
+	try {
+		lambda();
+		lambda("hej");
+		//lambda(5);
+	}
+	catch(...)
+	{
+		cout << "unknown type of argument" << endl;
+	} 
+
+	auto weird_lambda = [](auto... param) {
+		Store<decltype(param)...> stream;
+		using List = int[];
+		(void)List{ 0, ((void)(stream .add(param)), 0) ... };
+		return stream;
+	};
+	std::cout << weird_lambda(1,"abc", 2.34, 3,"qwe").get<int>()[1] << endl;
+
+	//std::function<std::vector<unsigned char>(auto... args)> f5 = [](auto... args){ std::vector<unsigned char> result; cout << "- Hello from executor - function 5" << endl; std::string s("HELLO EARTH"); result.insert(result.end(),s.begin(), s.end()); return result; };
+	auto f5 = [](auto... args){ 
+		std::vector<unsigned char> result; cout << "- Hello from executor - function 5 : " << endl; std::string s("HELLO EARTH"); result.insert(result.end(),s.begin(), s.end()); return result; 
+	};
+
+	f5();
+	f5("hello");
+
+	std::string s("My string");
+	boring_template_fn(s);
+	boring_template_fn(1024);
+	boring_template_fn(true);
+
+	cout << "}" << endl;
+}
+
 BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_using_Futures)
 {
 	cout<<"BOOST_AUTO_TEST_CASE( fetchAttributFrom_3_virtual_RPCclients_using_Futures)\n{"<<endl;
@@ -1326,81 +1497,90 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_using_Futures)
 		std::string attributToFetch = transGuid + "./profile/foto";
 		std::vector<std::list< pair<seqSpan, std::vector<assembledElements>>>> resultFromRPCclients (3); // testcase has only 3 virtual RPCclients delivering results
 
-		boost::filesystem::path currentSearchDirectory( boost::filesystem::current_path() );
-		boost::filesystem::recursive_directory_iterator directoryIterator(currentSearchDirectory), eod;
- 
+
 
 		// iterate .BFi files - create a promise for handling each .BFi file
-			//+ TODO
-/*	std::vector< std::future<std::vector<unsigned char>> >  collectionOfFutureRequests;
-	cf.runRequest( reqFetchAttributFromClientRPC1, collectionOfFutureRequests ); // fetch attribut data from .BFi file (virtual client 1's file)
-	cf.runRequest( reqFetchAttributFromClientRPC2, collectionOfFutureRequests ); // fetch attribut data from .BFi file (virtual client 2's file) 
-	cf.runRequest( reqFetchAttributFromClientRPC3, collectionOfFutureRequests ); // fetch attribut data from .BFi file (virtual client 3's file)
-	auto result_complete = cf.collect(collectionOfFutureRequests); // should contain complete attribut - combined result from the 3 clients
+		std::vector< std::future<std::vector<unsigned char>> >  collectionOfFutureRequests;
+/*
+		//Func fnFetchAllAttributsFromBFiFile = [](boost::filesystem::path const& currentfile){
+		Func fnFetchAllAttributsFromBFiFile = [](){
+				boost::filesystem::path const& currentfile;
+				CDataDictionaryControl DDC;
+				std::list<pair<seqSpan, std::vector<assembledElements>>> AttributInblockSequenceFromBFifile;
+				//boost::filesystem::path & currentfile = gFunc(args...);
+				boost::filesystem::path & currentfile;
+				cout << "*{{{" << endl;
+				cout << "  Fetch attributs from .BFi file " << endl;
+				DDC.fetchAttributsFromFile(currentfile, AttributInblockSequenceFromBFifile); 
+				cout << "  prepare result in a BLOB " << endl;
+				transferBLOB stBlob = DDC.convertToBLOB(AttributInblockSequenceFromBFifile,true);
+				cout << "*}}}" << endl;
+				return stBlob.data;	
+		};
+
+		boost::filesystem::path currentSearchDirectory( boost::filesystem::current_path() );
+		boost::filesystem::recursive_directory_iterator directoryIterator(currentSearchDirectory), eod;
+		int n=0;
+		BOOST_FOREACH(boost::filesystem::path const& currentfile, make_pair(directoryIterator, eod))
+		{
+			collectablefutures cf;
+			std::list<pair<seqSpan, std::vector<assembledElements>>> AttributInblockSequenceFromBFifile;
+			if((boost::filesystem::extension(currentfile.string()) == BFI_FILE_EXTENSION)) 
+			{ 
+				collectablefutures::request req = cf.createrequest();
+				req.addexecutorfunc( fnFetchAllAttributsFromBFiFile(currentfile) );
+				cf.runRequest( req, collectionOfFutureRequests ); // fetch attributs data from .BFi file 
+			}
+		}
 */
-		//-	
+// not possible yet - since result for each first needs to be sorted
+//		auto result_complete = cf.collect(collectionOfFutureRequests); // should contain complete attribut - combined result from the 3 clients
 
-// 	    int n=0;
-// 		BOOST_FOREACH(boost::filesystem::path const& currentfile, make_pair(directoryIterator, eod))
-// 		{
-// 			std::list<pair<seqSpan, std::vector<assembledElements>>> AttributInblockSequenceFromBFifile;
-// 
-// 
-// 			if((boost::filesystem::extension(currentfile.string()) == BFI_FILE_EXTENSION)) { 
-// 	
-// 			
-// 				
-// 				cout << "virtual RPCclient " << n+1 << " : " << endl;
-// 				cout << "*{{{" << endl;
-// 				cout << "  Fetch attribut from .BFi file " << endl;
-// 				ptestDataDictionaryControl->fetchAttributsFromFile(currentfile, AttributInblockSequenceFromBFifile); 
-// 
-// 				cout << "  prepare result in a BLOB " << endl;
-// 				transferBLOB stBlob = ptestDataDictionaryControl->convertToBLOB(AttributInblockSequenceFromBFifile,true);
-// 				BOOST_CHECK(stBlob.eType == transferBLOB::enumType::ATTRIBUTS_LIST);
-// 				
-// 				cout << "  simulate transfer / receive from RPCclient to server " << endl;
-// 				cout << "  convert result in BLOB to list pair<seq,vector<assembledElements>> " << endl;
-// 				
-// 				std::list<pair<seqSpan, std::vector<assembledElements>>> listpair;
-// 				BOOST_CHECK(ptestDataDictionaryControl->convertFromBLOBToPair(stBlob, listpair,true));
-// 				BOOST_CHECK(listpair.size() > 0);
-// 
-// //				cout << "  amount of elements in received listpair : " << listpair.size() << endl;
-// //				cout << "  sequence Numbers decoded from DED into std::list :  ";
-// //				cout << "*{{{" << endl;
-// //				BOOST_FOREACH(auto &_pair, listpair)
-// //				{
-// //					seqSpan ss;
-// //					ss = _pair.first;
-// //					BOOST_FOREACH(auto &number, ss.seqNumbers)
-// //					{
-// //						cout << number << ",";
-// //					}
-// //					cout << endl;
-// //						
-// //					assembledElements _element;
-// //					_element.strElementID = ss.attributPath; 
-// //					_element.seqNumbers   = ss.seqNumbers;
-// //					
-// //					std::vector<assembledElements> vae = _pair.second;
-// //
-// //					BOOST_FOREACH(auto &_element, vae) {
-// //						CUtils::showDataBlock(true,true,_element.ElementData);
-// //					}
-// //				}
-// //				cout << endl;
-// //				cout << "*}}}" << endl;
-// //
-// 
-// 				//resultFromRPCclients[n++] = AttributInblockSequenceFromBFifile;
-// 				resultFromRPCclients[n++] = listpair;
-// 				cout << "*}}}" << endl;
-// 			}
-// 		}
-// 		cout << "*}}}" << endl;
-// 		cout << "________________________________________" << endl;
+		int n=0;
+		for ( auto &f: collectionOfFutureRequests)
+		{
+			f.wait(); // wait for function in future request to finish
+			auto result_request = f.get(); 
+			// transfer result to a transferBLOB structure
+			transferBLOB stBLOB;
+			stBLOB.eType = transferBLOB::enumType::ATTRIBUTS_LIST;
+			stBLOB.size = result_request.size();
+			stBLOB.data = std::move(result_request);
+	
+			// transfer/convert to listpair
+			std::list<pair<seqSpan, std::vector<assembledElements>>> listpair;
+			ptestDataDictionaryControl->convertFromBLOBToPair(stBLOB, listpair,true);
 
+			//+ DEBUG show data
+			cout << "Amount of elements in received listpair : " << listpair.size() << endl;
+			cout << "*{{{" << endl;
+			BOOST_FOREACH(auto &_pair, listpair)
+			{
+				seqSpan ss;
+				ss = _pair.first;
+				BOOST_FOREACH(auto &number, ss.seqNumbers)
+				{
+					cout << number << ",";
+				}
+				cout << endl;
+
+				assembledElements _element;
+				_element.strElementID = ss.attributPath; 
+				_element.seqNumbers   = ss.seqNumbers;
+
+				std::vector<assembledElements> vae = _pair.second;
+
+				BOOST_FOREACH(auto &_element, vae) {
+					CUtils::showDataBlock(true,true,_element.ElementData);
+				}
+			}
+			cout << endl;
+			cout << "*}}}" << endl;
+			//- DEBUG show data
+
+			resultFromRPCclients[n++] = listpair;
+
+		}
 
 		cout << "*}}}" << endl;
 

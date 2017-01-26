@@ -5,11 +5,12 @@
 #include "thread_safe_queue.h"
 #include <iostream>
 using namespace std;
+using Func = std::function<std::vector<unsigned char>()>;  // functions return a vector<unsigned char>
 
 // An Executor accepts units of work with add(), which should be
 /// threadsafe.
 class cfExecutor {
-	using Func = std::function<std::vector<unsigned char>()>;
+	//using Func = std::function<std::vector<unsigned char>()>;
 	public:
 		cfExecutor();
 		virtual ~cfExecutor();
@@ -51,7 +52,7 @@ class cfExecutor {
 // 
 class ManualExecutor : public cfExecutor
 {
-	using Func = std::function<std::vector<unsigned char>()>;  // functions return a vector<unsigned char>
+	//using Func = std::function<std::vector<unsigned char>()>;  // functions return a vector<unsigned char>
 
 	std::mutex lock_;             // avoid multiple entity updating the function container
 	std::queue<Func> funcs_;      // functions queued for running
@@ -83,7 +84,7 @@ class ManualExecutor : public cfExecutor
  */
 class collectablefutures 
 {
-	using Func = std::function<std::vector<unsigned char>()>;
+	//using Func = std::function<std::vector<unsigned char>()>;
 
 	public:
 		enum enumstate { instantiated, preparing, executoradded, running, collecting, finishing, error } eState; 
