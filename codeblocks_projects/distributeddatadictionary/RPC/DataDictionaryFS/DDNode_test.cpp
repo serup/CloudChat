@@ -35,7 +35,6 @@
 #include "../../collectablefutures.hpp"
 
 
-// tmp
 #include <type_traits>
 #include <vector>
 #include <tuple>
@@ -1168,107 +1167,11 @@ void boring_template_fn(T t){
 	std::cout << identity(t) << std::endl;
 }
 
-
-
-
-//#include <type_traits>
-//#include <vector>
-//#include <tuple>
-//#include <iostream>
-
-// indices are a classic
-
-template< std::size_t... Ns >
-struct indices
-{
-	using next = indices< Ns..., sizeof...( Ns ) >;
-};
-
-
-template< std::size_t N >
-struct make_indices
-{
-	using type = typename make_indices< N - 1 >::type::next;
-};
-
-
-template<>
-struct make_indices< 0 >
-{
-	using type = indices<>;
-};
-
-
-
-// we need something to find a type's index within a list of types
-template<typename T, typename U, std::size_t=0>
-struct index {};
-
-
-template<typename T, typename... Us, std::size_t N>
-struct index<T,std::tuple<T,Us...>,N>
-: std::integral_constant<std::size_t, N> {};
-
-template<typename T, typename U, typename... Us, std::size_t N>
-struct index<T,std::tuple<U,Us...>,N>
-: index<T,std::tuple<Us...>,N+1> {};
-
-
-// we need a way to remove duplicate types from a list of types
-template<typename T,typename I=void> struct unique;
-
-// step 1: generate indices
-template<typename... Ts>
-struct unique< std::tuple<Ts...>, void >
-: unique< std::tuple<Ts...>, typename make_indices<sizeof...(Ts)>::type >
-{
-
-};
-
-
-// step 2: remove duplicates. Note: No recursion here!
-template<typename... Ts, std::size_t... Is>
-struct unique< std::tuple<Ts...>, indices<Is...> >
-{
-	using type = decltype( std::tuple_cat( std::declval<
-				typename std::conditional<index<Ts,std::tuple<Ts...>>::value==Is,std::tuple<Ts>,std::tuple<>>::type >()... ) );
-};
-
-
-
-// a helper to turn Ts... into std::vector<Ts>...
-template<typename> struct vectorize;
-
-template<typename... Ts>
-struct vectorize<std::tuple<Ts...>>
-{
-	using type = std::tuple< std::vector<Ts>... >;
-};
-
-// now you can easily use it to define your Store
-template<typename... Ts> class Store
-{
-	using Storage = typename vectorize<typename unique<std::tuple<Ts...>>::type>::type;
-	Storage storage;
-
-	template<typename T>
-		decltype(std::get<index<T,typename unique<std::tuple<Ts...>>::type>::value>(storage))
-		slot()
-		{
-			return std::get<index<T,typename unique<std::tuple<Ts...>>::type>::value>(storage);
-		}
-
-	public:
-
-	template<typename T> void add(T mValue) { 
-		slot<T>().push_back(mValue); 
-	}
-
-	template<typename T> std::vector<T>& get() { 
-		return slot<T>();
-	}    
-};
-
+// this should work in C++17 - however could not get it to work
+// template<typename ...Args>
+// void print_1(Args&&... args) {
+// 	    (std::cout << ... << args) << '\n';
+// }
 
 BOOST_AUTO_TEST_CASE(lambdaWithParameters)
 {
@@ -1304,12 +1207,89 @@ BOOST_AUTO_TEST_CASE(lambdaWithParameters)
 	std::cout << weird_lambda(1,"abc", 2.34, 3,"qwe").get<int>()[1] << endl;
 
 	//std::function<std::vector<unsigned char>(auto... args)> f5 = [](auto... args){ std::vector<unsigned char> result; cout << "- Hello from executor - function 5" << endl; std::string s("HELLO EARTH"); result.insert(result.end(),s.begin(), s.end()); return result; };
-	auto f5 = [](auto... args){ 
-		std::vector<unsigned char> result; cout << "- Hello from executor - function 5 : " << endl; std::string s("HELLO EARTH"); result.insert(result.end(),s.begin(), s.end()); return result; 
+	auto f5 = [](auto... param){ 
+		std::vector<unsigned char> result; cout << "- Hello from executor - function 5 : "  << endl; std::string s("HELLO EARTH"); result.insert(result.end(),s.begin(), s.end()); return result; 
 	};
 
 	f5();
 	f5("hello");
+
+
+	//auto f6 = [](auto&&...args) -> decltype(auto) { return simpleAdd(decltype(args)(args)...); };
+	//cout << f6() << endl;
+
+	auto head = [](auto... args ) {
+		    return [](auto first, auto ...rest) { return first; };
+	};
+
+	auto list = [](auto ...xs) {
+		return [=](auto access) { return access(xs...); };
+	};
+
+	//cout << " head lambda : result: " << head("first", "second", "3") << endl;
+
+	auto lambda2 = [](const auto&...args)
+	{
+		std::cout << "hello ";
+		const int dummy[] = {0, ((std::cout << args), 0)...};
+		static_cast<void>(dummy);
+		std::cout << std::endl;
+	};
+
+	lambda2("world", " and ", "universe");
+	lambda2(1);
+
+	auto lambda3 = [](const auto&...args)
+	{
+		std::vector<std::string> v;
+		std::cout << "hello ";
+		const int dummy[] = {0, ((v.push_back(args)), 0)...};
+		std::cout << std::endl;
+		return v;
+	};
+
+	std::vector<std::string> v = lambda3("world");
+	cout << "size of vector received: " << v.size() << endl;
+	cout << "content of vector : " << v[0] << endl;
+
+	typedef boost::variant<int, float, std::string> Variant;
+	auto lambda4 = [](const auto&...args)
+	{
+		//std::vector<Variant> vec;
+		//const int dummy[] = {0, ((vec.push_back(args)), 0)...};
+		std::vector<Variant> vec = {args...}; 
+		return vec;
+	};
+
+	std::vector<Variant> v4 = lambda4("world", " and ", "universe");
+	cout << "size of vector received: " << v4.size() << endl;
+	cout << "content of vector : " << v4[0] << v4[1]<< v4[2]  << endl;
+
+
+	auto _lambda = [](const auto&...args)
+	{
+		typedef boost::variant<int, float, std::string> Variant;
+		std::vector<Variant> vec = {args...}; 
+		std::cout << "hello ";
+		for(auto a: vec) {
+			std::cout << a;	
+		}
+		std::cout << std::endl;
+	};
+
+	_lambda("world", " and ", "universe");
+
+	// c++17 - however it does not work !? fold expressions - how to use it?
+	// auto lambda_c17 = [](const auto&...args)
+	// {
+	// 	 (std::cout << ... << args) << '\n';
+	// };
+
+	// lambda_c17("world");
+	// lambda_c17(1);
+
+	//print_1("hello ", "world");
+
 
 	std::string s("My string");
 	boring_template_fn(s);

@@ -7,9 +7,9 @@ CONVERT2=xsltproc -o test_results.txt test_results_text.xslt test_results.xml
 INC_PATH = -I/usr/local/include  
 LIB_PATH = -L"/usr/local/lib/" -L"/usr/include/" 
 SRC = DDNode_test.cpp ClientRequestHandling.cpp ClientRequestHandling.h zookeeper.hpp zookeeper.cpp mockRPCServer.h mockRPCServer.cpp ServerRequestHandling.h ServerRequestHandling.cpp RPCclient.cpp RPCclient.h DDNode.cpp DDDfs_clnt.cpp DDDfs_xdr.cpp  DDDfs_server.cpp ../../../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.h ../../../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.cpp ../../../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.h ../../../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.cpp ../../collectablefutures.hpp ../../collectablefutures.cpp ../../datadictionarycontrol.hpp ../../datadictionarycontrol.cpp 
-CFLAGS = -g -std=gnu++1y -D__DEBUG__ -D__MSABI_LONG=long -DBOOST_LOG_DYN_LINK
+CFLAGS = -g -std=c++17 -std=gnu++17 -D__DEBUG__ -D__MSABI_LONG=long -DBOOST_LOG_DYN_LINK
 LIBS = -lboost_system -lboost_signals -lboost_thread -lboost_filesystem -lpthread -lrt -lprocess -lglog -lzookeeper_mt -lev -lz -lboost_log   
-CC = g++
+CC = g++ 
 CCTEST = $(CC) $(CFLAGS) $(INC_PATH) $(LIB_PATH) -o DDNode_test $(SRC) $(LIBS)  
 
 DATETIME=$(shell date --iso=seconds)
@@ -40,10 +40,10 @@ prereq:
 	@rename 's/\.c/\.cpp/' *.c 
 	@echo "- then rename all .c to .cpp in Makefile.DDDfs"
 	@sed -i 's/\.c/\.cpp/g' Makefile.DDDfs
-	@sed -i 's/RPCGENFLAGS =/CC = g++ -g \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/DataEncoder.h \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/DataEncoder.cpp \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/compression-lib\/compression.h \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/compression-lib\/compression.cpp -L\"\/usr\/local\/lib\/\" -D__DEBUG__ -D__MSABI_LONG=long -lboost_system -lboost_signals -lboost_thread -lboost_filesystem -lpthread -lrt -std=gnu++11 \
+	@sed -i 's/RPCGENFLAGS =/CC = g++ -g \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/DataEncoder.h \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/DataEncoder.cpp \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/compression-lib\/compression.h \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/compression-lib\/compression.cpp -L\"\/usr\/local\/lib\/\" -D__DEBUG__ -D__MSABI_LONG=long -lboost_system -lboost_signals -lboost_thread -lboost_filesystem -lpthread -lrt -std=gnu++17 \
 	\
-	CCSERVER = g++ -g DDNode.cpp DDDfs_svc.cpp DDDfs_server.cpp DDDfs_xdr.cpp \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/DataEncoder.h \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/DataEncoder.cpp \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/compression-lib\/compression.h \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/compression-lib\/compression.cpp -L\"\/usr\/local\/lib\/\" -D__DEBUG__ -D__MSABI_LONG=long -lboost_system -lboost_signals -lboost_thread -lboost_filesystem -lpthread -lrt -std=gnu++11 \
-       \ CCCLIENT = g++ -g DDDfs_clnt.cpp DDDfs_client.cpp DDDfs_xdr.cpp \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/DataEncoder.h \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/DataEncoder.cpp \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/compression-lib\/compression.h \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/compression-lib\/compression.cpp -L\"\/usr\/local\/lib\/\" -D__DEBUG__ -D__MSABI_LONG=long -lboost_system -lboost_signals -lboost_thread -lboost_filesystem -lpthread -lrt -std=gnu++11 /g' Makefile.DDDfs
+	CCSERVER = g++ -g DDNode.cpp DDDfs_svc.cpp DDDfs_server.cpp DDDfs_xdr.cpp \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/DataEncoder.h \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/DataEncoder.cpp \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/compression-lib\/compression.h \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/compression-lib\/compression.cpp -L\"\/usr\/local\/lib\/\" -D__DEBUG__ -D__MSABI_LONG=long -lboost_system -lboost_signals -lboost_thread -lboost_filesystem -lpthread -lrt -std=gnu++17 \
+       \ CCCLIENT = g++ -g DDDfs_clnt.cpp DDDfs_client.cpp DDDfs_xdr.cpp \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/DataEncoder.h \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/DataEncoder.cpp \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/compression-lib\/compression.h \.\.\/\.\.\/\.\.\/DataEncoderDecoder\/DataEncoderDecoder\/compression-lib\/compression.cpp -L\"\/usr\/local\/lib\/\" -D__DEBUG__ -D__MSABI_LONG=long -lboost_system -lboost_signals -lboost_thread -lboost_filesystem -lpthread -lrt -std=gnu++17 /g' Makefile.DDDfs
 	@sed -i '/$$(SERVER) :/d' Makefile.DDDfs
 	@sed -i '/$$(LINK.cpp) -o $$(SERVER)/d' Makefile.DDDfs
 	@sed -i '/$$(LINK.cpp) -o/a $$(SERVER) : \

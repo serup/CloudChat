@@ -12,6 +12,10 @@
 #include <ctype.h>
 #include <future> 
 #include "thread_safe_queue.h"
+#include <type_traits>
+#include <vector>
+#include <tuple>
+
 
 using namespace std;
 
@@ -174,94 +178,113 @@ class CUtils
 		}
 };
 
-// DEPRECATED
-// class aio
-// {
-// 	class io_request
-// 	{
-// 		public:
-// 			std::streambuf* is;
-// 			unsigned read_count;
-// 			std::promise<std::vector<char> > p;
-// 			explicit io_request(std::streambuf& is_,unsigned count_):
-// 				is(&is_),read_count(count_)
-// 		{}
-// 
-// 			io_request(io_request&& other):
-// 				is(other.is),
-// 				read_count(other.read_count),
-// 				p(std::move(other.p))
-// 		{}
-// 
-// 			io_request():
-// 				is(0),read_count(0)
-// 		{}
-// 
-// 			std::future<std::vector<char> > get_future()
-// 			{
-// 				return p.get_future();
-// 			}
-// 
-// 			void process()
-// 			{
-// 				try
-// 				{
-// 					std::vector<char> buffer(read_count);
-// 
-// 					unsigned amount_read=0;
-// 					while((amount_read != read_count) && 
-// 							(is->sgetc()!=std::char_traits<char>::eof()))
-// 					{
-// 						amount_read+=is->sgetn(&buffer[amount_read],read_count-amount_read);
-// 					}
-// 
-// 					buffer.resize(amount_read);
-// 
-// 					p.set_value(std::move(buffer));
-// 				}
-// 				catch(...)
-// 				{
-// 					p.set_exception(std::current_exception());
-// 				}
-// 			}
-// 	};
-// 
-// 	thread_safe_queue<io_request> request_queue;
-// 	std::atomic_bool done;
-// 
-// 	void io_thread()
-// 	{
-// 		while(!done)
-// 		{
-// 			io_request req = request_queue.pop();
-// 			req.process();
-// 		}
-// 	}
-// 
-// 	std::thread iot;
-// 
-// 	public:
-// 	aio():
-// 		done(false),
-// 		iot(&aio::io_thread,this)
-// 	{}
-// 
-// 	std::future<std::vector<char> > queue_read(std::streambuf& is,unsigned count)
-// 	{
-// 		io_request req(is,count);
-// 		std::future<std::vector<char> > f(req.get_future());
-// 		request_queue.push(req);
-// 		return f;
-// 	}
-// 
-// 	~aio()
-// 	{
-// 		done=true;
-// 		io_request req;
-// 		request_queue.push(req);
-// 		iot.join();
-// 	}
-// };
+///////////////////////////////////////
+// variadic params in lambda handling
+// indices are a classic
+// *{{{
+
+//#include <type_traits>
+//#include <vector>
+//#include <tuple>
+//#include <iostream>
+
+// indices are a classic
+
+template< std::size_t... Ns >
+struct indices
+{
+	using next = indices< Ns..., sizeof...( Ns ) >;
+};
+
+
+template< std::size_t N >
+struct make_indices
+{
+	using type = typename make_indices< N - 1 >::type::next;
+};
+
+
+template<>
+struct make_indices< 0 >
+{
+	using type = indices<>;
+};
+
+
+
+// we need something to find a type's index within a list of types
+template<typename T, typename U, std::size_t=0>
+struct _index {};
+
+
+template<typename T, typename... Us, std::size_t N>
+struct _index<T,std::tuple<T,Us...>,N>
+: std::integral_constant<std::size_t, N> {};
+
+template<typename T, typename U, typename... Us, std::size_t N>
+struct _index<T,std::tuple<U,Us...>,N>
+: _index<T,std::tuple<Us...>,N+1> {};
+
+
+// we need a way to remove duplicate types from a list of types
+template<typename T,typename I=void> struct unique;
+
+// step 1: generate indices
+template<typename... Ts>
+struct unique< std::tuple<Ts...>, void >
+: unique< std::tuple<Ts...>, typename make_indices<sizeof...(Ts)>::type >
+{
+
+};
+
+
+// step 2: remove duplicates. Note: No recursion here!
+template<typename... Ts, std::size_t... Is>
+struct unique< std::tuple<Ts...>, indices<Is...> >
+{
+	using type = decltype( std::tuple_cat( std::declval<
+				typename std::conditional<_index<Ts,std::tuple<Ts...>>::value==Is,std::tuple<Ts>,std::tuple<>>::type >()... ) );
+};
+
+
+
+// a helper to turn Ts... into std::vector<Ts>...
+template<typename> struct vectorize;
+
+template<typename... Ts>
+struct vectorize<std::tuple<Ts...>>
+{
+	using type = std::tuple< std::vector<Ts>... >;
+};
+
+// now you can easily use it to define your Store
+template<typename... Ts> class Store
+{
+	using Storage = typename vectorize<typename unique<std::tuple<Ts...>>::type>::type;
+	Storage storage;
+
+	template<typename T>
+		decltype(std::get<_index<T,typename unique<std::tuple<Ts...>>::type>::value>(storage))
+		slot()
+		{
+			return std::get<_index<T,typename unique<std::tuple<Ts...>>::type>::value>(storage);
+		}
+
+	public:
+
+	template<typename T> void add(T mValue) { 
+		slot<T>().push_back(mValue); 
+	}
+
+	template<typename T> std::vector<T>& get() { 
+		return slot<T>();
+	}    
+};
+
+
+// *}}}
+///////////////////////////////////////
+
 
 
 #endif // CUTILS_H

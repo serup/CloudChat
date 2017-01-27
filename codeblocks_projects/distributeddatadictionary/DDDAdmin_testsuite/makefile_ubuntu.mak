@@ -3,7 +3,7 @@
 # Make file for DDDAdmin - Distributed Data Dictionary Administrator #
 #                                                                    #
 ######################################################################
-CC=g++ -g -o bin/Debug/DDDAdmin_test DDDAdmin_test.cpp ../utils.hpp ../utils.cpp ../datadictionarycontrol.hpp ../datadictionarycontrol.cpp ../md5.h ../../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.h ../../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.cpp ../../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.h ../../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.cpp -L"/usr/local/lib/" -D__DEBUG__ -D__MSABI_LONG=long -DBOOST_LOG_DYN_LINK -lboost_system -lboost_log -lboost_signals -lboost_thread -lboost_filesystem -lboost_regex -lpthread -lrt -std=gnu++11
+CC=g++ -g -o bin/Debug/DDDAdmin_test DDDAdmin_test.cpp ../utils.hpp ../utils.cpp ../datadictionarycontrol.hpp ../datadictionarycontrol.cpp ../md5.h ../../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.h ../../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.cpp ../../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.h ../../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.cpp -L"/usr/local/lib/" -D__DEBUG__ -D__MSABI_LONG=long -DBOOST_LOG_DYN_LINK -lboost_system -lboost_log -lboost_signals -lboost_thread -lboost_filesystem -lboost_regex -lpthread -lrt -std=c++17 -std=gnu++17
 TEST=./bin/Debug/DDDAdmin_test
 TESTFLAGS= --report_format=XML --report_level=detailed
 TESTFLAGS2= --report_level=detailed
