@@ -118,7 +118,16 @@ else
   echo "--  this will restart portmapper and your server should then work"
 fi
 
-PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 uuid-dev* |grep "install ok installed")
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 i3-wm* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install window manager i3"
+  sudo apt-fast install -yq i3-wm 
+  echo " - done."
+else
+  echo "- window manager i3 already installed"
+fi
+
+ PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 uuid-dev* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install uuid-dev - used in libminify project"
   sudo apt-fast install -yq uuid-dev 
