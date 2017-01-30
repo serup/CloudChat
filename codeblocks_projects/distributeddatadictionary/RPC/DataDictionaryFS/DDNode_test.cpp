@@ -58,7 +58,7 @@ using namespace std;
 using namespace boost::unit_test;
 using boost::property_tree::ptree;
 using namespace DDDfsRPC;
-using Func = std::function<std::vector<unsigned char>()>;
+//using Func = std::function<std::vector<unsigned char>()>;
 
 #if defined(_M_X64) || defined(__amd64__)
 #define writer_make_settings boost::property_tree::xml_writer_make_settings<std::string>('\t', 1)
@@ -1038,7 +1038,7 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 	BOOST_CHECK_MESSAGE(req.runExec(result_buffer) == false, "FAIL: when running NULL executor");
 	BOOST_TEST_MESSAGE( "add executor to request" );	
 
-	auto f1 = [](){ std::vector<unsigned char> result; cout << "- Hello from executor - function 1" << endl; return result; }; 
+	Func f1 = [](int i){ std::vector<unsigned char> result; cout << "- Hello from executor - function 1" << endl; return result; }; 
 	req.addexecutorfunc( f1 );
 	BOOST_CHECK_MESSAGE(cf.getstate() == collectablefutures::enumstate::executoradded, "FAIL: when adding executor");
 	BOOST_TEST_MESSAGE( "run executor from request" );	
@@ -1046,7 +1046,7 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 	BOOST_CHECK_MESSAGE(cf.getstate() == collectablefutures::enumstate::finishing, "FAIL: when running executor");
 	
 	BOOST_TEST_MESSAGE( "add one extra function to executor" );
-	Func f2 = [](){ std::vector<unsigned char> result; cout << "- Hello again from executor - function 2" << endl; return result; };
+	Func f2 = [](int i){ std::vector<unsigned char> result; cout << "- Hello again from executor - function 2" << endl; return result; };
 	req.addexecutorfunc( f2 );
 	BOOST_CHECK_MESSAGE(req.getAmountExecutorFunctions() == 2, "FAIL: when adding extra function to executor");
 	std::string msg = "starting executor with amount: " + std::to_string(req.getAmountExecutorFunctions()) + ", of functions "; 
@@ -1071,7 +1071,7 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 
 	// If old above req was used, then a future_error exception would be thrown, given that request future had already been accessed
 	collectablefutures::request req2 = cf.createrequest();
-	Func f3 = [](){ std::vector<unsigned char> result; cout << "- Hello again from NEW executor - function 3" << endl; std::string s("HELLO WORLD"); result.insert(result.end(),s.begin(), s.end()); return result; };
+	Func f3 = [](int i){ std::vector<unsigned char> result; cout << "- Hello again from NEW executor - function 3" << endl; std::string s("HELLO WORLD"); result.insert(result.end(),s.begin(), s.end()); return result; };
 	req2.addexecutorfunc( f3 );
 	BOOST_TEST_MESSAGE( "1. runRequest will take request and it will take its internal promise and add its future to a result vector buffer" );
 	std::future<std::vector<unsigned char>> future_result_from_executor = cf.runRequest( req2 );
@@ -1099,7 +1099,7 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 		is.close();
 	}
 
-	Func f4 = [](){
+	Func f4 = [](int i){
 		std::vector<unsigned char> FotoAttributValue;
 		std::string fn = "testImage.png"; // should be of size 10.5 Kb
 		std::ifstream is (fn, ios::binary);
@@ -1129,12 +1129,11 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 
 	BOOST_TEST_MESSAGE( "Try to create 2 requests, each having one function,  and waiting for future result : " );
 
-	Func f5 = [](){ std::vector<unsigned char> result; cout << "- Hello from executor - function 5" << endl; std::string s("HELLO EARTH"); result.insert(result.end(),s.begin(), s.end()); return result; };
+	Func f5 = [](int i){ std::vector<unsigned char> result; cout << "- Hello from executor - function 5" << endl; std::string s("HELLO EARTH"); result.insert(result.end(),s.begin(), s.end()); return result; };
 
 	collectablefutures::request req4 = cf.createrequest();
 	req4.addexecutorfunc( f5 );
 	
-	//Func f6 = [](){ std::vector<unsigned char> result; cout << "- Hello from executor - function 6" << endl; std::string s("HELLO UNIVERSE"); result.insert(result.end(),s.begin(), s.end()); return result; };
 	auto f6 = [](auto... args){ std::vector<unsigned char> result; cout << "- Hello from executor - function 6" << endl; std::string s("HELLO UNIVERSE"); result.insert(result.end(),s.begin(), s.end()); return result; };
 		
 	collectablefutures::request req5 = cf.createrequest();
@@ -1290,6 +1289,11 @@ BOOST_AUTO_TEST_CASE(lambdaWithParameters)
 
 	//print_1("hello ", "world");
 
+
+	std::function<void(int)> f = [] (int i) 
+	{ std::cout << "The answer is " << i; };
+	f(42);
+	cout << endl;
 
 	std::string s("My string");
 	boring_template_fn(s);

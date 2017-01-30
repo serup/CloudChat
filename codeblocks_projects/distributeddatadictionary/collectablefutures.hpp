@@ -5,7 +5,7 @@
 #include "thread_safe_queue.h"
 #include <iostream>
 using namespace std;
-using Func = std::function<std::vector<unsigned char>()>;  // functions return a vector<unsigned char>
+using Func = std::function<std::vector<unsigned char>(int)>;  
 
 // An Executor accepts units of work with add(), which should be
 /// threadsafe.
