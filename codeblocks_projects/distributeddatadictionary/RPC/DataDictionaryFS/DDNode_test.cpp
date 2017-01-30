@@ -1023,6 +1023,8 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 // }
 
 
+//using lambdaparams = std::vector<int>; 
+using lambdaparams = int; 
 BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 {
 	std::vector<unsigned char> result_buffer;
@@ -1038,7 +1040,7 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 	BOOST_CHECK_MESSAGE(req.runExec(result_buffer) == false, "FAIL: when running NULL executor");
 	BOOST_TEST_MESSAGE( "add executor to request" );	
 
-	Func f1 = [](int i){ std::vector<unsigned char> result; cout << "- Hello from executor - function 1" << endl; return result; }; 
+	Func f1 = [](lambdaparams i){ std::vector<unsigned char> result; cout << "- Hello from executor - function 1" << endl; return result; }; 
 	req.addexecutorfunc( f1 );
 	BOOST_CHECK_MESSAGE(cf.getstate() == collectablefutures::enumstate::executoradded, "FAIL: when adding executor");
 	BOOST_TEST_MESSAGE( "run executor from request" );	
@@ -1046,7 +1048,7 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 	BOOST_CHECK_MESSAGE(cf.getstate() == collectablefutures::enumstate::finishing, "FAIL: when running executor");
 	
 	BOOST_TEST_MESSAGE( "add one extra function to executor" );
-	Func f2 = [](int i){ std::vector<unsigned char> result; cout << "- Hello again from executor - function 2" << endl; return result; };
+	Func f2 = [](lambdaparams i){ std::vector<unsigned char> result; cout << "- Hello again from executor - function 2" << endl; return result; };
 	req.addexecutorfunc( f2 );
 	BOOST_CHECK_MESSAGE(req.getAmountExecutorFunctions() == 2, "FAIL: when adding extra function to executor");
 	std::string msg = "starting executor with amount: " + std::to_string(req.getAmountExecutorFunctions()) + ", of functions "; 
@@ -1071,7 +1073,7 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 
 	// If old above req was used, then a future_error exception would be thrown, given that request future had already been accessed
 	collectablefutures::request req2 = cf.createrequest();
-	Func f3 = [](int i){ std::vector<unsigned char> result; cout << "- Hello again from NEW executor - function 3" << endl; std::string s("HELLO WORLD"); result.insert(result.end(),s.begin(), s.end()); return result; };
+	Func f3 = [](lambdaparams i){ std::vector<unsigned char> result; cout << "- Hello again from NEW executor - function 3" << endl; std::string s("HELLO WORLD"); result.insert(result.end(),s.begin(), s.end()); return result; };
 	req2.addexecutorfunc( f3 );
 	BOOST_TEST_MESSAGE( "1. runRequest will take request and it will take its internal promise and add its future to a result vector buffer" );
 	std::future<std::vector<unsigned char>> future_result_from_executor = cf.runRequest( req2 );
@@ -1099,7 +1101,7 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 		is.close();
 	}
 
-	Func f4 = [](int i){
+	Func f4 = [](lambdaparams i){
 		std::vector<unsigned char> FotoAttributValue;
 		std::string fn = "testImage.png"; // should be of size 10.5 Kb
 		std::ifstream is (fn, ios::binary);
@@ -1129,7 +1131,7 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 
 	BOOST_TEST_MESSAGE( "Try to create 2 requests, each having one function,  and waiting for future result : " );
 
-	Func f5 = [](int i){ std::vector<unsigned char> result; cout << "- Hello from executor - function 5" << endl; std::string s("HELLO EARTH"); result.insert(result.end(),s.begin(), s.end()); return result; };
+	Func f5 = [](lambdaparams i){ std::vector<unsigned char> result; cout << "- Hello from executor - function 5" << endl; std::string s("HELLO EARTH"); result.insert(result.end(),s.begin(), s.end()); return result; };
 
 	collectablefutures::request req4 = cf.createrequest();
 	req4.addexecutorfunc( f5 );
@@ -1165,6 +1167,7 @@ void boring_template_fn(T t){
 	auto identity = [](decltype(t) t){ return t;};
 	std::cout << identity(t) << std::endl;
 }
+
 
 // this should work in C++17 - however could not get it to work
 // template<typename ...Args>
@@ -1291,7 +1294,9 @@ BOOST_AUTO_TEST_CASE(lambdaWithParameters)
 
 
 	std::function<void(int)> f = [] (int i) 
-	{ std::cout << "The answer is " << i; };
+	{ 
+		std::cout << "The answer is " << i; 
+	};
 	f(42);
 	cout << endl;
 
@@ -1299,6 +1304,8 @@ BOOST_AUTO_TEST_CASE(lambdaWithParameters)
 	boring_template_fn(s);
 	boring_template_fn(1024);
 	boring_template_fn(true);
+	cout << endl;
+
 
 	cout << "}" << endl;
 }
