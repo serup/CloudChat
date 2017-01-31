@@ -1136,7 +1136,7 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 	collectablefutures::request req4 = cf.createrequest();
 	req4.addexecutorfunc( f5 );
 	
-	auto f6 = [](auto... args){ std::vector<unsigned char> result; cout << "- Hello from executor - function 6" << endl; std::string s("HELLO UNIVERSE"); result.insert(result.end(),s.begin(), s.end()); return result; };
+	auto f6 = [](lambdaparams i){ std::vector<unsigned char> result; cout << "- Hello from executor - function 6" << endl; std::string s("HELLO UNIVERSE"); result.insert(result.end(),s.begin(), s.end()); return result; };
 		
 	collectablefutures::request req5 = cf.createrequest();
 	req5.addexecutorfunc( f6 );

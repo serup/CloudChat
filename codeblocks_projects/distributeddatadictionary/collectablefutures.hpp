@@ -5,6 +5,7 @@
 #include "thread_safe_queue.h"
 #include <iostream>
 #include <boost/bind.hpp>
+#include <stdarg.h>
 using namespace std;
 //using Func = std::function<std::vector<unsigned char>(std::vector<int>)>;  
 using Func = std::function<std::vector<unsigned char>(int)>;  
@@ -20,6 +21,7 @@ class cfExecutor {
 		/// Enqueue a function to be executed by this executor. This and all
 		/// variants must be threadsafe.
 		virtual void add(Func) = 0;
+		virtual void add(int param, Func callback) = 0;
 
 		/// Enqueue a function with a given priority, where 0 is the medium priority
 		/// This is up to the implementation to enforce
@@ -44,6 +46,7 @@ class cfExecutor {
 			}
 };
 
+//typedef std::map<int, std::pair<float, char> > Maptype;
 
 // Handles container with functions
 //
@@ -54,20 +57,29 @@ class cfExecutor {
 // 
 class ManualExecutor : public cfExecutor
 {
-	//using Func = std::function<std::vector<unsigned char>()>;  // functions return a vector<unsigned char>
 
 	std::mutex lock_;             // avoid multiple entity updating the function container
 	std::queue<Func> funcs_;      // functions queued for running
 
 	public:
-	std::map<int8_t, Func> funcs; // Function container (priority,Func) - added functions to this Executors 
+	std::map<int8_t, std::pair<int, Func> > funcs;
+	//std::map<int8_t, Func> funcs; // Function container (priority,Func) - added functions to this Executors 
+	//std::map<int8_t, std::pair<va_list, Func> > funcsWparam;
 	ManualExecutor() {}
 	ManualExecutor(ManualExecutor&& other):
 					funcs(std::move(other.funcs))
+//					funcs(std::move(other.funcs)),
+//					funcsWparam(std::move(other.funcsWparam))
 	{}
 	~ManualExecutor() {}
 
+	//std::map<int8_t, std::pair<int, Func> > _funcsWparam;
+	//Maptype m;
+
 	void add(Func callback); 
+	//void add(va_list param, Func callback); 
+	void add(int param, Func callback); 
+
 	void addWithPriority(Func, int8_t priority);
 	int  getAmount() { return funcs.size(); }
 	std::vector<unsigned char> run(); // result of all functions run in sequence will be in a resulting vector<unsigned char>, meaning func1,func2,func3 --> result1,result2,result3 inside vector
@@ -124,7 +136,7 @@ class collectablefutures
 				//TODO:
 				void addexecutorfunc(int param, Func callback)
 				{
-					executor.add(std::move(callback));
+					executor.add(param, std::move(callback));
 					pOwner->eState = executoradded;
 				}
 
