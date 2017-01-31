@@ -134,7 +134,6 @@ class collectablefutures
 					pOwner->eState = executoradded;
 				}
 
-				//TODO:
 				void addexecutorfunc(int param, Func callback)
 				{
 					executor.add(param, std::move(callback));

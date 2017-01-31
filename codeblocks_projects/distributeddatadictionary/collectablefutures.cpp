@@ -29,7 +29,7 @@ void ManualExecutor::add(int param, Func callback)
 
 	priority++;
 	std::lock_guard<std::mutex> lock(lock_);
-	//funcsWparam.emplace( priority, std::make_pair(param, std::move(callback)) );
+	funcs.emplace(priority, std::make_pair(param, std::move(callback)));
 }
 
 void ManualExecutor::addWithPriority(Func, int8_t priority)
