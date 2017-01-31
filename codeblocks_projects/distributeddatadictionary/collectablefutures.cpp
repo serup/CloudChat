@@ -45,19 +45,23 @@ std::vector<unsigned char>  ManualExecutor::run_queue()
 
 	for(size_t count = 0; count < amount; count++) 
 	{
+		int param;
 		{
 		std::lock_guard<std::mutex> lock(lock_);
 		if (funcs_.empty()) 
 			break;
 		
 		// fetch function to run
-		func = std::move(funcs_.front());
+		//func = std::move(funcs_.front());
+		std::pair<int, Func> pp = std::move(funcs_.front());
+		param = pp.first;
+		func = pp.second;
 		// remove ready to run function from queue
 		funcs_.pop();
 		}
 		
 		// run function from queue
-		std::vector<unsigned char> func_result_buffer = func(8); //TODO: find a way to remember parameters on func queue, and then add as parameter here
+		std::vector<unsigned char> func_result_buffer = func(param); //TODO: find a way to remember parameters on func queue, and then add as parameter here
 		
 		//TODO: consider using boost::bind to bind parameters to lambda function
 		// boost::bind<returntype>(func, parameter)();
@@ -80,7 +84,7 @@ std::vector<unsigned char> ManualExecutor::run()
 	for(const auto &p : funcs) {
 		std::pair<int,Func> pp = p.second;
 		//funcs_.emplace(std::move((Func)p.second));
-		funcs_.emplace(std::move((Func)pp.second));
+		funcs_.emplace(std::move(std::make_pair(pp.first, (Func)pp.second)));
 	}
 	// run functions in queue
 	return run_queue();

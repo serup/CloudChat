@@ -59,7 +59,8 @@ class ManualExecutor : public cfExecutor
 {
 
 	std::mutex lock_;             // avoid multiple entity updating the function container
-	std::queue<Func> funcs_;      // functions queued for running
+	//std::queue<Func> funcs_;      // functions queued for running
+	std::queue<std::pair<int,Func>> funcs_;      // functions queued for running
 
 	public:
 	std::map<int8_t, std::pair<int, Func> > funcs;
