@@ -64,9 +64,13 @@ std::vector<unsigned char>  ManualExecutor::run_queue()
 		}
 		
 		// run function from queue
-		std::vector<unsigned char> func_result_buffer = func(8); //TODO: find a way to remember parameters on func queue, and then add as parameter here
-	//	std::vector<int> i;
-	//	std::vector<unsigned char> func_result_buffer = func(i); //TODO: find a way to remember parameters on func queue, and then add as parameter here
+		//std::vector<unsigned char> func_result_buffer = func(8); //TODO: find a way to remember parameters on func queue, and then add as parameter here
+		//TODO: consider using boost::bind to bind parameters to lambda function
+		// boost::bind<returntype>(func, parameter)();
+		//
+		std::vector<unsigned char> func_result_buffer = boost::bind<std::vector<unsigned char>>(func, 8)(); 
+		
+
 	
 		// append functions results into result_buffer
 		result_buffer.insert(result_buffer.end(), func_result_buffer.begin(), func_result_buffer.end());

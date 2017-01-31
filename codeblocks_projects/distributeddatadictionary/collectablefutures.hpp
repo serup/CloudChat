@@ -4,6 +4,7 @@
 #include <map>
 #include "thread_safe_queue.h"
 #include <iostream>
+#include <boost/bind.hpp>
 using namespace std;
 //using Func = std::function<std::vector<unsigned char>(std::vector<int>)>;  
 using Func = std::function<std::vector<unsigned char>(int)>;  
@@ -81,7 +82,6 @@ class ManualExecutor : public cfExecutor
  * each request has an executor and inside the executor lies a queue of functions which will be run according to priority
  * The requests will be 
  *
- * TODO: transform below to follow this description
  */
 class collectablefutures 
 {

@@ -1131,7 +1131,7 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 
 	BOOST_TEST_MESSAGE( "Try to create 2 requests, each having one function,  and waiting for future result : " );
 
-	Func f5 = [](lambdaparams i){ std::vector<unsigned char> result; cout << "- Hello from executor - function 5" << endl; std::string s("HELLO EARTH"); result.insert(result.end(),s.begin(), s.end()); return result; };
+	Func f5 = [](lambdaparams i){ std::vector<unsigned char> result; cout << "- Hello from executor - function 5 : param : " << i << endl; std::string s("HELLO EARTH"); result.insert(result.end(),s.begin(), s.end()); return result; };
 
 	collectablefutures::request req4 = cf.createrequest();
 	req4.addexecutorfunc( f5 );
