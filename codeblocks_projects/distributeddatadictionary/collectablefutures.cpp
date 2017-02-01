@@ -17,8 +17,10 @@ void ManualExecutor::add(Func callback)
 
 	priority++;
 	std::lock_guard<std::mutex> lock(lock_);
-	//funcs.emplace(priority, std::move(callback));
-	funcs.emplace(priority, std::make_pair(7, std::move(callback)));
+	//funcs.emplace(priority, std::make_pair(7, std::move(callback)));
+	int param=7;
+	std::vector<Variant> params = {param}; 
+	funcs.emplace(priority, std::make_pair(params, std::move(callback)));
 }
 
 void ManualExecutor::add(int param, Func callback)
@@ -28,7 +30,10 @@ void ManualExecutor::add(int param, Func callback)
 
 	priority++;
 	std::lock_guard<std::mutex> lock(lock_);
-	funcs.emplace(priority, std::make_pair(param, std::move(callback)));
+	//funcs.emplace(priority, std::make_pair(param, std::move(callback)));
+										
+	std::vector<Variant> params = {param}; 
+	funcs.emplace(priority, std::make_pair(params, std::move(callback)));
 }
 
 void ManualExecutor::add(std::vector<Variant> params, Func callback)
@@ -51,7 +56,8 @@ void ManualExecutor::add(std::vector<Variant> params, Func callback)
 	}
 
 
-	funcs.emplace(priority, std::make_pair(_param, std::move(callback)));
+	//funcs.emplace(priority, std::make_pair(_param, std::move(callback)));
+	funcs.emplace(priority, std::make_pair(params, std::move(callback)));
 }
 
 // somehow not possible - due to virtual function in base class - [implicit templates may not be ‘virtual’]
@@ -85,10 +91,16 @@ std::vector<unsigned char>  ManualExecutor::run_queue()
 		if (funcs_.empty()) 
 			break;
 		
+		// fetch params
+		std::pair<std::vector<Variant>, Func> pp = std::move(funcs_.front());
+		//param = pp.first;
+		std::vector<Variant> vp = pp.first;
+		for(auto p: vp) {
+			param = boost::get<int>(p);
+			break; // take first param -- DEBUG
+		}
+
 		// fetch function to run
-		//func = std::move(funcs_.front());
-		std::pair<int, Func> pp = std::move(funcs_.front());
-		param = pp.first;
 		func = pp.second;
 		// remove ready to run function from queue
 		funcs_.pop();
@@ -116,8 +128,8 @@ std::vector<unsigned char> ManualExecutor::run()
 {
 	// setup all functions in queue
 	for(const auto &p : funcs) {
-		std::pair<int,Func> pp = p.second;
-		//funcs_.emplace(std::move((Func)p.second));
+		//std::pair<int,Func> pp = p.second;
+		std::pair<std::vector<Variant>,Func> pp = p.second;
 		funcs_.emplace(std::move(std::make_pair(pp.first, (Func)pp.second)));
 	}
 	// run functions in queue
