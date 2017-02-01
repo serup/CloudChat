@@ -9,7 +9,8 @@
 #include <stdarg.h>
 using namespace std;
 typedef boost::variant<int, float, std::string > Variant;
-using Func = std::function<std::vector<unsigned char>(int)>;  
+//using Func = std::function<std::vector<unsigned char>(int)>;  
+using Func = std::function<std::vector<unsigned char>(std::vector<Variant>)>;  
 
 // An Executor accepts units of work with add(), which should be
 /// threadsafe.

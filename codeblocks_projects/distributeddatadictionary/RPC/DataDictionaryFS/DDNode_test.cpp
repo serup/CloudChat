@@ -1024,7 +1024,8 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 
 
 //using lambdaparams = std::vector<int>; 
-using lambdaparams = int; 
+//using lambdaparams = int; 
+using lambdaparams = std::vector<Variant>; 
 BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 {
 	std::vector<unsigned char> result_buffer;
@@ -1131,16 +1132,16 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 
 	BOOST_TEST_MESSAGE( "Try to create 2 requests, each having one function,  and waiting for future result : " );
 
-	Func f5 = [](lambdaparams i){ std::vector<unsigned char> result; cout << "- Hello from executor - function 5 : param : " << i << endl; std::string s("HELLO EARTH"); result.insert(result.end(),s.begin(), s.end()); return result; };
+	Func f5 = [](lambdaparams i){ std::vector<unsigned char> result; cout << "- Hello from executor - function 5  " << endl; std::string s("HELLO EARTH"); result.insert(result.end(),s.begin(), s.end()); return result; };
 
 	collectablefutures::request req4 = cf.createrequest();
 	//req4.addexecutorfunc( f5 );
 	req4.addexecutorfunc( 8, f5 );
 	
-	//auto f6 = [](lambdaparams i){ std::vector<unsigned char> result; cout << "- Hello from executor - function 6" << endl; std::string s("HELLO UNIVERSE"); result.insert(result.end(),s.begin(), s.end()); return result; };
-	auto f6 = [](const auto&...args){ 	
-										typedef boost::variant<int, float, std::string> Variant;
-										std::vector<Variant> vec = {args...}; 
+	//auto f6 = [](const auto&...args){ 	
+	auto f6 = [](std::vector<Variant> vec){ 	
+										//typedef boost::variant<int, float, std::string> Variant;
+										//std::vector<Variant> vec = {args...}; 
 										std::vector<unsigned char> result; 
 										cout << "- Hello from executor - function 6 "; 
 										std::cout << ": parameters : ";
@@ -1157,9 +1158,10 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 	//req5.addexecutorfunc( f6 );
 	req5.addexecutorfunc( 10, f6 );
 
-	auto f7 = [](const auto&...args){ 	
-										typedef boost::variant<int, float, std::string> Variant;
-										std::vector<Variant> vec = {args...}; 
+	//auto f7 = [](const auto&...args){ 	
+	auto f7 = [](std::vector<Variant> vec){ 	
+										//typedef boost::variant<int, float, std::string> Variant;
+										//std::vector<Variant> vec = {args...}; 
 										std::vector<unsigned char> result; 
 										cout << "- Hello from executor - function 7 "; 
 										std::cout << ": parameters : ";

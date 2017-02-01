@@ -82,6 +82,7 @@ std::vector<unsigned char>  ManualExecutor::run_queue()
 	Func func;
 	std::vector<unsigned char> result_buffer;
 	size_t amount = getAmount();
+	std::vector<Variant> vp;
 
 	for(size_t count = 0; count < amount; count++) 
 	{
@@ -94,7 +95,7 @@ std::vector<unsigned char>  ManualExecutor::run_queue()
 		// fetch params
 		std::pair<std::vector<Variant>, Func> pp = std::move(funcs_.front());
 		//param = pp.first;
-		std::vector<Variant> vp = pp.first;
+		vp = pp.first;
 		for(auto p: vp) {
 			param = boost::get<int>(p);
 			break; // take first param -- DEBUG
@@ -105,9 +106,16 @@ std::vector<unsigned char>  ManualExecutor::run_queue()
 		// remove ready to run function from queue
 		funcs_.pop();
 		}
-		
+	
+		//did NOT work
+		//std::vector<char *> _args;
+		//_args.push_back(0);
+		//std::vector<unsigned char> func_result_buffer = func(&_args[0]); 
+
+		std::vector<unsigned char> func_result_buffer = func(vp);
+
 		// run function from queue
-		std::vector<unsigned char> func_result_buffer = func(param); //TODO: find a way to remember parameters on func queue, and then add as parameter here
+		//std::vector<unsigned char> func_result_buffer = func(param); //TODO: find a way to remember parameters on func queue, and then add as parameter here
 		
 		//TODO: consider using boost::bind to bind parameters to lambda function
 		// boost::bind<returntype>(func, parameter)();
