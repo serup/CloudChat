@@ -5,15 +5,15 @@
 #include "thread_safe_queue.h"
 #include <iostream>
 #include <boost/bind.hpp>
+#include <boost/variant.hpp>
 #include <stdarg.h>
 using namespace std;
-//using Func = std::function<std::vector<unsigned char>(std::vector<int>)>;  
+typedef boost::variant<int, float, std::string > Variant;
 using Func = std::function<std::vector<unsigned char>(int)>;  
 
 // An Executor accepts units of work with add(), which should be
 /// threadsafe.
 class cfExecutor {
-	//using Func = std::function<std::vector<unsigned char>()>;
 	public:
 		cfExecutor();
 		virtual ~cfExecutor();
@@ -22,6 +22,7 @@ class cfExecutor {
 		/// variants must be threadsafe.
 		virtual void add(Func) = 0;
 		virtual void add(int param, Func callback) = 0;
+		virtual void add(std::vector<Variant> params, Func callback) = 0;
 
 		/// Enqueue a function with a given priority, where 0 is the medium priority
 		/// This is up to the implementation to enforce
@@ -80,6 +81,8 @@ class ManualExecutor : public cfExecutor
 	void add(Func callback); 
 	//void add(va_list param, Func callback); 
 	void add(int param, Func callback); 
+	void add(std::vector<Variant> params, Func callback); 
+	void add(const auto&...args, Func callback);// issue due to [implicit templates may not be ‘virtual’] 
 
 	void addWithPriority(Func, int8_t priority);
 	int  getAmount() { return funcs.size(); }
@@ -137,6 +140,13 @@ class collectablefutures
 				void addexecutorfunc(int param, Func callback)
 				{
 					executor.add(param, std::move(callback));
+					pOwner->eState = executoradded;
+				}
+
+				void addexecutorfunc( Func callback, const auto&...args )
+				{
+					std::vector<Variant> vec = {args...}; 
+					executor.add(vec, std::move(callback));
 					pOwner->eState = executoradded;
 				}
 

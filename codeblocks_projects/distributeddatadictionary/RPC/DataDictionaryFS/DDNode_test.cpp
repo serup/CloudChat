@@ -1137,20 +1137,56 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 	//req4.addexecutorfunc( f5 );
 	req4.addexecutorfunc( 8, f5 );
 	
-	auto f6 = [](lambdaparams i){ std::vector<unsigned char> result; cout << "- Hello from executor - function 6" << endl; std::string s("HELLO UNIVERSE"); result.insert(result.end(),s.begin(), s.end()); return result; };
+	//auto f6 = [](lambdaparams i){ std::vector<unsigned char> result; cout << "- Hello from executor - function 6" << endl; std::string s("HELLO UNIVERSE"); result.insert(result.end(),s.begin(), s.end()); return result; };
+	auto f6 = [](const auto&...args){ 	
+										typedef boost::variant<int, float, std::string> Variant;
+										std::vector<Variant> vec = {args...}; 
+										std::vector<unsigned char> result; 
+										cout << "- Hello from executor - function 6 "; 
+										std::cout << ": parameters : ";
+										for(auto a: vec) {
+											std::cout << a << ",";	
+										}
+										std::cout << std::endl;
+										std::string s("HELLO UNIVERSE"); 
+										result.insert(result.end(),s.begin(), s.end()); 
+										return result; 
+	};
 		
 	collectablefutures::request req5 = cf.createrequest();
-	req5.addexecutorfunc( f6 );
+	//req5.addexecutorfunc( f6 );
+	req5.addexecutorfunc( 10, f6 );
+
+	auto f7 = [](const auto&...args){ 	
+										typedef boost::variant<int, float, std::string> Variant;
+										std::vector<Variant> vec = {args...}; 
+										std::vector<unsigned char> result; 
+										cout << "- Hello from executor - function 7 "; 
+										std::cout << ": parameters : ";
+										for(auto a: vec) {
+											std::cout << a << ",";	
+										}
+										std::cout << std::endl;
+										std::string s("HELLO GALAXY"); 
+										result.insert(result.end(),s.begin(), s.end()); 
+										return result; 
+	};
+
+	collectablefutures::request req6 = cf.createrequest();
+	
+	req6.addexecutorfunc( f7, 10,11,"s" );
+
 
 	std::vector< std::future<std::vector<unsigned char>> >  collectionOfFutureRequests;
 	//std::vector<unsigned char> result_complete;
 	cf.runRequest( req4, collectionOfFutureRequests );
 	cf.runRequest( req5, collectionOfFutureRequests );
+	cf.runRequest( req6, collectionOfFutureRequests );
 	auto result_complete = cf.collect(collectionOfFutureRequests);
 
 	BOOST_TEST_MESSAGE( "Verify the result" );
 	std::vector<unsigned char> result_compare;
-	std::string scompare("HELLO EARTHHELLO UNIVERSE"); 
+	std::string scompare("HELLO EARTHHELLO UNIVERSEHELLO GALAXY"); 
 	result_compare.insert(result_compare.end(),scompare.begin(), scompare.end());
 	BOOST_CHECK_MESSAGE(CUtils::showDataBlockDiff(true,true,result_complete, result_compare) == false, "FAIL: result differs from original");
 

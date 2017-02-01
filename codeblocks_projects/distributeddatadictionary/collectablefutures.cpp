@@ -21,7 +21,6 @@ void ManualExecutor::add(Func callback)
 	funcs.emplace(priority, std::make_pair(7, std::move(callback)));
 }
 
-//void ManualExecutor::add(va_list param, Func callback)
 void ManualExecutor::add(int param, Func callback)
 {
 	static const int8_t LO_PRI = SCHAR_MIN;
@@ -31,6 +30,41 @@ void ManualExecutor::add(int param, Func callback)
 	std::lock_guard<std::mutex> lock(lock_);
 	funcs.emplace(priority, std::make_pair(param, std::move(callback)));
 }
+
+void ManualExecutor::add(std::vector<Variant> params, Func callback)
+{
+	static const int8_t LO_PRI = SCHAR_MIN;
+	static int8_t priority = LO_PRI;
+
+	priority++;
+	std::lock_guard<std::mutex> lock(lock_);
+
+	for(auto a: params) {
+		std::cout << a << ",";	
+	}
+	std::cout << std::endl;
+
+	int _param;
+	for(auto p: params) {
+		_param = boost::get<int>(p);
+		break; // take first param -- DEBUG
+	}
+
+
+	funcs.emplace(priority, std::make_pair(_param, std::move(callback)));
+}
+
+// somehow not possible - due to virtual function in base class - [implicit templates may not be ‘virtual’]
+void ManualExecutor::add(const auto&...args, Func callback)
+{
+	static const int8_t LO_PRI = SCHAR_MIN;
+	static int8_t priority = LO_PRI;
+
+	priority++;
+	std::lock_guard<std::mutex> lock(lock_);
+	//funcs.emplace(priority, std::make_pair(args, std::move(callback)));
+}
+
 
 void ManualExecutor::addWithPriority(Func, int8_t priority)
 {
