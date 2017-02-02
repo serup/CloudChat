@@ -85,7 +85,7 @@ class ManualExecutor : public cfExecutor
 	//void add(va_list param, Func callback); 
 	void add(int param, Func callback); 
 	void add(std::vector<Variant> params, Func callback); 
-	void add(const auto&...args, Func callback);// issue due to [implicit templates may not be ‘virtual’] 
+	//void add(const auto&...args, Func callback);// issue due to [implicit templates may not be ‘virtual’] 
 
 	void addWithPriority(Func, int8_t priority);
 	int  getAmount() { return funcs.size(); }

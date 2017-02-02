@@ -507,7 +507,7 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom3BFi_diff_order)
 	}
 	BOOST_CHECK(listResult.size() <= 0);
 
-	BOOST_WARN_MESSAGE(listResult.size() <= 0, "Failure since - no .BFi file should be present ");
+	BOOST_WARN_MESSAGE(listResult.size() <= 0, "Failure since - no .BFi file should be present - PLEASE clean up test area - previous test must have failed, leaving some .BFi files ");
 
 	if(listResult.size() > 0) {
 		cout<<"}"<<endl;
@@ -1175,7 +1175,6 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 	};
 
 	collectablefutures::request req6 = cf.createrequest();
-	
 	req6.addexecutorfunc( f7, 10,11,"s" );
 
 
@@ -1194,11 +1193,6 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 
 	cout << "}" << endl;
 
-}
-
-template<typename ...Args>
-void gFunc(Args... args)
-{
 }
 
 template<typename T>
@@ -1526,31 +1520,40 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_using_Futures)
 		cout << "*{{{" << endl;
 		std::string attributToFetch = transGuid + "./profile/foto";
 		std::vector<std::list< pair<seqSpan, std::vector<assembledElements>>>> resultFromRPCclients (3); // testcase has only 3 virtual RPCclients delivering results
-
-
+		
+		int n=0;
 
 		// iterate .BFi files - create a promise for handling each .BFi file
 		std::vector< std::future<std::vector<unsigned char>> >  collectionOfFutureRequests;
 /*
-		//Func fnFetchAllAttributsFromBFiFile = [](boost::filesystem::path const& currentfile){
-		Func fnFetchAllAttributsFromBFiFile = [](){
-				boost::filesystem::path const& currentfile;
-				CDataDictionaryControl DDC;
-				std::list<pair<seqSpan, std::vector<assembledElements>>> AttributInblockSequenceFromBFifile;
-				//boost::filesystem::path & currentfile = gFunc(args...);
-				boost::filesystem::path & currentfile;
-				cout << "*{{{" << endl;
-				cout << "  Fetch attributs from .BFi file " << endl;
-				DDC.fetchAttributsFromFile(currentfile, AttributInblockSequenceFromBFifile); 
-				cout << "  prepare result in a BLOB " << endl;
-				transferBLOB stBlob = DDC.convertToBLOB(AttributInblockSequenceFromBFifile,true);
-				cout << "*}}}" << endl;
-				return stBlob.data;	
+
+		// create function for fetching attributs from .BFi file
+		auto fnFetchAllAttributsFromBFiFile = [](std::vector<Variant> vec){ 	
+			std::vector<unsigned char> result; 
+			cout << "- Hello from executor - function fnFetchAllAttributsFromBFiFile "; 
+			cout << "*{{{" << endl;
+			std::cout << "parameters : ";
+			for(auto a: vec) {
+				std::cout << a << ",";	
+			}
+			std::cout << std::endl;
+			cout << "First param : " << boost::get<std::string>(vec[0]) << endl;	
+			boost::filesystem::path currentfile = boost::filesystem::path(boost::get<std::string>(vec[0]));
+			cout << "currentfile : " << currentfile.string() << endl;
+			CDataDictionaryControl DDC;
+			std::list<pair<seqSpan, std::vector<assembledElements>>> AttributInblockSequenceFromBFifile;
+			cout << "  Fetch attributs from .BFi file " << endl;
+			DDC.fetchAttributsFromFile(currentfile, AttributInblockSequenceFromBFifile); 
+			cout << "  prepare result in a BLOB " << endl;
+			transferBLOB stBlob = DDC.convertToBLOB(AttributInblockSequenceFromBFifile,true);
+			cout << "*}}}" << endl;
+			return stBlob.data;	
 		};
+
 
 		boost::filesystem::path currentSearchDirectory( boost::filesystem::current_path() );
 		boost::filesystem::recursive_directory_iterator directoryIterator(currentSearchDirectory), eod;
-		int n=0;
+		n=0;
 		BOOST_FOREACH(boost::filesystem::path const& currentfile, make_pair(directoryIterator, eod))
 		{
 			collectablefutures cf;
@@ -1558,15 +1561,16 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_using_Futures)
 			if((boost::filesystem::extension(currentfile.string()) == BFI_FILE_EXTENSION)) 
 			{ 
 				collectablefutures::request req = cf.createrequest();
-				req.addexecutorfunc( fnFetchAllAttributsFromBFiFile(currentfile) );
+				req.addexecutorfunc( fnFetchAllAttributsFromBFiFile, currentfile.string() );
 				cf.runRequest( req, collectionOfFutureRequests ); // fetch attributs data from .BFi file 
 			}
 		}
-*/
-// not possible yet - since result for each first needs to be sorted
+
+*/		
+		// not possible yet - since result for each first needs to be sorted
 //		auto result_complete = cf.collect(collectionOfFutureRequests); // should contain complete attribut - combined result from the 3 clients
 
-		int n=0;
+		n=0;
 		for ( auto &f: collectionOfFutureRequests)
 		{
 			f.wait(); // wait for function in future request to finish

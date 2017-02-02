@@ -61,15 +61,15 @@ void ManualExecutor::add(std::vector<Variant> params, Func callback)
 }
 
 // somehow not possible - due to virtual function in base class - [implicit templates may not be ‘virtual’]
-void ManualExecutor::add(const auto&...args, Func callback)
-{
-	static const int8_t LO_PRI = SCHAR_MIN;
-	static int8_t priority = LO_PRI;
-
-	priority++;
-	std::lock_guard<std::mutex> lock(lock_);
-	//funcs.emplace(priority, std::make_pair(args, std::move(callback)));
-}
+//void ManualExecutor::add(const auto&...args, Func callback)
+//{
+//	static const int8_t LO_PRI = SCHAR_MIN;
+//	static int8_t priority = LO_PRI;
+//
+//	priority++;
+//	std::lock_guard<std::mutex> lock(lock_);
+//	//funcs.emplace(priority, std::make_pair(args, std::move(callback)));
+//}
 
 
 void ManualExecutor::addWithPriority(Func, int8_t priority)
@@ -82,11 +82,10 @@ std::vector<unsigned char>  ManualExecutor::run_queue()
 	Func func;
 	std::vector<unsigned char> result_buffer;
 	size_t amount = getAmount();
-	std::vector<Variant> vp;
+	std::vector<Variant> vparams;
 
 	for(size_t count = 0; count < amount; count++) 
 	{
-		int param;
 		{
 		std::lock_guard<std::mutex> lock(lock_);
 		if (funcs_.empty()) 
@@ -94,40 +93,21 @@ std::vector<unsigned char>  ManualExecutor::run_queue()
 		
 		// fetch params
 		std::pair<std::vector<Variant>, Func> pp = std::move(funcs_.front());
-		//param = pp.first;
-		vp = pp.first;
-		for(auto p: vp) {
-			param = boost::get<int>(p);
-			break; // take first param -- DEBUG
-		}
+		vparams = pp.first;
 
 		// fetch function to run
 		func = pp.second;
+
 		// remove ready to run function from queue
 		funcs_.pop();
 		}
-	
-		//did NOT work
-		//std::vector<char *> _args;
-		//_args.push_back(0);
-		//std::vector<unsigned char> func_result_buffer = func(&_args[0]); 
 
-		std::vector<unsigned char> func_result_buffer = func(vp);
+		// run fetched function
+		std::vector<unsigned char> func_result_buffer = func(vparams);
 
-		// run function from queue
-		//std::vector<unsigned char> func_result_buffer = func(param); //TODO: find a way to remember parameters on func queue, and then add as parameter here
-		
-		//TODO: consider using boost::bind to bind parameters to lambda function
-		// boost::bind<returntype>(func, parameter)();
-		//
-		//std::vector<unsigned char> func_result_buffer = boost::bind<std::vector<unsigned char>>(func, 8)(); 
-		
-
-	
 		// append functions results into result_buffer
 		result_buffer.insert(result_buffer.end(), func_result_buffer.begin(), func_result_buffer.end());
 	}
-
 
 	return result_buffer; 
 }
