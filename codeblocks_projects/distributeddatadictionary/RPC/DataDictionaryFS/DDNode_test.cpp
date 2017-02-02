@@ -491,7 +491,7 @@ BOOST_AUTO_TEST_CASE(CHandlingServerRequestToClients_init)
 }
 
 
-
+/*
 BOOST_AUTO_TEST_CASE(fetchAttributFrom3BFi_diff_order)
 {
 	cout<<"BOOST_AUTO_TEST_CASE( fetchAttributFrom3BFi_diff_order)\n{"<<endl;
@@ -552,7 +552,7 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom3BFi_diff_order)
 
 
 	cout << "BlockRecord size before: " << maxBlockRecordSize << endl;
-	std::string transGuid = "F9C23762ED2823A27E62A64B95C024FF";
+	std::string transGuid = "F7C23762ED2823A27E62A64B95C024FF";
 	BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, FotoAttributName, FotoAttributValue)); 
 	cout << "BlockRecord size after 1 attribut add : " << maxBlockRecordSize << endl;
 	BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName2, attributValue2)); 
@@ -1008,6 +1008,8 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 	cout<<"}"<<endl;
 }
 
+*/
+
 // DEPRECATED - somehow this does NOT release the file - causing next testcases to fail, thus it has been deprecated
 // BOOST_AUTO_TEST_CASE(usingFuturesAsynchronReadFile)
 // {
@@ -1028,8 +1030,9 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 using lambdaparams = std::vector<Variant>; 
 BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 {
-	std::vector<unsigned char> result_buffer;
 	cout << "BOOST_AUTO_TEST_CASE( testClass_collectablefutures )\n{" << endl;
+	
+	std::vector<unsigned char> result_buffer;
 
 	BOOST_TEST_MESSAGE( "Instantiate collectablefutures class" );
 	collectablefutures cf;
@@ -1138,7 +1141,6 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 	//req4.addexecutorfunc( f5 );
 	req4.addexecutorfunc( 8, f5 );
 	
-	//auto f6 = [](const auto&...args){ 	
 	auto f6 = [](std::vector<Variant> vec){ 	
 										//typedef boost::variant<int, float, std::string> Variant;
 										//std::vector<Variant> vec = {args...}; 
@@ -1155,27 +1157,38 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 	};
 		
 	collectablefutures::request req5 = cf.createrequest();
-	//req5.addexecutorfunc( f6 );
 	req5.addexecutorfunc( 10, f6 );
 
-	//auto f7 = [](const auto&...args){ 	
 	auto f7 = [](std::vector<Variant> vec){ 	
-										//typedef boost::variant<int, float, std::string> Variant;
-										//std::vector<Variant> vec = {args...}; 
-										std::vector<unsigned char> result; 
-										cout << "- Hello from executor - function 7 "; 
-										std::cout << ": parameters : ";
-										for(auto a: vec) {
-											std::cout << a << ",";	
-										}
-										std::cout << std::endl;
-										std::string s("HELLO GALAXY"); 
-										result.insert(result.end(),s.begin(), s.end()); 
-										return result; 
+		std::vector<unsigned char> result; 
+		cout << "- Hello from executor - function 7 "; 
+		std::cout << ": parameters : ";
+		for(auto a: vec) {
+			std::cout << a << ",";	
+		}
+		std::cout << std::endl;
+		std::string s("HELLO GALAXY"); 
+		result.insert(result.end(),s.begin(), s.end()); 
+		return result; 
 	};
 
 	collectablefutures::request req6 = cf.createrequest();
-	req6.addexecutorfunc( f7, 10,11,"s" );
+	req6.addexecutorfunc( f7, 10,11,"hello there" );
+
+	auto fnTest = [](std::vector<Variant> vec){ 	
+		std::vector<unsigned char> result; 
+		cout << "- Hello from executor - function fnTest "; 
+		std::cout << ": parameters : ";
+		for(auto a: vec) {
+			std::cout << a << ",";	
+		}
+		std::cout << std::endl;
+		std::string s("HELLO MULTIVERSE"); 
+		result.insert(result.end(),s.begin(), s.end()); 
+		return result; 
+	};
+	collectablefutures::request reqX = cf.createrequest();
+	reqX.addexecutorfunc( fnTest, 20,21,"h" );
 
 
 	std::vector< std::future<std::vector<unsigned char>> >  collectionOfFutureRequests;
@@ -1183,16 +1196,48 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 	cf.runRequest( req4, collectionOfFutureRequests );
 	cf.runRequest( req5, collectionOfFutureRequests );
 	cf.runRequest( req6, collectionOfFutureRequests );
+	cf.runRequest( reqX, collectionOfFutureRequests );
 	auto result_complete = cf.collect(collectionOfFutureRequests);
 
 	BOOST_TEST_MESSAGE( "Verify the result" );
 	std::vector<unsigned char> result_compare;
-	std::string scompare("HELLO EARTHHELLO UNIVERSEHELLO GALAXY"); 
+	std::string scompare("HELLO EARTHHELLO UNIVERSEHELLO GALAXYHELLO MULTIVERSE"); 
 	result_compare.insert(result_compare.end(),scompare.begin(), scompare.end());
 	BOOST_CHECK_MESSAGE(CUtils::showDataBlockDiff(true,true,result_complete, result_compare) == false, "FAIL: result differs from original");
 
-	cout << "}" << endl;
+	/* TODO: find out why multiple use of collectablefuture class instance causes exception memory read
+	BOOST_TEST_MESSAGE( "Try a new collectablefuture instance " );
+	auto fnTest2 = [](std::vector<Variant> vec){ 	
+		std::vector<unsigned char> result; 
+		cout << "- Hello from executor - function fnTest2 "; 
+		std::cout << ": parameters : ";
+		for(auto a: vec) {
+			std::cout << a << ",";	
+		}
+		std::cout << std::endl;
+		std::string s("HELLO MULTIVERSE"); 
+		result.insert(result.end(),s.begin(), s.end()); 
+		return result; 
+	};
+	collectablefutures cf2;
+	collectablefutures::request reqX2 = cf2.createrequest();
+	reqX2.addexecutorfunc( fnTest2, 20,21,"help" );
 
+	BOOST_TEST_MESSAGE( "Run request" );
+	std::vector< std::future<std::vector<unsigned char>> >  collectionOfFutureRequests2;
+	cf2.runRequest( reqX2, collectionOfFutureRequests2 );
+	BOOST_TEST_MESSAGE( "Collect result" );
+	auto result_complete2 = cf2.collect(collectionOfFutureRequests2);
+
+	BOOST_TEST_MESSAGE( "Verify the result" );
+	std::vector<unsigned char> result_compare2;
+	std::string scompare2("HELLO MULTIVERSE"); 
+	result_compare2.insert(result_compare2.end(),scompare2.begin(), scompare2.end());
+	BOOST_CHECK_MESSAGE(CUtils::showDataBlockDiff(true,true,result_complete2, result_compare2) == false, "FAIL: result differs from original");
+
+	*/
+
+	cout << "}" << endl;
 }
 
 template<typename T>
@@ -1201,12 +1246,6 @@ void boring_template_fn(T t){
 	std::cout << identity(t) << std::endl;
 }
 
-
-// this should work in C++17 - however could not get it to work
-// template<typename ...Args>
-// void print_1(Args&&... args) {
-// 	    (std::cout << ... << args) << '\n';
-// }
 
 BOOST_AUTO_TEST_CASE(lambdaWithParameters)
 {
@@ -1393,7 +1432,7 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_using_Futures)
 
 
 		cout << "BlockRecord size before: " << maxBlockRecordSize << endl;
-		std::string transGuid = "F9C23762ED2823A27E62A64B95C024FF";
+		std::string transGuid = "F8C23762ED2823A27E62A64B95C024EE";
 		BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, FotoAttributName, FotoAttributValue)); 
 		cout << "BlockRecord size after 1 attribut add : " << maxBlockRecordSize << endl;
 		BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName2, attributValue2)); 
@@ -1525,7 +1564,7 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_using_Futures)
 
 		// iterate .BFi files - create a promise for handling each .BFi file
 		std::vector< std::future<std::vector<unsigned char>> >  collectionOfFutureRequests;
-/*
+
 
 		// create function for fetching attributs from .BFi file
 		auto fnFetchAllAttributsFromBFiFile = [](std::vector<Variant> vec){ 	
@@ -1537,8 +1576,9 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_using_Futures)
 				std::cout << a << ",";	
 			}
 			std::cout << std::endl;
+			/*
 			cout << "First param : " << boost::get<std::string>(vec[0]) << endl;	
-			boost::filesystem::path currentfile = boost::filesystem::path(boost::get<std::string>(vec[0]));
+			boost::filesystem::path currentfile( boost::filesystem::path(boost::get<std::string>(vec[0])) );
 			cout << "currentfile : " << currentfile.string() << endl;
 			CDataDictionaryControl DDC;
 			std::list<pair<seqSpan, std::vector<assembledElements>>> AttributInblockSequenceFromBFifile;
@@ -1548,32 +1588,67 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_using_Futures)
 			transferBLOB stBlob = DDC.convertToBLOB(AttributInblockSequenceFromBFifile,true);
 			cout << "*}}}" << endl;
 			return stBlob.data;	
+			*/
+			cout << "*}}}" << endl;
+			return result;
+		};
+		
+		
+		//collectablefutures cf;
+
+		//std::string file = "F8C23762ED2823A27E62A64B95C024EE_1.BFi";
+		//collectablefutures::request req = cf.createrequest();
+		//req.addexecutorfunc( fnFetchAllAttributsFromBFiFile, "F8C23762ED2823A27E62A64B95C024EE_1.BFi" );
+		//cf.runRequest( req, collectionOfFutureRequests ); // fetch attributs data from .BFi file 
+
+/*
+	auto fnTest = [](std::vector<Variant> vec){ 	
+			std::vector<unsigned char> result; 
+			cout << "- Hello from executor - function fnTest "; 
+			std::cout << ": parameters : ";
+			for(auto a: vec) {
+				std::cout << a << ",";	
+			}
+			std::cout << std::endl;
+			std::string s("HELLO MULTIVERSE"); 
+			result.insert(result.end(),s.begin(), s.end()); 
+			return result; 
 		};
 
-
+		collectablefutures::request reqX = cf.createrequest();
+		reqX.addexecutorfunc( fnTest, 20,21,"h" );
+	
+		cf.runRequest( reqX, collectionOfFutureRequests );
+	
+		auto result_complete = cf.collect(collectionOfFutureRequests);
+*/
+	
+	/*
 		boost::filesystem::path currentSearchDirectory( boost::filesystem::current_path() );
 		boost::filesystem::recursive_directory_iterator directoryIterator(currentSearchDirectory), eod;
 		n=0;
 		BOOST_FOREACH(boost::filesystem::path const& currentfile, make_pair(directoryIterator, eod))
 		{
-			collectablefutures cf;
 			std::list<pair<seqSpan, std::vector<assembledElements>>> AttributInblockSequenceFromBFifile;
 			if((boost::filesystem::extension(currentfile.string()) == BFI_FILE_EXTENSION)) 
 			{ 
+				cout << "files : " << currentfile.string() << ", ";
 				collectablefutures::request req = cf.createrequest();
 				req.addexecutorfunc( fnFetchAllAttributsFromBFiFile, currentfile.string() );
 				cf.runRequest( req, collectionOfFutureRequests ); // fetch attributs data from .BFi file 
 			}
 		}
-
-*/		
+		cout << endl;	
+*/
 		// not possible yet - since result for each first needs to be sorted
 //		auto result_complete = cf.collect(collectionOfFutureRequests); // should contain complete attribut - combined result from the 3 clients
 
 		n=0;
 		for ( auto &f: collectionOfFutureRequests)
 		{
+			cout << "WAIT for completion of request " << endl;
 			f.wait(); // wait for function in future request to finish
+			cout << "fetch result from request " << endl;
 			auto result_request = f.get(); 
 			// transfer result to a transferBLOB structure
 			transferBLOB stBLOB;

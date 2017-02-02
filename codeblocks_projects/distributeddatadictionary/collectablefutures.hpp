@@ -67,25 +67,16 @@ class ManualExecutor : public cfExecutor
 
 	public:
 	std::map<int8_t, std::pair<std::vector<Variant>, Func> > funcs;
-	//std::map<int8_t, std::pair<int, Func> > funcs;
-	//std::map<int8_t, Func> funcs; // Function container (priority,Func) - added functions to this Executors 
-	//std::map<int8_t, std::pair<va_list, Func> > funcsWparam;
 	ManualExecutor() {}
 	ManualExecutor(ManualExecutor&& other):
 					funcs(std::move(other.funcs))
-//					funcs(std::move(other.funcs)),
-//					funcsWparam(std::move(other.funcsWparam))
 	{}
 	~ManualExecutor() {}
 
-	//std::map<int8_t, std::pair<int, Func> > _funcsWparam;
-	//Maptype m;
-
 	void add(Func callback); 
-	//void add(va_list param, Func callback); 
 	void add(int param, Func callback); 
 	void add(std::vector<Variant> params, Func callback); 
-	//void add(const auto&...args, Func callback);// issue due to [implicit templates may not be ‘virtual’] 
+	//void add(const auto&...args, Func callback); // not possible since base class virtual function can not have implicit types
 
 	void addWithPriority(Func, int8_t priority);
 	int  getAmount() { return funcs.size(); }
@@ -104,8 +95,6 @@ class ManualExecutor : public cfExecutor
  */
 class collectablefutures 
 {
-	//using Func = std::function<std::vector<unsigned char>()>;
-
 	public:
 		enum enumstate { instantiated, preparing, executoradded, running, collecting, finishing, error } eState; 
 		class request
@@ -150,6 +139,7 @@ class collectablefutures
 				{
 					std::vector<Variant> vec = {args...}; 
 					executor.add(vec, std::move(callback));
+					//executor.add(args..., std::move(callback)); // not possible
 					pOwner->eState = executoradded;
 				}
 
@@ -228,6 +218,7 @@ class collectablefutures
 		else {
 			cout << "FAIL: trying to add request with NO executors to request_queue; [" << __FILE__ << ":" << __LINE__ << "] " << endl;
 			bResult=false;
+			throw std::invalid_argument( "trying to add request with NO executors to request_queue" );
 		}
 		return bResult;
 	}

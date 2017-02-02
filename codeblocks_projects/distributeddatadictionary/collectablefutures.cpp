@@ -41,26 +41,18 @@ void ManualExecutor::add(std::vector<Variant> params, Func callback)
 	static const int8_t LO_PRI = SCHAR_MIN;
 	static int8_t priority = LO_PRI;
 
-	priority++;
-	std::lock_guard<std::mutex> lock(lock_);
-
-	for(auto a: params) {
-		std::cout << a << ",";	
+	try{
+		priority++;
+		std::lock_guard<std::mutex> lock(lock_);
+		funcs.emplace(priority, std::make_pair(params, std::move(callback)));
 	}
-	std::cout << std::endl;
-
-	int _param;
-	for(auto p: params) {
-		_param = boost::get<int>(p);
-		break; // take first param -- DEBUG
+	catch(std::exception& e) 
+	{ 
+		cout << "FAIL: exeception when adding function to queue : " << e.what() << endl; 
 	}
-
-
-	//funcs.emplace(priority, std::make_pair(_param, std::move(callback)));
-	funcs.emplace(priority, std::make_pair(params, std::move(callback)));
 }
 
-// somehow not possible - due to virtual function in base class - [implicit templates may not be ‘virtual’]
+// not possible
 //void ManualExecutor::add(const auto&...args, Func callback)
 //{
 //	static const int8_t LO_PRI = SCHAR_MIN;
@@ -68,7 +60,9 @@ void ManualExecutor::add(std::vector<Variant> params, Func callback)
 //
 //	priority++;
 //	std::lock_guard<std::mutex> lock(lock_);
-//	//funcs.emplace(priority, std::make_pair(args, std::move(callback)));
+//	
+//	std::vector<Variant> params = {args...}; 
+//	funcs.emplace(priority, std::make_pair(params, std::move(callback)));
 //}
 
 

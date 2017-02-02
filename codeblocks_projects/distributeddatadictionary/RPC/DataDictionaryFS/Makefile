@@ -1,4 +1,4 @@
-TEST=./DDNode_test --log_level=message
+TEST=./DDNode_test --log_level=message 
 TESTFLAGS= --report_format=XML --report_level=detailed 
 TESTFLAGS2= --report_level=detailed  
 TESTFLAGS3= --report_format=XML --report_level=detailed 
