@@ -118,6 +118,15 @@ else
   echo "--  this will restart portmapper and your server should then work"
 fi
 
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 valgrind* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install valgrind"
+  sudo apt-fast install -yq valgrind 
+  echo " - done."
+else
+  echo "- valgrind already installed"
+fi
+
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 i3-wm* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install window manager i3"
