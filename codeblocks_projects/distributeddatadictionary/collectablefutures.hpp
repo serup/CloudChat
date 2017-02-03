@@ -257,19 +257,25 @@ class collectablefutures
 		// wait for ALL requests futures to be done
 		for (auto &f : collectionOfFutureRequests)
 		{
+			cout << "wait for function to finish" << endl;
 			f.wait(); // wait for future to finish its job
+			cout << "function has finished" << endl;
 			// collect the results
-			auto result_request = f.get();
+			std::vector<unsigned char> result_request;
+			result_request = f.get();
 			if(result_request.size() <= 0)
 				cout << "WARNING: No result data from request " << endl;
-			else
+			else {
+				cout << "add result to result_complete" << endl;
 				result_complete.insert(result_complete.end(), result_request.begin(), result_request.end());	
+				cout << "result was added to result_complete" << endl;
+			}
 		}
 
 		}catch(...) { cout << "FAIL: collect result" << endl; }
 
 		// now all requests future functions have finished, and result is appended to result_complete
-		return result_complete;
+		return std::move(result_complete);
 	}
 
 	enumstate getstate()

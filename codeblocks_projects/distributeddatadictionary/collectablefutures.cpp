@@ -48,8 +48,8 @@ void ManualExecutor::add(std::vector<Variant> params, Func callback)
 	}
 	catch(std::exception& e) 
 	{ 
-		//cout << "FAIL: exeception when adding function to queue : " << e.what() << endl; 
-		cout << "FAIL: exeception when adding function to queue : " << endl; 
+		cout << "FAIL: exeception when adding function to queue : " << e.what() << endl; 
+		//BOOST_FAIL("FAIL: exeception when adding function to queue");
 	}
 }
 
