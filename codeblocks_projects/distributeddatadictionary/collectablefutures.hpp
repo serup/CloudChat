@@ -60,16 +60,15 @@ class cfExecutor {
 class ManualExecutor : public cfExecutor
 {
 
-	std::mutex lock_;             // avoid multiple entity updating the function container
-	////std::queue<Func> funcs_;      // functions queued for running
-	//std::queue<std::pair<int,Func>> funcs_;      // functions queued for running
-	std::queue<std::pair<std::vector<Variant>,Func>> funcs_;      // functions queued for running
 
 	public:
-	std::map<int8_t, std::pair<std::vector<Variant>, Func> > funcs;
+	std::mutex lock_;             // avoid multiple entity updating the function container
+	std::queue<std::pair<std::vector<Variant>,Func>> funcs_;        // functions queued for running
+	std::map<int8_t, std::pair<std::vector<Variant>, Func> > funcs; // actual functions added to this request
 	ManualExecutor() {}
 	ManualExecutor(ManualExecutor&& other):
-					funcs(std::move(other.funcs))
+					funcs(std::move(other.funcs)),
+					funcs_(std::move(other.funcs_))
 	{}
 	~ManualExecutor() {}
 
@@ -99,14 +98,15 @@ class collectablefutures
 		enum enumstate { instantiated, preparing, executoradded, running, collecting, finishing, error } eState; 
 		class request
 		{
-			collectablefutures * pOwner;
 
 			public:
+				collectablefutures * pOwner;
 				ManualExecutor executor;
 				std::promise<std::vector<unsigned char> > p;
 				request(request&& other):
 					p(std::move(other.p)),
-					executor(std::move(other.executor))
+					executor(std::move(other.executor)),
+					pOwner(std::move(other.pOwner))
 				{}
 				request()
 				{}
@@ -119,20 +119,23 @@ class collectablefutures
 				
 				void setowner(collectablefutures* parentclass)
 				{
-					pOwner = parentclass;
+					if(NULL != parentclass)
+						pOwner = parentclass;
 				}
 
 
 				void addexecutorfunc(Func callback)
 				{
 					executor.add(std::move(callback));
-					pOwner->eState = executoradded;
+					if(NULL != pOwner)
+						pOwner->eState = executoradded;
 				}
 
 				void addexecutorfunc(int param, Func callback)
 				{
 					executor.add(param, std::move(callback));
-					pOwner->eState = executoradded;
+					if(NULL != pOwner)
+						pOwner->eState = executoradded;
 				}
 
 				void addexecutorfunc( Func callback, const auto&...args )
@@ -140,7 +143,8 @@ class collectablefutures
 					std::vector<Variant> vec = {args...}; 
 					executor.add(vec, std::move(callback));
 					//executor.add(args..., std::move(callback)); // not possible
-					pOwner->eState = executoradded;
+					if(NULL != pOwner)
+						pOwner->eState = executoradded;
 				}
 
 				int getAmountExecutorFunctions()
@@ -166,18 +170,22 @@ class collectablefutures
 					// start the Executor - running ALL functions attached to this request, and
 					// results from the priority run functions and appended all the functions results
 					// into the result_buffer
+					std::vector<unsigned char> result_buffer = std::vector<unsigned char>();
 					try
 					{
-						std::vector<unsigned char> result_buffer;
 						if(runExec(result_buffer) != false) {		
 							pOwner->eState = collecting;
 							p.set_value(std::move(result_buffer)); // transfere result to promise
 						}
 						else
-							pOwner->eState = error;
+						{
+							if(NULL!=pOwner)
+								pOwner->eState = error;
+						}
 					}
 					catch(...)
 					{
+						cout << "FAIL: trying to process request [" << __FILE__ << ":" << __LINE__ << "] " << endl;
 						p.set_exception(std::current_exception());
 					}
 				}
@@ -245,17 +253,22 @@ class collectablefutures
 	{
 		std::vector<unsigned char> result_complete;
 
+		try {
 		// wait for ALL requests futures to be done
 		for (auto &f : collectionOfFutureRequests)
 		{
 			f.wait(); // wait for future to finish its job
 			// collect the results
 			auto result_request = f.get();
-			result_complete.insert(result_complete.end(), result_request.begin(), result_request.end());	
+			if(result_request.size() <= 0)
+				cout << "WARNING: No result data from request " << endl;
+			else
+				result_complete.insert(result_complete.end(), result_request.begin(), result_request.end());	
 		}
 
+		}catch(...) { cout << "FAIL: collect result" << endl; }
+
 		// now all requests future functions have finished, and result is appended to result_complete
-		
 		return result_complete;
 	}
 
@@ -278,6 +291,7 @@ class collectablefutures
 		request req;
 		request_queue.push(req); // make sure a pop() is not waiting when destruction is at hand ;-)
 		reqthread.join();        // this is needed otherwise exception will happen when class is destroyed - thread also needs to be closed proper
+		boost::this_thread::sleep( boost::posix_time::milliseconds(100) ); // give time to close down 
 	}
 };
 

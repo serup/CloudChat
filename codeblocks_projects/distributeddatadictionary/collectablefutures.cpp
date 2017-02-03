@@ -48,7 +48,8 @@ void ManualExecutor::add(std::vector<Variant> params, Func callback)
 	}
 	catch(std::exception& e) 
 	{ 
-		cout << "FAIL: exeception when adding function to queue : " << e.what() << endl; 
+		//cout << "FAIL: exeception when adding function to queue : " << e.what() << endl; 
+		cout << "FAIL: exeception when adding function to queue : " << endl; 
 	}
 }
 
@@ -74,13 +75,14 @@ void ManualExecutor::addWithPriority(Func, int8_t priority)
 std::vector<unsigned char>  ManualExecutor::run_queue()
 {
 	Func func;
-	std::vector<unsigned char> result_buffer;
+	std::vector<unsigned char> result_buffer = std::vector<unsigned char>(); 
 	size_t amount = getAmount();
 	std::vector<Variant> vparams;
 
+	bool bIsOK=true;
 	for(size_t count = 0; count < amount; count++) 
 	{
-		{
+		try{
 		std::lock_guard<std::mutex> lock(lock_);
 		if (funcs_.empty()) 
 			break;
@@ -94,13 +96,22 @@ std::vector<unsigned char>  ManualExecutor::run_queue()
 
 		// remove ready to run function from queue
 		funcs_.pop();
-		}
 
 		// run fetched function
 		std::vector<unsigned char> func_result_buffer = func(vparams);
 
 		// append functions results into result_buffer
-		result_buffer.insert(result_buffer.end(), func_result_buffer.begin(), func_result_buffer.end());
+		if(func_result_buffer.size() > 0)
+			result_buffer.insert(result_buffer.end(), func_result_buffer.begin(), func_result_buffer.end());
+		else
+			cout << "WARNING: no result data from request function" << endl;
+		}
+		catch(...) 
+		{
+			bIsOK=false;
+			cout << "FAIL: trying to run queue of request [" << __FILE__ << ":" << __LINE__ << "] " << endl;
+		}
+		if(!bIsOK) break;
 	}
 
 	return result_buffer; 
