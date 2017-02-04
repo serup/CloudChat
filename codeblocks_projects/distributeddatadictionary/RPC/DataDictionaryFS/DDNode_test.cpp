@@ -223,6 +223,7 @@ BOOST_AUTO_TEST_CASE(serverclient_udp)
 	}
 
 	delete pserver;
+	boost::this_thread::sleep( boost::posix_time::milliseconds(10) ); // above functions should not take longer to complete - this is to avoid cluttering up output
 	cout<<"}"<<endl;   
 }
 
@@ -381,6 +382,7 @@ BOOST_AUTO_TEST_CASE(classRPCclient)
   		     	) == true );
 
 	}
+	boost::this_thread::sleep( boost::posix_time::milliseconds(10) ); // above functions should not take longer to complete - this is to avoid cluttering up output
 	cout<<"/*}}}*/"<<endl;   
 
 	cout<<"}"<<endl;   
@@ -389,7 +391,7 @@ BOOST_AUTO_TEST_CASE(classRPCclient)
 BOOST_AUTO_TEST_CASE(RequestResponseMethod)
 {
 	cout<<"BOOST_AUTO_TEST_CASE( RequestResponseMethod)\n{"<<endl;    
-
+	{
 	// setup a request
 	DED_START_ENCODER(dedptr);
 	DED_PUT_STRUCT_START( dedptr, "DDNodeRequest" );
@@ -406,7 +408,8 @@ BOOST_AUTO_TEST_CASE(RequestResponseMethod)
 
 	// send request to mock server
 	BOOST_CHECK( client.sendRequestTo("localhost", dedptr,123,SEARCH) == true );
- 
+	} 
+	boost::this_thread::sleep( boost::posix_time::milliseconds(10) ); // above functions should not take longer to complete - this is to avoid cluttering up output
 	cout<<"}"<<endl;   
 }
 
@@ -466,8 +469,8 @@ BOOST_AUTO_TEST_CASE(RPCclient_connect_to_Server)
 	BOOST_CHECK( client.sendRequestTo("localhost", dedptr,421,CONNECT) == true );
 
 	}
+	boost::this_thread::sleep( boost::posix_time::milliseconds(1000) ); // above functions should not take longer to complete - this is to avoid cluttering up output
 	cout<<"/*}}}*/"<<endl;   
-
 
 	cout << "}" << endl;
 }
@@ -478,15 +481,18 @@ BOOST_AUTO_TEST_CASE(RPCclient_connect_to_Server)
 BOOST_AUTO_TEST_CASE(CHandlingServerRequestToClients_init)
 {
 	cout << "BOOST_AUTO_TEST_CASE( CHandlingServerRequestToClients_init )\n{" << endl;
+	{
 	CHandlingServerRequestToClients SRC;	
 
 	// setup a request - simulating a request from server
+	BOOST_TEST_MESSAGE( "setup a request - simulating a request from server" );
 	DDRequest req = createDummyDDRequest();
 	DED_PUT_DATA_IN_DECODER(decoder_ptr,(unsigned char*)req.ded.data.data_val, req.ded.data.data_len);
 
 	// test handleRequest function
+	BOOST_TEST_MESSAGE( "Verify handleRequest function " );
 	BOOST_CHECK(SRC.handlingRequest(decoder_ptr) == false);
-
+	}
 	cout << "}" << endl;
 }
 
@@ -1034,11 +1040,11 @@ using lambdaparams = std::vector<Variant>;
 BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 {
 	cout << "BOOST_AUTO_TEST_CASE( testClass_collectablefutures )\n{" << endl;
-	
-	std::vector<unsigned char> result_buffer;
-/*
-	BOOST_TEST_MESSAGE( "Instantiate collectablefutures class" );
 	collectablefutures cf;
+/*	
+	std::vector<unsigned char> result_buffer;
+
+	BOOST_TEST_MESSAGE( "Instantiate collectablefutures class" );
 	BOOST_REQUIRE(cf.getstate() == collectablefutures::enumstate::instantiated);
 
 	BOOST_TEST_MESSAGE( "create request" );
@@ -1135,8 +1141,8 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 	auto resultimage = future_result_image.get();
 	BOOST_TEST_MESSAGE( "7. verify the result" );
 	BOOST_CHECK_MESSAGE(CUtils::showDataBlockDiff(true,true,resultimage, origFotoAttributValue) == false, "FAIL: result differs from original");
-
-	BOOST_TEST_MESSAGE( "Try to create 2 requests, each having one function,  and waiting for future result : " );
+*/
+	BOOST_TEST_MESSAGE( "Try to create multiple requests, each having one function,  and waiting for future result : " );
 
 	Func f5 = [](lambdaparams i){ std::vector<unsigned char> result; cout << "- Hello from executor - function 5  " << endl; std::string s("HELLO EARTH"); result.insert(result.end(),s.begin(), s.end()); return result; };
 
@@ -1210,7 +1216,9 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 	result_compare.insert(result_compare.end(),scompare.begin(), scompare.end());
 	BOOST_CHECK_MESSAGE(CUtils::showDataBlockDiff(true,true,result_complete, result_compare) == false, "FAIL: result differs from original");
 	}catch(...){ cout << "Houston we have a problem " << endl; }
-*/
+
+
+/////////
 	BOOST_TEST_MESSAGE( "Try a new collectablefuture instance " );
 
 	// TODO: find out why multiple use of collectablefuture class instance causes exception memory read
@@ -1235,14 +1243,14 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 	cf2.runRequest( reqX2, collectionOfFutureRequests2 );
 	BOOST_TEST_MESSAGE( "Collect result" );
 	std::vector<unsigned char> result_complete2 = cf2.collect(collectionOfFutureRequests2);
-/*
+
 	BOOST_TEST_MESSAGE( "Verify the result" );
 	std::vector<unsigned char> result_compare2;
 	std::string scompare2("HELLO MULTIVERSE"); 
 	result_compare2.insert(result_compare2.end(),scompare2.begin(), scompare2.end());
 	BOOST_CHECK_MESSAGE(CUtils::showDataBlockDiff(true,true,result_complete2, result_compare2) == false, "FAIL: result differs from original");
 
-*/	
+	
 
 	cout << "}" << endl;
 }
