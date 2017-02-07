@@ -2,6 +2,7 @@
     echo "" | sudo tee --append /etc/hosts 2> /dev/null && \
     echo "# Host config for Puppet Master and Agent Nodes" | sudo tee --append /etc/hosts 2> /dev/null && \
     echo "192.168.31.8    dops.puppet.master               puppet" | sudo tee --append /etc/hosts 2> /dev/null && \
+    echo "192.168.31.13   elasticsearch.dops.scanva.com    elasticsearch" | sudo tee --append /etc/hosts 2> /dev/null && \
     echo "192.168.31.14   gerrit.dops.scanva.com           gerrit" | sudo tee --append /etc/hosts 2> /dev/null && \
     echo "192.168.31.15   jekyll.dops.scanva.com           jekyll" | sudo tee --append /etc/hosts 2> /dev/null && \
     echo "192.168.31.16   nginx.dops.scanva.com            nginx" | sudo tee --append /etc/hosts 2> /dev/null && \

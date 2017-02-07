@@ -8,6 +8,16 @@
       ":memory": 512,
       ":hostname" :  "puppet.dev.dops.scanva.com"
     },
+    "elasticsearch": {
+      "nodeOS": "mwe/vivid32",
+      "bootstrap": "bootstrap-node-elasticsearch.sh",
+      ":ip": "192.168.31.13",
+      "ports": [
+        {":host": 9200, ":guest": 9200, ":id": "elasticsearch"}
+	  ],
+      ":memory": 512,
+      ":hostname" :  "elasticsearch.dops.scanva.com"
+    },
     "gerrit": {
       "nodeOS": "mwe/vivid32",
       "bootstrap": "bootstrap-node-gerrit.sh",
