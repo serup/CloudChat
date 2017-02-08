@@ -64,6 +64,7 @@ fi
 cd elasticsearch-1.7.2
 echo "start elastic search"
 echo "**************************************************************************************************************"
+echo " info can be found on : http://www.elasticsearchtutorial.com/elasticsearch-in-5-minutes.html "
 echo "elasticsearch should now be running on http:://localhost:9200 or [http://elasticsearch.dops.scanva.com:9200/] "
 echo "**************************************************************************************************************"
 bin/elasticsearch
