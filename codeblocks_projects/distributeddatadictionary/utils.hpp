@@ -205,7 +205,7 @@ class CUtils
 				double x = (i - (size));
 				x = x*step;
 				// EQUATION
-				double value = -x;
+				double value = x*x;
 				/// EQUATION
 				value = value/step;
 				values[i] = int(round(value));
