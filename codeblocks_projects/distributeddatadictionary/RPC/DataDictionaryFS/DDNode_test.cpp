@@ -1217,7 +1217,8 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 	BOOST_CHECK_MESSAGE(CUtils::showDataBlockDiff(true,true,result_complete, result_compare) == false, "FAIL: result differs from original");
 	}catch(...){ cout << "Houston we have a problem " << endl; }
 
-
+	CUtils::terminalGraph(); // tst
+/*
 /////////
 	BOOST_TEST_MESSAGE( "Try a new collectablefuture instance " );
 
@@ -1250,7 +1251,7 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 	result_compare2.insert(result_compare2.end(),scompare2.begin(), scompare2.end());
 	BOOST_CHECK_MESSAGE(CUtils::showDataBlockDiff(true,true,result_complete2, result_compare2) == false, "FAIL: result differs from original");
 
-	
+*/	
 
 	cout << "}" << endl;
 }

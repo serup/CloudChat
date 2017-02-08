@@ -61,3 +61,4 @@ void CUtils::parallel_for_each(Iterator first,Iterator last,Func f)
 	}
 	bgtask.get();   
 }
+

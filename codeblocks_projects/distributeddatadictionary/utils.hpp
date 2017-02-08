@@ -15,8 +15,7 @@
 #include <type_traits>
 #include <vector>
 #include <tuple>
-
-
+#include <cmath>
 using namespace std;
 
 class CUtils
@@ -176,8 +175,107 @@ class CUtils
 		
 			return bFoundError;
 		}
+
+		////////////////////////////////////////////
+		// TERMINAL GRAPH FEATURE
+		////////////////////////////////////////////
+		// snippet from : https://github.com/JamezQ/cli-graph/blob/master/graph.cpp
+		// info : https://youtu.be/xGDd9higrzM
+		//
+		//
+		static double round(double number)
+		{
+			  return number < 0.0 ? ceil(number - 0.5) : floor(number + 0.5);
+		}
+
+		static void terminalGraph()
+		{
+			static string axis = "+ ";
+			static string line = "# ";
+			static string graph = ". ";
+
+			int size = 15;
+			double step = (1.0/10);
+
+			int *values = new int[size+size+1];
+
+			cout << "terminal graph: " << endl;
+			cout << "*{{{" << endl;
+			for(int i = 0;i< size+size+1;++i) {
+				double x = (i - (size));
+				x = x*step;
+				// EQUATION
+				double value = -x;
+				/// EQUATION
+				value = value/step;
+				values[i] = int(round(value));
+			}
+			// cout << "TABLE:" << endl;
+			// for(int i = 0; i < size+size+1;++i) {
+			//   cout << (i - (size)) << " : " << values[i] << endl;
+			// }
+			////for(int i = 0; i < size+size+1;++i) {
+			////	cout << endl;
+			////}
+			for(int i = 0;i < size;++i) {
+
+				for(int b = 0; b < size;++b) {
+					if(size - i == values[b]) 
+						cout << line;
+					else 
+						cout << graph;
+				}
+
+				if(size -i == values[size]) 
+					cout << line;
+				else
+					cout << axis;
+
+				for(int b = 0; b < size;++b) {
+					if(size - i == values[b+size+1])
+						cout << line;
+					else
+						cout << graph;
+				}
+				cout << endl;
+			}
+			for(int i = 0;i < size*2+1;++i) {
+				if( 0 == values[i] )
+					cout << line;
+				else
+					cout << axis;
+			}
+			cout << endl;
+
+			for(int i = 0;i < size;++i) {
+				for(int b = 0; b < size;++b) {
+					if(0-i-1 == values[b])
+						cout << line;
+					else
+						cout << graph;
+				}
+				if(0 -i-1 == values[size]) 
+					cout << line;
+				else
+					cout << axis;
+
+				for(int b = 0; b < size;++b) {
+					if(0-i-1 == values[b+size+1])
+						cout << line;
+					else
+						cout << graph;
+				}
+				cout << endl;
+			}
+
+			cout << "*}}}" << endl;
+			delete[] values;
+		}	
+		////////////////////////////////////////////
+
 };
 
+// TODO: TBD
 ///////////////////////////////////////
 // variadic params in lambda handling
 // indices are a classic
