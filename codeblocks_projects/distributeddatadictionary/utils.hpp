@@ -188,19 +188,42 @@ class CUtils
 			  return number < 0.0 ? ceil(number - 0.5) : floor(number + 0.5);
 		}
 
+		static int fixtostep(double n)
+		{
+			double step = (1.0);
+			return int(round(n/step)); 
+		}
+
 		static void terminalGraph()
 		{
 			static string axis = "+ ";
 			static string line = "# ";
 			static string graph = ". ";
+   
+			std::vector<int> values;
+			values.push_back( fixtostep(4.228) ); 
+			values.push_back( fixtostep(4.314) );
+			values.push_back( fixtostep(4.350) );
+			values.push_back( fixtostep(4.357) );
+			values.push_back( fixtostep(4.361) );
+			values.push_back( fixtostep(4.364) );
+			values.push_back( fixtostep(4.368) );
+			values.push_back( fixtostep(4.373) );
+			values.push_back( fixtostep(4.376) );
+			values.push_back( fixtostep(4.379) );
+			values.push_back( fixtostep(4.383) );
+			values.push_back( fixtostep(4.387) );
+			values.push_back( fixtostep(4.390) );
+			values.push_back( fixtostep(4.393) );
+			values.push_back( fixtostep(4.397) );
+			values.push_back( fixtostep(4.402) );
+			int size = values.size();
 
-			int size = 15;
-			double step = (1.0/10);
-
-			int *values = new int[size+size+1];
 
 			cout << "terminal graph: " << endl;
 			cout << "*{{{" << endl;
+
+		/*
 			for(int i = 0;i< size+size+1;++i) {
 				double x = (i - (size));
 				x = x*step;
@@ -210,6 +233,9 @@ class CUtils
 				value = value/step;
 				values[i] = int(round(value));
 			}
+*/
+
+			
 			// cout << "TABLE:" << endl;
 			// for(int i = 0; i < size+size+1;++i) {
 			//   cout << (i - (size)) << " : " << values[i] << endl;
@@ -217,6 +243,8 @@ class CUtils
 			////for(int i = 0; i < size+size+1;++i) {
 			////	cout << endl;
 			////}
+		
+
 			for(int i = 0;i < size;++i) {
 
 				for(int b = 0; b < size;++b) {
@@ -269,7 +297,7 @@ class CUtils
 			}
 
 			cout << "*}}}" << endl;
-			delete[] values;
+			//delete[] values;
 		}	
 		////////////////////////////////////////////
 
