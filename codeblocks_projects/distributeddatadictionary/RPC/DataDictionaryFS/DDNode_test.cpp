@@ -1253,6 +1253,7 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 	result_compare2.insert(result_compare2.end(),scompare2.begin(), scompare2.end());
 	BOOST_CHECK_MESSAGE(CUtils::showDataBlockDiff(true,true,result_complete2, result_compare2) == false, "FAIL: result differs from original");
 
+	BOOST_TEST_MESSAGE( "Again Try yet a new collectablefuture instance " );
 
 
 	Func fnTest3 = [](std::vector<Variant> vec){ 	
@@ -1267,11 +1268,22 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 		result.insert(result.end(),s.begin(), s.end()); 
 		return result; 
 	};
-	//collectablefutures cf3;
+	collectablefutures cf3;
 
-	//collectablefutures::request reqX3 = cf3.createrequest();
-	//reqX3.addexecutorfunc( fnTest3, 43,41,"Heeelp" );
+	collectablefutures::request reqX3 = cf3.createrequest();
+	reqX3.addexecutorfunc( fnTest3, 43,41,"Heeelp" );
+	BOOST_TEST_MESSAGE( "Run request" );
+	std::vector< std::future<std::vector<unsigned char>> >  collectionOfFutureRequests3;
+	cf3.runRequest( reqX3, collectionOfFutureRequests3 );
+	BOOST_TEST_MESSAGE( "Collect result" );
+	std::vector<unsigned char> result_complete3 = cf3.collect(collectionOfFutureRequests3);
 	
+	BOOST_TEST_MESSAGE( "Verify the result" );
+	std::vector<unsigned char> result_compare3;
+	std::string scompare3("HELLO miniverse"); 
+	result_compare3.insert(result_compare3.end(),scompare3.begin(), scompare3.end());
+	BOOST_CHECK_MESSAGE(CUtils::showDataBlockDiff(true,true,result_complete3, result_compare3) == false, "FAIL: result differs from original");
+
 	cout << "}" << endl;
 }
 
