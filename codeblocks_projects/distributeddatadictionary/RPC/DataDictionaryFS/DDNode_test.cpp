@@ -1142,17 +1142,16 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 	BOOST_TEST_MESSAGE( "7. verify the result" );
 	BOOST_CHECK_MESSAGE(CUtils::showDataBlockDiff(true,true,resultimage, origFotoAttributValue) == false, "FAIL: result differs from original");
 */
+
+	/*
 	BOOST_TEST_MESSAGE( "Try to create multiple requests, each having one function,  and waiting for future result : " );
 
 	Func f5 = [](lambdaparams i){ std::vector<unsigned char> result; cout << "- Hello from executor - function 5  " << endl; std::string s("HELLO EARTH"); result.insert(result.end(),s.begin(), s.end()); return result; };
 
 	collectablefutures::request req4 = cf.createrequest();
-	//req4.addexecutorfunc( f5 );
 	req4.addexecutorfunc( 8, f5 );
 	
 	auto f6 = [](std::vector<Variant> vec){ 	
-										//typedef boost::variant<int, float, std::string> Variant;
-										//std::vector<Variant> vec = {args...}; 
 										std::vector<unsigned char> result; 
 										cout << "- Hello from executor - function 6 "; 
 										std::cout << ": parameters : ";
@@ -1218,7 +1217,9 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 	}catch(...){ cout << "Houston we have a problem " << endl; }
 
 	CUtils::terminalGraph(); // tst
-/*
+
+	*/
+
 /////////
 	BOOST_TEST_MESSAGE( "Try a new collectablefuture instance " );
 
@@ -1236,6 +1237,7 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 		return result; 
 	};
 	collectablefutures cf2;
+
 	collectablefutures::request reqX2 = cf2.createrequest();
 	reqX2.addexecutorfunc( fnTest2, 20,21,"help" );
 	
@@ -1251,8 +1253,25 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 	result_compare2.insert(result_compare2.end(),scompare2.begin(), scompare2.end());
 	BOOST_CHECK_MESSAGE(CUtils::showDataBlockDiff(true,true,result_complete2, result_compare2) == false, "FAIL: result differs from original");
 
-*/	
 
+
+	Func fnTest3 = [](std::vector<Variant> vec){ 	
+		std::vector<unsigned char> result = std::vector<unsigned char>(); 
+		cout << "- Hello from executor - function fnTest3 "; 
+		std::cout << ": parameters : ";
+		for(auto a: vec) {
+			std::cout << a << ",";	
+		}
+		std::cout << std::endl;
+		std::string s("HELLO miniverse"); 
+		result.insert(result.end(),s.begin(), s.end()); 
+		return result; 
+	};
+	//collectablefutures cf3;
+
+	//collectablefutures::request reqX3 = cf3.createrequest();
+	//reqX3.addexecutorfunc( fnTest3, 43,41,"Heeelp" );
+	
 	cout << "}" << endl;
 }
 

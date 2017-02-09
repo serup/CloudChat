@@ -58,20 +58,37 @@ class thread_safe_queue
 		cndSignalQueuePush.notify_one();	
 		pthread_mutex_unlock(&m_mutex);
 	}
-	T pop() {
-			//std::cout << "waiting inside pop()" << std::endl;
+//	T pop() {
+//			//std::cout << "waiting inside pop()" << std::endl;
+//		pthread_mutex_lock(&m_mutex);
+//		while (m_queue.size() == 0 && !bDestroy) {
+//			pthread_cond_wait(&m_condv, &m_mutex);
+//		}
+//
+//		try{
+//		T& _item = m_queue.front();
+//		T itemcpy = std::move(_item);
+//
+//		m_queue.pop();
+//		pthread_mutex_unlock(&m_mutex);
+//		cndSignalQueuePop.notify_one();	
+//		return itemcpy;
+//		}catch(...) { T dummy; return dummy; }
+//	}	
+	T pop(bool &bResult) {
+		try {
 		pthread_mutex_lock(&m_mutex);
 		while (m_queue.size() == 0 && !bDestroy) {
 			pthread_cond_wait(&m_condv, &m_mutex);
 		}
-	
 		T& _item = m_queue.front();
 		T itemcpy = std::move(_item);
-
 		m_queue.pop();
+		if(bDestroy) bResult=false;
 		pthread_mutex_unlock(&m_mutex);
 		cndSignalQueuePop.notify_one();	
 		return itemcpy;
+		}catch(...) { bResult=false; T dummy; return dummy; }
 	}
 	int size() {
 		pthread_mutex_lock(&m_mutex);

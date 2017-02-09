@@ -202,10 +202,12 @@ class collectablefutures
 
 	void req_thread()
 	{
+		bool bErrItem=false;
 		while(!done)
 		{
-			request req = request_queue.pop();
-			req.process();
+			request req = request_queue.pop(bErrItem);
+			if(!bErrItem && !done)
+				req.process();
 		}
 	}
 
@@ -259,9 +261,9 @@ class collectablefutures
 		for (auto &f : collectionOfFutureRequests)
 		{
 			//cout << "wait for function to finish" << endl;
-			BOOST_LOG_TRIVIAL(trace)	<< "[collect] wait start ";
+			BOOST_LOG_TRIVIAL(trace)	<< "[collect] wait start "<< endl;
 			f.wait(); // wait for future to finish its job
-			BOOST_LOG_TRIVIAL(trace)	<< "[collect] wait done ";
+			BOOST_LOG_TRIVIAL(trace)	<< "[collect] wait done " << endl;
 			//cout << "function has finished" << endl;
 			// collect the results
 			std::vector<unsigned char> result_request;
@@ -269,12 +271,12 @@ class collectablefutures
 			if(result_request.size() <= 0)
 				cout << "WARNING: No result data from request " << endl;
 			else {
-				BOOST_LOG_TRIVIAL(trace)	<< "[collect] add to result ";
+				BOOST_LOG_TRIVIAL(trace)	<< "[collect] add to result " << endl;
 				//cout << " +>";
 				//cout << "add result to result_complete" << endl;
 				result_complete.insert(result_complete.end(), result_request.begin(), result_request.end());	
 				//cout << "result was added to result_complete" << endl;
-				BOOST_LOG_TRIVIAL(trace)	<< "[collect] add to result complete ";
+				BOOST_LOG_TRIVIAL(trace)	<< "[collect] add to result complete " << endl;
 				//cout << "<+ ";
 			}
 		}
