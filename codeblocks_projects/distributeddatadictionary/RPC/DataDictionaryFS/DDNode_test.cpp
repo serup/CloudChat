@@ -1601,7 +1601,7 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_using_Futures)
 		cout << "________________________________________" << endl;
 
 		cout << "*** SIMULATE creating Promises for .BFi file's from RPC's and get Future results when ready" << endl;
-		cout << "/*{{{*/" << endl;
+		//cout << "/*{{{*/" << endl;
 		std::string attributToFetch = transGuid + "./profile/foto";
 		std::vector<std::list< pair<seqSpan, std::vector<assembledElements>>>> resultFromRPCclients (3); // testcase has only 3 virtual RPCclients delivering results
 		
@@ -1650,8 +1650,7 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_using_Futures)
 //		auto result_complete = cf.collect(collectionOfFutureRequests); // should contain complete attribut - combined result from the 3 clients
 			
 		
-		cout << "/*}}}*/" << endl;
-        cout << "*** SIMULATE end ***" << endl;
+		//cout << "/*}}}*/" << endl;
 
 		// wait for all request to be finished before handling results - otherwise it could mess up output
 		for ( auto &f: collectionOfFutureRequests)
@@ -1707,6 +1706,7 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_using_Futures)
 
 		}
 		cout << "/*}}}*/" << endl;
+        cout << "*** SIMULATE end ***" << endl;
 
 		cout << "*** Merge retrieved RPCclient results with others " << endl;
 		std::list< pair<seqSpan, std::vector<assembledElements>> > totallistOfAssembledAttributes;
