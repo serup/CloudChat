@@ -118,6 +118,33 @@ else
   echo "--  this will restart portmapper and your server should then work"
 fi
 
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 htop* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install linux performance monitor htop "
+  sudo apt-fast install -yq htop 
+  echo " - done."
+else
+  echo "- linux console htop already installed"
+fi
+
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 terminology* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install linux console for graphics - terminology"
+  sudo apt-fast install -yq terminology 
+  echo " - done."
+else
+  echo "- linux console terminology already installed"
+fi
+
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 fbi* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install graphics feature for linux console - fbi"
+  sudo apt-fast install -yq fbi 
+  echo " - done."
+else
+  echo "- linux console graphics feature fbi already installed - use ctrl+alt+F#, then fbi image, and ctrl+alt+F7 to get back"
+fi
+
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 valgrind* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install valgrind"

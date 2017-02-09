@@ -1222,7 +1222,6 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 /////////
 	BOOST_TEST_MESSAGE( "Try a new collectablefuture instance " );
 
-	// TODO: find out why multiple use of collectablefuture class instance causes exception memory read
 	Func fnTest2 = [](std::vector<Variant> vec){ 	
 		std::vector<unsigned char> result = std::vector<unsigned char>(); 
 		cout << "- Hello from executor - function fnTest2 "; 
@@ -1614,38 +1613,47 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_using_Futures)
 
 		// create function for fetching attributs from .BFi file
 		auto fnFetchAllAttributsFromBFiFile = [](std::vector<Variant> vec){ 	
-			std::vector<unsigned char> result; 
-			cout << "- Hello from executor - function fnFetchAllAttributsFromBFiFile "; 
+			//std::vector<unsigned char> result; 
+			//cout << "- Hello from executor - function fnFetchAllAttributsFromBFiFile "; 
 			cout << "*{{{" << endl;
-			std::cout << "parameters : ";
-			for(auto a: vec) {
-				std::cout << a << ",";	
-			}
-			std::cout << std::endl;
-			/*
-			cout << "First param : " << boost::get<std::string>(vec[0]) << endl;	
+			//std::cout << "parameters : ";
+			//for(auto a: vec) {
+			//	std::cout << a << ",";	
+			//}
+			//std::cout << std::endl;
+			
+			//cout << "First param : " << boost::get<std::string>(vec[0]) << endl;	
 			boost::filesystem::path currentfile( boost::filesystem::path(boost::get<std::string>(vec[0])) );
-			cout << "currentfile : " << currentfile.string() << endl;
+			//cout << "currentfile : " << currentfile.string() << endl;
 			CDataDictionaryControl DDC;
 			std::list<pair<seqSpan, std::vector<assembledElements>>> AttributInblockSequenceFromBFifile;
-			cout << "  Fetch attributs from .BFi file " << endl;
+			//cout << "  Fetch attributs from .BFi file " << endl;
 			DDC.fetchAttributsFromFile(currentfile, AttributInblockSequenceFromBFifile); 
-			cout << "  prepare result in a BLOB " << endl;
+			//cout << "  prepare result in a BLOB " << endl;
 			transferBLOB stBlob = DDC.convertToBLOB(AttributInblockSequenceFromBFifile,true);
 			cout << "*}}}" << endl;
 			return stBlob.data;	
-			*/
-			cout << "*}}}" << endl;
-			return result;
+			
+			//cout << "*}}}" << endl;
+			//return result;
 		};
 		
 		
-		//collectablefutures cf;
+		collectablefutures cf;
 
-		//std::string file = "F8C23762ED2823A27E62A64B95C024EE_1.BFi";
-		//collectablefutures::request req = cf.createrequest();
-		//req.addexecutorfunc( fnFetchAllAttributsFromBFiFile, "F8C23762ED2823A27E62A64B95C024EE_1.BFi" );
-		//cf.runRequest( req, collectionOfFutureRequests ); // fetch attributs data from .BFi file 
+		std::string file1 = transGuid + "_1.BFi";
+		std::string file2 = transGuid + "_2.BFi";
+		std::string file3 = transGuid + "_3.BFi";
+		collectablefutures::request req1 = cf.createrequest();
+		collectablefutures::request req2 = cf.createrequest();
+		collectablefutures::request req3 = cf.createrequest();
+		req1.addexecutorfunc( fnFetchAllAttributsFromBFiFile, file1 );
+		req2.addexecutorfunc( fnFetchAllAttributsFromBFiFile, file2 );
+		req3.addexecutorfunc( fnFetchAllAttributsFromBFiFile, file3 );
+		
+		cf.runRequest( req1, collectionOfFutureRequests ); // fetch attributs data from .BFi file 
+		cf.runRequest( req2, collectionOfFutureRequests ); // fetch attributs data from .BFi file 
+		cf.runRequest( req3, collectionOfFutureRequests ); // fetch attributs data from .BFi file 
 
 /*
 	auto fnTest = [](std::vector<Variant> vec){ 	
