@@ -1041,7 +1041,7 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 {
 	cout << "BOOST_AUTO_TEST_CASE( testClass_collectablefutures )\n{" << endl;
 	collectablefutures cf;
-/*	
+	
 	std::vector<unsigned char> result_buffer;
 
 	BOOST_TEST_MESSAGE( "Instantiate collectablefutures class" );
@@ -1141,9 +1141,9 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 	auto resultimage = future_result_image.get();
 	BOOST_TEST_MESSAGE( "7. verify the result" );
 	BOOST_CHECK_MESSAGE(CUtils::showDataBlockDiff(true,true,resultimage, origFotoAttributValue) == false, "FAIL: result differs from original");
-*/
 
-	/*
+
+	
 	BOOST_TEST_MESSAGE( "Try to create multiple requests, each having one function,  and waiting for future result : " );
 
 	Func f5 = [](lambdaparams i){ std::vector<unsigned char> result; cout << "- Hello from executor - function 5  " << endl; std::string s("HELLO EARTH"); result.insert(result.end(),s.begin(), s.end()); return result; };
@@ -1218,7 +1218,6 @@ BOOST_AUTO_TEST_CASE(testClass_collectablefutures)
 
 	CUtils::terminalGraph(); // tst
 
-	*/
 
 /////////
 	BOOST_TEST_MESSAGE( "Try a new collectablefuture instance " );
