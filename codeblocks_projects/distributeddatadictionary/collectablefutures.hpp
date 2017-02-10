@@ -404,11 +404,17 @@ class collectablefutures
 	{
 		std::vector<unsigned char> dummy;
 		CDataDictionaryControl DDControl;
-		if(verbose) cout << "/*{{{*/" << endl;
 		std::vector<std::list< pair<seqSpan, std::vector<assembledElements>>>> resultFromRPCclients; 
-		decode( collectionOfFutureRequests, resultFromRPCclients, verbose);
-		auto resultAttributPair = DDControl.mergeAndSort(attributToFetch, DDControl.convertToList(resultFromRPCclients), verbose);
+		
+		if(verbose) cout << "/*{{{*/" << endl;
 
+		// wait for all request to be finished before handling results - otherwise it could mess up output
+		waitForAll(collectionOfFutureRequests);
+		// decode from transferBLOB
+		decode( collectionOfFutureRequests, resultFromRPCclients, verbose );
+		// merge attribut chunks and sort , then fetch specific attribut
+		auto resultAttributPair = DDControl.mergeAndSort(attributToFetch, DDControl.convertToList(resultFromRPCclients), verbose);
+		// return attribut fetched
 		if(resultAttributPair.first == attributToFetch)
 		{
 			if(verbose) cout << "/*}}}*/" << endl;

@@ -1647,18 +1647,10 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_using_Futures)
 		cf.runRequest( req2, collectionOfFutureRequests ); // fetch attributs data from .BFi file 
 		cf.runRequest( req3, collectionOfFutureRequests ); // fetch attributs data from .BFi file 
 
-		// wait for all request to be finished before handling results - otherwise it could mess up output
-		cf.waitForAll(collectionOfFutureRequests);
-		
-		// decode receive packet result from all clients 
-//		cf.decode( collectionOfFutureRequests, resultFromRPCclients, true);
-		
-		// not possible yet - since result for each first needs to be sorted, given the fact that they could return in different order
-//		auto result_complete = cf.collect(collectionOfFutureRequests); // should contain complete attribut - combined result from the 3 clients
-
-		
-		cout << "Try fetch attribut : " << endl;
+		cout << "Fetch attribut : " << endl;
 		auto result_attribut = cf.collect(collectionOfFutureRequests, attributToFetch);
+		
+		// verify that fetched attribut is same as original before being stored in .BFi files
 		BOOST_CHECK(FotoAttributValue == result_attribut); // verify that retrieved value is same as stored
 		
 		cout << "Original data : " << endl;
@@ -1675,33 +1667,9 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_using_Futures)
 		if(missingbytes > 0) cout << "FAIL: Missing byte(s) : " << missingbytes << endl;
 		BOOST_CHECK(FotoAttributValue.size() == result_attribut.size());
 
-		cout << "*** SIMULATE end ***" << endl;
-/*
-		cout << "*** Merge retrieved RPCclient results with others " << endl;
-	
-		auto resultAttributPair = ptestDataDictionaryControl->mergeAndSort(attributToFetch, ptestDataDictionaryControl->convertToList(resultFromRPCclients));
-
-		cout << "Attribut name : " << resultAttributPair.first << endl;
-		BOOST_CHECK(attributToFetch == resultAttributPair.first);
-
-		cout << "Original data : " << endl;
-		CUtils::showDataBlock(true,true,FotoAttributValue);
-
-		cout << "Result data : " << endl;
-		bool bFoundError = CUtils::showDataBlockDiff(true,true,resultAttributPair.second, FotoAttributValue);
-		if(!bFoundError) cout << "INFO: bytes assembled are equal to original " << endl;
-		BOOST_CHECK(bFoundError == false);
-
-		cout << "INFO: size of Original : " << FotoAttributValue.size() << ", size of result : " << resultAttributPair.second.size() << endl;
-		int missingbytes = (FotoAttributValue.size() - resultAttributPair.second.size());
-
-		if(missingbytes > 0) cout << "FAIL: Missing byte(s) : " << missingbytes << endl;
-		BOOST_CHECK(FotoAttributValue.size() == resultAttributPair.second.size());
-
-		BOOST_CHECK(FotoAttributValue == resultAttributPair.second); // verify that retrieved value is same as stored
-
-*/
 		cout << "________________________________________" << endl;
+		cout << "*** SIMULATE end ***" << endl;
+		
 		// Clean up section - must be in bottom
 		BOOST_FOREACH(std::string filename, listBFiFiles)
 		{
