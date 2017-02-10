@@ -1,4 +1,34 @@
-
+/////////////////////////////////////////////////////////////////////////////
+// CollectableFutures
+//
+// handles futures with executors, which handles lambda functions
+//
+// example (fetch 3 files using futures, then decode, sort and assemble result) :
+//
+//		std::vector< std::future<std::vector<unsigned char>> >  collectionOfFutureRequests;
+//		std::vector< std::list< pair<seqSpan, std::vector<assembledElements>>> > resultFromRPCclients; 
+//		std::string file1 = transGuid + "_1.BFi";
+//		std::string file2 = transGuid + "_2.BFi";
+//		std::string file3 = transGuid + "_3.BFi";
+//
+//		collectablefutures cf;
+//		collectablefutures::request req1 = cf.createrequest();
+//		collectablefutures::request req2 = cf.createrequest();
+//		collectablefutures::request req3 = cf.createrequest();
+//		req1.addexecutorfunc( fnFetchAllAttributsFromBFiFile, file1 );
+//		req2.addexecutorfunc( fnFetchAllAttributsFromBFiFile, file2 );
+//		req3.addexecutorfunc( fnFetchAllAttributsFromBFiFile, file3 );
+//	
+//		cf.runRequest( req1, collectionOfFutureRequests ); // fetch attributs data from .BFi file 
+//		cf.runRequest( req2, collectionOfFutureRequests ); // fetch attributs data from .BFi file 
+//		cf.runRequest( req3, collectionOfFutureRequests ); // fetch attributs data from .BFi file 
+//
+//		// wait for all request to be finished before handling results - otherwise it could mess up output
+//		cf.waitForAll(collectionOfFutureRequests);
+//  	cf.decode( collectionOfFutureRequests, resultsFromRPCclients, true );
+// 
+//
+/////////////////////////////////////////////////////////////////////////////
 #include <future> 
 #include <climits>
 #include <map>
@@ -8,9 +38,13 @@
 #include <boost/variant.hpp>
 #include <boost/log/trivial.hpp>
 #include <stdarg.h>
+#define USE_DDC
+#ifdef USE_DDC
+#include "datadictionarycontrol.hpp"
+#endif
+
 using namespace std;
 typedef boost::variant<int, float, std::string > Variant;
-//using Func = std::function<std::vector<unsigned char>(int)>;  
 using Func = std::function<std::vector<unsigned char>(std::vector<Variant>)>;  
 
 // An Executor accepts units of work with add(), which should be
@@ -251,6 +285,72 @@ class collectablefutures
 		collectionOfFutureRequests.push_back(std::move(f));
 		return bResult;
 	}
+
+	bool waitForAll(auto &collectionOfFutureRequests)
+	{
+		for ( auto &f: collectionOfFutureRequests)
+		{
+			f.wait(); // wait for function in future request to finish
+		}
+	}
+
+#ifdef USE_DDC
+	bool decode(auto &collectionOfFutureRequests, auto &resultFromRPCclients, bool verbose=false)
+	{
+		int n=0;
+		CDataDictionaryControl DDControl;
+		if(verbose) cout << "decode future results " << endl; cout << "/*{{{*/" << endl;
+		for ( auto &f: collectionOfFutureRequests)
+		{
+			f.wait(); // wait for function in future request to finish - should be finished allready, but just to be sure
+			auto result_request = f.get(); 
+			
+			// transfer result to a transferBLOB structure
+			transferBLOB stBLOB;
+			stBLOB.eType = transferBLOB::enumType::ATTRIBUTS_LIST;
+			stBLOB.size = result_request.size();
+			stBLOB.data = std::move(result_request);
+	
+			// transfer/convert to listpair
+			std::list<pair<seqSpan, std::vector<assembledElements>>> listpair;
+			DDControl.convertFromBLOBToPair(stBLOB, listpair, verbose);
+
+			//+ DEBUG show data
+			if(verbose) {
+				cout << "Amount of elements in received listpair : " << listpair.size() << endl;
+				cout << "/*{{{*/" << endl;
+				BOOST_FOREACH(auto &_pair, listpair)
+				{
+					seqSpan ss;
+					ss = _pair.first;
+					BOOST_FOREACH(auto &number, ss.seqNumbers)
+					{
+						cout << number << ",";
+					}
+					cout << endl;
+
+					assembledElements _element;
+					_element.strElementID = ss.attributPath; 
+					_element.seqNumbers   = ss.seqNumbers;
+
+					std::vector<assembledElements> vae = _pair.second;
+
+					BOOST_FOREACH(auto &_element, vae) {
+						CUtils::showDataBlock(true,true,_element.ElementData);
+					}
+				}
+				cout << endl;
+				cout << "/*}}}*/" << endl;
+			}
+			//- DEBUG show data
+
+			resultFromRPCclients.push_back(listpair);
+
+		}
+
+		if(verbose) cout << "/*}}}*/" << endl;
+	}
+#endif
 
 	std::vector<unsigned char> collect(std::vector< std::future<std::vector<unsigned char>> >  &collectionOfFutureRequests)
 	{

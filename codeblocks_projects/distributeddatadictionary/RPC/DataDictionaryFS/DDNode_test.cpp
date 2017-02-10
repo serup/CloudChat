@@ -1603,7 +1603,7 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_using_Futures)
 		cout << "*** SIMULATE creating Promises for .BFi file's from RPC's and get Future results when ready" << endl;
 		//cout << "/*{{{*/" << endl;
 		std::string attributToFetch = transGuid + "./profile/foto";
-		std::vector<std::list< pair<seqSpan, std::vector<assembledElements>>>> resultFromRPCclients (3); // testcase has only 3 virtual RPCclients delivering results
+		std::vector<std::list< pair<seqSpan, std::vector<assembledElements>>>> resultFromRPCclients; // testcase has only 3 virtual RPCclients delivering results
 		
 		int n=0;
 
@@ -1640,73 +1640,23 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_using_Futures)
 		req1.addexecutorfunc( fnFetchAllAttributsFromBFiFile, file1 );
 		req2.addexecutorfunc( fnFetchAllAttributsFromBFiFile, file2 );
 		req3.addexecutorfunc( fnFetchAllAttributsFromBFiFile, file3 );
-		
+	
+		// each runRequest yield a response and this response is what a client RPC would return, thus simulating result returned from client
+		// - in real the client would do the same; setup a request and run it, then send result back, to be sorted and assembled
 		cf.runRequest( req1, collectionOfFutureRequests ); // fetch attributs data from .BFi file 
 		cf.runRequest( req2, collectionOfFutureRequests ); // fetch attributs data from .BFi file 
 		cf.runRequest( req3, collectionOfFutureRequests ); // fetch attributs data from .BFi file 
 
-
+		// wait for all request to be finished before handling results - otherwise it could mess up output
+		cf.waitForAll(collectionOfFutureRequests);
+		
+		// decode receive packet result from all clients 
+		cf.decode( collectionOfFutureRequests, resultFromRPCclients, true);
+		
 		// not possible yet - since result for each first needs to be sorted
 //		auto result_complete = cf.collect(collectionOfFutureRequests); // should contain complete attribut - combined result from the 3 clients
-			
-		
-		//cout << "/*}}}*/" << endl;
-
-		// wait for all request to be finished before handling results - otherwise it could mess up output
-		for ( auto &f: collectionOfFutureRequests)
-		{
-			f.wait(); // wait for function in future request to finish
-		}
-
-		cout << "/*{{{*/" << endl;
-		n=0;
-		for ( auto &f: collectionOfFutureRequests)
-		{
-			f.wait(); // wait for function in future request to finish - should be finished allready, but just to be sure
-			auto result_request = f.get(); 
-			
-			// transfer result to a transferBLOB structure
-			transferBLOB stBLOB;
-			stBLOB.eType = transferBLOB::enumType::ATTRIBUTS_LIST;
-			stBLOB.size = result_request.size();
-			stBLOB.data = std::move(result_request);
-	
-			// transfer/convert to listpair
-			std::list<pair<seqSpan, std::vector<assembledElements>>> listpair;
-			ptestDataDictionaryControl->convertFromBLOBToPair(stBLOB, listpair,true);
-
-			//+ DEBUG show data
-			cout << "Amount of elements in received listpair : " << listpair.size() << endl;
-			cout << "/*{{{*/" << endl;
-			BOOST_FOREACH(auto &_pair, listpair)
-			{
-				seqSpan ss;
-				ss = _pair.first;
-				BOOST_FOREACH(auto &number, ss.seqNumbers)
-				{
-					cout << number << ",";
-				}
-				cout << endl;
-
-				assembledElements _element;
-				_element.strElementID = ss.attributPath; 
-				_element.seqNumbers   = ss.seqNumbers;
-
-				std::vector<assembledElements> vae = _pair.second;
-
-				BOOST_FOREACH(auto &_element, vae) {
-					CUtils::showDataBlock(true,true,_element.ElementData);
-				}
-			}
-			cout << endl;
-			cout << "/*}}}*/" << endl;
-			//- DEBUG show data
-
-			resultFromRPCclients[n++] = listpair;
-
-		}
-		cout << "/*}}}*/" << endl;
-        cout << "*** SIMULATE end ***" << endl;
+       
+		cout << "*** SIMULATE end ***" << endl;
 
 		cout << "*** Merge retrieved RPCclient results with others " << endl;
 		std::list< pair<seqSpan, std::vector<assembledElements>> > totallistOfAssembledAttributes;
