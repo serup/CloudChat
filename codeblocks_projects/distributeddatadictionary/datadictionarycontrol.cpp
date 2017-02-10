@@ -697,20 +697,20 @@ std::list<std::string> CDataDictionaryControl::ls()
 	return listBFiAttributes;
 }
 
-std::vector<assembledElements> CDataDictionaryControl::readBlockRecordElements(boost::property_tree::ptree::value_type &vt2)
+std::vector<assembledElements> CDataDictionaryControl::readBlockRecordElements(boost::property_tree::ptree::value_type &vt2, bool verbose)
 {
 	std::vector<assembledElements> records_elements; // contains assembled elements from tree
 	bool pushed=false;
 	std::string prevchunkid = (std::string)"nothing";
 	assembledElements Element;
 
-	cout << "searching for chunk_record ";
+	if(verbose) cout << "searching for chunk_record ";
 	bool bFound=false;
 	BOOST_FOREACH(boost::property_tree::ptree::value_type &vt3, vt2.second)
 	{
 		if(vt3.first == "chunk_record")
 		{
-			if(!bFound) { cout << "+" << endl; bFound=true; }
+			if(!bFound) { if(verbose) cout << "+" << endl; bFound=true; }
 
 			chunk_record_entries f;
 			f.chunk_ddid = vt3.second.get<std::string>("chunk_ddid");
@@ -768,8 +768,8 @@ std::vector<assembledElements> CDataDictionaryControl::readBlockRecordElements(b
 						prevchunkid = _chunk.entity_chunk_id;
 					}
 					Element.seqNumbers.push_back(_chunk.entity_chunk_seq);
-					cout << "- attribut : " << _chunk.entity_chunk_id << endl << "-- entity_chunk_seq : ";
-					cout << "," << _chunk.entity_chunk_seq;
+					if(verbose) cout << "- attribut : " << _chunk.entity_chunk_id << endl << "-- entity_chunk_seq : ";
+					if(verbose) cout << "," << _chunk.entity_chunk_seq;
 				}
 
 
@@ -781,12 +781,12 @@ std::vector<assembledElements> CDataDictionaryControl::readBlockRecordElements(b
 			free(data_in_unhexed_buf);
 		}
 		else
-			cout << "-";
+			if(verbose) cout << "-";
 	}
 	if(pushed==false){
 		records_elements.push_back(Element);
 	}
-	cout << endl;
+	if(verbose) cout << endl;
 
 	return records_elements;
 }
@@ -867,19 +867,19 @@ std::list< pair<seqSpan, std::vector<assembledElements>>> CDataDictionaryControl
 	return listOfAssembledAttributes;
 }
 
-pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::mergeAndSort(std::string attributpath, std::list< pair<seqSpan, std::vector<assembledElements>>> listOfAssembledAttributes)
+pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::mergeAndSort(std::string attributpath, std::list< pair<seqSpan, std::vector<assembledElements>>> listOfAssembledAttributes, bool verbose)
 {
 	std::vector<unsigned char> ElementData;
 	pair<std::string, std::vector<unsigned char>> resultAttributPair;
 	bool bFound = (listOfAssembledAttributes.size() > 0 ) ? true : false;
 	if(bFound==true) {
-		if(mergeRecords(filterAndSortAssembledRecords(attributpath, listOfAssembledAttributes), ElementData))
+		if(mergeRecords(filterAndSortAssembledRecords(attributpath, listOfAssembledAttributes), ElementData, verbose))
 			resultAttributPair = make_pair(attributpath,ElementData); // create assemble data result pair
 	}
 	return resultAttributPair;
 }
 
-bool CDataDictionaryControl::fetchAttributsFromFile(boost::filesystem::path const& filepathname, std::list< pair<seqSpan, std::vector<assembledElements>>> &listOfAssembledAttributes)
+bool CDataDictionaryControl::fetchAttributsFromFile(boost::filesystem::path const& filepathname, std::list< pair<seqSpan, std::vector<assembledElements>>> &listOfAssembledAttributes, bool verbose)
 {
 	bool bFoundFile=false;
 	bool bFoundAttributsInFile=false;
@@ -888,18 +888,18 @@ bool CDataDictionaryControl::fetchAttributsFromFile(boost::filesystem::path cons
 		if((boost::filesystem::extension(filepathname.string()) == BFI_FILE_EXTENSION)) 
 		{
 			bFoundFile=true;
-			cout << "file : " << filepathname << endl;
-			cout << "*{{{" << endl;
+			if(verbose) cout << "file : " << filepathname << endl;
+			if(verbose) cout << "*{{{" << endl;
 			
 			std::ifstream is (filepathname.string());
 			ptree pt;
 			try{
 				read_xml(is, pt);
-				if(addAttributFromBFiToList(pt, listOfAssembledAttributes))
+				if(addAttributFromBFiToList(pt, listOfAssembledAttributes, verbose))
 					bFoundAttributsInFile=true;
 
 			}catch(...) { cout << "FAIL: EXCEPTION trying to read xml file : " << filepathname.string(); }
-			cout << "*}}}" << endl;
+			if(verbose) cout << "*}}}" << endl;
 		}
 	}
 
@@ -909,7 +909,7 @@ bool CDataDictionaryControl::fetchAttributsFromFile(boost::filesystem::path cons
 	return bFoundFile;
 }
 
-bool CDataDictionaryControl::addAttributFromBFiToList(ptree pt, std::list< pair<seqSpan, std::vector<assembledElements>> > &listOfAssembledAttributes)
+bool CDataDictionaryControl::addAttributFromBFiToList(ptree pt, std::list< pair<seqSpan, std::vector<assembledElements>> > &listOfAssembledAttributes, bool verbose)
 {
 	bool bResult=false;
 	std::vector<assembledElements> recElements;
@@ -919,19 +919,19 @@ bool CDataDictionaryControl::addAttributFromBFiToList(ptree pt, std::list< pair<
 	optional< ptree& > child = pt.get_child_optional(BFI_BLOCK_ENTITY);
 	if(child) 
 	{
-		cout << "searching for chunk_data ";
+		if(verbose) cout << "searching for chunk_data ";
 
 		BOOST_FOREACH(boost::property_tree::ptree::value_type &child, pt.get_child("BFi.BlockEntity.BlockRecord", _empty_tree)) 
 		{
 			if (child.first == "TransGUID") transGuid = child.second.data();
 			if (child.first == "chunk_id") id = child.second.data();
 
-			cout << "-";
+			if(verbose) cout << "-";
 			if(child.first == "chunk_data")
 			{
-				cout << "+" << endl;
-				recElements = readBlockRecordElements(child);
-				bResult = assembleBlockRecords(transGuid, id, recElements, listOfAssembledAttributes);
+				if(verbose) cout << "+" << endl;
+				recElements = readBlockRecordElements(child, verbose);
+				bResult = assembleBlockRecords(transGuid, id, recElements, listOfAssembledAttributes, verbose);
 			}
 		}
 	}
@@ -940,40 +940,44 @@ bool CDataDictionaryControl::addAttributFromBFiToList(ptree pt, std::list< pair<
 }
 
 
-bool CDataDictionaryControl::assembleBlockRecords(std::string transGuid, std::string id, std::vector<assembledElements> &recElements, std::list< pair<seqSpan, std::vector<assembledElements>> > &listOfAssembledAttributes)
+bool CDataDictionaryControl::assembleBlockRecords(std::string transGuid, std::string id, std::vector<assembledElements> &recElements, std::list< pair<seqSpan, std::vector<assembledElements>> > &listOfAssembledAttributes, bool verbose)
 {
 	bool bResult=false;
 	seqSpan ss;
 	ss.attributPath="<empty>";
 
-	cout << "*{{{" << endl;
+	if(verbose) cout << "*{{{" << endl;
 	try {
 	BOOST_FOREACH(assembledElements &_element, recElements)
 	{
 		bResult=false;
 		ss.seqNumbers = _element.seqNumbers;	
-
-		cout << "---------------------" << endl;
-		cout << "element seq : ";
-		BOOST_FOREACH( auto &seqnumber, _element.seqNumbers )
-		{
-			cout << seqnumber << ",";
+	
+		if(verbose) {
+			cout << "---------------------" << endl;
+			cout << "element seq : ";
+			BOOST_FOREACH( auto &seqnumber, _element.seqNumbers )
+			{
+				cout << seqnumber << ",";
+			}
+			cout << endl;
+			cout << "element id : " << _element.strElementID << endl;
 		}
-		cout << endl;
-		cout << "element id : " << _element.strElementID << endl;
 
 		// add padding for element
 		_element.strElementID = transGuid + "./" + id + "/" + _element.strElementID;
 		ss.attributPath = _element.strElementID;
 
-		cout << "-element id : " << _element.strElementID << endl;
-		cout << "element size of value : " << _element.ElementData.size() << endl;
+		if(verbose) {
+			cout << "-element id : " << _element.strElementID << endl;
+			cout << "element size of value : " << _element.ElementData.size() << endl;
+		}
 
 		if(_element.ElementData.size() < 50) {
 			std::string str(_element.ElementData.begin(), _element.ElementData.end());
-			cout << "element value : " << str << endl;
+			if(verbose) cout << "element value : " << str << endl;
 		}
-		cout << "---------------------" << endl;
+		if(verbose) cout << "---------------------" << endl;
 
 		std::vector<assembledElements> vae;
 		vae.push_back(_element);
@@ -984,7 +988,7 @@ bool CDataDictionaryControl::assembleBlockRecords(std::string transGuid, std::st
 	catch (const std::exception& e)  // catch any exceptions
 	{ cerr << endl << "Exception: " << e.what() << endl; }
 
-	cout << "*}}}" << endl;
+	if(verbose) cout << "*}}}" << endl;
 
 	return bResult;
 }
@@ -992,7 +996,7 @@ bool CDataDictionaryControl::assembleBlockRecords(std::string transGuid, std::st
 /**
  * Sort the BlockRecords according to attributpathname and sequence numbers of chunks
  */
-vector<pair<unsigned long, std::vector<unsigned char> >> CDataDictionaryControl::filterAndSortAssembledRecords(std::string attributpath, std::list< pair<seqSpan, std::vector<assembledElements>> > listOfRecords)
+vector<pair<unsigned long, std::vector<unsigned char> >> CDataDictionaryControl::filterAndSortAssembledRecords(std::string attributpath, std::list< pair<seqSpan, std::vector<assembledElements>> > listOfRecords, bool verbose)
 {
 	//+ sort so assemble will be in correct order
 	vector<pair<unsigned long, std::vector<unsigned char> >> list;
@@ -1010,36 +1014,42 @@ vector<pair<unsigned long, std::vector<unsigned char> >> CDataDictionaryControl:
 
 		list.push_back( pair<unsigned long, std::vector<unsigned char>> (lastSeq, chunkdata) );
 	}
-	cout << "UnSorted : ";
-	for(auto item : list) {
-		cout << item.first << ",";
+	if(verbose) {
+		cout << "UnSorted : ";
+		for(auto item : list) {
+			cout << item.first << ",";
+		}
+		cout << endl;
 	}
-	cout << endl;
-		
+
 	sort(list.begin(), list.end());
-	cout << "Sorted : ";
-	for(auto item : list) {
-		cout << item.first << ",";
+	
+	if(verbose) {
+		cout << "Sorted : ";
+		for(auto item : list) {
+			cout << item.first << ",";
+		}
+		cout << endl;
 	}
-	cout << endl;
 	//-
 	
 	return list;
 }
 
-bool CDataDictionaryControl::mergeRecords(vector<pair<unsigned long, std::vector<unsigned char> >> list, std::vector<unsigned char> &ElementData)
+bool CDataDictionaryControl::mergeRecords(vector<pair<unsigned long, std::vector<unsigned char> >> list, std::vector<unsigned char> &ElementData, bool verbose)
 {
 	bool bResult=false;
-	CUtils utls;
 
 	// assemble acros multible .BFi files
 	BOOST_FOREACH( auto &assembledElements, list )
 	{
 		std::vector<unsigned char> chunkdata = assembledElements.second;
 		if(chunkdata.size()>0) { 
-			cout << "chunk data fetched from BlockEntity.BlockRecords : " << endl;
-			cout << "- lastSeq of assembled record : " << assembledElements.first;
-			utls.showDataBlock(true,true,chunkdata);
+			if(verbose) {
+				cout << "chunk data fetched from BlockEntity.BlockRecords : " << endl;
+				cout << "- lastSeq of assembled record : " << assembledElements.first;
+				CUtils::showDataBlock(true,true,chunkdata);
+			}
 			/// this will, chunk by chunk, assemble the attribut data
 			std::copy(chunkdata.begin(), chunkdata.end(), std::back_inserter(ElementData));
 			bResult=true;

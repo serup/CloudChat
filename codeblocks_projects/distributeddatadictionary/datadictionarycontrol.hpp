@@ -98,16 +98,25 @@ class CDataDictionaryControl
 	  	bool addAttributToBlockRecord(std::string transGuid, boost::property_tree::ptree &ptListOfBlockRecords, long &maxBlockRecordSize, std::string realmName, std::string attributName, std::vector<unsigned char> attributValue);
 	  
 	  	std::list<std::string> ls();
-		std::vector<assembledElements> readBlockRecordElements(boost::property_tree::ptree::value_type &vt2); 
+		std::vector<assembledElements> readBlockRecordElements(boost::property_tree::ptree::value_type &vt2, bool verbose=false); 
 		bool findElement(std::vector<assembledElements>& _Elements, std::string strElementID);
 		std::vector<unsigned char> fetchElement(std::vector<assembledElements>& _Elements, std::string strElementID);
 		pair<std::string, std::vector<unsigned char>> ftgt(std::string attributpath);
 		std::list< pair<seqSpan, std::vector<assembledElements>>> fetchAttributBlocksFromBFiFiles(boost::filesystem::path _targetDir);
-		pair<std::string, std::vector<unsigned char>> mergeAndSort(std::string attributpath, std::list< pair<seqSpan, std::vector<assembledElements>>> listOfAssembledAttributes);
-		bool fetchAttributsFromFile(boost::filesystem::path const& filepathname, std::list< pair<seqSpan, std::vector<assembledElements>>> &listOfAssembledAttributes);
+		pair<std::string, std::vector<unsigned char>> mergeAndSort(std::string attributpath, std::list< pair<seqSpan, std::vector<assembledElements>>> listOfAssembledAttributes, bool verbose=false);
+		bool fetchAttributsFromFile(boost::filesystem::path const& filepathname, std::list< pair<seqSpan, std::vector<assembledElements>>> &listOfAssembledAttributes, bool verbose=false);
 		transferBLOB convertToBLOB(std::list<pair<seqSpan, std::vector<assembledElements>>> listOfPairsOfAssembledAttributs, bool verbose=false);
 		bool convertFromBLOBToPair(transferBLOB tblob, std::list<pair<seqSpan, std::vector<assembledElements>>> &listOfPairsOfAssembledAttributs, bool verbose=false);
 		std::list<unsigned long> convertCommaSeperatedNumbersInStringToListOfLongs(std::string seqNumbers); 
+		std::list< pair<seqSpan, std::vector<assembledElements>> > convertToList(std::vector<std::list< pair<seqSpan, std::vector<assembledElements>>>> resultFromRPCclients) 
+		{
+			std::list< pair<seqSpan, std::vector<assembledElements>> > totallistOfAssembledAttributes;
+			BOOST_FOREACH(auto &list, resultFromRPCclients) { totallistOfAssembledAttributes.insert(totallistOfAssembledAttributes.end(), list.begin(),list.end()); }
+			return totallistOfAssembledAttributes;
+		}
+			
+
+
 
     protected:
 		long _maxDEDchunkSize;
@@ -121,11 +130,11 @@ class CDataDictionaryControl
 		bool appendToLastBlockEntity(boost::property_tree::ptree &node, boost::property_tree::ptree &subpt, std::string transGuid);
 		void setMaxDEDchunkSize(long maxSize);
 		long getMaxDEDchunkSize();
-		vector<pair<unsigned long, std::vector<unsigned char> >> filterAndSortAssembledRecords(std::string attributpath, std::list< pair<seqSpan, std::vector<assembledElements>> > listOfRecords);
-		bool mergeRecords(vector<pair<unsigned long, std::vector<unsigned char> >> list, std::vector<unsigned char> &ElementData);
-		bool assembleBlockRecords(std::string transGuid, std::string id, std::vector<assembledElements> &recElements,  std::list< pair<seqSpan, std::vector<assembledElements>> > &listOfAssembledAttributes);
+		vector<pair<unsigned long, std::vector<unsigned char> >> filterAndSortAssembledRecords(std::string attributpath, std::list< pair<seqSpan, std::vector<assembledElements>> > listOfRecords, bool verbose=false);
+		bool mergeRecords(vector<pair<unsigned long, std::vector<unsigned char> >> list, std::vector<unsigned char> &ElementData, bool verbose=false);
+		bool assembleBlockRecords(std::string transGuid, std::string id, std::vector<assembledElements> &recElements,  std::list< pair<seqSpan, std::vector<assembledElements>> > &listOfAssembledAttributes, bool verbose=false);
 		pair<std::string, std::vector<unsigned char>> findAndAssembleAttributFromBFiFiles( std::string attributpath, boost::filesystem::path _targetDir );
-		bool addAttributFromBFiToList(ptree pt, std::list< pair<seqSpan, std::vector<assembledElements>> > &listOfAssembledAttributes);
+		bool addAttributFromBFiToList(ptree pt, std::list< pair<seqSpan, std::vector<assembledElements>> > &listOfAssembledAttributes, bool verbose=false);
 
 };
 

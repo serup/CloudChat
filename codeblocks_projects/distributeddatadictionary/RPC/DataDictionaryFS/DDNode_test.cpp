@@ -1601,7 +1601,7 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_using_Futures)
 		cout << "________________________________________" << endl;
 
 		cout << "*** SIMULATE creating Promises for .BFi file's from RPC's and get Future results when ready" << endl;
-		//cout << "/*{{{*/" << endl;
+		
 		std::string attributToFetch = transGuid + "./profile/foto";
 		std::vector<std::list< pair<seqSpan, std::vector<assembledElements>>>> resultFromRPCclients; // testcase has only 3 virtual RPCclients delivering results
 		
@@ -1622,7 +1622,7 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_using_Futures)
 			std::list<pair<seqSpan, std::vector<assembledElements>>> AttributInblockSequenceFromBFifile;
 			
 			DDC.fetchAttributsFromFile(currentfile, AttributInblockSequenceFromBFifile); 
-			transferBLOB stBlob = DDC.convertToBLOB(AttributInblockSequenceFromBFifile,false);  // no debug output
+			transferBLOB stBlob = DDC.convertToBLOB(AttributInblockSequenceFromBFifile);  
 			
 			return stBlob.data;	
 		};
@@ -1651,22 +1651,38 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_using_Futures)
 		cf.waitForAll(collectionOfFutureRequests);
 		
 		// decode receive packet result from all clients 
-		cf.decode( collectionOfFutureRequests, resultFromRPCclients, true);
+//		cf.decode( collectionOfFutureRequests, resultFromRPCclients, true);
 		
-		// not possible yet - since result for each first needs to be sorted
+		// not possible yet - since result for each first needs to be sorted, given the fact that they could return in different order
 //		auto result_complete = cf.collect(collectionOfFutureRequests); // should contain complete attribut - combined result from the 3 clients
-       
+
+		
+		cout << "Try fetch attribut : " << endl;
+		auto result_attribut = cf.collect(collectionOfFutureRequests, attributToFetch);
+		BOOST_CHECK(FotoAttributValue == result_attribut); // verify that retrieved value is same as stored
+		
+		cout << "Original data : " << endl;
+		CUtils::showDataBlock(true,true,FotoAttributValue);
+		
+		cout << "Result data : " << endl;
+		bool bFoundError = CUtils::showDataBlockDiff(true,true,result_attribut, FotoAttributValue);
+		if(!bFoundError) cout << "INFO: bytes assembled are equal to original " << endl;
+		BOOST_CHECK(bFoundError == false);
+
+		cout << "INFO: size of Original : " << FotoAttributValue.size() << ", size of result : " << result_attribut.size() << endl;
+		int missingbytes = (FotoAttributValue.size() - result_attribut.size());
+
+		if(missingbytes > 0) cout << "FAIL: Missing byte(s) : " << missingbytes << endl;
+		BOOST_CHECK(FotoAttributValue.size() == result_attribut.size());
+
 		cout << "*** SIMULATE end ***" << endl;
-
+/*
 		cout << "*** Merge retrieved RPCclient results with others " << endl;
-		std::list< pair<seqSpan, std::vector<assembledElements>> > totallistOfAssembledAttributes;
+	
+		auto resultAttributPair = ptestDataDictionaryControl->mergeAndSort(attributToFetch, ptestDataDictionaryControl->convertToList(resultFromRPCclients));
 
-		BOOST_FOREACH(auto &list, resultFromRPCclients) { totallistOfAssembledAttributes.insert(totallistOfAssembledAttributes.end(), list.begin(),list.end()); }
-
-		pair<std::string, std::vector<unsigned char>> resultAttributPair = 	ptestDataDictionaryControl->mergeAndSort(attributToFetch, totallistOfAssembledAttributes);
 		cout << "Attribut name : " << resultAttributPair.first << endl;
 		BOOST_CHECK(attributToFetch == resultAttributPair.first);
-
 
 		cout << "Original data : " << endl;
 		CUtils::showDataBlock(true,true,FotoAttributValue);
@@ -1684,8 +1700,8 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_using_Futures)
 
 		BOOST_CHECK(FotoAttributValue == resultAttributPair.second); // verify that retrieved value is same as stored
 
+*/
 		cout << "________________________________________" << endl;
-
 		// Clean up section - must be in bottom
 		BOOST_FOREACH(std::string filename, listBFiFiles)
 		{

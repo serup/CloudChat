@@ -3,13 +3,59 @@
 //
 // handles futures with executors, which handles lambda functions
 //
-// example (fetch 3 files using futures, then decode, sort and assemble result) :
+// example 1 ( ) :
+//
+//	Func fnTest = [](std::vector<Variant> vec){ 	
+//		std::vector<unsigned char> result = std::vector<unsigned char>(); 
+//		cout << "- Hello from executor - function fnTest "; 
+//		std::cout << ": parameters : ";
+//		for(auto a: vec) {
+//			std::cout << a << ",";	
+//		}
+//		std::cout << std::endl;
+//		std::string s("HELLO MULTIVERSE"); 
+//		result.insert(result.end(),s.begin(), s.end()); 
+//		return result; 
+//	};
+//	collectablefutures cf;
+//
+//	collectablefutures::request reqX2 = cf.createrequest();
+//	reqX2.addexecutorfunc( fnTest, 20,21,"help" );
+//	
+//	std::vector< std::future<std::vector<unsigned char>> >  collectionOfFutureRequests;
+//	cf.runRequest( reqX2, collectionOfFutureRequests );
+//	std::vector<unsigned char> result_complete = cf.collect(collectionOfFutureRequests); // if more request, then result would be binary appended
+//
+//  // verify result
+//	std::vector<unsigned char> result_compare;
+//	std::string scompare("HELLO MULTIVERSE"); 
+//	result_compare.insert(result_compare.end(),scompare.begin(), scompare.end());
+//	BOOST_CHECK_MESSAGE(CUtils::showDataBlockDiff(true,true,result_complete, result_compare) == false, "FAIL: result differs from original");
+//
+// example 2 (fetch 3 files using futures, then decode, sort and assemble result and fetch one specific attribut from the .BFi ) :
 //
 //		std::vector< std::future<std::vector<unsigned char>> >  collectionOfFutureRequests;
 //		std::vector< std::list< pair<seqSpan, std::vector<assembledElements>>> > resultFromRPCclients; 
 //		std::string file1 = transGuid + "_1.BFi";
 //		std::string file2 = transGuid + "_2.BFi";
 //		std::string file3 = transGuid + "_3.BFi";
+//		
+//		////////////////////////////////////////////////////////////////
+//		// create lambda function for fetching attributs from .BFi file
+//		////////////////////////////////////////////////////////////////
+//		auto fnFetchAllAttributsFromBFiFile = [](std::vector<Variant> vec)
+//		{ 	
+//			CDataDictionaryControl DDC;
+//			
+//			boost::filesystem::path currentfile( boost::filesystem::path(boost::get<std::string>(vec[0])) );
+//			std::list<pair<seqSpan, std::vector<assembledElements>>> AttributInblockSequenceFromBFifile;
+//			
+//			DDC.fetchAttributsFromFile(currentfile, AttributInblockSequenceFromBFifile); 
+//			transferBLOB stBlob = DDC.convertToBLOB(AttributInblockSequenceFromBFifile,false);  // no debug output
+//			
+//			return stBlob.data;	
+//		};
+//		////////////////////////////////////////////////////////////////
 //
 //		collectablefutures cf;
 //		collectablefutures::request req1 = cf.createrequest();
@@ -25,8 +71,11 @@
 //
 //		// wait for all request to be finished before handling results - otherwise it could mess up output
 //		cf.waitForAll(collectionOfFutureRequests);
-//  	cf.decode( collectionOfFutureRequests, resultsFromRPCclients, true );
-// 
+//
+//		std::string attributToFetch = transGuid + "./profile/foto";
+//		auto result_attribut = cf.collect(collectionOfFutureRequests, attributToFetch);
+//		CUtils::showDataBlock(true,true, result_attribut); // Attribut fetched from assembled .BFi files
+//	    
 //
 /////////////////////////////////////////////////////////////////////////////
 #include <future> 
@@ -299,7 +348,8 @@ class collectablefutures
 	{
 		int n=0;
 		CDataDictionaryControl DDControl;
-		if(verbose) cout << "decode future results " << endl; cout << "/*{{{*/" << endl;
+		if(verbose) cout << "decode future results " << endl; 
+		if(verbose) cout << "/*{{{*/" << endl;
 		for ( auto &f: collectionOfFutureRequests)
 		{
 			f.wait(); // wait for function in future request to finish - should be finished allready, but just to be sure
@@ -347,9 +397,31 @@ class collectablefutures
 			resultFromRPCclients.push_back(listpair);
 
 		}
-
 		if(verbose) cout << "/*}}}*/" << endl;
 	}
+
+	std::vector<unsigned char> collect(std::vector< std::future<std::vector<unsigned char>> >  &collectionOfFutureRequests, std::string attributToFetch, bool verbose=false)
+	{
+		std::vector<unsigned char> dummy;
+		CDataDictionaryControl DDControl;
+		if(verbose) cout << "/*{{{*/" << endl;
+		std::vector<std::list< pair<seqSpan, std::vector<assembledElements>>>> resultFromRPCclients; 
+		decode( collectionOfFutureRequests, resultFromRPCclients, verbose);
+		auto resultAttributPair = DDControl.mergeAndSort(attributToFetch, DDControl.convertToList(resultFromRPCclients), verbose);
+
+		if(resultAttributPair.first == attributToFetch)
+		{
+			if(verbose) cout << "/*}}}*/" << endl;
+			return resultAttributPair.second;	
+		}
+		else
+		{
+			BOOST_LOG_TRIVIAL(error) << "[collect] FAIL: could NOT find attribut " << endl;
+		}
+		if(verbose) cout << "/*}}}*/" << endl;
+		return dummy;
+	}
+
 #endif
 
 	std::vector<unsigned char> collect(std::vector< std::future<std::vector<unsigned char>> >  &collectionOfFutureRequests)
