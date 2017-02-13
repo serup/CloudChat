@@ -344,62 +344,6 @@ class collectablefutures
 	}
 
 #ifdef USE_DDC
-	bool decode(auto &collectionOfFutureRequests, auto &resultFromRPCclients, bool verbose=false)
-	{
-		int n=0;
-		CDataDictionaryControl DDControl;
-		if(verbose) cout << "decode future results " << endl; 
-		if(verbose) cout << "/*{{{*/" << endl;
-		for ( auto &f: collectionOfFutureRequests)
-		{
-			f.wait(); // wait for function in future request to finish - should be finished allready, but just to be sure
-			auto result_request = f.get(); 
-			
-			// transfer result to a transferBLOB structure
-			transferBLOB stBLOB;
-			stBLOB.eType = transferBLOB::enumType::ATTRIBUTS_LIST;
-			stBLOB.size = result_request.size();
-			stBLOB.data = std::move(result_request);
-	
-			// transfer/convert to listpair
-			std::list<pair<seqSpan, std::vector<assembledElements>>> listpair;
-			DDControl.convertFromBLOBToPair(stBLOB, listpair, verbose);
-
-			//+ DEBUG show data
-			if(verbose) {
-				cout << "Amount of elements in received listpair : " << listpair.size() << endl;
-				cout << "/*{{{*/" << endl;
-				BOOST_FOREACH(auto &_pair, listpair)
-				{
-					seqSpan ss;
-					ss = _pair.first;
-					BOOST_FOREACH(auto &number, ss.seqNumbers)
-					{
-						cout << number << ",";
-					}
-					cout << endl;
-
-					assembledElements _element;
-					_element.strElementID = ss.attributPath; 
-					_element.seqNumbers   = ss.seqNumbers;
-
-					std::vector<assembledElements> vae = _pair.second;
-
-					BOOST_FOREACH(auto &_element, vae) {
-						CUtils::showDataBlock(true,true,_element.ElementData);
-					}
-				}
-				cout << endl;
-				cout << "/*}}}*/" << endl;
-			}
-			//- DEBUG show data
-
-			resultFromRPCclients.push_back(listpair);
-
-		}
-		if(verbose) cout << "/*}}}*/" << endl;
-	}
-
 	std::vector<unsigned char> collect(std::vector< std::future<std::vector<unsigned char>> >  &collectionOfFutureRequests, std::string attributToFetch, bool verbose=false)
 	{
 		std::vector<unsigned char> dummy;
@@ -410,10 +354,8 @@ class collectablefutures
 
 		// wait for all request to be finished before handling results - otherwise it could mess up output
 		waitForAll(collectionOfFutureRequests);
-		// decode from transferBLOB
-		decode( collectionOfFutureRequests, resultFromRPCclients, verbose );
 		// merge attribut chunks and sort , then fetch specific attribut
-		auto resultAttributPair = DDControl.ftgt(attributToFetch, resultFromRPCclients, verbose);
+		auto resultAttributPair = DDControl.ftgt(attributToFetch, collectionOfFutureRequests, verbose);
 		// return attribut fetched
 		if(resultAttributPair.first == attributToFetch)
 		{
@@ -427,7 +369,6 @@ class collectablefutures
 		if(verbose) cout << "/*}}}*/" << endl;
 		return dummy;
 	}
-
 #endif
 
 	std::vector<unsigned char> collect(std::vector< std::future<std::vector<unsigned char>> >  &collectionOfFutureRequests)

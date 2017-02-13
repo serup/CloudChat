@@ -853,6 +853,69 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::
 	return resultAttributPair; //return as a pair <name,value>
 }
 
+pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::string attributToFetch, std::vector< std::future<std::vector<unsigned char>> >  &collectionOfFutureRequests, bool verbose)
+{
+	pair<std::string, std::vector<unsigned char>> resultAttributPair;
+	std::vector<std::list< pair<seqSpan, std::vector<assembledElements>>>> resultFromRPCclients; 
+	decode( collectionOfFutureRequests, resultFromRPCclients, verbose ); // decode from transferBLOB 
+	resultAttributPair = mergeAndSort(attributToFetch, resultFromRPCclients, verbose); // the results can come in dfferent time order, hence the need for sort and merge
+	return resultAttributPair; //return as a pair <name,value>
+}
+		
+bool CDataDictionaryControl::decode(std::vector< std::future<std::vector<unsigned char>> > &collectionOfFutureRequests, std::vector<std::list< pair<seqSpan, std::vector<assembledElements>>>> &resultFromRPCclients, bool verbose)
+{
+	int n=0;
+	if(verbose) cout << "decode future results " << endl; 
+	if(verbose) cout << "/*{{{*/" << endl;
+	for ( auto &f: collectionOfFutureRequests)
+	{
+		f.wait(); // wait for function in future request to finish - should be finished allready, but just to be sure
+		auto result_request = f.get(); 
+
+		// transfer result to a transferBLOB structure
+		transferBLOB stBLOB;
+		stBLOB.eType = transferBLOB::enumType::ATTRIBUTS_LIST;
+		stBLOB.size = result_request.size();
+		stBLOB.data = std::move(result_request);
+
+		// transfer/convert to listpair
+		std::list<pair<seqSpan, std::vector<assembledElements>>> listpair;
+		convertFromBLOBToPair(stBLOB, listpair, verbose);
+
+		//+ DEBUG show data
+		if(verbose) {
+			cout << "Amount of elements in received listpair : " << listpair.size() << endl;
+			cout << "/*{{{*/" << endl;
+			BOOST_FOREACH(auto &_pair, listpair)
+			{
+				seqSpan ss;
+				ss = _pair.first;
+				BOOST_FOREACH(auto &number, ss.seqNumbers)
+				{
+					cout << number << ",";
+				}
+				cout << endl;
+
+				assembledElements _element;
+				_element.strElementID = ss.attributPath; 
+				_element.seqNumbers   = ss.seqNumbers;
+
+				std::vector<assembledElements> vae = _pair.second;
+
+				BOOST_FOREACH(auto &_element, vae) {
+					CUtils::showDataBlock(true,true,_element.ElementData);
+				}
+			}
+			cout << endl;
+			cout << "/*}}}*/" << endl;
+		}
+		//- DEBUG show data
+
+		resultFromRPCclients.push_back(listpair);
+	}
+	if(verbose) cout << "/*}}}*/" << endl;
+}
+
 pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::findAndAssembleAttributFromBFiFiles( std::string attributpath, boost::filesystem::path _targetDir) 
 {
 	return mergeAndSort(attributpath, fetchAttributBlocksFromBFiFiles(_targetDir));

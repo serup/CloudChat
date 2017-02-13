@@ -103,6 +103,7 @@ class CDataDictionaryControl
 		std::vector<unsigned char> fetchElement(std::vector<assembledElements>& _Elements, std::string strElementID);
 		pair<std::string, std::vector<unsigned char>> ftgt(std::string attributpath); // will search in current file system for .BFi files with attribut
 		pair<std::string, std::vector<unsigned char>> ftgt(std::string attributToFetch, std::vector<std::list< pair<seqSpan, std::vector<assembledElements>>>> resultFromRPCclients, bool verbose=false); // will assemble returned result and search thru it to find attribut
+		pair<std::string, std::vector<unsigned char>> ftgt(std::string attributToFetch, std::vector< std::future<std::vector<unsigned char>> >  &collectionOfFutureRequests, bool verbose=false);
 		std::list< pair<seqSpan, std::vector<assembledElements>>> fetchAttributBlocksFromBFiFiles(boost::filesystem::path _targetDir);
 		bool fetchAttributsFromFile(boost::filesystem::path const& filepathname, std::list< pair<seqSpan, std::vector<assembledElements>>> &listOfAssembledAttributes, bool verbose=false);
 		transferBLOB convertToBLOB(std::list<pair<seqSpan, std::vector<assembledElements>>> listOfPairsOfAssembledAttributs, bool verbose=false);
@@ -137,6 +138,7 @@ class CDataDictionaryControl
 		bool addAttributFromBFiToList(ptree pt, std::list< pair<seqSpan, std::vector<assembledElements>> > &listOfAssembledAttributes, bool verbose=false);
 		pair<std::string, std::vector<unsigned char>> mergeAndSort(std::string attributpath, std::list< pair<seqSpan, std::vector<assembledElements>>> listOfAssembledAttributes, bool verbose=false);
 		pair<std::string, std::vector<unsigned char>> mergeAndSort(std::string attributpath, std::vector<std::list< pair<seqSpan, std::vector<assembledElements>>>> resultFromRPCclients, bool verbose=false);
+		bool decode(std::vector< std::future<std::vector<unsigned char>> > &collectionOfFutureRequests, std::vector<std::list< pair<seqSpan, std::vector<assembledElements>>>> &resultFromRPCclients, bool verbose=false);
 };
 
 
