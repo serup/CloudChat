@@ -179,7 +179,7 @@ boost::property_tree::ptree CDataDictionaryControl::createBFiBlockRecord(bool bf
 }
 
 
-std::vector< pair<std::vector<unsigned char>, int> > CDataDictionaryControl::splitAttributIntoDEDchunks(long &aiid, std::string attributName, std::vector<unsigned char>& attributValue, long maxDEDchunkSize)
+std::vector< pair<std::vector<unsigned char>, int> > CDataDictionaryControl::splitAttributIntoDEDchunks(long &aiid, std::string attributName, std::vector<unsigned char>& attributValue, long maxDEDchunkSize, bool verbose)
 {
     using boost::property_tree::ptree;
 	ptree pt;
@@ -195,9 +195,11 @@ std::vector< pair<std::vector<unsigned char>, int> > CDataDictionaryControl::spl
 	int strangeCount=0;
 	bool bError=false;
 
+	if(verbose) {
 	cout << "split Attribut into DED chunks : " << endl;
 	cout << "*{{{" << endl;
 	cout << " DED entity_chunk_seq : ";
+	}
 
 	do
 	{
@@ -230,7 +232,7 @@ std::vector< pair<std::vector<unsigned char>, int> > CDataDictionaryControl::spl
 		aiid++;
 		entity_chunk_seq++;
 
-		cout << "," << entity_chunk_seq;
+		if(verbose) cout << "," << entity_chunk_seq;
 
 
 		{ /// defined in DD_ATTRIBUT_TOAST.xml in datadictionary
@@ -276,7 +278,7 @@ std::vector< pair<std::vector<unsigned char>, int> > CDataDictionaryControl::spl
 		}
 	}while(iBytesLeft>0 && !bError);
 
-	cout << "*}}}" << endl;
+	if (verbose) cout << "*}}}" << endl;
 
 
 	return listOfDEDchunks;
@@ -341,7 +343,7 @@ boost::property_tree::ptree CDataDictionaryControl::addDEDchunksToBlockRecords(l
 
 
 
-bool CDataDictionaryControl::addDEDchunksToBlockRecords(std::string transGuid, boost::property_tree::ptree &pt, long &aiid, std::string realmName, std::string ddid, std::vector<pair<std::vector<unsigned char>,int>>listOfDEDchunks, long &maxBlockRecordSize)
+bool CDataDictionaryControl::addDEDchunksToBlockRecords(std::string transGuid, boost::property_tree::ptree &pt, long &aiid, std::string realmName, std::string ddid, std::vector<pair<std::vector<unsigned char>,int>>listOfDEDchunks, long &maxBlockRecordSize, bool verbose)
 {
 	using boost::property_tree::ptree;
 	using boost::optional;
@@ -374,11 +376,13 @@ bool CDataDictionaryControl::addDEDchunksToBlockRecords(std::string transGuid, b
 	ptree &node = pt.get_child("listOfBlockRecords");
 
 	int c=0;
+	if(verbose) {
 	cout << "/*{{{*/" << endl;
 	cout << "handling DED chunk : ";
+	}
 	BOOST_FOREACH( auto &chunk, listOfDEDchunks )
 	{
-		cout << ++c << ",";
+		if(verbose) cout << ++c << ",";
 		strTransGUID = transGuid;
 
 		if(bytesLeftInBlockRecord<=0) {
@@ -402,8 +406,10 @@ bool CDataDictionaryControl::addDEDchunksToBlockRecords(std::string transGuid, b
 		bfirst=false;	
 	}
 
+	if(verbose) {
 	cout << endl;
 	cout << "/*}}}*/" << endl;
+	}
 	maxBlockRecordSize = bytesLeftInBlockRecord;
 	return bResult;		
 }
@@ -464,7 +470,7 @@ long CDataDictionaryControl::totalSizeOf(std::vector<pair<std::vector<unsigned c
 	return totalCount;
 }
 
-boost::property_tree::ptree CDataDictionaryControl::addBlockRecordToBlockEntity(std::string transGuid, boost::property_tree::ptree &ptListOfBlockRecords, long maxBlockEntitySize)
+boost::property_tree::ptree CDataDictionaryControl::addBlockRecordToBlockEntity(std::string transGuid, boost::property_tree::ptree &ptListOfBlockRecords, long maxBlockEntitySize, bool verbose)
 {
 	using boost::property_tree::ptree;
 	ptree _empty_tree;
@@ -590,19 +596,17 @@ std::vector< pair<std::string ,int> > CDataDictionaryControl::writeBlockEntityTo
 }
 
 
-bool CDataDictionaryControl::addAttributToBlockRecord(std::string transGuid, boost::property_tree::ptree &ptListOfBlockRecords, long &maxBlockRecordSize, std::string realmName, std::string attributName, std::vector<unsigned char> attributValue)
+bool CDataDictionaryControl::addAttributToBlockRecord(std::string transGuid, boost::property_tree::ptree &ptListOfBlockRecords, long &maxBlockRecordSize, std::string realmName, std::string attributName, std::vector<unsigned char> attributValue, bool verbose)
 {
 	using boost::property_tree::ptree;
 	using boost::optional;
 	bool bResult=false;
 	static long aiid=0;
 
-
 	long maxDEDchunkSize=getMaxDEDchunkSize();
-	std::vector< pair<std::vector<unsigned char>,int> > listOfDEDchunks = splitAttributIntoDEDchunks(aiid, attributName, attributValue, maxDEDchunkSize);
-	bResult = addDEDchunksToBlockRecords(transGuid, ptListOfBlockRecords, aiid, realmName, attributName, listOfDEDchunks, maxBlockRecordSize);
+	std::vector< pair<std::vector<unsigned char>,int> > listOfDEDchunks = splitAttributIntoDEDchunks(aiid, attributName, attributValue, maxDEDchunkSize, verbose);
+	bResult = addDEDchunksToBlockRecords(transGuid, ptListOfBlockRecords, aiid, realmName, attributName, listOfDEDchunks, maxBlockRecordSize, verbose);
 
-	
 	return bResult;
 }
 

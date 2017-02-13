@@ -379,24 +379,18 @@ class collectablefutures
 		// wait for ALL requests futures to be done
 		for (auto &f : collectionOfFutureRequests)
 		{
-			//cout << "wait for function to finish" << endl;
-			BOOST_LOG_TRIVIAL(trace)	<< "[collect] wait start "<< endl;
+			//BOOST_LOG_TRIVIAL(trace)	<< "[collect] wait start "<< endl;
 			f.wait(); // wait for future to finish its job
-			BOOST_LOG_TRIVIAL(trace)	<< "[collect] wait done " << endl;
-			//cout << "function has finished" << endl;
+			//BOOST_LOG_TRIVIAL(trace)	<< "[collect] wait done " << endl;
 			// collect the results
 			std::vector<unsigned char> result_request;
 			result_request = f.get();
 			if(result_request.size() <= 0)
 				cout << "WARNING: No result data from request " << endl;
 			else {
-				BOOST_LOG_TRIVIAL(trace)	<< "[collect] add to result " << endl;
-				//cout << " +>";
-				//cout << "add result to result_complete" << endl;
+				//BOOST_LOG_TRIVIAL(trace)	<< "[collect] add to result " << endl;
 				result_complete.insert(result_complete.end(), result_request.begin(), result_request.end());	
-				//cout << "result was added to result_complete" << endl;
-				BOOST_LOG_TRIVIAL(trace)	<< "[collect] add to result complete " << endl;
-				//cout << "<+ ";
+				//BOOST_LOG_TRIVIAL(trace)	<< "[collect] add to result complete " << endl;
 			}
 		}
 

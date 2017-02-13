@@ -89,13 +89,13 @@ class CDataDictionaryControl
 		int splitFileIntoBlocks(std::string filename);
 		string generateBlockFileName(string filename, int filenumber);
 	  	boost::property_tree::ptree createBFiBlockRecord(bool bfirst,long aiid, long seq, std::string transGuid,std::string ddid, std::string realmName, char* blob, int size);
-	  	std::vector< pair<std::vector<unsigned char>,int> > splitAttributIntoDEDchunks(long &aiid, std::string attributName, std::vector<unsigned char>& attributValue, long maxDEDchunkSize);
+	  	std::vector< pair<std::vector<unsigned char>,int> > splitAttributIntoDEDchunks(long &aiid, std::string attributName, std::vector<unsigned char>& attributValue, long maxDEDchunkSize, bool verbose=false);
 	  	boost::property_tree::ptree addDEDchunksToBlockRecords(long &aiid, std::string realmName, std::string ddid, std::vector<pair<std::vector<unsigned char>,int>>listOfDEDchunks, long maxBlockRecordSize);
-	  	bool addDEDchunksToBlockRecords(std::string transGuid, boost::property_tree::ptree &pt, long &aiid, std::string realmName, std::string ddid, std::vector<pair<std::vector<unsigned char>,int>>listOfDEDchunks, long &maxBlockRecordSize);
-	  	boost::property_tree::ptree addBlockRecordToBlockEntity(std::string transGuid, boost::property_tree::ptree &pt, long maxBlockEntitySize);
+	  	bool addDEDchunksToBlockRecords(std::string transGuid, boost::property_tree::ptree &pt, long &aiid, std::string realmName, std::string ddid, std::vector<pair<std::vector<unsigned char>,int>>listOfDEDchunks, long &maxBlockRecordSize, bool verbose=false);
+	  	boost::property_tree::ptree addBlockRecordToBlockEntity(std::string transGuid, boost::property_tree::ptree &pt, long maxBlockEntitySize, bool verbose=false);
 	  	long fetchBlockRecordSize(boost::property_tree::ptree::value_type &vt);
 	  	std::vector< pair<std::string ,int> > writeBlockEntityToBFiFile(boost::property_tree::ptree &ptBlockEntities);
-	  	bool addAttributToBlockRecord(std::string transGuid, boost::property_tree::ptree &ptListOfBlockRecords, long &maxBlockRecordSize, std::string realmName, std::string attributName, std::vector<unsigned char> attributValue);
+	  	bool addAttributToBlockRecord(std::string transGuid, boost::property_tree::ptree &ptListOfBlockRecords, long &maxBlockRecordSize, std::string realmName, std::string attributName, std::vector<unsigned char> attributValue, bool verbose=false);
 	  
 	  	std::list<std::string> ls();
 		std::vector<assembledElements> readBlockRecordElements(boost::property_tree::ptree::value_type &vt2, bool verbose=false); 

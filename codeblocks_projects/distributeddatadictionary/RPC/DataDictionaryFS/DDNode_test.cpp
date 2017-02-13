@@ -558,15 +558,15 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom3BFi_diff_order)
 
 	cout << "BlockRecord size before: " << maxBlockRecordSize << endl;
 	std::string transGuid = "F7C23762ED2823A27E62A64B95C024FF";
-	BOOST_CHECK(pDDC->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, FotoAttributName, FotoAttributValue)); 
+	BOOST_CHECK(pDDC->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, FotoAttributName, FotoAttributValue,true)); 
 	cout << "BlockRecord size after 1 attribut add : " << maxBlockRecordSize << endl;
-	BOOST_CHECK(pDDC->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName2, attributValue2)); 
+	BOOST_CHECK(pDDC->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName2, attributValue2,true)); 
 	cout << "BlockRecord size after 2 atrribut add : " << maxBlockRecordSize << endl;
-	BOOST_CHECK(pDDC->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName, attributValue)); 
+	BOOST_CHECK(pDDC->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName, attributValue,true)); 
 	cout << "BlockRecord size after 3 atrribut add : " << maxBlockRecordSize << endl;
 	 
 	long maxBlockEntitySize=10000; // should result in 3 BlockEntity 	
-	boost::property_tree::ptree ptBlockEntity = pDDC->addBlockRecordToBlockEntity(transGuid, ptListOfBlockRecords, maxBlockEntitySize);
+	boost::property_tree::ptree ptBlockEntity = pDDC->addBlockRecordToBlockEntity(transGuid, ptListOfBlockRecords, maxBlockEntitySize, true);
 	BOOST_CHECK(ptBlockEntity.size()>0);
 
 	cout << "XML output of ALL attributs - the foto attribut will be spanning over 3 .BFi files, however here is shown all attributs together: " << endl;
@@ -973,13 +973,6 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 		cout << "*}}}" << endl;
 		cout << "________________________________________" << endl;
 		cout << "*** Merge retrieved RPCclient results with others " << endl;
-		
-	//	std::list< pair<seqSpan, std::vector<assembledElements>> > totallistOfAssembledAttributes;
-	//	BOOST_FOREACH(auto &list, resultFromRPCclients) { totallistOfAssembledAttributes.insert(totallistOfAssembledAttributes.end(), list.begin(),list.end()); }
-	//	pair<std::string, std::vector<unsigned char>> resultAttributPair = 	pDDC->mergeAndSort(attributToFetch, totallistOfAssembledAttributes);
-		
-		//auto resultAttributPair = 	pDDC->mergeAndSort(attributToFetch, pDDC->convertToList(resultFromRPCclients));
-		//auto resultAttributPair = 	pDDC->mergeAndSort(attributToFetch, resultFromRPCclients);
 		
 		auto resultAttributPair = 	pDDC->ftgt(attributToFetch, resultFromRPCclients);
 
@@ -1651,7 +1644,7 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_using_Futures)
 		cf.runRequest( req3, collectionOfFutureRequests ); // fetch attributs data from .BFi file 
 
 		cout << "Fetch attribut : " << endl;
-		auto result_attribut = cf.collect(collectionOfFutureRequests, attributToFetch);
+		auto result_attribut = cf.collect(collectionOfFutureRequests, attributToFetch, true);
 		
 		// verify that fetched attribut is same as original before being stored in .BFi files
 		BOOST_CHECK(FotoAttributValue == result_attribut); // verify that retrieved value is same as stored
