@@ -975,6 +975,13 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::mergeAndSo
 	return resultAttributPair;
 }
 
+std::list< pair<seqSpan, std::vector<assembledElements>> > CDataDictionaryControl::convertToList(std::vector<std::list< pair<seqSpan, std::vector<assembledElements>>>> resultFromRPCclients) 
+{
+	std::list< pair<seqSpan, std::vector<assembledElements>> > totallistOfAssembledAttributes;
+	BOOST_FOREACH(auto &list, resultFromRPCclients) { totallistOfAssembledAttributes.insert(totallistOfAssembledAttributes.end(), list.begin(),list.end()); }
+	return totallistOfAssembledAttributes;
+}
+
 bool CDataDictionaryControl::fetchAttributsFromFile(boost::filesystem::path const& filepathname, std::list< pair<seqSpan, std::vector<assembledElements>>> &listOfAssembledAttributes, bool verbose)
 {
 	bool bFoundFile=false;

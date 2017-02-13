@@ -109,12 +109,6 @@ class CDataDictionaryControl
 		transferBLOB convertToBLOB(std::list<pair<seqSpan, std::vector<assembledElements>>> listOfPairsOfAssembledAttributs, bool verbose=false);
 		bool convertFromBLOBToPair(transferBLOB tblob, std::list<pair<seqSpan, std::vector<assembledElements>>> &listOfPairsOfAssembledAttributs, bool verbose=false);
 		std::list<unsigned long> convertCommaSeperatedNumbersInStringToListOfLongs(std::string seqNumbers); 
-		std::list< pair<seqSpan, std::vector<assembledElements>> > convertToList(std::vector<std::list< pair<seqSpan, std::vector<assembledElements>>>> resultFromRPCclients) 
-		{
-			std::list< pair<seqSpan, std::vector<assembledElements>> > totallistOfAssembledAttributes;
-			BOOST_FOREACH(auto &list, resultFromRPCclients) { totallistOfAssembledAttributes.insert(totallistOfAssembledAttributes.end(), list.begin(),list.end()); }
-			return totallistOfAssembledAttributes;
-		}
 			
 
 
@@ -139,6 +133,7 @@ class CDataDictionaryControl
 		pair<std::string, std::vector<unsigned char>> mergeAndSort(std::string attributpath, std::list< pair<seqSpan, std::vector<assembledElements>>> listOfAssembledAttributes, bool verbose=false);
 		pair<std::string, std::vector<unsigned char>> mergeAndSort(std::string attributpath, std::vector<std::list< pair<seqSpan, std::vector<assembledElements>>>> resultFromRPCclients, bool verbose=false);
 		bool decode(std::vector< std::future<std::vector<unsigned char>> > &collectionOfFutureRequests, std::vector<std::list< pair<seqSpan, std::vector<assembledElements>>>> &resultFromRPCclients, bool verbose=false);
+		std::list< pair<seqSpan, std::vector<assembledElements>> > convertToList(std::vector<std::list< pair<seqSpan, std::vector<assembledElements>>>> resultFromRPCclients);
 };
 
 
