@@ -857,13 +857,17 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::
 {
 	pair<std::string, std::vector<unsigned char>> resultAttributPair;
 	std::vector<std::list< pair<seqSpan, std::vector<assembledElements>>>> resultFromRPCclients; 
-	decode( collectionOfFutureRequests, resultFromRPCclients, verbose ); // decode from transferBLOB 
-	resultAttributPair = mergeAndSort(attributToFetch, resultFromRPCclients, verbose); // the results can come in dfferent time order, hence the need for sort and merge
+	if(decode( collectionOfFutureRequests, resultFromRPCclients, verbose )) { // decode from transferBLOB 
+		resultAttributPair = mergeAndSort(attributToFetch, resultFromRPCclients, verbose); // the results can come in dfferent time order, hence the need for sort and merge
+	}
+	else
+		cout << "FAIL: decoding transferBLOB " << __FILE__ << __LINE__ << endl;
 	return resultAttributPair; //return as a pair <name,value>
 }
 		
 bool CDataDictionaryControl::decode(std::vector< std::future<std::vector<unsigned char>> > &collectionOfFutureRequests, std::vector<std::list< pair<seqSpan, std::vector<assembledElements>>>> &resultFromRPCclients, bool verbose)
 {
+	bool bResult=false;
 	int n=0;
 	if(verbose) cout << "decode future results " << endl; 
 	if(verbose) cout << "/*{{{*/" << endl;
@@ -912,8 +916,10 @@ bool CDataDictionaryControl::decode(std::vector< std::future<std::vector<unsigne
 		//- DEBUG show data
 
 		resultFromRPCclients.push_back(listpair);
+		bResult=true;
 	}
 	if(verbose) cout << "/*}}}*/" << endl;
+	return bResult;
 }
 
 pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::findAndAssembleAttributFromBFiFiles( std::string attributpath, boost::filesystem::path _targetDir) 
