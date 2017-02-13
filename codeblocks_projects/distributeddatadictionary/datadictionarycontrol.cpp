@@ -965,11 +965,9 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::mergeAndSo
 	std::vector<unsigned char> ElementData;
 	pair<std::string, std::vector<unsigned char>> resultAttributPair;
 
-	auto listOfAssembledAttributes = convertToList(resultFromRPCclients);
-
-	bool bFound = (listOfAssembledAttributes.size() > 0 ) ? true : false;
+	bool bFound = (resultFromRPCclients.size() > 0 ) ? true : false;
 	if(bFound==true) {
-		if(mergeRecords(filterAndSortAssembledRecords(attributpath, listOfAssembledAttributes), ElementData, verbose))
+		if(mergeRecords(filterAndSortAssembledRecords(attributpath, convertToList(resultFromRPCclients)), ElementData, verbose))
 			resultAttributPair = make_pair(attributpath,ElementData); // create assemble data result pair
 	}
 	return resultAttributPair;
