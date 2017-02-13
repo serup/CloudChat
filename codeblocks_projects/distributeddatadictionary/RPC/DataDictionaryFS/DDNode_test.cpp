@@ -497,7 +497,6 @@ BOOST_AUTO_TEST_CASE(CHandlingServerRequestToClients_init)
 }
 
 
-/*
 BOOST_AUTO_TEST_CASE(fetchAttributFrom3BFi_diff_order)
 {
 	cout<<"BOOST_AUTO_TEST_CASE( fetchAttributFrom3BFi_diff_order)\n{"<<endl;
@@ -1014,7 +1013,6 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 	cout<<"}"<<endl;
 }
 
-*/
 
 // DEPRECATED - somehow this does NOT release the file - causing next testcases to fail, thus it has been deprecated
 // BOOST_AUTO_TEST_CASE(usingFuturesAsynchronReadFile)
