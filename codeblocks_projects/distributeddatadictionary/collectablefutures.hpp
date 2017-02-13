@@ -413,7 +413,7 @@ class collectablefutures
 		// decode from transferBLOB
 		decode( collectionOfFutureRequests, resultFromRPCclients, verbose );
 		// merge attribut chunks and sort , then fetch specific attribut
-		auto resultAttributPair = DDControl.mergeAndSort(attributToFetch, DDControl.convertToList(resultFromRPCclients), verbose);
+		auto resultAttributPair = DDControl.ftgt(attributToFetch, resultFromRPCclients, verbose);
 		// return attribut fetched
 		if(resultAttributPair.first == attributToFetch)
 		{

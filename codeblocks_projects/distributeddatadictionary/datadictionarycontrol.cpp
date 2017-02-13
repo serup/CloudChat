@@ -846,6 +846,13 @@ pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::
 	return resultAttributPair; //return as a pair <name,value>
 }
 
+pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::ftgt(std::string attributToFetch, std::vector<std::list< pair<seqSpan, std::vector<assembledElements>>>> resultFromRPCclients, bool verbose)
+{
+	pair<std::string, std::vector<unsigned char>> resultAttributPair;
+	resultAttributPair = mergeAndSort(attributToFetch, resultFromRPCclients, verbose); // the results can come in dfferent time order, hence the need for sort and merge
+	return resultAttributPair; //return as a pair <name,value>
+}
+
 pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::findAndAssembleAttributFromBFiFiles( std::string attributpath, boost::filesystem::path _targetDir) 
 {
 	return mergeAndSort(attributpath, fetchAttributBlocksFromBFiFiles(_targetDir));
@@ -867,10 +874,26 @@ std::list< pair<seqSpan, std::vector<assembledElements>>> CDataDictionaryControl
 	return listOfAssembledAttributes;
 }
 
+
 pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::mergeAndSort(std::string attributpath, std::list< pair<seqSpan, std::vector<assembledElements>>> listOfAssembledAttributes, bool verbose)
 {
 	std::vector<unsigned char> ElementData;
 	pair<std::string, std::vector<unsigned char>> resultAttributPair;
+	bool bFound = (listOfAssembledAttributes.size() > 0 ) ? true : false;
+	if(bFound==true) {
+		if(mergeRecords(filterAndSortAssembledRecords(attributpath, listOfAssembledAttributes), ElementData, verbose))
+			resultAttributPair = make_pair(attributpath,ElementData); // create assemble data result pair
+	}
+	return resultAttributPair;
+}
+
+pair<std::string, std::vector<unsigned char>> CDataDictionaryControl::mergeAndSort(std::string attributpath, std::vector<std::list< pair<seqSpan, std::vector<assembledElements>>>> resultFromRPCclients, bool verbose)
+{
+	std::vector<unsigned char> ElementData;
+	pair<std::string, std::vector<unsigned char>> resultAttributPair;
+
+	auto listOfAssembledAttributes = convertToList(resultFromRPCclients);
+
 	bool bFound = (listOfAssembledAttributes.size() > 0 ) ? true : false;
 	if(bFound==true) {
 		if(mergeRecords(filterAndSortAssembledRecords(attributpath, listOfAssembledAttributes), ElementData, verbose))

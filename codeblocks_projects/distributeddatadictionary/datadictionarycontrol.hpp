@@ -101,9 +101,9 @@ class CDataDictionaryControl
 		std::vector<assembledElements> readBlockRecordElements(boost::property_tree::ptree::value_type &vt2, bool verbose=false); 
 		bool findElement(std::vector<assembledElements>& _Elements, std::string strElementID);
 		std::vector<unsigned char> fetchElement(std::vector<assembledElements>& _Elements, std::string strElementID);
-		pair<std::string, std::vector<unsigned char>> ftgt(std::string attributpath);
+		pair<std::string, std::vector<unsigned char>> ftgt(std::string attributpath); // will search in current file system for .BFi files with attribut
+		pair<std::string, std::vector<unsigned char>> ftgt(std::string attributToFetch, std::vector<std::list< pair<seqSpan, std::vector<assembledElements>>>> resultFromRPCclients, bool verbose=false); // will assemble returned result and search thru it to find attribut
 		std::list< pair<seqSpan, std::vector<assembledElements>>> fetchAttributBlocksFromBFiFiles(boost::filesystem::path _targetDir);
-		pair<std::string, std::vector<unsigned char>> mergeAndSort(std::string attributpath, std::list< pair<seqSpan, std::vector<assembledElements>>> listOfAssembledAttributes, bool verbose=false);
 		bool fetchAttributsFromFile(boost::filesystem::path const& filepathname, std::list< pair<seqSpan, std::vector<assembledElements>>> &listOfAssembledAttributes, bool verbose=false);
 		transferBLOB convertToBLOB(std::list<pair<seqSpan, std::vector<assembledElements>>> listOfPairsOfAssembledAttributs, bool verbose=false);
 		bool convertFromBLOBToPair(transferBLOB tblob, std::list<pair<seqSpan, std::vector<assembledElements>>> &listOfPairsOfAssembledAttributs, bool verbose=false);
@@ -135,7 +135,8 @@ class CDataDictionaryControl
 		bool assembleBlockRecords(std::string transGuid, std::string id, std::vector<assembledElements> &recElements,  std::list< pair<seqSpan, std::vector<assembledElements>> > &listOfAssembledAttributes, bool verbose=false);
 		pair<std::string, std::vector<unsigned char>> findAndAssembleAttributFromBFiFiles( std::string attributpath, boost::filesystem::path _targetDir );
 		bool addAttributFromBFiToList(ptree pt, std::list< pair<seqSpan, std::vector<assembledElements>> > &listOfAssembledAttributes, bool verbose=false);
-
+		pair<std::string, std::vector<unsigned char>> mergeAndSort(std::string attributpath, std::list< pair<seqSpan, std::vector<assembledElements>>> listOfAssembledAttributes, bool verbose=false);
+		pair<std::string, std::vector<unsigned char>> mergeAndSort(std::string attributpath, std::vector<std::list< pair<seqSpan, std::vector<assembledElements>>>> resultFromRPCclients, bool verbose=false);
 };
 
 

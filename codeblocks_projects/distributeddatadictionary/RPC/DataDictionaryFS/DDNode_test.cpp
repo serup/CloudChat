@@ -519,7 +519,7 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom3BFi_diff_order)
 		return;
 	}
 
-	CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
+	//CDataDictionaryControl *pDDC = new CDataDictionaryControl();
 	ptree ptListOfBlockRecords;
 
 	// attribut 3
@@ -558,15 +558,15 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom3BFi_diff_order)
 
 	cout << "BlockRecord size before: " << maxBlockRecordSize << endl;
 	std::string transGuid = "F7C23762ED2823A27E62A64B95C024FF";
-	BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, FotoAttributName, FotoAttributValue)); 
+	BOOST_CHECK(pDDC->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, FotoAttributName, FotoAttributValue)); 
 	cout << "BlockRecord size after 1 attribut add : " << maxBlockRecordSize << endl;
-	BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName2, attributValue2)); 
+	BOOST_CHECK(pDDC->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName2, attributValue2)); 
 	cout << "BlockRecord size after 2 atrribut add : " << maxBlockRecordSize << endl;
-	BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName, attributValue)); 
+	BOOST_CHECK(pDDC->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName, attributValue)); 
 	cout << "BlockRecord size after 3 atrribut add : " << maxBlockRecordSize << endl;
 	 
 	long maxBlockEntitySize=10000; // should result in 3 BlockEntity 	
-	boost::property_tree::ptree ptBlockEntity = ptestDataDictionaryControl->addBlockRecordToBlockEntity(transGuid, ptListOfBlockRecords, maxBlockEntitySize);
+	boost::property_tree::ptree ptBlockEntity = pDDC->addBlockRecordToBlockEntity(transGuid, ptListOfBlockRecords, maxBlockEntitySize);
 	BOOST_CHECK(ptBlockEntity.size()>0);
 
 	cout << "XML output of ALL attributs - the foto attribut will be spanning over 3 .BFi files, however here is shown all attributs together: " << endl;
@@ -575,7 +575,7 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom3BFi_diff_order)
 	cout << "*}}}" << endl;
 
 	// create BFi files
-	std::vector< pair<std::string ,int> > listOfBlockEntityFiles = ptestDataDictionaryControl->writeBlockEntityToBFiFile(ptBlockEntity);
+	std::vector< pair<std::string ,int> > listOfBlockEntityFiles = pDDC->writeBlockEntityToBFiFile(ptBlockEntity);
 	cout << "Created : " << listOfBlockEntityFiles.size() << " .BFi files " << endl;
 	BOOST_CHECK(listOfBlockEntityFiles.size()==3);
 
@@ -690,7 +690,7 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom3BFi_diff_order)
 
 	cout << "INFO: ftgt should beable to assemble across multiple .BFi files " << endl;
 	std::string attributToFetch = transGuid + "./profile/foto";
-	pair<std::string, std::vector<unsigned char>> pairAttribut = ptestDataDictionaryControl->ftgt(attributToFetch);
+	pair<std::string, std::vector<unsigned char>> pairAttribut = pDDC->ftgt(attributToFetch);
 	cout << "Attribut name : " << pairAttribut.first << endl;
 
 	cout << "Original data : " << endl;
@@ -718,7 +718,7 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom3BFi_diff_order)
 		boost::filesystem::path p = boost::filesystem::path(filename);
 		boost::filesystem::remove(filename);
 	}
-	delete ptestDataDictionaryControl;
+	delete pDDC;
 
 	cout<<"}"<<endl;
 }
@@ -739,7 +739,7 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 
 	if(listResult.size() <= 0) {
 
-		CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
+		CDataDictionaryControl *pDDC = new CDataDictionaryControl();
 		ptree ptListOfBlockRecords;
 
 		// attribut 3
@@ -778,15 +778,15 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 
 		cout << "BlockRecord size before: " << maxBlockRecordSize << endl;
 		std::string transGuid = "F9C23762ED2823A27E62A64B95C024FF";
-		BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, FotoAttributName, FotoAttributValue)); 
+		BOOST_CHECK(pDDC->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, FotoAttributName, FotoAttributValue)); 
 		cout << "BlockRecord size after 1 attribut add : " << maxBlockRecordSize << endl;
-		BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName2, attributValue2)); 
+		BOOST_CHECK(pDDC->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName2, attributValue2)); 
 		cout << "BlockRecord size after 2 atrribut add : " << maxBlockRecordSize << endl;
-		BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName, attributValue)); 
+		BOOST_CHECK(pDDC->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName, attributValue)); 
 		cout << "BlockRecord size after 3 atrribut add : " << maxBlockRecordSize << endl;
 
 		long maxBlockEntitySize=10000; // should result in 3 BlockEntity 	
-		boost::property_tree::ptree ptBlockEntity = ptestDataDictionaryControl->addBlockRecordToBlockEntity(transGuid, ptListOfBlockRecords, maxBlockEntitySize);
+		boost::property_tree::ptree ptBlockEntity = pDDC->addBlockRecordToBlockEntity(transGuid, ptListOfBlockRecords, maxBlockEntitySize);
 		BOOST_CHECK(ptBlockEntity.size()>0);
 
 		//cout << "XML output of ALL attributs - the foto attribut will be spanning over 3 .BFi files, however here is shown all attributs together: " << endl;
@@ -795,7 +795,7 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 		//cout << "*}}}" << endl;
 
 		// create BFi files
-		std::vector< pair<std::string ,int> > listOfBlockEntityFiles = ptestDataDictionaryControl->writeBlockEntityToBFiFile(ptBlockEntity);
+		std::vector< pair<std::string ,int> > listOfBlockEntityFiles = pDDC->writeBlockEntityToBFiFile(ptBlockEntity);
 		cout << "Created : " << listOfBlockEntityFiles.size() << " .BFi files " << endl;
 		BOOST_CHECK(listOfBlockEntityFiles.size()==3);
 
@@ -925,17 +925,17 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 				cout << "virtual RPCclient " << n+1 << " : " << endl;
 				cout << "*{{{" << endl;
 				cout << "  Fetch attribut from .BFi file " << endl;
-				ptestDataDictionaryControl->fetchAttributsFromFile(currentfile, AttributInblockSequenceFromBFifile); 
+				pDDC->fetchAttributsFromFile(currentfile, AttributInblockSequenceFromBFifile); 
 
 				cout << "  prepare result in a BLOB " << endl;
-				transferBLOB stBlob = ptestDataDictionaryControl->convertToBLOB(AttributInblockSequenceFromBFifile,true);
+				transferBLOB stBlob = pDDC->convertToBLOB(AttributInblockSequenceFromBFifile,true);
 				BOOST_CHECK(stBlob.eType == transferBLOB::enumType::ATTRIBUTS_LIST);
 				
 				cout << "  simulate transfer / receive from RPCclient to server " << endl;
 				cout << "  convert result in BLOB to list pair<seq,vector<assembledElements>> " << endl;
 				
 				std::list<pair<seqSpan, std::vector<assembledElements>>> listpair;
-				BOOST_CHECK(ptestDataDictionaryControl->convertFromBLOBToPair(stBlob, listpair,true));
+				BOOST_CHECK(pDDC->convertFromBLOBToPair(stBlob, listpair,true));
 				BOOST_CHECK(listpair.size() > 0);
 
 				cout << "  amount of elements in received listpair : " << listpair.size() << endl;
@@ -973,11 +973,16 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 		cout << "*}}}" << endl;
 		cout << "________________________________________" << endl;
 		cout << "*** Merge retrieved RPCclient results with others " << endl;
-		std::list< pair<seqSpan, std::vector<assembledElements>> > totallistOfAssembledAttributes;
+		
+	//	std::list< pair<seqSpan, std::vector<assembledElements>> > totallistOfAssembledAttributes;
+	//	BOOST_FOREACH(auto &list, resultFromRPCclients) { totallistOfAssembledAttributes.insert(totallistOfAssembledAttributes.end(), list.begin(),list.end()); }
+	//	pair<std::string, std::vector<unsigned char>> resultAttributPair = 	pDDC->mergeAndSort(attributToFetch, totallistOfAssembledAttributes);
+		
+		//auto resultAttributPair = 	pDDC->mergeAndSort(attributToFetch, pDDC->convertToList(resultFromRPCclients));
+		//auto resultAttributPair = 	pDDC->mergeAndSort(attributToFetch, resultFromRPCclients);
+		
+		auto resultAttributPair = 	pDDC->ftgt(attributToFetch, resultFromRPCclients);
 
-		BOOST_FOREACH(auto &list, resultFromRPCclients) { totallistOfAssembledAttributes.insert(totallistOfAssembledAttributes.end(), list.begin(),list.end()); }
-
-		pair<std::string, std::vector<unsigned char>> resultAttributPair = 	ptestDataDictionaryControl->mergeAndSort(attributToFetch, totallistOfAssembledAttributes);
 		cout << "Attribut name : " << resultAttributPair.first << endl;
 		BOOST_CHECK(attributToFetch == resultAttributPair.first);
 
@@ -1007,7 +1012,7 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_BFi_Files)
 			boost::filesystem::path p = boost::filesystem::path(filename);
 			boost::filesystem::remove(filename);
 		}
-		delete ptestDataDictionaryControl;
+		delete pDDC;
 	}
 	
 	cout<<"}"<<endl;
@@ -1440,7 +1445,7 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_using_Futures)
 
 	if(listResult.size() <= 0) {
 
-		CDataDictionaryControl *ptestDataDictionaryControl = new CDataDictionaryControl();
+		CDataDictionaryControl *pDDC = new CDataDictionaryControl();
 		ptree ptListOfBlockRecords;
 
 		// attribut 3
@@ -1476,19 +1481,19 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_using_Futures)
 
 		cout << "BlockRecord size before: " << maxBlockRecordSize << endl;
 		std::string transGuid = "F8C23762ED2823A27E62A64B95C024EE";
-		BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, FotoAttributName, FotoAttributValue)); 
+		BOOST_CHECK(pDDC->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, FotoAttributName, FotoAttributValue)); 
 		cout << "BlockRecord size after 1 attribut add : " << maxBlockRecordSize << endl;
-		BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName2, attributValue2)); 
+		BOOST_CHECK(pDDC->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName2, attributValue2)); 
 		cout << "BlockRecord size after 2 atrribut add : " << maxBlockRecordSize << endl;
-		BOOST_CHECK(ptestDataDictionaryControl->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName, attributValue)); 
+		BOOST_CHECK(pDDC->addAttributToBlockRecord(transGuid,ptListOfBlockRecords, maxBlockRecordSize, realmName, attributName, attributValue)); 
 		cout << "BlockRecord size after 3 atrribut add : " << maxBlockRecordSize << endl;
 
 		long maxBlockEntitySize=10000; // should result in 3 BlockEntity 	
-		boost::property_tree::ptree ptBlockEntity = ptestDataDictionaryControl->addBlockRecordToBlockEntity(transGuid, ptListOfBlockRecords, maxBlockEntitySize);
+		boost::property_tree::ptree ptBlockEntity = pDDC->addBlockRecordToBlockEntity(transGuid, ptListOfBlockRecords, maxBlockEntitySize);
 		BOOST_CHECK(ptBlockEntity.size()>0);
 
 		// create BFi files
-		std::vector< pair<std::string ,int> > listOfBlockEntityFiles = ptestDataDictionaryControl->writeBlockEntityToBFiFile(ptBlockEntity);
+		std::vector< pair<std::string ,int> > listOfBlockEntityFiles = pDDC->writeBlockEntityToBFiFile(ptBlockEntity);
 		cout << "Created : " << listOfBlockEntityFiles.size() << " .BFi files " << endl;
 		BOOST_CHECK(listOfBlockEntityFiles.size()==3);
 
@@ -1675,7 +1680,7 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_using_Futures)
 			boost::filesystem::path p = boost::filesystem::path(filename);
 			boost::filesystem::remove(filename);
 		}
-		delete ptestDataDictionaryControl;
+		delete pDDC;
 	}
 	
 	cout<<"}"<<endl;
