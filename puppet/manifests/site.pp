@@ -381,6 +381,72 @@ node /^javaservices.*/ {
    include grails_springboot
 }
 
+node /^nifi.*/ {
+
+  include git
+  include maven
+  include apt
+ 
+  # howto manually apply this manifest file -- make sure you are sudo
+  # puppet apply /vagrant/puppet/manifests/site.pp --modulepath /vagrant/puppet/trunk/environments/devtest/modules/
+
+  class { apache : } 
+
+  exec { "apt-update":
+    command => "/usr/bin/apt-get update"
+  }
+  Exec["apt-update"] -> Package <| |>
+
+  include sudo
+  # Add adm group to sudoers with NOPASSWD
+  sudo::conf { 'vagrant':
+    priority => 01,
+    content  => "vagrant ALL=(ALL) NOPASSWD: ALL",
+  }
+
+   apt::ppa { "ppa:webupd8team/java": }
+
+ 
+  exec { 'apt-get update':
+      command => '/usr/bin/apt-get update',
+      before => Apt::Ppa["ppa:webupd8team/java"],
+  }
+
+  package { ["vim",
+        "curl",   
+        "git-core",
+        "bash"]:
+        ensure => present,
+        require => Exec["apt-get update"],
+        before => Apt::Ppa["ppa:webupd8team/java"],
+  }
+
+  exec { 'apt-get update 2':
+     command => '/usr/bin/apt-get update',
+     require => [ Apt::Ppa["ppa:webupd8team/java"],  Package["git-core"] ],
+  }
+
+  package { ["oracle-java8-installer"]:
+	 ensure => present,
+	 require => Exec["apt-get update 2"],
+  }
+
+  exec {
+	  "accept_license":
+		  command => "echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections && echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections",
+	  cwd => "/home/vagrant",
+	  user => "vagrant",
+	  path => "/usr/bin/:/bin/",
+	  before => Package["oracle-java8-installer"],
+	  logoutput => true,
+  }
+
+  exec { "add_java_home":
+	  command => '/bin/echo "export JAVA_HOME=/usr/lib/jvm/java-8-oracle" >> /home/vagrant/.bashrc',
+ 	  require => Package["oracle-java8-installer"],
+  }
+
+}
 
 node /^jenkins.*/ {
 

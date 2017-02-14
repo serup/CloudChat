@@ -58,6 +58,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       if node_name == "javaservices"
         config.ssh.forward_x11 = true 
       end
+
+      if node_name == "nifi"
+        config.ssh.forward_x11 = true 
+      end
+ 
       config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
       config.vm.synced_folder("puppet/hiera", "/tmp/vagrant-puppet-3/hiera")
 
