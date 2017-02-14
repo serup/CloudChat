@@ -99,7 +99,7 @@ else
 	echo "**********************************"
 	sudo /home/vagrant/NiFi/nifi-1.1.1/bin/nifi.sh install 
 	sudo service nifi status 
-	sudo /home/vagrant/NiFi/nifi-1.1.1/bin/nifi.sh start
+	#sudo /home/vagrant/NiFi/nifi-1.1.1/bin/nifi.sh start
 
 fi
 
