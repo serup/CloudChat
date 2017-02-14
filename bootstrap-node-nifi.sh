@@ -82,7 +82,7 @@ else
 	wget http://ftp.download-by.net/apache/nifi/1.1.1/nifi-1.1.1-bin.tar.gz . 2> download.log
 	wget https://www.apache.org/dist/nifi/1.1.1/nifi-1.1.1-bin.tar.gz.asc . 2> download_asc.log
 	echo "import keys for verification of download"
-    gpg -vimpor  KEYS
+    gpg --import  KEYS
 	gpg --keyserver pgpkeys.mit.edu --recv-key 22886FEE
 	gpg --verify nifi-1.1.1-bin.tar.gz.asc nifi-1.1.1-bin.tar.gz
 	gpg --fingerprint 22886FEE
@@ -107,8 +107,8 @@ fi
 echo "****************"
 echo "start nifi"
 echo "****************"
-#sudo /home/vagrant/NiFi/nifi-1.1.1/bin/nifi.sh run
-sudo service nifi start
+sudo /home/vagrant/NiFi/nifi-1.1.1/bin/nifi.sh start 
+#sudo service nifi start
 echo "****************"
 echo "You can see nifi here : http://nifi.dops.scanva.com:8080/nifi or http://192.168.31.12:8080/nifi/"
 
