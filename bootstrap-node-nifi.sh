@@ -100,7 +100,31 @@ else
 	sudo /home/vagrant/NiFi/nifi-1.1.1/bin/nifi.sh install 
 	sudo service nifi status 
 	#sudo /home/vagrant/NiFi/nifi-1.1.1/bin/nifi.sh start
-
+	
+	echo "**********************************"
+	echo " example template "
+	echo "**********************************"
+	echo " try testfile: (to test run then copy it to folder tranferToNiFi; it should be originally stored in files folder) "
+	echo " #"
+	echo " #"
+	echo " #"
+	echo " #"
+	echo " #"
+	echo " #"
+	echo " # bla bla"
+	echo " #"
+	echo " #"
+	echo " 0.0.0.0|0.255.255.255|0|0|20108000|0|001|0|XX|0|||||2|123|HEE=Text line 1 bla bla"
+	echo " 1.0.0.0|1.0.0.0|0|0|20108000|0|001|0|XX|0|||||2|123|HEE=Text line 2 bla bla"
+	echo " 1.0.0.1|1.0.0.1|2.72|101.31|40000|0|001|0|XX|0|||||2|123|HEE=Text line 3 bla bla"
+	sudo mkdir -p /home/vagrant/NiFi/nifi-1.1.1/templates
+	sudo chown vagrant /home/vagrant/NiFi/nifi-1.1.1/templates
+	cp /vagrant/nifiexampletemplate.xml /home/vagrant/NiFi/nifi-1.1.1/templates/.
+	sudo mkdir -p /home/vagrant/NiFi/nifi-1.1.1/work
+	sudo chown vagrant /home/vagrant/NiFi/nifi-1.1.1/work 
+	mkdir -p /home/vagrant/NiFi/nifi-1.1.1/work/test/files
+	mkdir -p /home/vagrant/NiFi/nifi-1.1.1/work/test/result
+	mkdir -p /home/vagrant/NiFi/nifi-1.1.1/work/test/transferToNiFi
 fi
 
 
