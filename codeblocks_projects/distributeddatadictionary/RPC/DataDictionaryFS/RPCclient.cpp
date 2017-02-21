@@ -132,9 +132,8 @@ bool RPCclient::handleResponse(std::unique_ptr<CDataEncoder> &decoder_ptr)
 
 		if(!bDecoded){
 			// could be server is sending a request
-			cout << "TODO: handle a possible Request from server" << endl;	
-			//CHandlingServerRequestToClients SRC;	
-			//SRC.handlingRequst(decoder_ptr);
+			CHandlingServerRequestToClients SRC;	
+			SRC.handlingRequest(decoder_ptr);
 			
 		}
 	}

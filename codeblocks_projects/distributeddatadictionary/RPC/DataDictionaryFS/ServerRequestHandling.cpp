@@ -15,6 +15,8 @@
 bool CHandlingServerRequestToClients::handlingRequest(std::unique_ptr<CDataEncoder> &decoder_ptr)
 {
 	bool bResult=false;
+		
+	cout << "TODO: handle a possible Request from server" << endl;	
 
 	return bResult;
 }

@@ -9,6 +9,7 @@
 #include <sys/stat.h>
 #include <iostream>
 #include <fstream>
+#include "ServerRequestHandling.h"
 
 using namespace std;
 

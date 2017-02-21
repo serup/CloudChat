@@ -28,7 +28,7 @@
 #include "DDDfs.h"
 #include "mockRPCServer.h"
 #include "dummyrequest.h"
-#include "ServerRequestHandling.h"
+//#include "ServerRequestHandling.h" // included in RPCclient.h
 #include "ClientRequestHandling.h"
 #include "../../datadictionarycontrol.hpp"
 #include <errno.h>
@@ -1680,69 +1680,106 @@ BOOST_AUTO_TEST_CASE(fetchAttributFrom_3_virtual_RPCclients_using_Futures)
 }
 
 
+BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_dummy_RPCclients_using_futures)
+{
+	cout << "BOOST_AUTO_TEST_CASE( fetchAttributsFrom_3_dummy_RPCclients_using_futures )\n{" << endl;
+	
+	BOOST_TEST_MESSAGE( "Simulate DDDAdmin requesting to fetch attribut from clients - 3 will respond with data " );	
+	
+	cout<<"/*{{{*/"<<endl;   
+	{
+	// setup RPCclients
+	BOOST_TEST_MESSAGE( "Initiate 3 dummy RPCclients" );
+	RPCclient client1;
+	RPCclient client2;
+	RPCclient client3;
+
+	// simulate that DDDAdmin is sending a request to each client
+	// setup a request - simulating a request from server
+	BOOST_TEST_MESSAGE( "setup a request - simulating a request from server, to later be send to each RPCclient node " );
+	DDRequest req = createDummyDDRequest();
+	DED_PUT_DATA_IN_DECODER(requestForAttribut,(unsigned char*)req.ded.data.data_val, req.ded.data.data_len);
+
+	BOOST_TEST_MESSAGE( "Simulate sending a request from DDDAdmin to each client" );
+	// default response handler will forward to handle a request if it validates incomming message as different than a response
+	// a request from DDDAdmin is in the scope of the client actually a response to last communication
+	client1.handleResponse(requestForAttribut);
+	client2.handleResponse(requestForAttribut);
+	client3.handleResponse(requestForAttribut);
+
+	
+
+	}
+	cout<<"/*}}}*/"<<endl;   
+
+	BOOST_CHECK(true == false);
+
+	cout << "}" << endl;
+}
+
 #ifdef FOLLY
-
-/**
- * TODO: create a testcase which creates futures and executers - where executers simulate RPCclients
- * see example : https://code.facebook.com/posts/1661982097368498/futures-for-c-11-at-facebook/
- *
- * using: 
- * https://github.com/facebook/folly/tree/master/folly/futures
- */
-struct Executor {
-	using Func = std::function<void()>;
-	virtual void add(Func) = 0;
-};
-
-std::runtime_error greatScott("Great Scott!");
-double getEnergySync(int year) {
-	if (year == 1955 || year == 1885) throw greatScott;
-	return 1.21e9;
-}
-
-Future<double> getEnergy(int year) {
-	auto promise = make_shared<Promise<double>>();
-
-	std::thread([=]{
-			promise->setWith(std::bind(getEnergySync, year));
-			}).detach();
-
-	return promise->getFuture();
-}
-
-BOOST_AUTO_TEST_CASE(testFollyFutures)
-{
-	cout << "BOOST_AUTO_TEST_CASE( testFollyFutures )\n{" << endl;
-
-	// First create a promise
-	Promise<double> promise;
-	Future<double> future = promise.getFuture();
-
-
-
-	// fullfill the promise
-	promise.setValue(1.21e9);
-	promise.setException(greatScott);
-	promise.setWith([]{ if (year == 1955 || year == 1885) throw greatScott; return 1.21e9; });
-
-
-	//Future<double> future = folly::via(Executor, std::bind(getEnergySync, 2017));
-
-
-	BOOST_CHECK(true == false);
-
-	cout << "}" << endl;
-}
-
-BOOST_AUTO_TEST_CASE(useFuturesToCollectRPCclientsResults)
-{
-	cout << "BOOST_AUTO_TEST_CASE( useFuturesToCollectRPCclientsResults )\n{" << endl;
-
-	BOOST_CHECK(true == false);
-
-	cout << "}" << endl;
-}
-
+		
+	/**
+	 * TODO: create a testcase which creates futures and executers - where executers simulate RPCclients
+	 * see example : https://code.facebook.com/posts/1661982097368498/futures-for-c-11-at-facebook/
+	 *
+	 * using: 
+	 * https://github.com/facebook/folly/tree/master/folly/futures
+	 */
+	struct Executor {
+		using Func = std::function<void()>;
+		virtual void add(Func) = 0;
+	};
+	
+	std::runtime_error greatScott("Great Scott!");
+	double getEnergySync(int year) {
+		if (year == 1955 || year == 1885) throw greatScott;
+		return 1.21e9;
+	}
+	
+	Future<double> getEnergy(int year) {
+		auto promise = make_shared<Promise<double>>();
+	
+		std::thread([=]{
+				promise->setWith(std::bind(getEnergySync, year));
+				}).detach();
+	
+		return promise->getFuture();
+	}
+	
+	BOOST_AUTO_TEST_CASE(testFollyFutures)
+	{
+		cout << "BOOST_AUTO_TEST_CASE( testFollyFutures )\n{" << endl;
+	
+		// First create a promise
+		Promise<double> promise;
+		Future<double> future = promise.getFuture();
+	
+	
+	
+		// fullfill the promise
+		promise.setValue(1.21e9);
+		promise.setException(greatScott);
+		promise.setWith([]{ if (year == 1955 || year == 1885) throw greatScott; return 1.21e9; });
+	
+	
+		//Future<double> future = folly::via(Executor, std::bind(getEnergySync, 2017));
+	
+	
+		BOOST_CHECK(true == false);
+	
+		cout << "}" << endl;
+	}
+	
+	BOOST_AUTO_TEST_CASE(useFuturesToCollectRPCclientsResults)
+	{
+		cout << "BOOST_AUTO_TEST_CASE( useFuturesToCollectRPCclientsResults )\n{" << endl;
+	
+		BOOST_CHECK(true == false);
+	
+		cout << "}" << endl;
+	}
+	
 #endif // FOLLY
 
 // ******************************************************************************************************************
