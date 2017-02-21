@@ -151,6 +151,7 @@ com! DiffSaved call s:DiffWithSaved()
 let g:statline_syntastic = 0
 let @m = 'iBOOST_LOG_MESSAGE( " " );'
 let @q = 'iBOOST_AUTO_TEST_CASE(x){cout << "BOOST_AUTO_TEST_CASE(x)\n{" << endl;BOOST_CHECK(true == false);cout << "}" << endl;}'
+let @t = 'iBOOST_TEST_MESSAGE(" " );'
 let @j = 'y/^R"^M'
 let @h = '!xmllint --format - | highlight --out-format=ansi --syntax=xml'
 set autoindent noexpandtab tabstop=4 shiftwidth=4
