@@ -1,4 +1,10 @@
-DDRequest createRequest(std::string requestName)                                                                  
+/**
+ *
+ * General create requests to use for request comming from server to client
+ *
+ */
+
+DDRequest createRequest(std::string requestName, std::vector<pair<std::string, std::vector<unsigned char>>> parameters)                                                            
 {                                                                                                 
 	DDRequest req;                                                                                
 	if(requestName == "fetchAttribut") 

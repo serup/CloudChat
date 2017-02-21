@@ -1697,7 +1697,9 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_dummy_RPCclients_using_futures)
 	// simulate that DDDAdmin is sending a request to each client
 	// setup a request - simulating a request from server
 	BOOST_TEST_MESSAGE( "setup a request - simulating a request from server, to later be send to each RPCclient node " );
-	DDRequest req = createRequest("fetchAttribut");
+
+	std::vector<pair<std::string, std::vector<unsigned char>>> parameters;
+	DDRequest req = createRequest("fetchAttribut", parameters);
 	DED_PUT_DATA_IN_DECODER(requestForAttribut,(unsigned char*)req.ded.data.data_val, req.ded.data.data_len);
 
 	BOOST_TEST_MESSAGE( "Simulate sending a request from DDDAdmin to each client" );
