@@ -16,7 +16,49 @@ bool CHandlingServerRequestToClients::handlingRequest(std::unique_ptr<CDataEncod
 {
 	bool bResult=false;
 		
-	cout << "TODO: handle a possible Request from server" << endl;	
+	
+	// decode data ...
+	if( DED_GET_STRUCT_START( decoder_ptr, "DDNodeRequest" ) == true )
+	{	
+		std::string methodName;
+		if( DED_GET_METHOD( decoder_ptr, "name", methodName ) == true )
+		{
+			eMethod = analyseRequestMethod(methodName);
+			switch(eMethod)
+			{
+				case FETCH_ATTRIBUT:
+					{
+						/** 
+						 * TODO: 
+						 *
+						 **/
+						printf("TODO: handle request fetchAttribut \n");	
+					}
+					break;
+
+				default:
+					{
+						printf("FAIL: no request method found for [ %s ] , hence no request handling\n",methodName.c_str());
+					}
+					break;
+			}
+		}
+		else
+			cout << "WARNING: unknown method : " << methodName << endl;
+
+	}
+	
 
 	return bResult;
 }
+
+
+CHandlingServerRequestToClients::_eMethod CHandlingServerRequestToClients::analyseRequestMethod(std::string strMethod)
+{
+	_eMethod eRmethod;
+	if( strMethod ==(std::string)"fetchAttribut" ) eRmethod = FETCH_ATTRIBUT;
+
+	return eRmethod;
+}
+
+

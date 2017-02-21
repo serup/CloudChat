@@ -94,6 +94,9 @@ noremap <silent> <leader>vzr :VFoldClear<CR>
 nnoremap <leader>xml :so xml_project_output.vim<CR>
 noremap <leader>M <C-W>\| <C-W>_
 noremap <leader>m <C-W>=
+map <C-l> :tabn<CR>
+map <C-h> :tabp<CR>
+map <C-n> :tabnew<CR>
 "noremap <F3> :echo 'Current time is ' . strftime('%c')<CR>
 "nnoremap <silent> <F2> :lchdir %:p:h<CR>:pwd<CR>
 set showcmd
