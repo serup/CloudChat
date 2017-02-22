@@ -12,6 +12,7 @@ DDRequest createRequest(std::string requestName, requestType type, long transID,
 		DED_PUT_STRUCT_START( dedptr, "DDNodeRequest" );                                              
 		DED_PUT_METHOD      ( dedptr, "name", (std::string)requestName );     
 		DED_PUT_LONG        ( dedptr, "amount", (long)parameters.size() );
+		if(parameters.size() <= 0) cout << "WARNING: no parameters added in createRequest " << endl;
 		for(auto pair: parameters) { 
 			// iterate thru parameters and add them to structure
 			DED_PUT_STDVECTOR ( dedptr, pair.first, pair.second );

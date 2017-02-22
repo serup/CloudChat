@@ -29,11 +29,16 @@ bool CHandlingServerRequestToClients::handlingRequest(std::unique_ptr<CDataEncod
 				case FETCH_ATTRIBUT:
 					{
 						long amount=0;
-						static std::string paramNames [] = {" ", " "};
+						static std::string paramNames [] = {" ", " ", "hello there!"};
+						int numberofelements = countof(paramNames);
+						//int numberofelements=0; for(auto c: paramNames) { numberofelements++; }; cout << "amount of elements : " << numberofelements << endl;
+						cout << "amount of elements : " << numberofelements << endl;
 						std::vector<pair<std::string, std::vector<unsigned char>>> parameterPairs;
 						if( DED_GET_LONG( decoder_ptr, "amount", amount ) == true )
 						{
-							for(int c=0; c < amount; c++)
+							if(amount != numberofelements)
+								cout << "WARNING: amount of parameters received differ from what is expected " << amount << " != " << numberofelements << " - perhaps mismatch in versions of this function : " << __FILE__ << ":" << __LINE__ << endl;
+							for(int c=0; c < numberofelements; c++)
 							{// Traverse thru parameters
 								std::vector<unsigned char> value;
 								pair <std::string, std::vector<unsigned char>> pp;
