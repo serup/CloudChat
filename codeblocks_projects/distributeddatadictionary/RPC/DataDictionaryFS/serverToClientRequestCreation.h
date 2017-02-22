@@ -39,3 +39,11 @@ pair<std::string, std::vector<unsigned char>> createParameter(std::string name, 
 	return _pair;
 }
 
+
+std::vector<pair<std::string, std::vector<unsigned char>>> addParameter(auto _parameter)
+{
+	static std::vector<pair<std::string, std::vector<unsigned char>>> parameterPairs;
+	parameterPairs.push_back( _parameter );
+
+	return parameterPairs;
+}
