@@ -58,7 +58,7 @@ if [ "" == "$PKG_OK" ]; then
   echo -n "- install apt-fast on ubuntu, to use for speeding up apt-get install's "
   sudo add-apt-repository ppa:saiarcot895/myppa
   sudo apt-get update
-  sudo apt-get install -yq apt-fast
+  sudo apt-get install -yq apt-fast  --allow-unauthenticated 
   echo " - done."
 else
   echo "- apt-fast already installed"
