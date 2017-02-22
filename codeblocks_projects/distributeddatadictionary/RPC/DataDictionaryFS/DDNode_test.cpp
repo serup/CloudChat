@@ -1698,10 +1698,10 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_dummy_RPCclients_using_futures)
 	// setup a request - simulating a request from server
 	BOOST_TEST_MESSAGE( "setup a request - simulating a request from server, to later be send to each RPCclient node " );
 
-	std::vector<pair<std::string, std::vector<unsigned char>>> parameters;
+	std::vector<pair<std::string, std::vector<unsigned char>>> parameterPairs;
 	unsigned long int sec = time(NULL);                                                                          
 	long transID = (long)sec;// do not really need a time, since this is infact a transaction ID TODO: make a fetchTransactionID function that returns next available ID from Zookeeper fx.
-	DDRequest req = createRequest("fetchAttribut", SEARCH, transID, parameters);
+	DDRequest req = createRequest("fetchAttribut", SEARCH, transID, parameterPairs);
 	DED_PUT_DATA_IN_DECODER(requestForAttribut,(unsigned char*)req.ded.data.data_val, req.ded.data.data_len);
 
 	BOOST_TEST_MESSAGE( "Simulate sending a request from DDDAdmin to each client" );

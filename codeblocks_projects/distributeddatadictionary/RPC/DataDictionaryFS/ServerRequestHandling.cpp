@@ -28,6 +28,21 @@ bool CHandlingServerRequestToClients::handlingRequest(std::unique_ptr<CDataEncod
 			{
 				case FETCH_ATTRIBUT:
 					{
+						long amount=0;
+						static std::string paramNames [] = {" ", " "};
+						std::vector<pair<std::string, std::vector<unsigned char>>> parameterPairs;
+						if( DED_GET_LONG( decoder_ptr, "amount", amount ) == true )
+						{
+							for(int c=0; c < amount; c++)
+							{// Traverse thru parameters
+								std::vector<unsigned char> value;
+								pair <std::string, std::vector<unsigned char>> pp;
+								DED_GET_STDVECTOR( decoder_ptr, paramNames[c], value );
+								pp = make_pair(paramNames[c], value);
+								parameterPairs.push_back(pp); 
+							}
+						
+						}
 						/** 
 						 * TODO: 
 						 *
