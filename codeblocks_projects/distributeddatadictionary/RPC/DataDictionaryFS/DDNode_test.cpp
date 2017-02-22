@@ -1701,6 +1701,14 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_dummy_RPCclients_using_futures)
 	std::vector<pair<std::string, std::vector<unsigned char>>> parameterPairs;
 	unsigned long int sec = time(NULL);                                                                          
 	long transID = (long)sec;// do not really need a time, since this is infact a transaction ID TODO: make a fetchTransactionID function that returns next available ID from Zookeeper fx.
+	std::string transGuid = "F8C23762ED2823A27E62A64B95C024EE";
+	std::string attributToFetch = transGuid + "./profile/foto";
+	std::vector<unsigned char> data(attributToFetch.begin(), attributToFetch.end());
+	pair<std::string, std::vector<unsigned char>> _pair = make_pair("attributname", data);
+	parameterPairs.push_back( _pair );
+
+	cout << "amount of parameterPairs : " << parameterPairs.size() << endl;
+
 	DDRequest req = createRequest("fetchAttribut", SEARCH, transID, parameterPairs);
 	DED_PUT_DATA_IN_DECODER(requestForAttribut,(unsigned char*)req.ded.data.data_val, req.ded.data.data_len);
 
