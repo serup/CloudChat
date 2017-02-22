@@ -94,6 +94,9 @@ noremap <silent> <leader>vzr :VFoldClear<CR>
 nnoremap <leader>xml :so xml_project_output.vim<CR>
 noremap <leader>M <C-W>\| <C-W>_
 noremap <leader>m <C-W>=
+noremap <silent> <leader>nt :tabn<CR>   
+noremap <silent> <leader>pt :tabp<CR>
+noremap <silent> <leader>nt :tabnew<CR>
 map <C-l> :tabn<CR>
 map <C-h> :tabp<CR>
 map <C-n> :tabnew<CR>

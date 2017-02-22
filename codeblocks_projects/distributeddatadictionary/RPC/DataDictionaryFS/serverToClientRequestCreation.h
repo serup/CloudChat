@@ -30,3 +30,12 @@ DDRequest createRequest(std::string requestName, requestType type, long transID,
 
 	return req;                                                                                   
 }                                                                                                 
+
+pair<std::string, std::vector<unsigned char>> createParameter(std::string name, std::string value)
+{
+	std::vector<unsigned char> _data(value.begin(), value.end());
+	pair<std::string, std::vector<unsigned char>> _pair = make_pair(name, _data);
+
+	return _pair;
+}
+
