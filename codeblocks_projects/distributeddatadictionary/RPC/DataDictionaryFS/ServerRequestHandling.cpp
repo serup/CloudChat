@@ -16,7 +16,6 @@ bool CHandlingServerRequestToClients::handlingRequest(std::unique_ptr<CDataEncod
 {
 	bool bResult=false;
 		
-	
 	// decode data ...
 	if( DED_GET_STRUCT_START( decoder_ptr, "DDNodeRequest" ) == true )
 	{	
@@ -29,10 +28,8 @@ bool CHandlingServerRequestToClients::handlingRequest(std::unique_ptr<CDataEncod
 				case FETCH_ATTRIBUT:
 					{
 						long amount=0;
-						static std::string paramNames [] = {" ", " ", "hello there!"};
+						static std::string paramNames [] = {"attributToFetch"};
 						int numberofelements = countof(paramNames);
-						//int numberofelements=0; for(auto c: paramNames) { numberofelements++; }; cout << "amount of elements : " << numberofelements << endl;
-						cout << "amount of elements : " << numberofelements << endl;
 						std::vector<pair<std::string, std::vector<unsigned char>>> parameterPairs;
 						if( DED_GET_LONG( decoder_ptr, "amount", amount ) == true )
 						{
@@ -45,6 +42,8 @@ bool CHandlingServerRequestToClients::handlingRequest(std::unique_ptr<CDataEncod
 								DED_GET_STDVECTOR( decoder_ptr, paramNames[c], value );
 								pp = make_pair(paramNames[c], value);
 								parameterPairs.push_back(pp); 
+								cout << "parameter added : " << paramNames[c] << ", value : " << endl;
+								//CUtils::showDataBlock(true,true,value);
 							}
 						
 						}
