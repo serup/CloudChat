@@ -1704,13 +1704,13 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_dummy_RPCclients_using_futures)
 	std::string attributToFetch = transGuid + "./profile/foto";
 	
 	//addParameter(createParameter("attributToFetch", attributToFetch));
-	//addParameter(createParameter("attributToFetch", attributToFetch));
-	auto parameters = addParameter(createParameter("attributToFetch", attributToFetch));
+	addParameter(createParameter("attributToFetch", attributToFetch));
+	auto parameters = addParameter(createParameter("hello", "world"));
 	
 	cout << "amount of parameterPairs : " << parameters.size() << endl;
 
-	DDRequest req = createRequest("fetchAttribut", SEARCH, transID, parameters);
-	DED_PUT_DATA_IN_DECODER(requestForAttribut,(unsigned char*)req.ded.data.data_val, req.ded.data.data_len);
+	auto requestForAttribut = createRequest("fetchAttribut", SEARCH, transID, parameters);
+
 
 	BOOST_TEST_MESSAGE( "Simulate sending a request from DDDAdmin to each client" );
 	// default response handler will forward to handle a request if it validates incomming message as different than a response

@@ -28,9 +28,8 @@ bool CHandlingServerRequestToClients::handlingRequest(std::unique_ptr<CDataEncod
 			{
 				case FETCH_ATTRIBUT:
 					{
-						//std::vector<std::string> paramNames = {"attributToFetch"};
-						//auto parameterPairs = fetchParametersFromDED(decoder_ptr, paramNames, verbose);
-						auto parameterPairs = fetchParametersFromDED(decoder_ptr, {"attributToFetch","hello"}, verbose);
+						//auto parameterPairs = fetchParametersFromDED(decoder_ptr, {"attributToFetch","hello"}, verbose);
+						auto parameterPairs = fetchParametersFromDED(decoder_ptr, {"attributToFetch"}, verbose);
 
 						// handle parameters
 							
@@ -68,8 +67,6 @@ CHandlingServerRequestToClients::_eMethod CHandlingServerRequestToClients::analy
 std::vector<pair<std::string, std::vector<unsigned char>>> CHandlingServerRequestToClients::fetchParametersFromDED(std::unique_ptr<CDataEncoder> &decoder_ptr, std::vector<std::string> paramNames, bool verbose)
 {
 	long amount=0;
-	//int numberofelements = countof(paramNames);
-	//int numberofelements = 0; for(auto c: paramNames) {numberofelements++;};
 	int numberofelements = paramNames.size();
 	std::vector<pair<std::string, std::vector<unsigned char>>> parameterPairs;
 	if( DED_GET_LONG( decoder_ptr, "amount", amount ) == true )

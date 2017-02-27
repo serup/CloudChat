@@ -5,7 +5,8 @@
  *
  */
 
-DDRequest createRequest(std::string requestName, requestType type, long transID, std::vector<pair<std::string, std::vector<unsigned char>>> parameters) 
+
+std::unique_ptr<CDataEncoder> createRequest(std::string requestName, requestType type, long transID, std::vector<pair<std::string, std::vector<unsigned char>>> parameters) 
 { 
 	DDRequest req;                                                                                
 	{
@@ -29,7 +30,8 @@ DDRequest createRequest(std::string requestName, requestType type, long transID,
 		req.ded.transID = transID; 
 	}
 
-	return req;                                                                                   
+	DED_PUT_DATA_IN_DECODER(requestForAttribut,(unsigned char*)req.ded.data.data_val, req.ded.data.data_len);
+	return requestForAttribut;                                                                                   
 }                                                                                                 
 
 pair<std::string, std::vector<unsigned char>> createParameter(std::string name, std::string value)
