@@ -1,4 +1,5 @@
 #include "ServerRequestHandling.h"
+#include "../../utils.hpp"
 
 /**
  * The RPCclient is connected to DDDAdmin server and it
@@ -12,7 +13,7 @@
  * This method handles request comming from DDDAdmin server
  */
 
-bool CHandlingServerRequestToClients::handlingRequest(std::unique_ptr<CDataEncoder> &decoder_ptr)
+bool CHandlingServerRequestToClients::handlingRequest(std::unique_ptr<CDataEncoder> &decoder_ptr, bool verbose)
 {
 	bool bResult=false;
 		
@@ -27,43 +28,27 @@ bool CHandlingServerRequestToClients::handlingRequest(std::unique_ptr<CDataEncod
 			{
 				case FETCH_ATTRIBUT:
 					{
-						long amount=0;
-						static std::string paramNames [] = {"attributToFetch"};
-						int numberofelements = countof(paramNames);
-						std::vector<pair<std::string, std::vector<unsigned char>>> parameterPairs;
-						if( DED_GET_LONG( decoder_ptr, "amount", amount ) == true )
-						{
-							if(amount != numberofelements)
-								cout << "WARNING: amount of parameters received differ from what is expected " << amount << " != " << numberofelements << " - perhaps mismatch in versions of this function : " << __FILE__ << ":" << __LINE__ << endl;
-							for(int c=0; c < numberofelements; c++)
-							{// Traverse thru parameters
-								std::vector<unsigned char> value;
-								pair <std::string, std::vector<unsigned char>> pp;
-								DED_GET_STDVECTOR( decoder_ptr, paramNames[c], value );
-								pp = make_pair(paramNames[c], value);
-								parameterPairs.push_back(pp); 
-								cout << "parameter added : " << paramNames[c] << ", value : " << endl;
-								//CUtils::showDataBlock(true,true,value);
-							}
+						//std::vector<std::string> paramNames = {"attributToFetch"};
+						//auto parameterPairs = fetchParametersFromDED(decoder_ptr, paramNames, verbose);
+						auto parameterPairs = fetchParametersFromDED(decoder_ptr, {"attributToFetch","hello"}, verbose);
+
+						// handle parameters
+							
+
 						
-						}
-						/** 
-						 * TODO: 
-						 *
-						 **/
-						printf("TODO: handle request fetchAttribut \n");	
 					}
 					break;
 
 				default:
 					{
 						printf("FAIL: no request method found for [ %s ] , hence no request handling\n",methodName.c_str());
+						cout << __FILE__ << "[" << __LINE__ << "]" << endl;
 					}
 					break;
 			}
 		}
 		else
-			cout << "WARNING: unknown method : " << methodName << endl;
+			cout << "WARNING: unknown method : " << methodName << " " << __FILE__ << "[" << __LINE__ << "]" << endl;
 
 	}
 	
@@ -80,4 +65,40 @@ CHandlingServerRequestToClients::_eMethod CHandlingServerRequestToClients::analy
 	return eRmethod;
 }
 
+std::vector<pair<std::string, std::vector<unsigned char>>> CHandlingServerRequestToClients::fetchParametersFromDED(std::unique_ptr<CDataEncoder> &decoder_ptr, std::vector<std::string> paramNames, bool verbose)
+{
+	long amount=0;
+	//int numberofelements = countof(paramNames);
+	//int numberofelements = 0; for(auto c: paramNames) {numberofelements++;};
+	int numberofelements = paramNames.size();
+	std::vector<pair<std::string, std::vector<unsigned char>>> parameterPairs;
+	if( DED_GET_LONG( decoder_ptr, "amount", amount ) == true )
+	{
+		if(amount != numberofelements)
+			cout << "WARNING: amount of parameters received differ from what is expected " << amount << " != " << numberofelements << " - perhaps mismatch in versions of this function : " << __FILE__ << ":" << __LINE__ << endl;
+		// Traverse thru parameters
+		for(int c=0; c < numberofelements; c++)
+		{
+			std::vector<unsigned char> value;
+			pair <std::string, std::vector<unsigned char>> pp;
+			DED_GET_STDVECTOR( decoder_ptr, paramNames[c], value );
+			pp = make_pair(paramNames[c], value);
+			parameterPairs.push_back(pp); 
+			if(verbose) {
+				cout << "found in DED parameter : " << paramNames[c] << ", value : " << endl;
+				if(value.size() < 100) 
+				{
+					std::string str(value.begin(), value.end());
+					cout << str << endl;
+				}
+				else
+					CUtils::showDataBlock(true,true,value);
+			}
+		}
+	}
+	else
+		cout << "FAIL: protocol is wrong - perhaps misuse of version " << " " << __FILE__ << "[" << __LINE__ << "]" << endl;
+
+	return parameterPairs; 
+}
 

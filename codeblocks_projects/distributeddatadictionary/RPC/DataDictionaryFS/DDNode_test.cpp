@@ -1703,8 +1703,8 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_dummy_RPCclients_using_futures)
 	std::string transGuid = "F8C23762ED2823A27E62A64B95C024EE";
 	std::string attributToFetch = transGuid + "./profile/foto";
 	
-	addParameter(createParameter("attributToFetch", attributToFetch));
-	addParameter(createParameter("attributToFetch", attributToFetch));
+	//addParameter(createParameter("attributToFetch", attributToFetch));
+	//addParameter(createParameter("attributToFetch", attributToFetch));
 	auto parameters = addParameter(createParameter("attributToFetch", attributToFetch));
 	
 	cout << "amount of parameterPairs : " << parameters.size() << endl;
