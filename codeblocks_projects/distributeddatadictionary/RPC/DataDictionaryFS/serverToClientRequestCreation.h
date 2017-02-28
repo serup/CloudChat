@@ -34,19 +34,34 @@ std::unique_ptr<CDataEncoder> createRequest(std::string requestName, requestType
 	return requestForAttribut;                                                                                   
 }                                                                                                 
 
-pair<std::string, std::vector<unsigned char>> createParameter(std::string name, std::string value)
+boost::optional<std::pair<std::string, std::vector<unsigned char>>> createParameter(std::string name, std::string value)
 {
-	std::vector<unsigned char> _data(value.begin(), value.end());
-	pair<std::string, std::vector<unsigned char>> _pair = make_pair(name, _data);
-
-	return _pair;
+	if(name.empty())
+		return boost::optional<std::pair<std::string, std::vector<unsigned char>>>(); // uninitialized 
+	else {
+		std::vector<unsigned char> _data(value.begin(), value.end());
+		std::pair<std::string, std::vector<unsigned char>> _pair = make_pair(name, _data);
+		boost::optional<std::pair<std::string, std::vector<unsigned char>>>	 ret;
+		ret.reset( _pair );
+		return ret;
+	}
 }
 
 
-std::vector<pair<std::string, std::vector<unsigned char>>> addParameter(auto _parameter)
+std::vector<pair<std::string, std::vector<unsigned char>>> addParameter(boost::optional< std::pair<std::string, std::vector<unsigned char>> > _parameter = boost::none )
 {
 	static std::vector<pair<std::string, std::vector<unsigned char>>> parameterPairs;
-	parameterPairs.push_back( _parameter );
+	if(_parameter )
+		parameterPairs.push_back( _parameter.get() );
+	else {
+		cout << "WARNING: parameter buffer will be emptied - due to attempt to add parameter of zero size; " << __FILE__ << "[" << __LINE__ << "]" << endl;
+		parameterPairs.clear();
+	}
 
 	return parameterPairs;
+}
+
+void clearParameters()
+{
+	addParameter(); // clean out internal list of parameters
 }
