@@ -28,7 +28,7 @@ class CHandlingServerRequestToClients
 		CHandlingServerRequestToClients(std::string guid = "<unknown>") {setclientID(guid);};
 
 		void setclientID(std::string guid) { clientID = guid; };
-		bool handlingRequest(std::unique_ptr<CDataEncoder> &decoder_ptr, bool verbose=true);
+		bool handlingRequest(std::unique_ptr<CDataEncoder> &decoder_ptr, bool verbose=false);
 
 	private:
 		std::string clientID = "<unknown>";

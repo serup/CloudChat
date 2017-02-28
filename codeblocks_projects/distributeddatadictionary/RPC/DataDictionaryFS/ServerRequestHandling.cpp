@@ -42,8 +42,10 @@ bool CHandlingServerRequestToClients::handlingRequest(std::unique_ptr<CDataEncod
 						// fetch a parameter
 						std::vector<unsigned char> paramvalue = fetchParameter("BFi_File", parameterPairs, verbose);
 						std::string file(paramvalue.begin(), paramvalue.end());
+						paramvalue = fetchParameter("attributToFetch", parameterPairs, verbose);
+						std::string attributToFetch(paramvalue.begin(), paramvalue.end());
 
-						cout << "INFO: file : " << file << endl;
+						if(verbose) cout << "INFO: file : " << file << endl;
 
 
 						////////////////////////////////////////////////////////////////
@@ -70,11 +72,16 @@ bool CHandlingServerRequestToClients::handlingRequest(std::unique_ptr<CDataEncod
 						req.addexecutorfunc( fnFetchAllAttributsFromBFiFile, file );
 						cf.runRequest( req, collectionOfFutureRequests ); // fetch attributs data from .BFi file 
 
-						//cf.runRequest( cf.createrequest().addexecutorfunc( fnFetchAllAttributsFromBFiFile, file ), collectionOfFutureRequests ); // fetch attributs data from .BFi file 
+						// wait for all request to be finished before handling results 
+						cf.waitForAll(collectionOfFutureRequests);
+
+						if(verbose) cout << "Result from RPCclient, size of vector with futures : " << collectionOfFutureRequests.size() << endl;
 
 						//cout << "Fetch attribut : " << endl;
 						//auto result_attribut = cf.collect(collectionOfFutureRequests, attributToFetch, true);
 
+						// TODO: send result back to caller
+						
 						//-
 						
 					}
