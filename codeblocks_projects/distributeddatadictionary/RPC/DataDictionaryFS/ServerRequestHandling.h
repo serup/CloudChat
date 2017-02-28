@@ -34,5 +34,6 @@ class CHandlingServerRequestToClients
 		enum _eMethod { null, FETCH_ATTRIBUT } eMethod;
 		_eMethod analyseRequestMethod(std::string strMethod);
 		std::vector<pair<std::string, std::vector<unsigned char>>> fetchParametersFromDED(std::unique_ptr<CDataEncoder> &decoder_ptr, std::vector<std::string> paramNames, bool verbose=false);
+		std::vector<unsigned char> fetchParameter(std::string name, std::vector<pair<std::string, std::vector<unsigned char>>> parameterPairs, bool verbose=false);
 
 };

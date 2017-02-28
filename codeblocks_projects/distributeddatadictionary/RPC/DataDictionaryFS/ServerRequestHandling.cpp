@@ -39,31 +39,24 @@ bool CHandlingServerRequestToClients::handlingRequest(std::unique_ptr<CDataEncod
 
 						//+ handle parameters
 
-//						for(auto pairAttribut : parameterPairs)
-//						{
-//							cout << "pp: " << pairAttribut.first << " : ";
-//							if(pairAttribut.second.size() < 100) 
-//							{
-//								std::string str(pairAttribut.second.begin(), pairAttribut.second.end());
-//								cout << str << endl;
-//							}
-//							else
-//								CUtils::showDataBlock(true,true,pairAttribut.second);
-//
-//					    }
-
 						// fetch a parameter
-						typedef std::vector<std::pair<std::string, std::vector<unsigned char>> > my_vector;	
-						my_vector::iterator i = std::find_if(parameterPairs.begin(), parameterPairs.end(), comp("BFi_File"));
-						if (i != parameterPairs.end())
-						{
-							std::vector<unsigned char>& c = i->second;
-							std::string str(c.begin(), c.end());
-							cout << "INFO: Fetched parameter value : " << str << endl;
+						std::vector<unsigned char> paramvalue = fetchParameter("BFi_File", parameterPairs, verbose);
+						std::string file(paramvalue.begin(), paramvalue.end());
 
-						}
-						else
-							cout << "WARNING: NOT FOUND " << endl;
+						cout << "INFO: file : " << file << endl;
+
+
+			//			typedef std::vector<std::pair<std::string, std::vector<unsigned char>> > my_vector;	
+			//			my_vector::iterator i = std::find_if(parameterPairs.begin(), parameterPairs.end(), comp("BFi_File"));
+			//			if (i != parameterPairs.end())
+			//			{
+			//				std::vector<unsigned char>& c = i->second;
+			//				std::string str(c.begin(), c.end());
+			//				cout << "INFO: Fetched parameter value : " << str << endl;
+
+			//			}
+			//			else
+			//				cout << "WARNING: NOT FOUND " << endl;
 //					
 //
 //						////////////////////////////////////////////////////////////////
@@ -161,3 +154,26 @@ std::vector<pair<std::string, std::vector<unsigned char>>> CHandlingServerReques
 	return parameterPairs; 
 }
 
+std::vector<unsigned char> CHandlingServerRequestToClients::fetchParameter(std::string name, std::vector<pair<std::string, std::vector<unsigned char>>> parameterPairs, bool verbose)
+{
+	std::vector<unsigned char> ret;
+	typedef std::vector<std::pair<std::string, std::vector<unsigned char>> > my_vector;	
+	my_vector::iterator i = std::find_if(parameterPairs.begin(), parameterPairs.end(), comp(name));
+	if (i != parameterPairs.end())
+	{
+		ret = std::move(i->second);
+		if(verbose) {
+			cout << "INFO: Fetched parameter value : ";
+			if(ret.size() < 100) {
+				std::string str(ret.begin(), ret.end());
+				cout << str << endl;
+			}
+			else
+				CUtils::showDataBlock(true,true,ret);
+		}
+	}
+	else
+		cout << "WARNING: parameter was NOT FOUND " << endl;
+
+	return ret;
+}
