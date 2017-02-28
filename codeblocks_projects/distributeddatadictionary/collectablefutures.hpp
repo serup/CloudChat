@@ -78,6 +78,10 @@
 //	    
 //
 /////////////////////////////////////////////////////////////////////////////
+#ifndef COLLECTABLE_FUTURES_HPP
+#define COLLECTABLE_FUTURES_HPP
+
+
 #include <future> 
 #include <climits>
 #include <map>
@@ -423,4 +427,4 @@ class collectablefutures
 	}
 };
 
-
+#endif

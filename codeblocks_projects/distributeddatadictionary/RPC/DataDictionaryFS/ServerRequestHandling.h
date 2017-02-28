@@ -1,6 +1,7 @@
 #include <memory>
 #include "DED.h"
-
+#include "../../datadictionarycontrol.hpp"
+#include "../../collectablefutures.hpp"
 
 struct comp
 {

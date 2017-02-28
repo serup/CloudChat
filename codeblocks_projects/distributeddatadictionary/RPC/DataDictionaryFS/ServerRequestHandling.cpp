@@ -46,47 +46,34 @@ bool CHandlingServerRequestToClients::handlingRequest(std::unique_ptr<CDataEncod
 						cout << "INFO: file : " << file << endl;
 
 
-			//			typedef std::vector<std::pair<std::string, std::vector<unsigned char>> > my_vector;	
-			//			my_vector::iterator i = std::find_if(parameterPairs.begin(), parameterPairs.end(), comp("BFi_File"));
-			//			if (i != parameterPairs.end())
-			//			{
-			//				std::vector<unsigned char>& c = i->second;
-			//				std::string str(c.begin(), c.end());
-			//				cout << "INFO: Fetched parameter value : " << str << endl;
+						////////////////////////////////////////////////////////////////
+						// create lambda function for fetching attributs from .BFi file
+						////////////////////////////////////////////////////////////////
+						auto fnFetchAllAttributsFromBFiFile = [](std::vector<Variant> vec)
+						{ 	
+							CDataDictionaryControl DDC;
 
-			//			}
-			//			else
-			//				cout << "WARNING: NOT FOUND " << endl;
-//					
-//
-//						////////////////////////////////////////////////////////////////
-//						// create lambda function for fetching attributs from .BFi file
-//						////////////////////////////////////////////////////////////////
-//						auto fnFetchAllAttributsFromBFiFile = [](std::vector<Variant> vec)
-//						{ 	
-//							CDataDictionaryControl DDC;
-//
-//							boost::filesystem::path currentfile( boost::filesystem::path(boost::get<std::string>(vec[0])) );
-//							std::list<pair<seqSpan, std::vector<assembledElements>>> AttributInblockSequenceFromBFifile;
-//
-//							DDC.fetchAttributsFromFile(currentfile, AttributInblockSequenceFromBFifile); 
-//							transferBLOB stBlob = DDC.convertToBLOB(AttributInblockSequenceFromBFifile);  
-//
-//							return stBlob.data;	
-//						};
-//						////////////////////////////////////////////////////////////////
-//
-//
-//						collectablefutures cf;
-//
-//						std::string file = transGuid + "_1.BFi";
-//						collectablefutures::request req = cf.createrequest();
-//						req.addexecutorfunc( fnFetchAllAttributsFromBFiFile, file );
-//
-//						cf.runRequest( req, collectionOfFutureRequests ); // fetch attributs data from .BFi file 
-//
-//						cout << "Fetch attribut : " << endl;
-//						auto result_attribut = cf.collect(collectionOfFutureRequests, attributToFetch, true);
+							boost::filesystem::path currentfile( boost::filesystem::path(boost::get<std::string>(vec[0])) );
+							std::list<pair<seqSpan, std::vector<assembledElements>>> AttributInblockSequenceFromBFifile;
+
+							DDC.fetchAttributsFromFile(currentfile, AttributInblockSequenceFromBFifile); 
+							transferBLOB stBlob = DDC.convertToBLOB(AttributInblockSequenceFromBFifile);  
+
+							return stBlob.data;	
+						};
+						////////////////////////////////////////////////////////////////
+
+	
+						std::vector< std::future<std::vector<unsigned char>> >  collectionOfFutureRequests;
+						collectablefutures cf;
+						collectablefutures::request req = cf.createrequest();
+						req.addexecutorfunc( fnFetchAllAttributsFromBFiFile, file );
+						cf.runRequest( req, collectionOfFutureRequests ); // fetch attributs data from .BFi file 
+
+						//cf.runRequest( cf.createrequest().addexecutorfunc( fnFetchAllAttributsFromBFiFile, file ), collectionOfFutureRequests ); // fetch attributs data from .BFi file 
+
+						//cout << "Fetch attribut : " << endl;
+						//auto result_attribut = cf.collect(collectionOfFutureRequests, attributToFetch, true);
 
 						//-
 						
