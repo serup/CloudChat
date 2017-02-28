@@ -1702,21 +1702,36 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_dummy_RPCclients_using_futures)
 	long transID = (long)sec;// do not really need a time, since this is infact a transaction ID TODO: make a fetchTransactionID function that returns next available ID from Zookeeper fx.
 	std::string transGuid = "F8C23762ED2823A27E62A64B95C024EE";
 	std::string attributToFetch = transGuid + "./profile/foto";
-	
-	auto parameters = addParameter(createParameter("hello", "world"));
-	clearParameters();
-	parameters = addParameter(createParameter("attributToFetch", attributToFetch));
-	cout << "amount of parameterPairs : " << parameters.size() << endl;
 
-	auto requestForAttribut = createRequest("fetchAttribut", SEARCH, transID, parameters);
+	//+ setup parameter for client1 - find .BFi file and extract attribut
+	std::string file1 = transGuid + "_1.BFi";
+	clearParameters();
+	addParameter(createParameter("attributToFetch", attributToFetch));
+	auto parameters = addParameter(createParameter("BFi_File", file1));
+	auto RPC1requestForAttribut = createRequest("fetchAttribut", SEARCH, transID, parameters);
+	//-
+	//+ setup parameter for client2 - find .BFi file and extract attribut
+	std::string file2 = transGuid + "_2.BFi";
+	clearParameters();
+	addParameter(createParameter("attributToFetch", attributToFetch));
+	parameters = addParameter(createParameter("BFi_File", file2));
+	auto RPC2requestForAttribut = createRequest("fetchAttribut", SEARCH, transID, parameters);
+	//-
+	//+ setup parameter for client3 - find .BFi file and extract attribut
+	std::string file3 = transGuid + "_3.BFi";
+	clearParameters();
+	addParameter(createParameter("attributToFetch", attributToFetch));
+	parameters = addParameter(createParameter("BFi_File", file3));
+	auto RPC3requestForAttribut = createRequest("fetchAttribut", SEARCH, transID, parameters);
+	//-
 
 
 	BOOST_TEST_MESSAGE( "Simulate sending a request from DDDAdmin to each client" );
 	// default response handler will forward to handle a request if it validates incomming message as different than a response
 	// a request from DDDAdmin is in the scope of the client actually a response to last communication
-	client1.handleResponse(requestForAttribut);
-	client2.handleResponse(requestForAttribut);
-	client3.handleResponse(requestForAttribut);
+	client1.handleResponse(RPC1requestForAttribut);
+	client2.handleResponse(RPC2requestForAttribut);
+	client3.handleResponse(RPC3requestForAttribut);
 
 	
 

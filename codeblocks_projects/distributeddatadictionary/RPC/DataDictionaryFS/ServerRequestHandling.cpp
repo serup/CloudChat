@@ -11,6 +11,12 @@
  * be residing on a non-static ip address
  *
  * This method handles request comming from DDDAdmin server
+ *
+ * TODO:
+ * NB! the client is only allowed to handle files if server
+ * has given permission - such a permission is stored in 
+ * zookeeper main storage, and client will then consult
+ * this storage before proceeding with handling of files
  */
 
 bool CHandlingServerRequestToClients::handlingRequest(std::unique_ptr<CDataEncoder> &decoder_ptr, bool verbose)
@@ -28,12 +34,68 @@ bool CHandlingServerRequestToClients::handlingRequest(std::unique_ptr<CDataEncod
 			{
 				case FETCH_ATTRIBUT:
 					{
-						//auto parameterPairs = fetchParametersFromDED(decoder_ptr, {"attributToFetch","hello"}, verbose);
-						auto parameterPairs = fetchParametersFromDED(decoder_ptr, {"attributToFetch"}, verbose);
+						// iterate thru all parameters in incomming data and add to list
+						auto parameterPairs = fetchParametersFromDED(decoder_ptr, {"attributToFetch", "BFi_File"}, verbose);
 
-						// handle parameters
-							
+						//+ handle parameters
 
+//						for(auto pairAttribut : parameterPairs)
+//						{
+//							cout << "pp: " << pairAttribut.first << " : ";
+//							if(pairAttribut.second.size() < 100) 
+//							{
+//								std::string str(pairAttribut.second.begin(), pairAttribut.second.end());
+//								cout << str << endl;
+//							}
+//							else
+//								CUtils::showDataBlock(true,true,pairAttribut.second);
+//
+//					    }
+
+						// fetch a parameter
+						typedef std::vector<std::pair<std::string, std::vector<unsigned char>> > my_vector;	
+						my_vector::iterator i = std::find_if(parameterPairs.begin(), parameterPairs.end(), comp("BFi_File"));
+						if (i != parameterPairs.end())
+						{
+							std::vector<unsigned char>& c = i->second;
+							std::string str(c.begin(), c.end());
+							cout << "INFO: Fetched parameter value : " << str << endl;
+
+						}
+						else
+							cout << "WARNING: NOT FOUND " << endl;
+//					
+//
+//						////////////////////////////////////////////////////////////////
+//						// create lambda function for fetching attributs from .BFi file
+//						////////////////////////////////////////////////////////////////
+//						auto fnFetchAllAttributsFromBFiFile = [](std::vector<Variant> vec)
+//						{ 	
+//							CDataDictionaryControl DDC;
+//
+//							boost::filesystem::path currentfile( boost::filesystem::path(boost::get<std::string>(vec[0])) );
+//							std::list<pair<seqSpan, std::vector<assembledElements>>> AttributInblockSequenceFromBFifile;
+//
+//							DDC.fetchAttributsFromFile(currentfile, AttributInblockSequenceFromBFifile); 
+//							transferBLOB stBlob = DDC.convertToBLOB(AttributInblockSequenceFromBFifile);  
+//
+//							return stBlob.data;	
+//						};
+//						////////////////////////////////////////////////////////////////
+//
+//
+//						collectablefutures cf;
+//
+//						std::string file = transGuid + "_1.BFi";
+//						collectablefutures::request req = cf.createrequest();
+//						req.addexecutorfunc( fnFetchAllAttributsFromBFiFile, file );
+//
+//						cf.runRequest( req, collectionOfFutureRequests ); // fetch attributs data from .BFi file 
+//
+//						cout << "Fetch attribut : " << endl;
+//						auto result_attribut = cf.collect(collectionOfFutureRequests, attributToFetch, true);
+
+						//-
 						
 					}
 					break;
