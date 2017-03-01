@@ -82,9 +82,11 @@ Scenario: lets say that a large file is stored in multiple .BFi files, then the 
 to be distributed to other nodes (RPCclients), thereby making sure that the replica area and footprint of file on nodes is handled, meaning that it
 orders copy and move of these .BFi files ( it is important that the redundant replicas of .BFi is put in correct places, and that zookeeper is updated )
 
+/* reconsider
 The DDDAdmin can ask via zookeeper a RPCclient to connect to it, it can then use this connection to handle request/reponses comming to and from the client.
 the zookeeper tells the RPCclient where to connect to DDDAdmin. The reason for this is to avoid having ALL clients connected to DDDAdmin at the same time,
 it is only necessary to have a tcp "pipe" from/to DDDAdmin and RPCclient when a transfer of administrative request/responses is handled
+*/
 
 Scenario: lets say that multiple DDDAdmin's are connected to zookeeper and asking RPCclients to do various things - inorder for this to work, then
 it must be zookeeper that decides when access is given and when a certain action is to be performed by the RPCclient

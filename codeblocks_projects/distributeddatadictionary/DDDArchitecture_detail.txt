@@ -4,26 +4,31 @@ DDD - Distributed Data Dictionary
  There are two folders on each node - 'data' and 'dictionary' - inside the dictionary folder lies blockfiles with datadictionary realm file definitions
  and inside data lies database realm files formatted in according to the dictionary definition files
 
- DDDAdmin
- +                +-zookeeper
- |                |
+ DDDAdmin+--+-zookeeper(zk)
+ +                                 
+ |                                   
  +-----+----+-----+------+-------+------+-------+-------+--------------------------------------+
- |   ACCESS LAYER - AL's (collection of proactor entities connected in a tree like structure)
+ |   CONNECTIVITY LAYER - CL's (collection of proactor entities connected in a tree like structure)
  |   example:
- |                (AL) 'has two connected AL's'
- |                 ||
- |       (AL)+-----++(AL)
+ |                (CL) 'has two connected CL's'
+ |                | |
+ |       (CL)+----+ +(CL)
  |         |           |
- |   DDNode+           +-(AL) 'has two connected AL's'
- |                       ||
- |                       |+-(AL) 'has two connected DDNodes'
- |                       |   ||
- |                       |   +-DDNode
- |                       |    +-DDNode
- |                       |
- |                       +-(AL)
+ |   DDDAdmin(zk)      +-(CL) 'has two connected CL's'
+ |     |                 ||
+ |     +-(DDNode)        |+-(CL) 'has two connected DDDAdmin'
+ |     +-(DDNode)        |   ||
+ |     +-(DDNode)        |   |+-------------+
+ |     +-(DDNode)        |   |              |
+ |     +-(DDNode)        |   DDDAdmin(zk)   DDDAdmin(zk)
+ |     +-(DDNode)        |    +-DDNode       |
+ |                       |                   +-DDNode
+ |                       |                   +-DDNode
+ |                       +-(CL)
  |                           |
- |                           +DDNode 'DDNode can be connected to any AL' 
+ |                           DDDAdmin
+ |                            |
+ |                            +DDNode 'DDNode can be connected to any DDDAdmin' 
  +-----+----+-----+------+-------+------+-------+-------+-------------------------------+-------
  |          |            |              |               |                               |
  [DDNode]   [DDNode]     [DDNode]      [DDNode]    [DDNode]                         [DDNode]     ... 6 node example, it could be many more nodes
@@ -52,38 +57,34 @@ DDD - Distributed Data Dictionary
 Reason for having ACCESS LAYER is to make sure that DDNodes are loosely coupled, meaning that there is no direct TCPIP port connection from outside
 to any DDNode.
 It is only possible to communicate with the DDNodes via the AL's - sending a datapacket with src and dest toward and from a DDNode.
-The job of the access layer is to take care of all trafic to and from the DDNodes. The zookeeper service will be updated by the AL entity, making 
+The job of the access layer is to take care of all trafic to and from the DDNodes. The zookeeper service will be updated by the CL entity, making 
 sure that data is accessed correctly and with the correct access rights. The ACCESS LAYER is transparent and it is only DDNodes and DDDAdmin which knows
-about its existence and where to connect to it. The ACCESS LAYER then has zookeeper in the background and each AL of the ACCESS LAYER will communicate
+about its existence and where to connect to it. The ACCESS LAYER then has zookeeper in the background and each CL of the ACCESS LAYER will communicate
 with it to make sure transactions to and from DataDictionary files .BFi is done according to specs.
 
 example:
 
 * DDDAdmin wants to fetch a specific attribut from dataditionary
 	
-   . DDDAdmin connects to nearby AL
-   . AL handles connection of entity and informs zookeeper that entity is online
-     it sends response to DDDAdmin telling it about its security access level
-   . DDDAdmin creates a RFD - Request For Data
-   . DDDAdmin sends RFD to nearby AL
-   . AL receives RFD and creates a zookeeper RFD session object (zkRFDobj)
-   . AL sends a RFDconfirm to DDDAmin
-   . ALL AL's which have DDNodes connected, will send an event [RFDevent] ( a request for data event ) to DDNodes
+   . DDDAdmin connects to nearby CL, if available, and informs zookeeper that entity is online
+     zookeeper sends response to DDDAdmin telling it about its security access level
+   . CL handles connectivity between multiple DDDAdmin's 
+   . DDDAdmin creates a RFD - Request For Data and creates a zookeeper RFD session object (zkRFDobj)
+   . DDDAdmin sends RFD to nearby CL and towards local connected DDNodes
+   . CL receives RFD as DED packet and transmit it towards all known sources, or to sources described in the DED protocol
+   . ALL DDDAdmin's which have DDNodes connected, will send an event [RFDevent] ( a request for data event ) to DDNodes
    . DDNodes receives RFDevent and initiates a sweep search for data
-   . DDNodes which have found the requested data, will send a RFDResponse to nearby AL
-   . AL receives RFDResponse and updates zookeeper zkRFDobj with info about which DDNode has data
-   . AL sends an event object about the zkRFDobj in zookeeper to DDDAdmin 
+   . DDNodes which have found the requested data, will send a RFDResponse to nearby DDDAdmin 
+   . DDDAdmin receives RFDResponse and updates zookeeper zkRFDobj with info about which DDNode has data
+   . DDDAdmin sends an event object about the zkRFDobj in zookeeper to DDDAdmin which send RFD 
    . DDDAdmin receives event about RFD
    . DDDAdmin loops list of DDNodes which have responded to RFD and sends them a FAR (Fetch Attribut Request)
    . DDNodes receive FAR 
    . DDNode fetch .BFi file and send result toward FAR src
    . DDDAdmin receives incomming data blocks
   >. DDDAdmin reads/merges and assemble the attribut requested from the data blocks received from the DDNodes
-   . DDDAdmin sends a ERFD (End Request For Data) event to AL, telling it about the success/failure of the RFD
-   . AL receives ERFD from DDDAmin 
-   . AL sends update to zkRFDobj to zookeeper
-   . DDDAdmin disconnect from nearby AL
-   . AL informs zookeeper that entity is offline - removing tempory objects from zookeeper database
+   . DDDAdmin sends a ERFD (End Request For Data) event update to zkRFDobj to zookeeper, telling it about the success/failure of the RFD
+   . DDDAdmin informs zookeeper that entity is offline - removing tempory objects from zookeeper database and disconnect from nearby CL
 
 
 
