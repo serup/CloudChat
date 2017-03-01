@@ -78,12 +78,14 @@ bool CHandlingServerRequestToClients::handlingRequest(std::unique_ptr<CDataEncod
 						if(verbose) cout << "Result from RPCclient, size of vector with futures : " << collectionOfFutureRequests.size() << endl;
 
 						//cout << "Fetch attribut : " << endl;
-						//auto result_attribut = cf.collect(collectionOfFutureRequests, attributToFetch, true);
+						auto result_attribut = cf.collect(collectionOfFutureRequests, attributToFetch, true);
 
 						// TODO: send result back to caller
-						
+						std::string src = "";
+						std::string dest = "";
+						//auto transferPacket = prepareResponsePacket(src, dest, attributToFetch, result_attribut);
+					    //putInQueue("OUT", transferPacket);	
 						//-
-						
 					}
 					break;
 
