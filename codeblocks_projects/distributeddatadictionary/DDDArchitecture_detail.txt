@@ -56,11 +56,10 @@ DDD - Distributed Data Dictionary
 
 Reason for having ACCESS LAYER is to make sure that DDNodes are loosely coupled, meaning that there is no direct TCPIP port connection from outside
 to any DDNode.
-It is only possible to communicate with the DDNodes via the AL's - sending a datapacket with src and dest toward and from a DDNode.
-The job of the access layer is to take care of all trafic to and from the DDNodes. The zookeeper service will be updated by the CL entity, making 
-sure that data is accessed correctly and with the correct access rights. The ACCESS LAYER is transparent and it is only DDNodes and DDDAdmin which knows
-about its existence and where to connect to it. The ACCESS LAYER then has zookeeper in the background and each CL of the ACCESS LAYER will communicate
-with it to make sure transactions to and from DataDictionary files .BFi is done according to specs.
+It is only possible to communicate with the DDNodes via the DDDAdmin's via CL - sending a datapacket with src and dest toward and from a DDNode->DDDAdmin.
+The job of the connectivity layer is to take care of all trafic to and from the DDDAdmin's and it is DDDAdmin responsibility to maintain and control the DDNodes attached to it. The zookeeper service will be updated by the DDDAdmin entity, making sure that data is accessed correctly and with the correct access rights. 
+The CONNECTIVITY LAYER is transparent and it is only DDDAdmin which knows about its existence and where to connect to it. 
+The DDDAdmin's then have zookeeper in the background and each DDDAdmin of the CONNECTIVITY LAYER will communicate with it to make sure transactions to and from DataDictionary files .BFi is done according to specs.
 
 example:
 
