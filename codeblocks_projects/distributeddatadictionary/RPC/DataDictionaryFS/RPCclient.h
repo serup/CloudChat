@@ -17,6 +17,7 @@ class RPCclient
 {
 
 	public:
+		CHandlingServerRequestToClients ServerReqToClient;	
 		DDRequest request;
 
 		RPCclient() { pZkStorage = NULL; };
@@ -30,6 +31,8 @@ class RPCclient
 		bool handleResponse(std::unique_ptr<CDataEncoder> &decoder_ptr);	
 	
 		bool connectToZooKeeper(std::string servers, long timeoutseconds, std::string znodepath);
+
+		std::list<std::vector<unsigned char>> getResultFromQueue();
 
 	private:
 		bool handleServerRequest(DDRequest req); // response from server could be a request

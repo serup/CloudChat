@@ -132,13 +132,19 @@ bool RPCclient::handleResponse(std::unique_ptr<CDataEncoder> &decoder_ptr)
 
 		if(!bDecoded){
 			// could be server is sending a request
-			CHandlingServerRequestToClients SRC;	
-			SRC.handlingRequest(decoder_ptr, true); // TODO: verbose = true
+			ServerReqToClient.handlingRequest(decoder_ptr, true); // TODO: verbose = true
 			
 		}
 	}
 
 	return bDecoded;
+}
+
+std::list<std::vector<unsigned char>> RPCclient::getResultFromQueue()
+{
+	std::list<std::vector<unsigned char>> result;
+    result = ServerReqToClient.getResultFromQueue();	
+	return result; 
 }
 
 bool RPCclient::connectToZooKeeper(std::string servers, long timeoutseconds, std::string znodepath)

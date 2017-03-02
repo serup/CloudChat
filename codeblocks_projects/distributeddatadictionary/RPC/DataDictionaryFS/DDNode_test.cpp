@@ -1878,8 +1878,8 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_dummy_RPCclients_using_futures)
 	auto listBFiFiles = createTestBFiFiles(); // will create .BFi files with content
 
 	BOOST_TEST_MESSAGE( "Simulate clients receiving requests for data; fetchAttribut " );
-	cout<<"/*{{{*/"<<endl;   
 	{
+	cout<<"/*{{{*/"<<endl;   
 	BOOST_TEST_MESSAGE( "Initiate 3 dummy RPCclients" );
 	// setup RPCclients
 	RPCclient client1;
@@ -1925,12 +1925,14 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_dummy_RPCclients_using_futures)
 	client2.handleResponse(RPC2requestForAttribut);
 	client3.handleResponse(RPC3requestForAttribut);
 
-	
+	cout<<"/*}}}*/"<<endl;   
+
+	BOOST_TEST_MESSAGE( "Simulate that client have send result via socket - by just fetching result from client instance" );
 	// simulate that client have send result via sockets to DDDAdmin (this) - by just fetching result from client instance
-	//client1.fetchElementFromQueue("OUT");
+	auto result1 = client1.getResultFromQueue();
+	cout << "size of result list from client1 : " << result1.size() << endl;
 
 	}
-	cout<<"/*}}}*/"<<endl;   
 
 	cout << "________________________________________" << endl;
 	cout << "*** SIMULATE end ***" << endl;

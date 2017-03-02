@@ -24,13 +24,17 @@ constexpr std::size_t countof(T const (&)[N]) noexcept
 
 class CHandlingServerRequestToClients
 {
+
 	public:
 		CHandlingServerRequestToClients(std::string guid = "<unknown>") {setclientID(guid);};
 
 		void setclientID(std::string guid) { clientID = guid; };
 		bool handlingRequest(std::unique_ptr<CDataEncoder> &decoder_ptr, bool verbose=false);
+		std::list<std::vector<unsigned char>> getResultFromQueue();
+		bool putResultOnQueue(auto result);
 
 	private:
+		thread_safe_queue<std::vector<unsigned char>> result_buffer_queue;
 		std::string clientID = "<unknown>";
 		enum _eMethod { null, FETCH_ATTRIBUT } eMethod;
 		_eMethod analyseRequestMethod(std::string strMethod);

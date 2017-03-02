@@ -77,14 +77,24 @@ bool CHandlingServerRequestToClients::handlingRequest(std::unique_ptr<CDataEncod
 
 						if(verbose) cout << "Result from RPCclient, size of vector with futures : " << collectionOfFutureRequests.size() << endl;
 
+						if(collectionOfFutureRequests.size() > 0) {
 						//cout << "Fetch attribut : " << endl;
-						auto result_attribut = cf.collect(collectionOfFutureRequests, attributToFetch, true);
+						auto result_attribut = cf.collect(collectionOfFutureRequests, attributToFetch, verbose);
+
+						if(verbose) cout << "collected result size : " << result_attribut.size() << " added to queue" << endl;
 
 						// TODO: send result back to caller
+						putResultOnQueue(result_attribut);
+
 						std::string src = "";
 						std::string dest = "";
 						//auto transferPacket = prepareResponsePacket(src, dest, attributToFetch, result_attribut);
 					    //putInQueue("OUT", transferPacket);	
+						}
+						else {
+							if(verbose) cout << "INFO: no attribut : " << attributToFetch << " found in .BFi file: " << file << "; " << __FILE__ << "[" << __LINE__ << "]" << endl;
+						}
+						
 						//-
 					}
 					break;
@@ -173,3 +183,35 @@ std::vector<unsigned char> CHandlingServerRequestToClients::fetchParameter(std::
 
 	return ret;
 }
+
+bool CHandlingServerRequestToClients::putResultOnQueue(auto result)
+{
+	bool bResult=false;
+				
+	if(result.size() > 0) {
+		result_buffer_queue.push(result);
+		bResult=true;
+	}
+	else
+		cout << "WARNING: Nothing added to queue; " << __FILE__ << "[" << __LINE__ << "]" << endl;
+
+	return bResult;
+}
+
+std::list<std::vector<unsigned char>> CHandlingServerRequestToClients::getResultFromQueue()
+{
+	bool bFoundResult=false;
+	std::list<std::vector<unsigned char>> listOfResults;
+	//transfer results to list
+	do {
+		auto result = result_buffer_queue.pop(bFoundResult);		
+		if(bFoundResult)
+			listOfResults.push_back(result);
+	}while(bFoundResult);
+
+	if(listOfResults.size() <= 0)
+		cout << "WARNING: NOTHING was on queue " << __FILE__ << "[" << __LINE__ << "]" << endl; 
+
+	return listOfResults;
+}
+
