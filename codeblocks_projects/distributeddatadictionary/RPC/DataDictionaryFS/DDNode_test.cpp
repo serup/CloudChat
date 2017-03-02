@@ -1936,7 +1936,26 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_dummy_RPCclients_using_futures)
 	auto result3 = client3.getResultFromQueue();
 	cout << "size of result from client3 : " << result1.size() << endl;
 
-//	std::vector< std::future<std::vector<unsigned char>> >  collectionOfFutureRequests;
+	std::vector< std::future<std::vector<unsigned char>> >  collectionOfFutureRequests;
+				
+	std::promise<std::vector<unsigned char> > p1;
+	std::promise<std::vector<unsigned char> > p2;
+	std::promise<std::vector<unsigned char> > p3;
+	p1.set_value(std::move(result1)); // transfere result to promise
+	p2.set_value(std::move(result2)); // transfere result to promise
+	p3.set_value(std::move(result3)); // transfere result to promise
+
+	std::future<std::vector<unsigned char> > f1(p1.get_future());
+	std::future<std::vector<unsigned char> > f2(p2.get_future());
+	std::future<std::vector<unsigned char> > f3(p3.get_future());
+
+	collectionOfFutureRequests.push_back(std::move(f1));
+	collectionOfFutureRequests.push_back(std::move(f2));
+	collectionOfFutureRequests.push_back(std::move(f3));
+		
+	cout << "Fetch attribut : " << endl;
+	collectablefutures cf;
+	auto result_attribut = cf.collect(collectionOfFutureRequests, attributToFetch, true);
 
 	}
 
