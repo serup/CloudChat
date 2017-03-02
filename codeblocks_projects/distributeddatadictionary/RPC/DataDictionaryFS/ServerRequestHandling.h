@@ -30,8 +30,8 @@ class CHandlingServerRequestToClients
 
 		void setclientID(std::string guid) { clientID = guid; };
 		bool handlingRequest(std::unique_ptr<CDataEncoder> &decoder_ptr, bool verbose=false);
-		std::list<std::vector<unsigned char>> getResultFromQueue();
-		bool putResultOnQueue(auto result);
+		std::vector<unsigned char> getResultFromQueue(bool verbose=false);
+		bool putResultOnQueue(auto result, bool verbose=false);
 
 	private:
 		thread_safe_queue<std::vector<unsigned char>> result_buffer_queue;

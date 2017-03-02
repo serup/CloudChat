@@ -84,7 +84,7 @@ bool CHandlingServerRequestToClients::handlingRequest(std::unique_ptr<CDataEncod
 						if(verbose) cout << "collected result size : " << result_attribut.size() << " added to queue" << endl;
 
 						// TODO: send result back to caller
-						putResultOnQueue(result_attribut);
+						putResultOnQueue(result_attribut, verbose);
 
 						std::string src = "";
 						std::string dest = "";
@@ -184,34 +184,36 @@ std::vector<unsigned char> CHandlingServerRequestToClients::fetchParameter(std::
 	return ret;
 }
 
-bool CHandlingServerRequestToClients::putResultOnQueue(auto result)
+bool CHandlingServerRequestToClients::putResultOnQueue(auto result, bool verbose)
 {
 	bool bResult=false;
 				
 	if(result.size() > 0) {
+		if(verbose) cout << "INFO: added size : " << result.size() << " to queue " << endl;
 		result_buffer_queue.push(result);
+		if(verbose) cout << "INFO: size of queue : " << result_buffer_queue.size() << endl;
 		bResult=true;
 	}
 	else
-		cout << "WARNING: Nothing added to queue; " << __FILE__ << "[" << __LINE__ << "]" << endl;
+		if(verbose) cout << "WARNING: Nothing added to queue; " << __FILE__ << "[" << __LINE__ << "]" << endl;
 
 	return bResult;
 }
 
-std::list<std::vector<unsigned char>> CHandlingServerRequestToClients::getResultFromQueue()
+std::vector<unsigned char> CHandlingServerRequestToClients::getResultFromQueue(bool verbose)
 {
-	bool bFoundResult=false;
-	std::list<std::vector<unsigned char>> listOfResults;
-	//transfer results to list
-	do {
-		auto result = result_buffer_queue.pop(bFoundResult);		
-		if(bFoundResult)
-			listOfResults.push_back(result);
-	}while(bFoundResult);
+	bool bNoFailure=true;
+	std::vector<unsigned char> BufferResult;
 
-	if(listOfResults.size() <= 0)
-		cout << "WARNING: NOTHING was on queue " << __FILE__ << "[" << __LINE__ << "]" << endl; 
+	auto result = result_buffer_queue.pop(bNoFailure);		
+	if(verbose) cout << "INFO: getResultFromQueue : size : " << result.size() << " bNoFailure=" << bNoFailure << endl;
+	if(bNoFailure && result.size() > 0) {
+		BufferResult = std::move(result);
+	}
+	else {
+		cout << "WARNING: nothing was fetched from queue " << __FILE__ << "[" << __LINE__ << "]" << endl;
+	}
 
-	return listOfResults;
+	return BufferResult;
 }
 

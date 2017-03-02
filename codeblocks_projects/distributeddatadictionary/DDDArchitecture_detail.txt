@@ -54,7 +54,7 @@ DDD - Distributed Data Dictionary
         + etc...........................        + etc...........................
 
 
-Reason for having ACCESS LAYER is to make sure that DDNodes are loosely coupled, meaning that there is no direct TCPIP port connection from outside
+Reason for having CONNECTIVITY LAYER is to make sure that DDNodes are loosely coupled, meaning that there is no direct TCPIP port connection from outside
 to any DDNode.
 It is only possible to communicate with the DDNodes via the DDDAdmin's via CL - sending a datapacket with src and dest toward and from a DDNode->DDDAdmin.
 The job of the connectivity layer is to take care of all trafic to and from the DDDAdmin's and it is DDDAdmin responsibility to maintain and control the DDNodes attached to it. The zookeeper service will be updated by the DDDAdmin entity, making sure that data is accessed correctly and with the correct access rights. 

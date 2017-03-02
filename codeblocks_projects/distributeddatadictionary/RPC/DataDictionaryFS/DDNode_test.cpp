@@ -1930,7 +1930,13 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_dummy_RPCclients_using_futures)
 	BOOST_TEST_MESSAGE( "Simulate that client have send result via socket - by just fetching result from client instance" );
 	// simulate that client have send result via sockets to DDDAdmin (this) - by just fetching result from client instance
 	auto result1 = client1.getResultFromQueue();
-	cout << "size of result list from client1 : " << result1.size() << endl;
+	cout << "size of result from client1 : " << result1.size() << endl;
+	auto result2 = client2.getResultFromQueue();
+	cout << "size of result from client2 : " << result1.size() << endl;
+	auto result3 = client3.getResultFromQueue();
+	cout << "size of result from client3 : " << result1.size() << endl;
+
+//	std::vector< std::future<std::vector<unsigned char>> >  collectionOfFutureRequests;
 
 	}
 
