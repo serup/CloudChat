@@ -352,7 +352,7 @@ class collectablefutures
 	{
 		std::vector<unsigned char> dummy;
 		CDataDictionaryControl DDControl;
-		std::vector<std::list< pair<seqSpan, std::vector<assembledElements>>>> resultFromRPCclients; 
+		//std::vector<std::list< pair<seqSpan, std::vector<assembledElements>>>> resultFromRPCclients; 
 		
 		if(verbose) cout << "/*{{{*/" << endl;
 

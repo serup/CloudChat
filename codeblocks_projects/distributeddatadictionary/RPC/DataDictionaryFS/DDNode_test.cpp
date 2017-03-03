@@ -87,7 +87,9 @@ struct ReportRedirector
 BOOST_GLOBAL_FIXTURE(ReportRedirector)
 #endif
 #endif
-
+		
+	
+std::vector<unsigned char> FotoAttributValue;
 std::list<std::string> createTestBFiFiles() 
 {
 	CDataDictionaryControl *pDDC = new CDataDictionaryControl();
@@ -116,7 +118,7 @@ std::list<std::string> createTestBFiFiles()
 
 		// attribut 1 - large
 		std::string FotoAttributName= "foto"; // it should be ddid -- datadictionary id which refers to attribut description
-		std::vector<unsigned char> FotoAttributValue;
+		//std::vector<unsigned char> FotoAttributValue;
 		std::string fn = "testImage.png"; // should be of size 10.5 Kb
 		std::ifstream is (fn, ios::binary);
 		if (is)
@@ -1936,26 +1938,32 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_dummy_RPCclients_using_futures)
 	auto result3 = client3.getResultFromQueue();
 	cout << "size of result from client3 : " << result1.size() << endl;
 
-	std::vector< std::future<std::vector<unsigned char>> >  collectionOfFutureRequests;
+
+ 	std::vector< std::future<std::vector<unsigned char>> >  collectionOfFutureRequests;
 				
 	std::promise<std::vector<unsigned char> > p1;
 	std::promise<std::vector<unsigned char> > p2;
 	std::promise<std::vector<unsigned char> > p3;
+	std::future<std::vector<unsigned char> > f1(p1.get_future());
+	std::future<std::vector<unsigned char> > f2(p2.get_future());
+	std::future<std::vector<unsigned char> > f3(p3.get_future());
+
 	p1.set_value(std::move(result1)); // transfere result to promise
 	p2.set_value(std::move(result2)); // transfere result to promise
 	p3.set_value(std::move(result3)); // transfere result to promise
 
-	std::future<std::vector<unsigned char> > f1(p1.get_future());
-	std::future<std::vector<unsigned char> > f2(p2.get_future());
-	std::future<std::vector<unsigned char> > f3(p3.get_future());
 
 	collectionOfFutureRequests.push_back(std::move(f1));
 	collectionOfFutureRequests.push_back(std::move(f2));
 	collectionOfFutureRequests.push_back(std::move(f3));
 		
 	cout << "Fetch attribut : " << endl;
+	cout << "collect results, and decode " << __FILE__ <<" "<< __LINE__ << endl;
 	collectablefutures cf;
-	auto result_attribut = cf.collect(collectionOfFutureRequests, attributToFetch, true);
+	std::vector<unsigned char> result_attribut = cf.collect(collectionOfFutureRequests, attributToFetch, true);
+	cout << "compare attribut fetched result with original data : " << endl;
+	bool bFoundError = CUtils::showDataBlockDiff(true,true,result_attribut, FotoAttributValue);
+	BOOST_CHECK(FotoAttributValue.size() == result_attribut.size());
 
 	}
 
@@ -1965,8 +1973,6 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_dummy_RPCclients_using_futures)
 	// Clean up section - must be in bottom
 	cleanupTestBFiFiles(listBFiFiles);
 	
-	BOOST_CHECK(true == false);
-
 	cout << "}" << endl;
 }
 

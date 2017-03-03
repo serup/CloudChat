@@ -61,7 +61,39 @@ bool CHandlingServerRequestToClients::handlingRequest(std::unique_ptr<CDataEncod
 							DDC.fetchAttributsFromFile(currentfile, AttributInblockSequenceFromBFifile); 
 							transferBLOB stBlob = DDC.convertToBLOB(AttributInblockSequenceFromBFifile);  
 
-							return stBlob.data;	
+							//+ DEBUG
+							std::list<pair<seqSpan, std::vector<assembledElements>>> listpair;
+							DDC.convertFromBLOBToPair(stBlob, listpair,true);
+							//BOOST_CHECK(listpair.size() > 0);
+			
+							cout << "  amount of elements in received listpair : " << listpair.size() << endl;
+							cout << "  sequence Numbers decoded from DED into std::list :  ";
+							cout << "*{{{" << endl;
+							BOOST_FOREACH(auto &_pair, listpair)
+							{
+								seqSpan ss;
+								ss = _pair.first;
+								BOOST_FOREACH(auto &number, ss.seqNumbers)
+								{
+									cout << number << ",";
+								}
+								cout << endl;
+									
+								assembledElements _element;
+								_element.strElementID = ss.attributPath; 
+								_element.seqNumbers   = ss.seqNumbers;
+								
+								std::vector<assembledElements> vae = _pair.second;
+			
+								BOOST_FOREACH(auto &_element, vae) {
+									CUtils::showDataBlock(true,true,_element.ElementData);
+								}
+							}
+							cout << endl;
+							cout << "*}}}" << endl;
+							//- DEBUG
+							
+							return stBlob.data; // data is a BLOB of protocol DED of structure transferBLOB
 						};
 						////////////////////////////////////////////////////////////////
 
@@ -78,13 +110,27 @@ bool CHandlingServerRequestToClients::handlingRequest(std::unique_ptr<CDataEncod
 						if(verbose) cout << "Result from RPCclient, size of vector with futures : " << collectionOfFutureRequests.size() << endl;
 
 						if(collectionOfFutureRequests.size() > 0) {
-						//cout << "Fetch attribut : " << endl;
-						auto result_attribut = cf.collect(collectionOfFutureRequests, attributToFetch, verbose);
 
-						if(verbose) cout << "collected result size : " << result_attribut.size() << " added to queue" << endl;
+							auto result = cf.collect(collectionOfFutureRequests);
+							putResultOnQueue(result, verbose); // result send back must be transferBLOB's 
+
+						//cout << "Fetch attribut : " << endl;
+						//auto result_attribut = cf.collect(collectionOfFutureRequests, attributToFetch, verbose);
+
+						//if(verbose) { 
+						//	cout << "collected result size : " << result_attribut.size() << " added to queue" << endl;
+						//	CUtils::showDataBlock(true,true,result_attribut);
+						//}
 
 						// TODO: send result back to caller
-						putResultOnQueue(result_attribut, verbose);
+	/*					
+				if(verbose) cout << "  prepare result in a BLOB " << endl;
+				std::list<pair<seqSpan, std::vector<assembledElements>>> AttributInblockSequenceFromBFifile;
+				transferBLOB stBlob = pDDC->convertToBLOB(AttributInblockSequenceFromBFifile,true);
+				BOOST_CHECK(stBlob.eType == transferBLOB::enumType::ATTRIBUTS_LIST);
+*/
+
+						//putResultOnQueue(result_attribut, verbose); //TODO: result send back must be a BLOB -> listpair 
 
 						std::string src = "";
 						std::string dest = "";
