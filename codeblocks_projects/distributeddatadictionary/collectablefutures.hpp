@@ -417,6 +417,21 @@ class collectablefutures
 		return req;
 	}
 
+	bool addReceivedTransferToCollection(auto transfer, std::vector< std::future<std::vector<unsigned char>> >  &collectionOfFutureRequests)
+	{
+		bool bResult=false;
+
+		try {
+		std::promise<std::vector<unsigned char> > p1;
+		std::future<std::vector<unsigned char> > f1(p1.get_future());
+		p1.set_value(std::move(transfer)); // transfere result to promise
+		collectionOfFutureRequests.push_back(std::move(f1));
+		bResult=true;
+		}catch(...) { cout << "FAIL: exception " << __FILE__ << " " << __LINE__ << endl; }
+
+		return bResult;
+	}
+				
 	~collectablefutures()
 	{
 		done=true;

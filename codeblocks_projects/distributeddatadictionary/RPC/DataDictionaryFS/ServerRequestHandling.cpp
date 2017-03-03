@@ -46,7 +46,7 @@ bool CHandlingServerRequestToClients::handlingRequest(std::unique_ptr<CDataEncod
 						std::string attributToFetch(paramvalue.begin(), paramvalue.end());
 
 						if(verbose) cout << "INFO: file : " << file << endl;
-
+						
 
 						////////////////////////////////////////////////////////////////
 						// create lambda function for fetching attributs from .BFi file
@@ -54,54 +54,57 @@ bool CHandlingServerRequestToClients::handlingRequest(std::unique_ptr<CDataEncod
 						auto fnFetchAllAttributsFromBFiFile = [](std::vector<Variant> vec)
 						{ 	
 							CDataDictionaryControl DDC;
-
 							boost::filesystem::path currentfile( boost::filesystem::path(boost::get<std::string>(vec[0])) );
+							//bool verbose( boost::get<bool>(vec[1]) );
+							bool verbose=true;
 							std::list<pair<seqSpan, std::vector<assembledElements>>> AttributInblockSequenceFromBFifile;
-
 							DDC.fetchAttributsFromFile(currentfile, AttributInblockSequenceFromBFifile); 
 							transferBLOB stBlob = DDC.convertToBLOB(AttributInblockSequenceFromBFifile);  
+						
+							if(verbose) {
+								//+ DEBUG
+								std::list<pair<seqSpan, std::vector<assembledElements>>> listpair;
+								DDC.convertFromBLOBToPair(stBlob, listpair,true);
+								//BOOST_CHECK(listpair.size() > 0);
 
-							//+ DEBUG
-							std::list<pair<seqSpan, std::vector<assembledElements>>> listpair;
-							DDC.convertFromBLOBToPair(stBlob, listpair,true);
-							//BOOST_CHECK(listpair.size() > 0);
-			
-							cout << "  amount of elements in received listpair : " << listpair.size() << endl;
-							cout << "  sequence Numbers decoded from DED into std::list :  ";
-							cout << "*{{{" << endl;
-							BOOST_FOREACH(auto &_pair, listpair)
-							{
-								seqSpan ss;
-								ss = _pair.first;
-								BOOST_FOREACH(auto &number, ss.seqNumbers)
+								cout << "  amount of elements in received listpair : " << listpair.size() << endl;
+								cout << "  sequence Numbers decoded from DED into std::list :  ";
+								cout << "*{{{" << endl;
+								BOOST_FOREACH(auto &_pair, listpair)
 								{
-									cout << number << ",";
+									seqSpan ss;
+									ss = _pair.first;
+									BOOST_FOREACH(auto &number, ss.seqNumbers)
+									{
+										cout << number << ",";
+									}
+									cout << endl;
+
+									assembledElements _element;
+									_element.strElementID = ss.attributPath; 
+									_element.seqNumbers   = ss.seqNumbers;
+									std::vector<assembledElements> vae = _pair.second;
+
+									BOOST_FOREACH(auto &_element, vae) {
+										CUtils::showDataBlock(true,true,_element.ElementData);
+									}
 								}
 								cout << endl;
-									
-								assembledElements _element;
-								_element.strElementID = ss.attributPath; 
-								_element.seqNumbers   = ss.seqNumbers;
-								
-								std::vector<assembledElements> vae = _pair.second;
-			
-								BOOST_FOREACH(auto &_element, vae) {
-									CUtils::showDataBlock(true,true,_element.ElementData);
-								}
+								cout << "*}}}" << endl;
+								//- DEBUG
 							}
-							cout << endl;
-							cout << "*}}}" << endl;
-							//- DEBUG
-							
+
 							return stBlob.data; // data is a BLOB of protocol DED of structure transferBLOB
 						};
+
 						////////////////////////////////////////////////////////////////
 
 	
 						std::vector< std::future<std::vector<unsigned char>> >  collectionOfFutureRequests;
 						collectablefutures cf;
 						collectablefutures::request req = cf.createrequest();
-						req.addexecutorfunc( fnFetchAllAttributsFromBFiFile, file );
+						//req.addexecutorfunc( fnFetchAllAttributsFromBFiFile, file, verbose);
+						req.addexecutorfunc( fnFetchAllAttributsFromBFiFile, file);
 						cf.runRequest( req, collectionOfFutureRequests ); // fetch attributs data from .BFi file 
 
 						// wait for all request to be finished before handling results 
@@ -110,37 +113,12 @@ bool CHandlingServerRequestToClients::handlingRequest(std::unique_ptr<CDataEncod
 						if(verbose) cout << "Result from RPCclient, size of vector with futures : " << collectionOfFutureRequests.size() << endl;
 
 						if(collectionOfFutureRequests.size() > 0) {
-
 							auto result = cf.collect(collectionOfFutureRequests);
 							putResultOnQueue(result, verbose); // result send back must be transferBLOB's 
-
-						//cout << "Fetch attribut : " << endl;
-						//auto result_attribut = cf.collect(collectionOfFutureRequests, attributToFetch, verbose);
-
-						//if(verbose) { 
-						//	cout << "collected result size : " << result_attribut.size() << " added to queue" << endl;
-						//	CUtils::showDataBlock(true,true,result_attribut);
-						//}
-
-						// TODO: send result back to caller
-	/*					
-				if(verbose) cout << "  prepare result in a BLOB " << endl;
-				std::list<pair<seqSpan, std::vector<assembledElements>>> AttributInblockSequenceFromBFifile;
-				transferBLOB stBlob = pDDC->convertToBLOB(AttributInblockSequenceFromBFifile,true);
-				BOOST_CHECK(stBlob.eType == transferBLOB::enumType::ATTRIBUTS_LIST);
-*/
-
-						//putResultOnQueue(result_attribut, verbose); //TODO: result send back must be a BLOB -> listpair 
-
-						std::string src = "";
-						std::string dest = "";
-						//auto transferPacket = prepareResponsePacket(src, dest, attributToFetch, result_attribut);
-					    //putInQueue("OUT", transferPacket);	
 						}
 						else {
 							if(verbose) cout << "INFO: no attribut : " << attributToFetch << " found in .BFi file: " << file << "; " << __FILE__ << "[" << __LINE__ << "]" << endl;
 						}
-						
 						//-
 					}
 					break;
