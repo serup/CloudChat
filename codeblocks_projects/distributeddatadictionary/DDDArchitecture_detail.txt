@@ -60,8 +60,9 @@ It is only possible to communicate with the DDNodes via the DDDAdmin's via CL - 
 The job of the connectivity layer is to take care of all trafic to and from the DDDAdmin's and it is DDDAdmin responsibility to maintain and control the DDNodes attached to it. The zookeeper service will be updated by the DDDAdmin entity, making sure that data is accessed correctly and with the correct access rights. 
 The CONNECTIVITY LAYER is transparent and it is only DDDAdmin which knows about its existence and where to connect to it. 
 The DDDAdmin's then have zookeeper in the background and each DDDAdmin of the CONNECTIVITY LAYER will communicate with it to make sure transactions to and from DataDictionary files .BFi is done according to specs.
+The DDNode's could be connected to DDDAdmin's using TCPIP or UDP, actually the DDNode is responsible for trying to find a DDDAdmin and update it with its own status and findings - a DDNode could be offline to DDDAdmin for a long time, doing some work, this work could be some request given from DDDAdmin and the result could take a long time to compile and add to DDD (.BFi files), it would then connect to DDDAdmin and tell it about the finished request, then DDDAdmin would take over and create some more request to handle further process of the results
 
-example:
+example:(TODO: needs more work, and a MSC showing it in detail)
 
 * DDDAdmin wants to fetch a specific attribut from dataditionary
 	
@@ -86,5 +87,8 @@ example:
    . DDDAdmin informs zookeeper that entity is offline - removing tempory objects from zookeeper database and disconnect from nearby CL
 
 
+The Data Dictionary should have the ability to store and access datablocks of enormous sizes - think like this: only the amount of DDNode's .BFi determine the maximum size of a datablock. Its main objective is to create a platform for handling data - all data.
+The handling of data will be done in many ways, however with DDD it will be possible to go back to basic, each datablock/attribut in the DDD should be handled using simple filehandlers like simple files, and data should only be transfered when needed, when the filehandle is pointing towards some bytes stored in an attribut in a .BFi file far away from the DDDAdmin reguesting to read from it, then the bytes will be transfered and only then - this is one way of handling data in DDD
 
+Fetching an attribut from DDD could also be done like this; Request from DDDAdmin towards DDNodes asking for an attribute, then DDNodes will find a record containing the attribut and sending it towards DDDAdmin, and DDDAdmin will assemble results from DDNodes and fetch attribut from the assembled result (this is pt. what project can do, however more work towards creating a handle aka filehandler for the requested data/attribut is needed)
 
