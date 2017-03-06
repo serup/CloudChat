@@ -9,7 +9,7 @@
  
 class CServerRequestToClient
 {
-	public:
+	private:
 		std::unique_ptr<CDataEncoder> createRequest(std::string requestName, requestType type, long transID, std::vector<pair<std::string, std::vector<unsigned char>>> parameters) 
 		{ 
 			DDRequest req;                                                                                
@@ -68,6 +68,16 @@ class CServerRequestToClient
 		void clearParameters()
 		{
 			addParameter(); // clean out internal list of parameters
+		}
+
+	public:
+		std::unique_ptr<CDataEncoder> createReqForAttribut(auto attributToFetch, auto BFi_file, auto transID)
+		{
+			std::string file = BFi_file;
+			clearParameters();
+			addParameter(createParameter("attributToFetch", attributToFetch));
+			auto parameters = addParameter(createParameter("BFi_File", file));
+			return createRequest("fetchAttribut", SEARCH, transID, parameters);
 		}
 
 };

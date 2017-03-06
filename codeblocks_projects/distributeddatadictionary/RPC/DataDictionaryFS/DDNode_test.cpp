@@ -1899,28 +1899,10 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_dummy_RPCclients_using_futures)
 	std::string attributToFetch = transGuid + "./profile/foto";
 
 	CServerRequestToClient sreq;
-	//+ setup parameter for client1 - find .BFi file and extract attribut
-	std::string file1 = transGuid + "_1.BFi";
-	sreq.clearParameters();
-	sreq.addParameter(sreq.createParameter("attributToFetch", attributToFetch));
-	auto parameters = sreq.addParameter(sreq.createParameter("BFi_File", file1));
-	auto RPC1requestForAttribut = sreq.createRequest("fetchAttribut", SEARCH, transID, parameters);
-	//-
-	//+ setup parameter for client2 - find .BFi file and extract attribut
-	std::string file2 = transGuid + "_2.BFi";
-	sreq.clearParameters();
-	sreq.addParameter(sreq.createParameter("attributToFetch", attributToFetch));
-	parameters = sreq.addParameter(sreq.createParameter("BFi_File", file2));
-	auto RPC2requestForAttribut = sreq.createRequest("fetchAttribut", SEARCH, transID, parameters);
-	//-
-	//+ setup parameter for client3 - find .BFi file and extract attribut
-	std::string file3 = transGuid + "_3.BFi";
-	sreq.clearParameters();
-	sreq.addParameter(sreq.createParameter("attributToFetch", attributToFetch));
-	parameters = sreq.addParameter(sreq.createParameter("BFi_File", file3));
-	auto RPC3requestForAttribut = sreq.createRequest("fetchAttribut", SEARCH, transID, parameters);
-	//-
-
+	// setup parameter for client's - find .BFi file and extract attribut
+	auto RPC1requestForAttribut = sreq.createReqForAttribut(attributToFetch,transGuid + "_1.BFi", transID);
+	auto RPC2requestForAttribut = sreq.createReqForAttribut(attributToFetch,transGuid + "_2.BFi", transID);
+	auto RPC3requestForAttribut = sreq.createReqForAttribut(attributToFetch,transGuid + "_3.BFi", transID);
 
 	BOOST_TEST_MESSAGE( "Simulate sending a request from DDDAdmin to each client" );
 	// default response handler will forward to handle a request if it validates incomming message as different than a response
@@ -2044,26 +2026,30 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_RPCclients_via_virtual_DDDAdmin)
 			std::string attributToFetch = transGuid + "./profile/foto";
 
 			CServerRequestToClient sreq;
-			//+ setup parameter for client1 - find .BFi file and extract attribut
-			std::string file1 = transGuid + "_1.BFi";
-			sreq.clearParameters();
-			sreq.addParameter(sreq.createParameter("attributToFetch", attributToFetch));
-			auto parameters = sreq.addParameter(sreq.createParameter("BFi_File", file1));
-			auto RPC1requestForAttribut = sreq.createRequest("fetchAttribut", SEARCH, transID, parameters);
+			//+ setup parameter for client's - find .BFi file and extract attribut
+			auto RPC1requestForAttribut = sreq.createReqForAttribut(attributToFetch,transGuid + "_1.BFi", transID);
+			auto RPC2requestForAttribut = sreq.createReqForAttribut(attributToFetch,transGuid + "_2.BFi", transID);
+			auto RPC3requestForAttribut = sreq.createReqForAttribut(attributToFetch,transGuid + "_3.BFi", transID);
+
+			//std::string file1 = transGuid + "_1.BFi";
+			//sreq.clearParameters();
+			//sreq.addParameter(sreq.createParameter("attributToFetch", attributToFetch));
+			//auto parameters = sreq.addParameter(sreq.createParameter("BFi_File", file1));
+			//auto RPC1requestForAttribut = sreq.createRequest("fetchAttribut", SEARCH, transID, parameters);
 			//-
 			//+ setup parameter for client2 - find .BFi file and extract attribut
-			std::string file2 = transGuid + "_2.BFi";
-			sreq.clearParameters();
-			sreq.addParameter(sreq.createParameter("attributToFetch", attributToFetch));
-			parameters = sreq.addParameter(sreq.createParameter("BFi_File", file2));
-			auto RPC2requestForAttribut = sreq.createRequest("fetchAttribut", SEARCH, transID, parameters);
+			//std::string file2 = transGuid + "_2.BFi";
+			//sreq.clearParameters();
+			//sreq.addParameter(sreq.createParameter("attributToFetch", attributToFetch));
+			//auto parameters = sreq.addParameter(sreq.createParameter("BFi_File", file2));
+			//auto RPC2requestForAttribut = sreq.createRequest("fetchAttribut", SEARCH, transID, parameters);
 			//-
 			//+ setup parameter for client3 - find .BFi file and extract attribut
-			std::string file3 = transGuid + "_3.BFi";
-			sreq.clearParameters();
-			sreq.addParameter(sreq.createParameter("attributToFetch", attributToFetch));
-			parameters = sreq.addParameter(sreq.createParameter("BFi_File", file3));
-			auto RPC3requestForAttribut = sreq.createRequest("fetchAttribut", SEARCH, transID, parameters);
+			//std::string file3 = transGuid + "_3.BFi";
+			//sreq.clearParameters();
+			//sreq.addParameter(sreq.createParameter("attributToFetch", attributToFetch));
+			//parameters = sreq.addParameter(sreq.createParameter("BFi_File", file3));
+			//auto RPC3requestForAttribut = sreq.createRequest("fetchAttribut", SEARCH, transID, parameters);
 			//-
 
 
