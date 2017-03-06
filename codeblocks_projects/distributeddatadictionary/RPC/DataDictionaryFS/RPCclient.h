@@ -17,7 +17,7 @@ class RPCclient
 {
 
 	public:
-		CHandlingServerRequestToClients ServerReqToClient;	
+		CHandlingServerRequestToClients ServerReqToClient; // incomming request from server is handled here	
 		DDRequest request;
 
 		RPCclient() { pZkStorage = NULL; };
