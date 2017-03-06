@@ -413,6 +413,7 @@ BOOST_AUTO_TEST_CASE(serverclient_udp)
 		clnt_destroy (clnt);
 	}
 
+	//pserver->stop();
 	delete pserver;
 	boost::this_thread::sleep( boost::posix_time::milliseconds(10) ); // above functions should not take longer to complete - this is to avoid cluttering up output
 	cout<<"}"<<endl;   
@@ -1953,6 +1954,126 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_dummy_RPCclients_using_futures)
 
 	}
 
+	cout << "________________________________________" << endl;
+	cout << "*** SIMULATE end ***" << endl;
+
+	// Clean up section - must be in bottom
+	cleanupTestBFiFiles(listBFiFiles);
+	
+	cout << "}" << endl;
+}
+
+BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_RPCclients_via_virtual_DDDAdmin)
+{
+	cout << "BOOST_AUTO_TEST_CASE( fetchAttributsFrom_3_RPCclients_via_virtual_DDDAdmin )\n{" << endl;
+	
+	auto listBFiFiles = createTestBFiFiles(); // will create .BFi files with content
+
+	BOOST_TEST_MESSAGE( "Start a virtual DDDAdmin (mockRPCServer) and ask it to send a request to fetch attribut from clients - 3 will respond with data " );	
+	cout<<"/*{{{*/"<<endl;   
+	{
+		// setup mock server
+		mockRPCServer server;
+		server.start();
+		server.wait();				
+
+		cout<<"/*}}}*/"<<endl;   
+
+
+		BOOST_TEST_MESSAGE( "Simulate clients receiving requests for data; fetchAttribut " );
+		{
+			cout<<"/*{{{*/"<<endl;   
+			BOOST_TEST_MESSAGE( "Initiate 3 dummy RPCclients" );
+			// setup RPCclients
+			RPCclient client1;
+			RPCclient client2;
+			RPCclient client3;
+
+			// setup connect request
+			DED_START_ENCODER(dedptr);
+			DED_PUT_STRUCT_START( dedptr, "DDNodeRequest" );
+			DED_PUT_METHOD	( dedptr, "name", (std::string)"RPCclientConnect" );
+			DED_PUT_STRUCT_END( dedptr, "DDNodeRequest" );
+
+			// setup a RPCclient1 connect request
+			BOOST_CHECK( client1.sendRequestTo("localhost", dedptr,421,CONNECT) == true ); 
+			boost::this_thread::sleep( boost::posix_time::milliseconds(1000) ); // above functions should not take longer to complete - this is to avoid cluttering up output
+
+			// setup a RPCclient2 connect request
+			BOOST_CHECK( client2.sendRequestTo("localhost", dedptr,422,CONNECT) == true ); 
+			boost::this_thread::sleep( boost::posix_time::milliseconds(1000) ); // above functions should not take longer to complete - this is to avoid cluttering up output
+
+			// setup a RPCclient3 connect request
+			BOOST_CHECK( client3.sendRequestTo("localhost", dedptr,423,CONNECT) == true ); 
+			boost::this_thread::sleep( boost::posix_time::milliseconds(1000) ); // above functions should not take longer to complete - this is to avoid cluttering up output
+
+
+			// simulate that DDDAdmin is sending a request to each client
+			// setup a request - simulating a request from server
+			BOOST_TEST_MESSAGE( "setup a request - simulating a request from server, to later be send to each RPCclient node " );
+
+			unsigned long int sec = time(NULL);                                                                          
+			long transID = (long)sec;// do not really need a time, since this is infact a transaction ID TODO: make a fetchTransactionID function that returns next available ID from Zookeeper fx.
+			std::string transGuid = "F8C23762ED2823A27E62A64B95C024EE";
+			std::string attributToFetch = transGuid + "./profile/foto";
+
+			//+ setup parameter for client1 - find .BFi file and extract attribut
+			std::string file1 = transGuid + "_1.BFi";
+			clearParameters();
+			addParameter(createParameter("attributToFetch", attributToFetch));
+			auto parameters = addParameter(createParameter("BFi_File", file1));
+			auto RPC1requestForAttribut = createRequest("fetchAttribut", SEARCH, transID, parameters);
+			//-
+			//+ setup parameter for client2 - find .BFi file and extract attribut
+			std::string file2 = transGuid + "_2.BFi";
+			clearParameters();
+			addParameter(createParameter("attributToFetch", attributToFetch));
+			parameters = addParameter(createParameter("BFi_File", file2));
+			auto RPC2requestForAttribut = createRequest("fetchAttribut", SEARCH, transID, parameters);
+			//-
+			//+ setup parameter for client3 - find .BFi file and extract attribut
+			std::string file3 = transGuid + "_3.BFi";
+			clearParameters();
+			addParameter(createParameter("attributToFetch", attributToFetch));
+			parameters = addParameter(createParameter("BFi_File", file3));
+			auto RPC3requestForAttribut = createRequest("fetchAttribut", SEARCH, transID, parameters);
+			//-
+
+
+			BOOST_TEST_MESSAGE( "Simulate sending a request from DDDAdmin to each client" );
+			// default response handler will forward to handle a request if it validates incomming message as different than a response
+			// a request from DDDAdmin is in the scope of the client actually a response to last communication
+			client1.handleResponse(RPC1requestForAttribut);
+			client2.handleResponse(RPC2requestForAttribut);
+			client3.handleResponse(RPC3requestForAttribut);
+
+			cout<<"/*}}}*/"<<endl;   
+
+			BOOST_TEST_MESSAGE( "Simulate that client have send result via socket - by just fetching result from client instance" );
+			// simulate that client have send result via sockets to DDDAdmin (this) - by just fetching result from client instance
+			auto result1 = client1.getResultFromQueue();
+			cout << "size of result from client1 : " << result1.size() << endl;
+			auto result2 = client2.getResultFromQueue();
+			cout << "size of result from client2 : " << result1.size() << endl;
+			auto result3 = client3.getResultFromQueue();
+			cout << "size of result from client3 : " << result1.size() << endl;
+
+			std::vector< std::future<std::vector<unsigned char>> >  collectionOfFutureRequests;
+			collectablefutures cf;
+			cf.addReceivedTransferToCollection(result1, collectionOfFutureRequests);
+			cf.addReceivedTransferToCollection(result2, collectionOfFutureRequests);
+			cf.addReceivedTransferToCollection(result3, collectionOfFutureRequests);
+
+			cout << "Fetch attribut : " << endl;
+			cout << "collect results, and decode " << __FILE__ <<" "<< __LINE__ << endl;
+			std::vector<unsigned char> result_attribut = cf.collect(collectionOfFutureRequests, attributToFetch, true);
+			cout << "compare attribut fetched result with original data : " << endl;
+			bool bFoundError = CUtils::showDataBlockDiff(true,true,result_attribut, FotoAttributValue);
+			BOOST_CHECK(FotoAttributValue.size() == result_attribut.size());
+
+		}
+
+	} // end mock server scope
 	cout << "________________________________________" << endl;
 	cout << "*** SIMULATE end ***" << endl;
 

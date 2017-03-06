@@ -74,7 +74,10 @@ class mockRPCServer
 					svcerr_decode (transp);
 					return;
 				}
+
+				// call the (local) function
 				result = (*local)((mockRPCServer*)_this,(char *)&argument, rqstp);
+				// handle result from call to (local) function
 				if (result != NULL && !svc_sendreply(transp, (xdrproc_t) _xdr_result, result)) {
 					svcerr_systemerr (transp);
 				}
@@ -82,7 +85,10 @@ class mockRPCServer
 					fprintf (stderr, "%s", "unable to free arguments");
 					exit (1);
 				}
-				svc_exit(); // make sure test server is stopped
+
+				// use this if you only want ONE request handling
+				//printf("mockRPCServerMain - calling svc_exit() to stop svc_run() \n");
+				//svc_exit(); // make sure test server is stopped
 				return;
 			}
 
@@ -92,6 +98,10 @@ class mockRPCServer
 			mockRPCServer()
 			{
 				// the thread is not-a-thread until we call start()
+			}
+			~mockRPCServer()
+			{
+				stop();
 			}
 
 			void start()
