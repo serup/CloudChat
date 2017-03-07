@@ -1963,7 +1963,6 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_RPCclients_via_virtual_DDDAdmin)
 
 		cout<<"/*}}}*/"<<endl;   
 
-
 		BOOST_TEST_MESSAGE( "Simulate clients connecting to mockServer and receiving requests for data; fetchAttribut " );
 		BOOST_TEST_MESSAGE( "_________________________________________________________________________________________" );
 		{
@@ -1973,7 +1972,6 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_RPCclients_via_virtual_DDDAdmin)
 			RPCclient client1;
 			RPCclient client2;
 			RPCclient client3;
-
 
 			cout<<"/*{{{*/"<<endl;   
 			// setup a RPCclient1 connect request
@@ -2006,9 +2004,7 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_RPCclients_via_virtual_DDDAdmin)
 			BOOST_CHECK( client1.sendRequestTo("localhost", dedptr,423,CONNECT) == true ); 
 			}
 			
-			
 			boost::this_thread::sleep( boost::posix_time::milliseconds(100) ); // above functions should not take longer to complete - this is to avoid cluttering up output
-
 
 			cout<<"/*}}}*/"<<endl;   
 
@@ -2030,28 +2026,6 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_RPCclients_via_virtual_DDDAdmin)
 			auto RPC1requestForAttribut = sreq.createReqForAttribut(attributToFetch,transGuid + "_1.BFi", transID);
 			auto RPC2requestForAttribut = sreq.createReqForAttribut(attributToFetch,transGuid + "_2.BFi", transID);
 			auto RPC3requestForAttribut = sreq.createReqForAttribut(attributToFetch,transGuid + "_3.BFi", transID);
-
-			//std::string file1 = transGuid + "_1.BFi";
-			//sreq.clearParameters();
-			//sreq.addParameter(sreq.createParameter("attributToFetch", attributToFetch));
-			//auto parameters = sreq.addParameter(sreq.createParameter("BFi_File", file1));
-			//auto RPC1requestForAttribut = sreq.createRequest("fetchAttribut", SEARCH, transID, parameters);
-			//-
-			//+ setup parameter for client2 - find .BFi file and extract attribut
-			//std::string file2 = transGuid + "_2.BFi";
-			//sreq.clearParameters();
-			//sreq.addParameter(sreq.createParameter("attributToFetch", attributToFetch));
-			//auto parameters = sreq.addParameter(sreq.createParameter("BFi_File", file2));
-			//auto RPC2requestForAttribut = sreq.createRequest("fetchAttribut", SEARCH, transID, parameters);
-			//-
-			//+ setup parameter for client3 - find .BFi file and extract attribut
-			//std::string file3 = transGuid + "_3.BFi";
-			//sreq.clearParameters();
-			//sreq.addParameter(sreq.createParameter("attributToFetch", attributToFetch));
-			//parameters = sreq.addParameter(sreq.createParameter("BFi_File", file3));
-			//auto RPC3requestForAttribut = sreq.createRequest("fetchAttribut", SEARCH, transID, parameters);
-			//-
-
 
 			BOOST_TEST_MESSAGE( "Simulate sending a request from DDDAdmin to each client" );
 			// default response handler will forward to handle a request if it validates incomming message as different than a response
