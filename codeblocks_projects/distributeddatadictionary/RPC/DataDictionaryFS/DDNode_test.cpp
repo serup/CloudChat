@@ -2013,6 +2013,8 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_RPCclients_via_virtual_DDDAdmin)
 			BOOST_TEST_MESSAGE( "*************************************************************************************************************************************" );
 
 			// simulate that DDDAdmin is sending a request to each client
+			CHandlingServerRequestToClients reqToClient;
+
 			// setup a request - simulating a request from server
 			BOOST_TEST_MESSAGE( "setup a request - simulating a request from server, to later be send to each RPCclient node " );
 
@@ -2028,19 +2030,11 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_RPCclients_via_virtual_DDDAdmin)
 			auto RPC3requestForAttribut = sreq.createReqForAttribut(attributToFetch,transGuid + "_3.BFi", transID);
 
 			BOOST_TEST_MESSAGE( "Simulate sending a request from DDDAdmin to each client" );
-//+TODO: send requests to DDDAdmin server (mockServer), then have it forward in a standard way
-			// test with lambda function
-			BOOST_CHECK( client1.sendRequestTo("localhost", RPC1requestForAttribut,421,PINGPONG,
-						[&](std::unique_ptr<CDataEncoder> &decoder_ptr) // lambda functionality
-						{
-						printf("************************************************\n");
-						printf("WARNING: lambda callback function called \n");
-						if (decoder_ptr == 0) { printf(">>> no data received\n"); }
-						printf("************************************************\n");
-						}
-						) == true );
 
-		
+			// simulate -  using a method in DDDAdmin to send request to each client
+			
+			
+
 			// this should be done inside server (mockServer simulating real server)
 			//
 			// default response handler will forward to handle a request if it validates incomming message as different than a response
