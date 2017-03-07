@@ -2013,7 +2013,6 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_RPCclients_via_virtual_DDDAdmin)
 			BOOST_TEST_MESSAGE( "*************************************************************************************************************************************" );
 
 			// simulate that DDDAdmin is sending a request to each client
-			CHandlingServerRequestToClients reqToClient;
 
 			// setup a request - simulating a request from server
 			BOOST_TEST_MESSAGE( "setup a request - simulating a request from server, to later be send to each RPCclient node " );
@@ -2023,8 +2022,8 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_RPCclients_via_virtual_DDDAdmin)
 			std::string transGuid = "F8C23762ED2823A27E62A64B95C024EE";
 			std::string attributToFetch = transGuid + "./profile/foto";
 
-			CServerRequestToClient sreq;
 			//+ setup parameter for client's - find .BFi file and extract attribut
+			CServerRequestToClient sreq;
 			auto RPC1requestForAttribut = sreq.createReqForAttribut(attributToFetch,transGuid + "_1.BFi", transID);
 			auto RPC2requestForAttribut = sreq.createReqForAttribut(attributToFetch,transGuid + "_2.BFi", transID);
 			auto RPC3requestForAttribut = sreq.createReqForAttribut(attributToFetch,transGuid + "_3.BFi", transID);
@@ -2032,8 +2031,8 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_RPCclients_via_virtual_DDDAdmin)
 			BOOST_TEST_MESSAGE( "Simulate sending a request from DDDAdmin to each client" );
 
 			// simulate -  using a method in DDDAdmin to send request to each client
-			
-			
+		    //TODO:
+			sreq.sendRequestToClient();
 
 			// this should be done inside server (mockServer simulating real server)
 			//

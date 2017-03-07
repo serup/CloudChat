@@ -15,3 +15,5 @@ bool CHandlingRPCclientRequestToServer::connect(clientInfo *pClientInfoObj)
 
 	return bResult;
 }
+
+

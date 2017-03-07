@@ -80,6 +80,11 @@ class CServerRequestToClient
 			return createRequest("fetchAttribut", SEARCH, transID, parameters);
 		}
 
+		void sendRequestToClient()
+		{
+
+		}
+
 };
 
 #endif

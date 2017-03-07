@@ -1,7 +1,11 @@
 #include <memory>
 #include "DED.h"
 
-
+//TODO: DEPRECATED
+//
+/**
+ * class in Server handling request comming from client
+ */
 class CHandlingRPCclientRequestToServer
 {
 	public:
@@ -18,6 +22,9 @@ class CHandlingRPCclientRequestToServer
 			return pobj;
 		};
 
+		void sendResponseToClient();
 	private:
 
 };
+
+
