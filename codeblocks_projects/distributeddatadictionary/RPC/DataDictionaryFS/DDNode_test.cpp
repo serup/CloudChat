@@ -1991,7 +1991,7 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_RPCclients_via_virtual_DDDAdmin)
 			DED_PUT_METHOD	( dedptr, "name", (std::string)"RPCclientConnect" );
 			DED_PUT_STDSTRING( dedptr, "RPCname", (std::string)"RPC2" );
 			DED_PUT_STRUCT_END( dedptr, "DDNodeRequest" );
-			BOOST_CHECK( client1.sendRequestTo("localhost", dedptr,422,CONNECT) == true ); 
+			BOOST_CHECK( client2.sendRequestTo("localhost", dedptr,422,CONNECT) == true ); 
 			}
 
 			// setup a RPCclient3 connect request
@@ -2001,7 +2001,7 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_RPCclients_via_virtual_DDDAdmin)
 			DED_PUT_METHOD	( dedptr, "name", (std::string)"RPCclientConnect" );
 			DED_PUT_STDSTRING( dedptr, "RPCname", (std::string)"RPC3" );
 			DED_PUT_STRUCT_END( dedptr, "DDNodeRequest" );
-			BOOST_CHECK( client1.sendRequestTo("localhost", dedptr,423,CONNECT) == true ); 
+			BOOST_CHECK( client3.sendRequestTo("localhost", dedptr,423,CONNECT) == true ); 
 			}
 			
 			boost::this_thread::sleep( boost::posix_time::milliseconds(100) ); // above functions should not take longer to complete - this is to avoid cluttering up output
@@ -2028,11 +2028,27 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_RPCclients_via_virtual_DDDAdmin)
 			auto RPC3requestForAttribut = sreq.createReqForAttribut(attributToFetch,transGuid + "_3.BFi", transID);
 
 			BOOST_TEST_MESSAGE( "Simulate sending a request from DDDAdmin to each client" );
+//+TODO: send requests to DDDAdmin server (mockServer), then have it forward in a standard way
+			// test with lambda function
+			BOOST_CHECK( client1.sendRequestTo("localhost", RPC1requestForAttribut,421,PINGPONG,
+						[&](std::unique_ptr<CDataEncoder> &decoder_ptr) // lambda functionality
+						{
+						printf("************************************************\n");
+						printf("WARNING: lambda callback function called \n");
+						if (decoder_ptr == 0) { printf(">>> no data received\n"); }
+						printf("************************************************\n");
+						}
+						) == true );
+
+		
+			// this should be done inside server (mockServer simulating real server)
+			//
 			// default response handler will forward to handle a request if it validates incomming message as different than a response
 			// a request from DDDAdmin is in the scope of the client actually a response to last communication
 			client1.handleResponse(RPC1requestForAttribut);
 			client2.handleResponse(RPC2requestForAttribut);
 			client3.handleResponse(RPC3requestForAttribut);
+//-
 
 			cout<<"/*}}}*/"<<endl;   
 

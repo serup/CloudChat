@@ -22,6 +22,10 @@ constexpr std::size_t countof(T const (&)[N]) noexcept
 	return N;
 }
 
+/**
+ * class used in Client for handling Requests comming from Server 
+ *
+ */
 class CHandlingServerRequestToClients
 {
 
