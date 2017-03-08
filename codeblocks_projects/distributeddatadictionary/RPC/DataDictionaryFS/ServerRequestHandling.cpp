@@ -246,12 +246,12 @@ std::vector<unsigned char> CHandlingServerRequestToClients::getResultFromQueue(b
 std::vector<unsigned char> CHandlingServerRequestToClients::getResultFromQueue(long timeout_milliseconds, bool verbose)
 {
 	bool bNoFailure=true;
-	bool bTimeout=false;
+	bool bNoTimeout=true;
 	std::vector<unsigned char> BufferResult;
 
 	if(verbose) cout << "INFO: inside getResultFromQueue - will try to pop() from safethread queue " << endl;
-	if(result_buffer_queue.size() <= 0) bTimeout = result_buffer_queue.WaitForQueueSignalPush(timeout_milliseconds);
-	if(!bTimeout) {
+	if(result_buffer_queue.size() <= 0) bNoTimeout = result_buffer_queue.WaitForQueueSignalPush(timeout_milliseconds);
+	if(bNoTimeout) {
 		if(verbose) cout << "INFO: event push on queue; lets fetch from queue" << endl;
 		if(result_buffer_queue.size() > 0) {
 			auto result = result_buffer_queue.pop(bNoFailure);		
