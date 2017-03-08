@@ -107,9 +107,18 @@ DEDBlock* mockRPCServer::handleRequest(DDRequest req)
 							 * a result, the future is completed and its value is the server’s response.
 							 *
 							 */
+							
+							cout << "INFO: received REQUESTREQUEST from client " << endl;
+							cout << "INFO: look for outgoing request on queue and if any request for this client, then send " << endl;
 
 
-
+							// send an appropriate - default request reply back	
+							DED_START_ENCODER(encoder_ptr);
+							DED_PUT_STRUCT_START( encoder_ptr, "DDNodeResponse" );
+							DED_PUT_METHOD 		( encoder_ptr, "name", (std::string)"request_for_request" );
+							DED_PUT_STRUCT_END( encoder_ptr, "DDNodeResponse" );
+							DED_GET_DEDBLOCK_DATA(encoder_ptr,result);
+							bResponseSend=true;
 
 						}
 						break;
