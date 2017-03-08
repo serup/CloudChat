@@ -140,11 +140,17 @@ bool RPCclient::handleResponse(std::unique_ptr<CDataEncoder> &decoder_ptr)
 
 	return bDecoded;
 }
-
 std::vector<unsigned char> RPCclient::getResultFromQueue(bool verbose)
 {
 	std::vector<unsigned char> result;
     result = ServerReqToClient.getResultFromQueue(verbose);	
+	return result; 
+}
+
+std::vector<unsigned char> RPCclient::getResultFromQueue(long timeout_milliseconds, bool verbose)
+{
+	std::vector<unsigned char> result;
+    result = ServerReqToClient.getResultFromQueue(timeout_milliseconds, verbose);	
 	return result; 
 }
 

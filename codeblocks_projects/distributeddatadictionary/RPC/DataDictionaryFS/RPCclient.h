@@ -33,7 +33,8 @@ class RPCclient
 		bool connectToZooKeeper(std::string servers, long timeoutseconds, std::string znodepath);
 
 		std::vector<unsigned char> getResultFromQueue(bool verbose=false);
-
+		std::vector<unsigned char> getResultFromQueue(long timeout_milliseconds, bool verbose=false);
+	
 	private:
 		bool handleServerRequest(DDRequest req); // response from server could be a request
 		ZooKeeperStorage* pZkStorage;

@@ -226,8 +226,11 @@ bool CHandlingServerRequestToClients::putResultOnQueue(auto result, bool verbose
 std::vector<unsigned char> CHandlingServerRequestToClients::getResultFromQueue(bool verbose)
 {
 	bool bNoFailure=true;
+	bool bTimeout=false;
 	std::vector<unsigned char> BufferResult;
 
+	if(verbose) cout << "INFO: inside getResultFromQueue - will try to pop() from safethread queue " << endl;
+	if(result_buffer_queue.size() <= 0) cout << "WARNING: no timeout and nothing in queue, yet - possible freeze; suggest use with timeout " << endl; 
 	auto result = result_buffer_queue.pop(bNoFailure);		
 	if(verbose) cout << "INFO: getResultFromQueue : size : " << result.size() << " bNoFailure=" << bNoFailure << endl;
 	if(bNoFailure && result.size() > 0) {
@@ -236,6 +239,35 @@ std::vector<unsigned char> CHandlingServerRequestToClients::getResultFromQueue(b
 	else {
 		cout << "WARNING: nothing was fetched from queue " << __FILE__ << "[" << __LINE__ << "]" << endl;
 	}
+
+	return BufferResult;
+}
+
+std::vector<unsigned char> CHandlingServerRequestToClients::getResultFromQueue(long timeout_milliseconds, bool verbose)
+{
+	bool bNoFailure=true;
+	bool bTimeout=false;
+	std::vector<unsigned char> BufferResult;
+
+	if(verbose) cout << "INFO: inside getResultFromQueue - will try to pop() from safethread queue " << endl;
+	if(result_buffer_queue.size() <= 0) bTimeout = result_buffer_queue.WaitForQueueSignalPush(timeout_milliseconds);
+	if(!bTimeout) {
+		if(verbose) cout << "INFO: event push on queue; lets fetch from queue" << endl;
+		if(result_buffer_queue.size() > 0) {
+			auto result = result_buffer_queue.pop(bNoFailure);		
+			if(verbose) cout << "INFO: getResultFromQueue : size : " << result.size() << " bNoFailure=" << bNoFailure << endl;
+			if(bNoFailure && result.size() > 0) {
+				BufferResult = std::move(result);
+			}
+			else {
+				cout << "WARNING: nothing was fetched from queue " << __FILE__ << "[" << __LINE__ << "]" << endl;
+			}
+		}
+		else
+			cout << "WARNING: FAIL: somehow a push was made to queue, however queue is empty" << endl;
+	}
+	else
+		cout << "WARNING: Timeout when trying to fetch from queue " << endl;
 
 	return BufferResult;
 }

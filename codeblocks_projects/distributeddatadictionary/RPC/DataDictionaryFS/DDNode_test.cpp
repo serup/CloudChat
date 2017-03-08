@@ -2063,11 +2063,14 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_RPCclients_via_virtual_DDDAdmin)
 				//TODO: transID should be set correctly
 				client.sendRequestTo("localhost", dedptr,421,requestType::REQUESTREQUEST); // should cause server to create a promise
 				//reply to request should be handled by default handleResponse method, since no other method is added
+				//the server will look in outgoing queue for request for this client and if any request, then it will be send as reply to this request
+				
 				
 				cout << "after sendRequestTo (REQUESTREQUEST) - now server should send a request as reply" << endl;
 
-				// returns a DED with a request from server
 				//TODO: return ...	
+				// returns result from request send to client 
+				result = client.getResultFromQueue(4000, true);
 				return result;
 			};
 			////////////////////////////////////////////////////////////////
@@ -2076,7 +2079,21 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_RPCclients_via_virtual_DDDAdmin)
 			reqForReq1.addexecutorfunc( fnSendRequestForRequest, "RPC1" );
 
 			std::future<std::vector<unsigned char>> future_result = cf.runRequest( reqForReq1 );
-			future_result.wait();
+			
+			//TODO: add RPC1requestForAttribut to outgoing request queue in server
+			//
+		
+			// wait for future result of request RPC1requestForAttribut 
+			//future_result.wait();
+
+			auto status = future_result.wait_for(std::chrono::seconds(8));
+			if (status == std::future_status::deferred) {
+				std::cout << "deferred\n";
+			} else if (status == std::future_status::timeout) {
+				std::cout << "timeout -- no request was send \n";
+			} else if (status == std::future_status::ready) {
+				std::cout << "ready!\n";
+			}
 
 			// now a client is waiting for a request - server now have to send it -- add RPC1requestForAttribut to outgoing request queue of mockserver
 			// it should then send it towards the correct client
