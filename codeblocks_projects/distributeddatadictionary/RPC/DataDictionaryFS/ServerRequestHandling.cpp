@@ -122,7 +122,6 @@ bool CHandlingServerRequestToClients::handlingRequest(std::unique_ptr<CDataEncod
 						//-
 					}
 					break;
-
 				default:
 					{
 						printf("FAIL: no request method found for [ %s ] , hence no request handling\n",methodName.c_str());

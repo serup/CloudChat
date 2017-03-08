@@ -6,7 +6,7 @@ struct DEDBlock {
 };
 
 
-enum requestType {PINGPONG, CONNECT, CREATE, UPDATE, DELETE, APPEND, SEARCH, MAPREDUCE};
+enum requestType {PINGPONG, CONNECT, CREATE, UPDATE, DELETE, APPEND, SEARCH, MAPREDUCE, REQUESTREQUEST};
 
 struct DDRequest {
 	requestType reqType;

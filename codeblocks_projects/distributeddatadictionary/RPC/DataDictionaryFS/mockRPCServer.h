@@ -28,7 +28,7 @@ class mockRPCServer
 {
 		private:
 			DEDBlock* handleRequest(DDRequest req);
-			enum _eMethod { null, CONNECT, LIST_ATTRIBUTS } eMethod;
+			enum _eMethod { null, CONNECT, LIST_ATTRIBUTS, REQUESTREQUEST } eMethod;
 			_eMethod analyseRequestMethod(std::string strMethod);
 
 			static DEDBlock * outscopeToInscope(mockRPCServer *_this, DDRequest  *argp, struct svc_req *rqstp)

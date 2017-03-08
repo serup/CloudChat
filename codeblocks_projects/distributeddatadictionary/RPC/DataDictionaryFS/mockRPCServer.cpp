@@ -84,6 +84,36 @@ DEDBlock* mockRPCServer::handleRequest(DDRequest req)
 						}
 						break;
 
+						case REQUESTREQUEST:
+						{
+							/**
+							 * TODO: a client will always send a request for request after a connect, thus enabling
+							 * the server to send a reply - this means that client can use udp or tcp connections
+							 * a reply to a request for request could be any thing, its just a way to keep connections up 
+							 * and to have more control of the DDNodes (clients)
+							 *
+							 * Since a client is NOT listening, it MUST request a reply from server, hence this setup
+							 * the server will maintain a list of clients and a list of currently running clients (clients waiting for request)
+							 * the server will constantly in communication with zookeeper make sure that the data on the clients are updated
+							 * and if not then send reply with update info to newly connecting clients
+							 *
+							 * NB!
+							 * request for request will be handled as promises to future reply, and other threads will update a future reply
+							 *
+							 * INFO:
+							 * RPC (Remote Procedure Call). Network latency is typically an issue when making an RPC call to a server. 
+							 * It may be desirable to not have to wait on the result of the RPC invocation by instead offloading it to
+							 * another process. A future may be used to represent the RPC call and its result; when the server responds with 
+							 * a result, the future is completed and its value is the server’s response.
+							 *
+							 */
+
+
+
+
+						}
+						break;
+
 						default:
 						{
 							printf("FAIL: no request method found for [ %s ] , hence no request handling\n",methodName.c_str());
@@ -116,6 +146,7 @@ mockRPCServer::_eMethod mockRPCServer::analyseRequestMethod(std::string strMetho
 	if( strMethod ==(std::string)"RPCclientConnect" ) eRmethod = CONNECT;
 	if( strMethod ==(std::string)"LIST_ATTRIBUTS" ) eRmethod = LIST_ATTRIBUTS;
 	if( strMethod ==(std::string)"LA" ) eRmethod = LIST_ATTRIBUTS;
+	if( strMethod ==(std::string)"REQUESTREQUEST" ) eRmethod = REQUESTREQUEST;
 
 	return eRmethod;
 }

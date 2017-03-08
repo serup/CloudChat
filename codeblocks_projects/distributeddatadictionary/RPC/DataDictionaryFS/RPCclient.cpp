@@ -132,6 +132,7 @@ bool RPCclient::handleResponse(std::unique_ptr<CDataEncoder> &decoder_ptr)
 
 		if(!bDecoded){
 			// could be server is sending a request
+			cout << "INFO: possible request received as reply from server " << endl;
 			ServerReqToClient.handlingRequest(decoder_ptr, true); // TODO: verbose = true
 			
 		}

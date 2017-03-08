@@ -28,7 +28,7 @@
 #include "DDDfs.h"
 #include "mockRPCServer.h"
 #include "dummyrequest.h"
-#include "serverToClientRequestCreation.h"
+#include "serverToClient.h"
 #include "ClientRequestHandling.h"
 #include "../../datadictionarycontrol.hpp"
 #include <errno.h>
@@ -2022,6 +2022,9 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_RPCclients_via_virtual_DDDAdmin)
 			std::string transGuid = "F8C23762ED2823A27E62A64B95C024EE";
 			std::string attributToFetch = transGuid + "./profile/foto";
 
+			/**
+			 * this request for attribut is seen from server side - the server is sending a request towards its clients (DDNodes)
+			 */
 			//+ setup parameter for client's - find .BFi file and extract attribut
 			CServerRequestToClient sreq;
 			auto RPC1requestForAttribut = sreq.createReqForAttribut(attributToFetch,transGuid + "_1.BFi", transID);
@@ -2030,9 +2033,57 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_RPCclients_via_virtual_DDDAdmin)
 
 			BOOST_TEST_MESSAGE( "Simulate sending a request from DDDAdmin to each client" );
 
-			// simulate -  using a method in DDDAdmin to send request to each client
-		    //TODO:
-			sreq.sendRequestToClient();
+			// simulate -  using a method in (server/mockServer) `DDDAdmin` to send request to each client
+			// First client will send a request for request to server, then wait until a reply is receiced
+			//
+			// INFO:
+			// RPC (Remote Procedure Call). Network latency is typically an issue when making an RPC call to a server. 
+			// It may be desirable to not have to wait on the result of the RPC invocation by instead offloading it to
+			// another process. A future may be used to represent the RPC call and its result; when the server responds with 
+			// a result, the future is completed and its value is the server’s response.
+		
+			//client1.sendRequestTo("localhost", dedptr,421,REQUESTREQUEST); // should cause server to create a promise
+			
+			////////////////////////////////////////////////////////////////
+			// lambda function for handling request for request and reply //
+			////////////////////////////////////////////////////////////////
+			Func fnSendRequestForRequest = [](std::vector<Variant> vec)
+			{ 	
+				std::vector<unsigned char> result = std::vector<unsigned char>(); 
+				std::string clientID = boost::get<std::string>(vec[0]);
+
+				cout << "inside SendRequestForRequest, clientID: " << clientID << endl;
+
+				RPCclient client;
+				DED_START_ENCODER(dedptr);
+				DED_PUT_STRUCT_START( dedptr, "DDNodeRequest" );
+				DED_PUT_METHOD	( dedptr, "name", (std::string)"REQUESTREQUEST" );
+				DED_PUT_STDSTRING( dedptr, "RPCname", clientID );
+				DED_PUT_STRUCT_END( dedptr, "DDNodeRequest" );
+				//TODO: transID should be set correctly
+				client.sendRequestTo("localhost", dedptr,421,requestType::REQUESTREQUEST); // should cause server to create a promise
+				//reply to request should be handled by default handleResponse method, since no other method is added
+				
+				cout << "after sendRequestTo (REQUESTREQUEST) - now server should send a request as reply" << endl;
+
+				// returns a DED with a request from server
+				//TODO: return ...	
+				return result;
+			};
+			////////////////////////////////////////////////////////////////
+			collectablefutures cf;
+			collectablefutures::request reqForReq1 = cf.createrequest();
+			reqForReq1.addexecutorfunc( fnSendRequestForRequest, "RPC1" );
+
+			std::future<std::vector<unsigned char>> future_result = cf.runRequest( reqForReq1 );
+			future_result.wait();
+
+			// now a client is waiting for a request - server now have to send it
+			
+
+			
+		    //TODO: future advanced communication from server to client
+			//sreq.sendRequestToClient("RPC1",RPC1requestForAttribut, 421);
 
 			// this should be done inside server (mockServer simulating real server)
 			//
@@ -2055,7 +2106,6 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_RPCclients_via_virtual_DDDAdmin)
 			cout << "size of result from client3 : " << result1.size() << endl;
 
 			std::vector< std::future<std::vector<unsigned char>> >  collectionOfFutureRequests;
-			collectablefutures cf;
 			cf.addReceivedTransferToCollection(result1, collectionOfFutureRequests);
 			cf.addReceivedTransferToCollection(result2, collectionOfFutureRequests);
 			cf.addReceivedTransferToCollection(result3, collectionOfFutureRequests);

@@ -6,11 +6,13 @@
  */
 #ifndef SERVER_REQ_TO_CLIENT
 #define SERVER_REQ_TO_CLIENT
- 
+
+using DEDRequest = std::unique_ptr<CDataEncoder>;
+
 class CServerRequestToClient
 {
 	private:
-		std::unique_ptr<CDataEncoder> createRequest(std::string requestName, requestType type, long transID, std::vector<pair<std::string, std::vector<unsigned char>>> parameters) 
+		DEDRequest createRequest(std::string requestName, requestType type, long transID, std::vector<pair<std::string, std::vector<unsigned char>>> parameters) 
 		{ 
 			DDRequest req;                                                                                
 			{
@@ -71,7 +73,7 @@ class CServerRequestToClient
 		}
 
 	public:
-		std::unique_ptr<CDataEncoder> createReqForAttribut(auto attributToFetch, auto BFi_file, auto transID)
+		DEDRequest createReqForAttribut(auto attributToFetch, auto BFi_file, auto transID)
 		{
 			std::string file = BFi_file;
 			clearParameters();
@@ -80,8 +82,11 @@ class CServerRequestToClient
 			return createRequest("fetchAttribut", SEARCH, transID, parameters);
 		}
 
-		void sendRequestToClient()
+		void sendRequestToClient(std::string clientID, DEDRequest &request, auto transID)
 		{
+			//TODO: normal request / reply is done with svc_sendreply, after main _this->handleRequest(*argp)
+			//This is for more advanced handling of communication with a client
+			
 
 		}
 
