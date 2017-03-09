@@ -10,14 +10,39 @@ void DED_GET_DEDBLOCK_DATA(std::unique_ptr<CDataEncoder> &encoder_ptr, DEDBlock 
 	memcpy(result.data.data_val, pCompressedData, sizeofCompressedData);
 }
 
-bool mockRPCServer::putRequestOnOutgoingQueue(std::unique_ptr<CDataEncoder> &DEDRequest, bool verbose)
+/**
+ * dest : clientID for the recipient RPCclient 
+ * DEDRequest : the request stored in DED structure
+ * verbose : if true method will cout info - usage typically in test
+ */
+bool mockRPCServer::putRequestOnOutgoingQueue(std::string dest, std::unique_ptr<CDataEncoder> &DEDRequest, bool verbose)
 {
 	bool bResult=false;
-	//thread_safe_queue<std::vector<pair<std::string, std::vector<unsigned char>>>> outgoing_request_queue;
+	bool bValid=false;
+
+	//thread_safe_queue<std::vector<pair<std::string, std::unique_ptr<CDataEncoder>>>> outgoing_request_queue;
 
 	if(verbose) cout << "INFO: first verify that it is a valid request - parse its name " << endl;
-//TODO:
-	if(verbose) cout << "INFO: put DED request in a pair and add it to outgoing queue" << endl;
+	
+	// decode data ...
+	if( DED_GET_STRUCT_START( DEDRequest, "DDNodeRequest" ) == true )
+	{	
+		std::string methodName;
+		if( DED_GET_METHOD( DEDRequest, "name", methodName ) == true )
+			bValid=true;
+	}
+
+	if(bValid) {
+		if(verbose) cout << "INFO: put DED request in a pair and add it to outgoing queue" << endl;
+		pair <std::string, std::unique_ptr<CDataEncoder>> pp;
+	//	pp = make_pair( dest, std::move(DEDRequest) );
+	//	std::vector<pair<std::string, std::unique_ptr<CDataEncoder>>> requestpair;
+		//requestpair.push_back(pp);
+		//outgoing_request_queue.push(requestpair);
+		//bResult=true;
+	}
+	else
+		cout << "FAIL: the Request was not a valid request, thus will not be added to outgoing queue ; " << __FILE__ << ":" << __LINE__<< endl;
 
 	return bResult;
 }
