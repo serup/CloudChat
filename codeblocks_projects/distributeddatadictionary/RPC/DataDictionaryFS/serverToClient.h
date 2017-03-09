@@ -35,9 +35,9 @@ class CServerRequestToClient
 				memcpy(req.ded.data.data_val, pCompressedData, sizeofCompressedData);                         
 				req.ded.transID = transID; 
 			}
-
-			DED_PUT_DATA_IN_DECODER(requestForAttribut,(unsigned char*)req.ded.data.data_val, req.ded.data.data_len);
-			return requestForAttribut;                                                                                   
+			// put DED into a Decoder object, to be handled later
+			DED_PUT_DATA_IN_DECODER(requestFor,(unsigned char*)req.ded.data.data_val, req.ded.data.data_len);
+			return requestFor;                                                                                   
 		}                                                                                                 
 
 		boost::optional<std::pair<std::string, std::vector<unsigned char>>> createParameter(std::string name, std::string value)

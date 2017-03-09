@@ -20,7 +20,7 @@ bool mockRPCServer::putRequestOnOutgoingQueue(std::string dest, std::unique_ptr<
 	bool bResult=false;
 	bool bValid=false;
 
-	//thread_safe_queue<std::vector<pair<std::string, std::unique_ptr<CDataEncoder>>>> outgoing_request_queue;
+    //thread_safe_queue<std::vector<pair<std::string, std::vector<unsigned char>>>> outgoing_request_queue;
 
 	if(verbose) cout << "INFO: first verify that it is a valid request - parse its name " << endl;
 	
@@ -34,12 +34,20 @@ bool mockRPCServer::putRequestOnOutgoingQueue(std::string dest, std::unique_ptr<
 
 	if(bValid) {
 		if(verbose) cout << "INFO: put DED request in a pair and add it to outgoing queue" << endl;
-		pair <std::string, std::unique_ptr<CDataEncoder>> pp;
-	//	pp = make_pair( dest, std::move(DEDRequest) );
-	//	std::vector<pair<std::string, std::unique_ptr<CDataEncoder>>> requestpair;
-		//requestpair.push_back(pp);
-		//outgoing_request_queue.push(requestpair);
-		//bResult=true;
+		
+		DED_GET_ENCODED_DATA(DEDRequest,data_ptr,iLengthOfTotalData,pCompressedData,sizeofCompressedData);
+		if(sizeofCompressedData==0) {
+			sizeofCompressedData = iLengthOfTotalData;                                                
+			if(verbose) cout << "WARNING: compression failed; " << __FILE__ << ":" << __LINE__ << endl;
+		}
+		pair <std::string, std::vector<unsigned char>> pp;
+		std::vector<unsigned char> value(pCompressedData, pCompressedData+sizeofCompressedData);
+		pp = make_pair( dest,  value );
+		std::vector<pair<std::string, std::vector<unsigned char>>> requestpair;
+		requestpair.push_back(pp);
+		outgoing_request_queue.push(requestpair); //TODO: add a timeout possibility to avoid freeze on errornous queue
+
+		bResult=true;
 	}
 	else
 		cout << "FAIL: the Request was not a valid request, thus will not be added to outgoing queue ; " << __FILE__ << ":" << __LINE__<< endl;

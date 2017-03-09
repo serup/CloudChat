@@ -2065,10 +2065,8 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_RPCclients_via_virtual_DDDAdmin)
 				//reply to request should be handled by default handleResponse method, since no other method is added
 				//the server will look in outgoing queue for request for this client and if any request, then it will be send as reply to this request
 				
-				
 				cout << "after sendRequestTo (REQUESTREQUEST) - now server should send a request as reply" << endl;
 
-				//TODO: return ...	
 				// returns result from request send to client 
 				result = client.getResultFromQueue(4000, true);
 				return result;
@@ -2080,7 +2078,7 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_RPCclients_via_virtual_DDDAdmin)
 
 			std::future<std::vector<unsigned char>> future_result = cf.runRequest( reqForReq1 );
 			
-			//TODO: add RPC1requestForAttribut to outgoing request queue in server
+			// add RPC1requestForAttribut to outgoing request queue in server
 			server.putRequestOnOutgoingQueue("RPC1", RPC1requestForAttribut, true);
 
 		

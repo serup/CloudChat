@@ -28,8 +28,8 @@ using namespace std;
 class mockRPCServer
 {
 		private:
-			thread_safe_queue<std::vector<pair<std::string, std::unique_ptr<CDataEncoder>>>> outgoing_request_queue;
-		  //thread_safe_queue<std::vector<pair<std::string, std::vector<unsigned char>>>> outgoing_request_queue;
+		  //thread_safe_queue<std::vector<pair<std::string, std::unique_ptr<CDataEncoder>>>> outgoing_request_queue;
+		    thread_safe_queue<std::vector<pair<std::string, std::vector<unsigned char>>>> outgoing_request_queue;
 			
 			DEDBlock* handleRequest(DDRequest req);
 			enum _eMethod { null, CONNECT, LIST_ATTRIBUTS, REQUESTREQUEST } eMethod;
