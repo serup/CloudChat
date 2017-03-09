@@ -77,6 +77,10 @@ all:	clean
 	@echo "Building..."
 	@make -f Makefile.DDDfs > build.log 
 	@echo "Done. - see detailed info in build.log"
+	@echo " - building ctags; use Ctrl-[ and Ctrl-t to jump to method definition"
+	@ctags -R .
+	@echo "Done."
+
 
 patch:
 	@echo "Creating a patch"
