@@ -10,6 +10,18 @@ void DED_GET_DEDBLOCK_DATA(std::unique_ptr<CDataEncoder> &encoder_ptr, DEDBlock 
 	memcpy(result.data.data_val, pCompressedData, sizeofCompressedData);
 }
 
+bool mockRPCServer::putRequestOnOutgoingQueue(std::unique_ptr<CDataEncoder> &DEDRequest, bool verbose)
+{
+	bool bResult=false;
+	//thread_safe_queue<std::vector<pair<std::string, std::vector<unsigned char>>>> outgoing_request_queue;
+
+	if(verbose) cout << "INFO: first verify that it is a valid request - parse its name " << endl;
+//TODO:
+	if(verbose) cout << "INFO: put DED request in a pair and add it to outgoing queue" << endl;
+
+	return bResult;
+}
+
 DEDBlock* mockRPCServer::handleRequest(DDRequest req)
 {
 	bool bResponseSend=false;

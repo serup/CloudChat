@@ -3,6 +3,7 @@
 #include <iostream>
 #include "DDDfs.h"
 #include "DED.h"
+#include "../../thread_safe_queue.h"
 
 using namespace std;
 
@@ -27,6 +28,8 @@ using namespace std;
 class mockRPCServer
 {
 		private:
+			thread_safe_queue<std::vector<pair<std::string, std::vector<unsigned char>>>> outgoing_request_queue;
+			
 			DEDBlock* handleRequest(DDRequest req);
 			enum _eMethod { null, CONNECT, LIST_ATTRIBUTS, REQUESTREQUEST } eMethod;
 			_eMethod analyseRequestMethod(std::string strMethod);
@@ -184,6 +187,8 @@ class mockRPCServer
 					bServerInstantiated = true;
 				}
 			}
+
+			bool putRequestOnOutgoingQueue(std::unique_ptr<CDataEncoder> &DEDRequest, bool verbose=false);
 
 		private:
 

@@ -2081,7 +2081,8 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_RPCclients_via_virtual_DDDAdmin)
 			std::future<std::vector<unsigned char>> future_result = cf.runRequest( reqForReq1 );
 			
 			//TODO: add RPC1requestForAttribut to outgoing request queue in server
-			//
+			server.putRequestOnOutgoingQueue(RPC1requestForAttribut, true);
+
 		
 			// wait for future result of request RPC1requestForAttribut 
 			//future_result.wait();

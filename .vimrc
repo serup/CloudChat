@@ -160,6 +160,7 @@ let @q = 'iBOOST_AUTO_TEST_CASE(x){cout << "BOOST_AUTO_TEST_CASE(x)\n{" << end
 let @t = 'iBOOST_TEST_MESSAGE(" " );'
 let @j = 'y/^R"^M'
 let @h = '!xmllint --format - | highlight --out-format=ansi --syntax=xml'
+let @W = '!curl wttr.in/copenhagen?lang=da'
 set autoindent noexpandtab tabstop=4 shiftwidth=4
 "make sure color codes are enabled at startup
 "autocmd VimEnter * AnsiEsc
