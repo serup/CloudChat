@@ -2100,6 +2100,8 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_RPCclients_via_virtual_DDDAdmin)
 			
 			// add RPC1requestForAttribut to outgoing request queue in server
 			server.putRequestOnOutgoingQueue("RPC1", RPC1requestForAttribut, true);
+			server.putRequestOnOutgoingQueue("RPC2", RPC2requestForAttribut, true);
+			server.putRequestOnOutgoingQueue("RPC3", RPC3requestForAttribut, true);
 
 		
 			// wait for future result of request RPC1requestForAttribut 
@@ -2110,32 +2112,30 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_RPCclients_via_virtual_DDDAdmin)
 			} else if (status == std::future_status::timeout) {
 				std::cout << "timeout -- no request was send \n";
 			} else if (status == std::future_status::ready) {
-				std::cout << "ready!\n";
+				std::cout << "ready! future has signaled that it has data \n";
 			}
 
 			// now a client is waiting for a request - server now have to send it -- add RPC1requestForAttribut to outgoing request queue of mockserver
 			// it should then send it towards the correct client
 			//
 			
-
-			
 			// this should be done inside server (mockServer simulating real server)
 			//
 			// default response handler will forward to handle a request if it validates incomming message as different than a response
 			// a request from DDDAdmin is in the scope of the client actually a response to last communication
-			client1.handleResponse(RPC1requestForAttribut);
-			client2.handleResponse(RPC2requestForAttribut);
-			client3.handleResponse(RPC3requestForAttribut);
+			//client1.handleResponse(RPC1requestForAttribut);
+			//client2.handleResponse(RPC2requestForAttribut);
+			//client3.handleResponse(RPC3requestForAttribut);
 
 			cout<<"/*}}}*/"<<endl;   
 
 			BOOST_TEST_MESSAGE( "Simulate that client have send result via socket - by just fetching result from client instance" );
 			// simulate that client have send result via sockets to DDDAdmin (this) - by just fetching result from client instance
-			auto result1 = client1.getResultFromQueue();
+			auto result1 = client1.getResultFromQueue(1000, true);
 			cout << "size of result from client1 : " << result1.size() << endl;
-			auto result2 = client2.getResultFromQueue();
+			auto result2 = client2.getResultFromQueue(1000, true);
 			cout << "size of result from client2 : " << result1.size() << endl;
-			auto result3 = client3.getResultFromQueue();
+			auto result3 = client3.getResultFromQueue(1000, true);
 			cout << "size of result from client3 : " << result1.size() << endl;
 
 			std::vector< std::future<std::vector<unsigned char>> >  collectionOfFutureRequests;

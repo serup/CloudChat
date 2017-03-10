@@ -157,17 +157,25 @@ DEDBlock* mockRPCServer::handleRequest(DDRequest req)
 							cout << "INFO: look for outgoing request on queue and if any request for this client, then send " << endl;
 
 							// TODO: check for clientID in outgoing request queue, then take the request and send it instead of below default
-						
+							bool bfound=false;
+							//std::vector<pair<std::string, std::vector<unsigned char>>> requestpair = outgoing_request_queue.pop();
+							//for(auto pp : requestpair)
+							//{
+							//	std::vector<unsigned char> buffer = pp.second;
+							//	DED_PUT_DATA_IN_DECODER(encoder_ptr,buffer.begin(), buffer.size());
+							//	DED_GET_DEDBLOCK_DATA(encoder_ptr,result);
+							//	bfound=true;
+							//}
 
-
-							// send an appropriate - default request reply back	
-							DED_START_ENCODER(encoder_ptr);
-							DED_PUT_STRUCT_START( encoder_ptr, "DDNodeResponse" );
-							DED_PUT_METHOD 		( encoder_ptr, "name", (std::string)"request_for_request" );
-							DED_PUT_STRUCT_END( encoder_ptr, "DDNodeResponse" );
-							DED_GET_DEDBLOCK_DATA(encoder_ptr,result);
+							if(!bfound) {
+								// send an appropriate - default request reply back	
+								DED_START_ENCODER(encoder_ptr);
+								DED_PUT_STRUCT_START( encoder_ptr, "DDNodeResponse" );
+								DED_PUT_METHOD 		( encoder_ptr, "name", (std::string)"request_for_request" );
+								DED_PUT_STRUCT_END( encoder_ptr, "DDNodeResponse" );
+								DED_GET_DEDBLOCK_DATA(encoder_ptr,result);
+							}
 							bResponseSend=true;
-
 						}
 						break;
 
