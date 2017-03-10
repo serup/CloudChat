@@ -10,6 +10,7 @@
 #include <iostream>
 #include <fstream>
 #include "ServerRequestHandling.h"
+#include "Request.h"
 
 using namespace std;
 
@@ -22,7 +23,10 @@ class RPCclient
 
 		RPCclient() { pZkStorage = NULL; };
 		~RPCclient() { delete pZkStorage; };
-		DDRequest createDDRequest(std::unique_ptr<CDataEncoder> &encoder_ptr, int transID, enum requestType reqtype);
+
+		DDRequest createDDRequest(std::unique_ptr<CDataEncoder> &encoder_ptr, long transID, enum requestType reqtype);
+		DEDRequest createRequestForRequest(std::string clientID, long transID);
+		DEDRequest createReqForAttribut(auto attributToFetch, auto BFi_file, auto transID);
 		bool sendRequestTo(DDRequest req, string host);
 		bool sendRequestTo(string host);
 		bool sendRequestTo(string host, std::unique_ptr<CDataEncoder> &encoder_ptr, int transID, enum requestType reqtype,  void(*fptr)(std::unique_ptr<CDataEncoder> &decoder_ptr));

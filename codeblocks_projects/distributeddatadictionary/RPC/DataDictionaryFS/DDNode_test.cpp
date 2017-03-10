@@ -28,7 +28,7 @@
 #include "DDDfs.h"
 #include "mockRPCServer.h"
 #include "dummyrequest.h"
-#include "serverToClient.h"
+#include "Request.h"
 #include "ClientRequestHandling.h"
 #include "../../datadictionarycontrol.hpp"
 #include <errno.h>
@@ -276,6 +276,17 @@ void cleanupTestBFiFiles(std::list<std::string> listBFiFiles)
 		boost::filesystem::path p = boost::filesystem::path(filename);
 		boost::filesystem::remove(filename);
 	}
+}
+
+//TODO: should be inside RPCclient however has undefined issues ????
+DEDRequest createReqForAttribut(auto attributToFetch, auto BFi_file, auto transID)
+{
+	CRequest dedRequest;
+	std::string file = BFi_file;
+	dedRequest.clearParameters();
+	dedRequest.addParameter(dedRequest.createParameter("attributToFetch", attributToFetch));
+	auto parameters = dedRequest.addParameter(dedRequest.createParameter("BFi_File", file));
+	return dedRequest.createRequest("fetchAttribut", SEARCH, transID, parameters);
 }
 
 BOOST_AUTO_TEST_SUITE (DDNode_Test) // name of the test suite
@@ -1898,11 +1909,10 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_dummy_RPCclients_using_futures)
 	std::string transGuid = "F8C23762ED2823A27E62A64B95C024EE";
 	std::string attributToFetch = transGuid + "./profile/foto";
 
-	CServerRequestToClient sreq;
 	// setup parameter for client's - find .BFi file and extract attribut
-	auto RPC1requestForAttribut = sreq.createReqForAttribut(attributToFetch,transGuid + "_1.BFi", transID);
-	auto RPC2requestForAttribut = sreq.createReqForAttribut(attributToFetch,transGuid + "_2.BFi", transID);
-	auto RPC3requestForAttribut = sreq.createReqForAttribut(attributToFetch,transGuid + "_3.BFi", transID);
+	auto RPC1requestForAttribut = createReqForAttribut(attributToFetch,transGuid + "_1.BFi", transID);
+	auto RPC2requestForAttribut = createReqForAttribut(attributToFetch,transGuid + "_2.BFi", transID);
+	auto RPC3requestForAttribut = createReqForAttribut(attributToFetch,transGuid + "_3.BFi", transID);
 
 	BOOST_TEST_MESSAGE( "Simulate sending a request from DDDAdmin to each client" );
 	// default response handler will forward to handle a request if it validates incomming message as different than a response
@@ -2026,10 +2036,11 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_RPCclients_via_virtual_DDDAdmin)
 			 * this request for attribut is seen from server side - the server is sending a request towards its clients (DDNodes)
 			 */
 			//+ setup parameter for client's - find .BFi file and extract attribut
-			CServerRequestToClient sreq;
-			auto RPC1requestForAttribut = sreq.createReqForAttribut(attributToFetch,transGuid + "_1.BFi", transID);
-			auto RPC2requestForAttribut = sreq.createReqForAttribut(attributToFetch,transGuid + "_2.BFi", transID);
-			auto RPC3requestForAttribut = sreq.createReqForAttribut(attributToFetch,transGuid + "_3.BFi", transID);
+			RPCclient c;
+
+			auto RPC1requestForAttribut = createReqForAttribut(attributToFetch,transGuid + "_1.BFi", transID);
+			auto RPC2requestForAttribut = createReqForAttribut(attributToFetch,transGuid + "_2.BFi", transID);
+			auto RPC3requestForAttribut = createReqForAttribut(attributToFetch,transGuid + "_3.BFi", transID);
 
 			BOOST_TEST_MESSAGE( "Simulate sending a request from DDDAdmin to each client" );
 
@@ -2051,17 +2062,26 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_RPCclients_via_virtual_DDDAdmin)
 			{ 	
 				std::vector<unsigned char> result = std::vector<unsigned char>(); 
 				std::string clientID = boost::get<std::string>(vec[0]);
+				long transID = 421; // TODO: should be a parameter to fn
 
 				cout << "inside SendRequestForRequest, clientID: " << clientID << endl;
 
 				RPCclient client;
+
+				/*
 				DED_START_ENCODER(dedptr);
 				DED_PUT_STRUCT_START( dedptr, "DDNodeRequest" );
 				DED_PUT_METHOD	( dedptr, "name", (std::string)"REQUESTREQUEST" );
+				DED_PUT_LONG    ( dedptr, "transID", transID );
+				DED_PUT_LONG    ( dedptr, "amount", (long)1 );
 				DED_PUT_STDSTRING( dedptr, "RPCname", clientID );
 				DED_PUT_STRUCT_END( dedptr, "DDNodeRequest" );
+				*/
+
+				auto dedptr = client.createRequestForRequest(clientID, transID);
+				
 				//TODO: transID should be set correctly
-				client.sendRequestTo("localhost", dedptr,421,requestType::REQUESTREQUEST); // should cause server to create a promise
+				client.sendRequestTo("localhost", dedptr,transID,requestType::REQUESTREQUEST); // should cause server to create a promise
 				//reply to request should be handled by default handleResponse method, since no other method is added
 				//the server will look in outgoing queue for request for this client and if any request, then it will be send as reply to this request
 				
@@ -2084,7 +2104,6 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_RPCclients_via_virtual_DDDAdmin)
 		
 			// wait for future result of request RPC1requestForAttribut 
 			//future_result.wait();
-
 			auto status = future_result.wait_for(std::chrono::seconds(8));
 			if (status == std::future_status::deferred) {
 				std::cout << "deferred\n";
@@ -2100,9 +2119,6 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_RPCclients_via_virtual_DDDAdmin)
 			
 
 			
-		    //TODO: future advanced communication from server to client
-			//sreq.sendRequestToClient("RPC1",RPC1requestForAttribut, 421);
-
 			// this should be done inside server (mockServer simulating real server)
 			//
 			// default response handler will forward to handle a request if it validates incomming message as different than a response
@@ -2110,7 +2126,6 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_RPCclients_via_virtual_DDDAdmin)
 			client1.handleResponse(RPC1requestForAttribut);
 			client2.handleResponse(RPC2requestForAttribut);
 			client3.handleResponse(RPC3requestForAttribut);
-//-
 
 			cout<<"/*}}}*/"<<endl;   
 

@@ -2,7 +2,7 @@
 
 // based upon automatic generated DDDfs_client.cpp <-- generated from DDDfs.x
 
-DDRequest RPCclient::createDDRequest(std::unique_ptr<CDataEncoder> &encoder_ptr, int transID, enum requestType reqtype)
+DDRequest RPCclient::createDDRequest(std::unique_ptr<CDataEncoder> &encoder_ptr, long transID, enum requestType reqtype)
 {
 	DDRequest req;
 	req.reqType = reqtype; 
@@ -18,6 +18,24 @@ DDRequest RPCclient::createDDRequest(std::unique_ptr<CDataEncoder> &encoder_ptr,
 
 	request=req;	
 	return req;
+}
+
+DEDRequest RPCclient::createRequestForRequest(std::string clientID, long transID)
+{
+	CRequest dedRequest;
+	dedRequest.clearParameters();
+	auto parameters = dedRequest.addParameter(dedRequest.createParameter("RPCname", clientID));
+	return dedRequest.createRequest("REQUESTREQUEST", SEARCH, transID, parameters);
+}
+		
+DEDRequest RPCclient::createReqForAttribut(auto attributToFetch, auto BFi_file, auto transID)
+{
+	CRequest dedRequest;
+	std::string file = BFi_file;
+	dedRequest.clearParameters();
+	dedRequest.addParameter(dedRequest.createParameter("attributToFetch", attributToFetch));
+	auto parameters = dedRequest.addParameter(dedRequest.createParameter("BFi_File", file));
+	return dedRequest.createRequest("fetchAttribut", SEARCH, transID, parameters);
 }
 
 bool RPCclient::sendRequestTo(DDRequest req, string host)

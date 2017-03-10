@@ -157,6 +157,8 @@ DEDBlock* mockRPCServer::handleRequest(DDRequest req)
 							cout << "INFO: look for outgoing request on queue and if any request for this client, then send " << endl;
 
 							// TODO: check for clientID in outgoing request queue, then take the request and send it instead of below default
+						
+
 
 							// send an appropriate - default request reply back	
 							DED_START_ENCODER(encoder_ptr);

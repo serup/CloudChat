@@ -150,30 +150,33 @@ CHandlingServerRequestToClients::_eMethod CHandlingServerRequestToClients::analy
 
 std::vector<pair<std::string, std::vector<unsigned char>>> CHandlingServerRequestToClients::fetchParametersFromDED(std::unique_ptr<CDataEncoder> &decoder_ptr, std::vector<std::string> paramNames, bool verbose)
 {
+	long transID=0;
 	long amount=0;
 	int numberofelements = paramNames.size();
 	std::vector<pair<std::string, std::vector<unsigned char>>> parameterPairs;
-	if( DED_GET_LONG( decoder_ptr, "amount", amount ) == true )
-	{
-		if(amount != numberofelements)
-			cout << "WARNING: amount of parameters received differ from what is expected " << amount << " != " << numberofelements << " - perhaps mismatch in versions of this function : " << __FILE__ << ":" << __LINE__ << endl;
-		// Traverse thru parameters
-		for(int c=0; c < numberofelements; c++)
+	if( DED_GET_LONG( decoder_ptr, "transID", transID ) == true ) { 
+		if( DED_GET_LONG( decoder_ptr, "amount", amount ) == true )
 		{
-			std::vector<unsigned char> value;
-			pair <std::string, std::vector<unsigned char>> pp;
-			DED_GET_STDVECTOR( decoder_ptr, paramNames[c], value );
-			pp = make_pair(paramNames[c], value);
-			parameterPairs.push_back(pp); 
-			if(verbose) {
-				cout << "found in DED parameter : " << paramNames[c] << ", value : " << endl;
-				if(value.size() < 100) 
-				{
-					std::string str(value.begin(), value.end());
-					cout << str << endl;
+			if(amount != numberofelements)
+				cout << "WARNING: amount of parameters received differ from what is expected " << amount << " != " << numberofelements << " - perhaps mismatch in versions of this function : " << __FILE__ << ":" << __LINE__ << endl;
+			// Traverse thru parameters
+			for(int c=0; c < numberofelements; c++)
+			{
+				std::vector<unsigned char> value;
+				pair <std::string, std::vector<unsigned char>> pp;
+				DED_GET_STDVECTOR( decoder_ptr, paramNames[c], value );
+				pp = make_pair(paramNames[c], value);
+				parameterPairs.push_back(pp); 
+				if(verbose) {
+					cout << "found in DED parameter : " << paramNames[c] << ", value : " << endl;
+					if(value.size() < 100) 
+					{
+						std::string str(value.begin(), value.end());
+						cout << str << endl;
+					}
+					else
+						CUtils::showDataBlock(true,true,value);
 				}
-				else
-					CUtils::showDataBlock(true,true,value);
 			}
 		}
 	}
