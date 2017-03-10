@@ -37,7 +37,8 @@ Plugin 'Xuyuanp/nerdtree-git-plugin'
 Plugin 'google/vim-maktaba'
 " Install foldcol - folding columns using <ctrl-v> visual mark, then :VFoldCol  
 Plugin 'paulhybryant/foldcol'
-
+" Install vim-ctrlspace
+Plugin 'vim-ctrlspace/vim-ctrlspace'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -152,6 +153,11 @@ endfunction
 com! DiffSaved call s:DiffWithSaved()
 
 :command DiffOrig rightbelow vertical new | set bt=nofile | r # | 0d_ | diffthis | wincmd p | diffthis
+
+" used with vim-ctrlspace
+set nocompatible
+set hidden
+set showtabline=0
 
 "disable syntastic on the statusline
 let g:statline_syntastic = 0
