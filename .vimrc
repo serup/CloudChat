@@ -158,6 +158,7 @@ com! DiffSaved call s:DiffWithSaved()
 set nocompatible
 set hidden
 set showtabline=0
+let g:CtrlSpaceHeight = 5
 
 "disable syntastic on the statusline
 let g:statline_syntastic = 0
