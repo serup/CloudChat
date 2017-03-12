@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="DDDAdmin" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/DDDAdmin" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/DDDAdmin" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-fexceptions" />
+			<Add option="-std=gnu++11" />
+			<Add option="-D__DEBUG__" />
+			<Add option="-D__MSABI_LONG=long" />
+			<Add option="-DBOOST_LOG_DYN_LINK" />
+			<Add directory="/tclap-1.2.1/include" />
+		</Compiler>
+		<Linker>
+			<Add library="curses" />
+			<Add library="boost_regex" />
+			<Add library="rt" />
+			<Add library="pthread" />
+			<Add library="boost_filesystem" />
+			<Add library="boost_thread" />
+			<Add library="boost_log" />
+			<Add library="boost_signals" />
+			<Add library="boost_system" />
+			<Add directory="/usr/local/lib/" />
+		</Linker>
+		<Unit filename="../../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.cpp" />
+		<Unit filename="../../DataEncoderDecoder/DataEncoderDecoder/DataEncoder.h" />
+		<Unit filename="../../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.cpp" />
+		<Unit filename="../../DataEncoderDecoder/DataEncoderDecoder/compression-lib/compression.h" />
+		<Unit filename="../datadictionarycontrol.cpp" />
+		<Unit filename="../datadictionarycontrol.hpp" />
+		<Unit filename="../main.cpp" />
+		<Unit filename="../md5.h" />
+		<Unit filename="../utils.cpp" />
+		<Unit filename="../utils.hpp" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
