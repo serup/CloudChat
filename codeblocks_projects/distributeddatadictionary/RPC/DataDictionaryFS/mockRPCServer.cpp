@@ -47,6 +47,15 @@ bool mockRPCServer::putRequestOnOutgoingQueue(std::string dest, std::unique_ptr<
 		requestpair.push_back(pp);
 		outgoing_request_queue.push(requestpair); //TODO: add a timeout possibility to avoid freeze on errornous queue
 
+		///* tst */
+		//bool bNoFailure=true;
+		//std::vector<pair<std::string, std::vector<unsigned char>>> vpair;
+		//vpair = outgoing_request_queue.pop(bNoFailure); //TODO: add a timeout possibility to avoid freeze on errornous queue
+		//cout << "INFO: DEBUG: - pop from outgoing_request_queue : " << bNoFailure << " size : " << vpair.size() << endl;
+	    //pair<std::string, std::vector<unsigned char>> _pp = vpair.back();
+		//cout << "INFO: DEBUG: - pair id : " << _pp.first << endl;
+		///* tst */
+
 		bResult=true;
 	}
 	else
@@ -158,7 +167,33 @@ DEDBlock* mockRPCServer::handleRequest(DDRequest req)
 
 							// TODO: check for clientID in outgoing request queue, then take the request and send it instead of below default
 							bool bfound=false;
-							//std::vector<pair<std::string, std::vector<unsigned char>>> requestpair = outgoing_request_queue.pop();
+
+							/* tst */
+							if(outgoing_request_queue.size() > 0) {
+							bool bNoFailure=true;
+							std::vector<pair<std::string, std::vector<unsigned char>>> vpair;
+							vpair = outgoing_request_queue.pop(bNoFailure); //TODO: add a timeout possibility to avoid freeze on errornous queue
+							cout << "INFO: DEBUG: - pop from outgoing_request_queue : " << bNoFailure << " size : " << vpair.size() << endl;
+							pair<std::string, std::vector<unsigned char>> _pp = vpair.back();
+							cout << "INFO: DEBUG: - pair id : " << _pp.first << endl;
+							}
+							else
+								cout << "WARNING: DEBUG: - NO request in queue " << endl;
+							/* tst */
+
+
+							//std::vector<pair<std::string, std::vector<unsigned char>>> requestpair = outgoing_request_queue.pop(bvalid);
+							//auto requestpair = outgoing_request_queue.pop(bNoFailure);
+							//if(bNoFailure) {
+							//	for(auto pp : requestpair)
+							//	{
+							//		std::string id = pp.first;
+							//		cout << " - request client id : " << id << endl;
+							//	}
+							//}
+							//else
+							//	cout << " - WARNING: no element found in queue " << __FILE__ << " " << __LINE__ << endl;
+
 							//for(auto pp : requestpair)
 							//{
 							//	std::vector<unsigned char> buffer = pp.second;
