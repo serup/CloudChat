@@ -169,13 +169,16 @@ DEDBlock* mockRPCServer::handleRequest(DDRequest req)
 							bool bfound=false;
 
 							/* tst */
-							if(outgoing_request_queue.size() > 0) {
-							bool bNoFailure=true;
-							std::vector<pair<std::string, std::vector<unsigned char>>> vpair;
-							vpair = outgoing_request_queue.pop(bNoFailure); //TODO: add a timeout possibility to avoid freeze on errornous queue
-							cout << "INFO: DEBUG: - pop from outgoing_request_queue : " << bNoFailure << " size : " << vpair.size() << endl;
-							pair<std::string, std::vector<unsigned char>> _pp = vpair.back();
-							cout << "INFO: DEBUG: - pair id : " << _pp.first << endl;
+							bool bNoTimeout=true;
+							long timeout_milliseconds = 10000;
+							if(outgoing_request_queue.size() <= 0) bNoTimeout = outgoing_request_queue.WaitForQueueSignalPush(timeout_milliseconds);
+							if(bNoTimeout) {
+								bool bNoFailure=true;
+								std::vector<pair<std::string, std::vector<unsigned char>>> vpair;
+								vpair = outgoing_request_queue.pop(bNoFailure); 
+								cout << "INFO: DEBUG: - pop from outgoing_request_queue : " << bNoFailure << " size : " << vpair.size() << endl;
+								pair<std::string, std::vector<unsigned char>> _pp = vpair.back();
+								cout << "INFO: DEBUG: - pair id : " << _pp.first << endl;
 							}
 							else
 								cout << "WARNING: DEBUG: - NO request in queue " << endl;

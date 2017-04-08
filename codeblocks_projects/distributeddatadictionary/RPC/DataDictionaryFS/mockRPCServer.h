@@ -28,7 +28,6 @@ using namespace std;
 class mockRPCServer
 {
 		private:
-		  //thread_safe_queue<std::vector<pair<std::string, std::unique_ptr<CDataEncoder>>>> outgoing_request_queue;
 		    thread_safe_queue<std::vector<pair<std::string, std::vector<unsigned char>>>> outgoing_request_queue;
 			
 			DEDBlock* handleRequest(DDRequest req);
@@ -48,7 +47,7 @@ class mockRPCServer
 			 */
 			static void mockRPCServerMain(struct svc_req *rqstp, register SVCXPRT *transp)
 			{
-				mockRPCServer *_this = new mockRPCServer();
+				static mockRPCServer *_this = new mockRPCServer();
 				union {
 					DDRequest req;
 				} argument;
