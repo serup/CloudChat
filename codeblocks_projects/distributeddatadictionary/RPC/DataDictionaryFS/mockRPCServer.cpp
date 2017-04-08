@@ -24,10 +24,12 @@ bool mockRPCServer::putRequestOnOutgoingQueue(std::string dest, std::unique_ptr<
 	bool bValid=false;
 
     //thread_safe_queue<std::vector<pair<std::string, std::vector<unsigned char>>>> outgoing_request_queue;
-
-	if(verbose) cout << "INFO: inside putRequestOnOutgoingQueue - mockServerID = " << getID() << endl; 
+	if(NULL==_thismockRPCServer) _thismockRPCServer = this; 
+	if(verbose) cout << "INFO: inside putRequestOnOutgoingQueue - parent mockServerID = " << getID() << endl; 
+	if(verbose) cout << "INFO: inside putRequestOnOutgoingQueue - child  mockServerID = " << _thismockRPCServer->getID() << endl; 
 	if(verbose) cout << "INFO: first verify that it is a valid request - parse its name " << endl;
-	
+
+
 	// decode data ...
 	if( DED_GET_STRUCT_START( DEDRequest, "DDNodeRequest" ) == true )
 	{	
@@ -49,7 +51,7 @@ bool mockRPCServer::putRequestOnOutgoingQueue(std::string dest, std::unique_ptr<
 		pp = make_pair( dest,  value );
 		std::vector<pair<std::string, std::vector<unsigned char>>> requestpair;
 		requestpair.push_back(pp);
-		outgoing_request_queue.push(requestpair); //TODO: add a timeout possibility to avoid freeze on errornous queue
+		_thismockRPCServer->outgoing_request_queue.push(requestpair); //TODO: add a timeout possibility to avoid freeze on errornous queue
 
 		///* tst */
 		//bool bNoFailure=true;
