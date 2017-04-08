@@ -49,8 +49,6 @@ class mockRPCServer
 			 */
 			static void mockRPCServerMain(struct svc_req *rqstp, register SVCXPRT *transp)
 			{
-				//mockRPCServer *_this = new mockRPCServer("test");
-				//mockRPCServer *_this = instance();
 				cout << "INFO: inside mockRPCServerMain" << endl;	
 				if(NULL==_thismockRPCServer) _thismockRPCServer = new mockRPCServer();
 				mockRPCServer *_this = _thismockRPCServer;
@@ -116,7 +114,6 @@ class mockRPCServer
 			{
 				cout << "INFO: setting mockserverID : " << id << endl;
 				mockserverID = "parent_of_[" + id + "]";
-				//_thismockRPCServer = instance();
 				_thismockRPCServer = new mockRPCServer();
 				_thismockRPCServer->mockserverID = id;
 			}
@@ -214,6 +211,7 @@ class mockRPCServer
 			}
 
 			bool putRequestOnOutgoingQueue(std::string dest, std::unique_ptr<CDataEncoder> &DEDRequest, bool verbose=false);
+			auto fetchRequestFromOutgoingQueue(bool verbose=false);
 
 		private:
 

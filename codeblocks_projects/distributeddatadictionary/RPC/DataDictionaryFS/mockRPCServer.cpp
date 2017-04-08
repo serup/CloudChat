@@ -51,16 +51,7 @@ bool mockRPCServer::putRequestOnOutgoingQueue(std::string dest, std::unique_ptr<
 		pp = make_pair( dest,  value );
 		std::vector<pair<std::string, std::vector<unsigned char>>> requestpair;
 		requestpair.push_back(pp);
-		_thismockRPCServer->outgoing_request_queue.push(requestpair); //TODO: add a timeout possibility to avoid freeze on errornous queue
-
-		///* tst */
-		//bool bNoFailure=true;
-		//std::vector<pair<std::string, std::vector<unsigned char>>> vpair;
-		//vpair = outgoing_request_queue.pop(bNoFailure); //TODO: add a timeout possibility to avoid freeze on errornous queue
-		//cout << "INFO: DEBUG: - pop from outgoing_request_queue : " << bNoFailure << " size : " << vpair.size() << endl;
-	    //pair<std::string, std::vector<unsigned char>> _pp = vpair.back();
-		//cout << "INFO: DEBUG: - pair id : " << _pp.first << endl;
-		///* tst */
+		_thismockRPCServer->outgoing_request_queue.push(requestpair); 
 
 		bResult=true;
 	}
@@ -68,6 +59,26 @@ bool mockRPCServer::putRequestOnOutgoingQueue(std::string dest, std::unique_ptr<
 		cout << "FAIL: the Request was not a valid request, thus will not be added to outgoing queue ; " << __FILE__ << ":" << __LINE__<< endl;
 
 	return bResult;
+}
+			
+auto mockRPCServer::fetchRequestFromOutgoingQueue(bool verbose)
+{
+	bool bNoTimeout=true;
+	long timeout_milliseconds = 4000;
+	std::vector<pair<std::string, std::vector<unsigned char>>> vpair;
+
+	if(outgoing_request_queue.size() <= 0) bNoTimeout = outgoing_request_queue.WaitForQueueSignalPush(timeout_milliseconds);
+	if(bNoTimeout) {
+		bool bNoFailure=true;
+		vpair = outgoing_request_queue.pop(bNoFailure); 
+		if(verbose) cout << "INFO: DEBUG: - pop from outgoing_request_queue : " << bNoFailure << " size : " << vpair.size() << endl;
+		pair<std::string, std::vector<unsigned char>> _pp = vpair.back();
+		if(verbose) cout << "INFO: DEBUG: - pair id : " << _pp.first << endl;
+	}
+	else
+		if(verbose) cout << "WARNING: NO request in queue" << endl;
+
+	return vpair;
 }
 
 DEDBlock* mockRPCServer::handleRequest(DDRequest req)
@@ -168,50 +179,54 @@ DEDBlock* mockRPCServer::handleRequest(DDRequest req)
 							 *
 							 */
 							
+							 /*
+							   DED_START_ENCODER(dedptr);
+							   DED_PUT_STRUCT_START( dedptr, "DDNodeRequest" );
+							   DED_PUT_METHOD	( dedptr, "name", (std::string)"REQUESTREQUEST" );
+							   DED_PUT_LONG    ( dedptr, "transID", transID );
+							   DED_PUT_LONG    ( dedptr, "amount", (long)1 );
+							   DED_PUT_STDVECTOR ( dedptr, "RPCname", clientID );
+							   DED_PUT_STRUCT_END( dedptr, "DDNodeRequest" );
+							 */
+							
 							cout << "INFO: received REQUESTREQUEST from client " << endl;
 							cout << "INFO: look for outgoing request on queue and if any request for this client, then send " << endl;
-
-							// TODO: check for clientID in outgoing request queue, then take the request and send it instead of below default
+							
+							long transID;
+							long amount=0;
+							std::string RPCname="";
+							std::vector<unsigned char> value;
 							bool bfound=false;
-
-							/* tst */
-							bool bNoTimeout=true;
-							long timeout_milliseconds = 4000;
-							if(outgoing_request_queue.size() <= 0) bNoTimeout = outgoing_request_queue.WaitForQueueSignalPush(timeout_milliseconds);
-							if(bNoTimeout) {
-								bool bNoFailure=true;
-								std::vector<pair<std::string, std::vector<unsigned char>>> vpair;
-								vpair = outgoing_request_queue.pop(bNoFailure); 
-								cout << "INFO: DEBUG: - pop from outgoing_request_queue : " << bNoFailure << " size : " << vpair.size() << endl;
-								pair<std::string, std::vector<unsigned char>> _pp = vpair.back();
-								cout << "INFO: DEBUG: - pair id : " << _pp.first << endl;
+							if( DED_GET_LONG( decoder_ptr, "transID", transID ) == true ) {
+								cout << ".";
+								if( DED_GET_LONG( decoder_ptr, "amount", amount ) == true ) {
+									cout << ".";
+									//TODO: use fetchParametersFromDED
+									if( DED_GET_STDVECTOR( decoder_ptr, "RPCname", value ) == true ) {
+										cout << ".";
+										std::string str(value.begin(), value.end());
+										RPCname = str;
+										// check for clientID in outgoing request queue, then take the request and send it instead of below default
+										std::vector<pair<std::string, std::vector<unsigned char>>> vpair = fetchRequestFromOutgoingQueue(true);
+										for(auto pp : vpair)
+										{
+											std::string id = pp.first;
+											cout << " - request client id : " << id << endl;
+											if(RPCname==id) {
+												cout << ". found request" << endl;
+												std::vector<unsigned char> buffer = pp.second;
+												DED_PUT_DATA_IN_DECODER( decoder_ptr,(unsigned char*)&buffer[0], buffer.size());
+												DED_GET_DEDBLOCK_DATA( decoder_ptr,result);
+												bfound=true;
+												break;
+											}
+										}
+									}
+								}
 							}
-							else
-								cout << "WARNING: DEBUG: - NO request in queue - so DEFAULT request will be send " << endl;
-							/* tst */
-
-
-							//std::vector<pair<std::string, std::vector<unsigned char>>> requestpair = outgoing_request_queue.pop(bvalid);
-							//auto requestpair = outgoing_request_queue.pop(bNoFailure);
-							//if(bNoFailure) {
-							//	for(auto pp : requestpair)
-							//	{
-							//		std::string id = pp.first;
-							//		cout << " - request client id : " << id << endl;
-							//	}
-							//}
-							//else
-							//	cout << " - WARNING: no element found in queue " << __FILE__ << " " << __LINE__ << endl;
-
-							//for(auto pp : requestpair)
-							//{
-							//	std::vector<unsigned char> buffer = pp.second;
-							//	DED_PUT_DATA_IN_DECODER(encoder_ptr,buffer.begin(), buffer.size());
-							//	DED_GET_DEDBLOCK_DATA(encoder_ptr,result);
-							//	bfound=true;
-							//}
 
 							if(!bfound) {
+								cout << " - no request was found - sending default " << endl;
 								// send an appropriate - default request reply back	
 								DED_START_ENCODER(encoder_ptr);
 								DED_PUT_STRUCT_START( encoder_ptr, "DDNodeResponse" );

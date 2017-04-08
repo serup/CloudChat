@@ -2075,7 +2075,7 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_RPCclients_via_virtual_DDDAdmin)
 				DED_PUT_METHOD	( dedptr, "name", (std::string)"REQUESTREQUEST" );
 				DED_PUT_LONG    ( dedptr, "transID", transID );
 				DED_PUT_LONG    ( dedptr, "amount", (long)1 );
-				DED_PUT_STDSTRING( dedptr, "RPCname", clientID );
+				DED_PUT_STDVECTOR( dedptr, "RPCname", clientID );
 				DED_PUT_STRUCT_END( dedptr, "DDNodeRequest" );
 				*/
 
@@ -2094,15 +2094,17 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_RPCclients_via_virtual_DDDAdmin)
 			};
 			////////////////////////////////////////////////////////////////
 			collectablefutures cf;
-			collectablefutures::request reqForReq1 = cf.createrequest();
-			reqForReq1.addexecutorfunc( fnSendRequestForRequest, "RPC1" );
+			collectablefutures::request reqForReq = cf.createrequest();
+			reqForReq.addexecutorfunc( fnSendRequestForRequest, "RPC1" );
+			reqForReq.addexecutorfunc( fnSendRequestForRequest, "RPC2" );
+			reqForReq.addexecutorfunc( fnSendRequestForRequest, "RPC3" );
 
-			std::future<std::vector<unsigned char>> future_result = cf.runRequest( reqForReq1 );
+			std::future<std::vector<unsigned char>> future_result = cf.runRequest( reqForReq );
 			
 			// add RPC1requestForAttribut to outgoing request queue in server
 			server.putRequestOnOutgoingQueue("RPC1", RPC1requestForAttribut, true);
-			//server.putRequestOnOutgoingQueue("RPC2", RPC2requestForAttribut, true);
-			//server.putRequestOnOutgoingQueue("RPC3", RPC3requestForAttribut, true);
+			server.putRequestOnOutgoingQueue("RPC2", RPC2requestForAttribut, true);
+			server.putRequestOnOutgoingQueue("RPC3", RPC3requestForAttribut, true);
 
 		
 			// wait for future result of request RPC1requestForAttribut 

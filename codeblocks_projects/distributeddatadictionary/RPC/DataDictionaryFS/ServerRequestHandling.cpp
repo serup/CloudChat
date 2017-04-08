@@ -148,6 +148,7 @@ CHandlingServerRequestToClients::_eMethod CHandlingServerRequestToClients::analy
 	return eRmethod;
 }
 
+//TODO: move it to Request.cpp
 std::vector<pair<std::string, std::vector<unsigned char>>> CHandlingServerRequestToClients::fetchParametersFromDED(std::unique_ptr<CDataEncoder> &decoder_ptr, std::vector<std::string> paramNames, bool verbose)
 {
 	long transID=0;
