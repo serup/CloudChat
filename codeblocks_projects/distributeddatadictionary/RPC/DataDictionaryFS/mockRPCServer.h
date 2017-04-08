@@ -24,9 +24,11 @@ using namespace std;
 	//};
 
 
-
 class mockRPCServer
 {
+		public:
+			static mockRPCServer* _thismockRPCServer;
+
 		private:
 		    thread_safe_queue<std::vector<pair<std::string, std::vector<unsigned char>>>> outgoing_request_queue;
 			
@@ -47,7 +49,13 @@ class mockRPCServer
 			 */
 			static void mockRPCServerMain(struct svc_req *rqstp, register SVCXPRT *transp)
 			{
-				static mockRPCServer *_this = new mockRPCServer();
+				//mockRPCServer *_this = new mockRPCServer("test");
+				//mockRPCServer *_this = instance();
+				cout << "INFO: inside mockRPCServerMain" << endl;	
+				if(NULL==_thismockRPCServer) _thismockRPCServer = new mockRPCServer();
+				mockRPCServer *_this = _thismockRPCServer;
+				cout << "INFO: inside mockRPCServerMain - mockServerID = " << _this->getID() << endl;
+
 				union {
 					DDRequest req;
 				} argument;
@@ -97,11 +105,26 @@ class mockRPCServer
 
 		public:
 			bool bServerInstantiated = false;
+			std::string mockserverID = "<undefined>";
 
 			mockRPCServer()
 			{
 				// the thread is not-a-thread until we call start()
 			}
+
+			mockRPCServer(std::string id)
+			{
+				cout << "INFO: setting mockserverID : " << id << endl;
+				mockserverID = "parent_of_[" + id + "]";
+				//_thismockRPCServer = instance();
+				_thismockRPCServer = new mockRPCServer();
+				_thismockRPCServer->mockserverID = id;
+			}
+
+			std::string getID() { 
+				return mockserverID;
+			}
+
 			~mockRPCServer()
 			{
 				stop();
@@ -143,7 +166,9 @@ class mockRPCServer
 
 				register SVCXPRT *transp;
 
-				pmap_unset (DDD_FS_PROG, DDD_FS_VERS);                                                  
+				pmap_unset (DDD_FS_PROG, DDD_FS_VERS);         
+
+				std::cout << "mockRPCServer: mockServerID : " << this->getID() << std::endl;
 				std::cout << "mockRPCServer: init" << std::endl;
 				std::cout << "mockRPCServer: Create udp" << std::endl;
 

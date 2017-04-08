@@ -1,5 +1,8 @@
 #include "mockRPCServer.h"
 
+mockRPCServer* mockRPCServer::_thismockRPCServer = NULL;
+
+
 void DED_GET_DEDBLOCK_DATA(std::unique_ptr<CDataEncoder> &encoder_ptr, DEDBlock &result)
 {
 	DED_GET_ENCODED_DATA(encoder_ptr,data_ptr,iLengthOfTotalData,pCompressedData,sizeofCompressedData);
@@ -22,6 +25,7 @@ bool mockRPCServer::putRequestOnOutgoingQueue(std::string dest, std::unique_ptr<
 
     //thread_safe_queue<std::vector<pair<std::string, std::vector<unsigned char>>>> outgoing_request_queue;
 
+	if(verbose) cout << "INFO: inside putRequestOnOutgoingQueue - mockServerID = " << getID() << endl; 
 	if(verbose) cout << "INFO: first verify that it is a valid request - parse its name " << endl;
 	
 	// decode data ...
@@ -170,7 +174,7 @@ DEDBlock* mockRPCServer::handleRequest(DDRequest req)
 
 							/* tst */
 							bool bNoTimeout=true;
-							long timeout_milliseconds = 10000;
+							long timeout_milliseconds = 4000;
 							if(outgoing_request_queue.size() <= 0) bNoTimeout = outgoing_request_queue.WaitForQueueSignalPush(timeout_milliseconds);
 							if(bNoTimeout) {
 								bool bNoFailure=true;
@@ -181,7 +185,7 @@ DEDBlock* mockRPCServer::handleRequest(DDRequest req)
 								cout << "INFO: DEBUG: - pair id : " << _pp.first << endl;
 							}
 							else
-								cout << "WARNING: DEBUG: - NO request in queue " << endl;
+								cout << "WARNING: DEBUG: - NO request in queue - so DEFAULT request will be send " << endl;
 							/* tst */
 
 

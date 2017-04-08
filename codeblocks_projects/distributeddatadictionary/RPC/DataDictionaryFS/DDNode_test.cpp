@@ -1967,9 +1967,10 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_RPCclients_via_virtual_DDDAdmin)
 	cout<<"/*{{{*/"<<endl;   
 	{
 		// setup mock server
-		mockRPCServer server;
+		mockRPCServer server("testing");
 		server.start();
 		server.wait();				
+		cout << "INFO: initial setting of mockServerID = " << server.getID() << endl; 
 
 		cout<<"/*}}}*/"<<endl;   
 
@@ -2064,7 +2065,7 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_RPCclients_via_virtual_DDDAdmin)
 				std::string clientID = boost::get<std::string>(vec[0]);
 				long transID = 421; // TODO: should be a parameter to fn
 
-				cout << "inside SendRequestForRequest, clientID: " << clientID << endl;
+				cout << ">>> OK: inside SendRequestForRequest, clientID: " << clientID << endl;
 
 				RPCclient client;
 
@@ -2085,7 +2086,7 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_RPCclients_via_virtual_DDDAdmin)
 				//reply to request should be handled by default handleResponse method, since no other method is added
 				//the server will look in outgoing queue for request for this client and if any request, then it will be send as reply to this request
 				
-				cout << "after sendRequestTo (REQUESTREQUEST) - now server should send a request as reply" << endl;
+				cout << "<<< OK: after sendRequestTo (REQUESTREQUEST) - now server should send a request as reply" << endl;
 
 				// returns result from request send to client 
 				result = client.getResultFromQueue(4000, true);
@@ -2100,19 +2101,19 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_RPCclients_via_virtual_DDDAdmin)
 			
 			// add RPC1requestForAttribut to outgoing request queue in server
 			server.putRequestOnOutgoingQueue("RPC1", RPC1requestForAttribut, true);
-			server.putRequestOnOutgoingQueue("RPC2", RPC2requestForAttribut, true);
-			server.putRequestOnOutgoingQueue("RPC3", RPC3requestForAttribut, true);
+			//server.putRequestOnOutgoingQueue("RPC2", RPC2requestForAttribut, true);
+			//server.putRequestOnOutgoingQueue("RPC3", RPC3requestForAttribut, true);
 
 		
 			// wait for future result of request RPC1requestForAttribut 
 			//future_result.wait();
 			auto status = future_result.wait_for(std::chrono::seconds(8));
 			if (status == std::future_status::deferred) {
-				std::cout << "deferred\n";
+				std::cout << "ERROR: deferred - NO future_result\n";
 			} else if (status == std::future_status::timeout) {
-				std::cout << "timeout -- no request was send \n";
+				std::cout << "WARNING: timeout -- no request was send \n";
 			} else if (status == std::future_status::ready) {
-				std::cout << "ready! future has signaled that it has data \n";
+				std::cout << "OK: INFO: ready! future has signaled that it has data \n";
 			}
 
 			// now a client is waiting for a request - server now have to send it -- add RPC1requestForAttribut to outgoing request queue of mockserver
