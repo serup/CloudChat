@@ -1928,9 +1928,9 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_dummy_RPCclients_using_futures)
 	auto result1 = client1.getResultFromQueue();
 	cout << "size of result from client1 : " << result1.size() << endl;
 	auto result2 = client2.getResultFromQueue();
-	cout << "size of result from client2 : " << result1.size() << endl;
+	cout << "size of result from client2 : " << result2.size() << endl;
 	auto result3 = client3.getResultFromQueue();
-	cout << "size of result from client3 : " << result1.size() << endl;
+	cout << "size of result from client3 : " << result3.size() << endl;
 		
 	std::vector< std::future<std::vector<unsigned char>> >  collectionOfFutureRequests;
 	collectablefutures cf;
@@ -2094,34 +2094,28 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_RPCclients_via_virtual_DDDAdmin)
 			};
 			////////////////////////////////////////////////////////////////
 			collectablefutures cf;
-			collectablefutures::request reqForReq = cf.createrequest();
-			reqForReq.addexecutorfunc( fnSendRequestForRequest, "RPC1" );
-			reqForReq.addexecutorfunc( fnSendRequestForRequest, "RPC2" );
-			reqForReq.addexecutorfunc( fnSendRequestForRequest, "RPC3" );
+			collectablefutures::request reqForReq1 = cf.createrequest();
+			collectablefutures::request reqForReq2 = cf.createrequest();
+			collectablefutures::request reqForReq3 = cf.createrequest();
+			reqForReq1.addexecutorfunc( fnSendRequestForRequest, "RPC1" );
+			reqForReq2.addexecutorfunc( fnSendRequestForRequest, "RPC2" );
+			reqForReq3.addexecutorfunc( fnSendRequestForRequest, "RPC3" );
 
-			std::future<std::vector<unsigned char>> future_result = cf.runRequest( reqForReq );
-			
-			// add RPC1requestForAttribut to outgoing request queue in server
+			std::vector< std::future<std::vector<unsigned char>> >  collectionOfFutureRequests;
+			cf.runRequest( reqForReq1, collectionOfFutureRequests );
+			cf.runRequest( reqForReq2, collectionOfFutureRequests );
+			cf.runRequest( reqForReq3, collectionOfFutureRequests );
+		
+			// now clients is waiting for a request - server now have to send it -- add RPC1requestForAttribut to outgoing request queue of mockserver
+			// it should then send it towards the correct client
+			//
+
+			// Simulate that a request is comming from server to each client asking for a specific task - add RPC[123]requestForAttribut to outgoing request queue in server
 			server.putRequestOnOutgoingQueue("RPC1", RPC1requestForAttribut, true);
 			server.putRequestOnOutgoingQueue("RPC2", RPC2requestForAttribut, true);
 			server.putRequestOnOutgoingQueue("RPC3", RPC3requestForAttribut, true);
 
 		
-			// wait for future result of request RPC1requestForAttribut 
-			//future_result.wait();
-			auto status = future_result.wait_for(std::chrono::seconds(8));
-			if (status == std::future_status::deferred) {
-				std::cout << "ERROR: deferred - NO future_result\n";
-			} else if (status == std::future_status::timeout) {
-				std::cout << "WARNING: timeout -- no request was send \n";
-			} else if (status == std::future_status::ready) {
-				std::cout << "OK: INFO: ready! future has signaled that it has data \n";
-			}
-
-			// now a client is waiting for a request - server now have to send it -- add RPC1requestForAttribut to outgoing request queue of mockserver
-			// it should then send it towards the correct client
-			//
-			
 			// this should be done inside server (mockServer simulating real server)
 			//
 			// default response handler will forward to handle a request if it validates incomming message as different than a response
@@ -2131,20 +2125,6 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_RPCclients_via_virtual_DDDAdmin)
 			//client3.handleResponse(RPC3requestForAttribut);
 
 			cout<<"/*}}}*/"<<endl;   
-
-			BOOST_TEST_MESSAGE( "Simulate that client have send result via socket - by just fetching result from client instance" );
-			// simulate that client have send result via sockets to DDDAdmin (this) - by just fetching result from client instance
-			auto result1 = client1.getResultFromQueue(1000, true);
-			cout << "size of result from client1 : " << result1.size() << endl;
-			auto result2 = client2.getResultFromQueue(1000, true);
-			cout << "size of result from client2 : " << result1.size() << endl;
-			auto result3 = client3.getResultFromQueue(1000, true);
-			cout << "size of result from client3 : " << result1.size() << endl;
-
-			std::vector< std::future<std::vector<unsigned char>> >  collectionOfFutureRequests;
-			cf.addReceivedTransferToCollection(result1, collectionOfFutureRequests);
-			cf.addReceivedTransferToCollection(result2, collectionOfFutureRequests);
-			cf.addReceivedTransferToCollection(result3, collectionOfFutureRequests);
 
 			cout << "Fetch attribut : " << endl;
 			cout << "collect results, and decode " << __FILE__ <<" "<< __LINE__ << endl;
@@ -2162,8 +2142,6 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_RPCclients_via_virtual_DDDAdmin)
 	// Clean up section - must be in bottom
 	cleanupTestBFiFiles(listBFiFiles);
 	
-	BOOST_CHECK( true == false ); // NOT DONE YET
-
 	cout << "}" << endl;
 }
 
