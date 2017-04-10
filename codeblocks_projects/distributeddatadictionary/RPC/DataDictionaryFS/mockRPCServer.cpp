@@ -213,8 +213,8 @@ DEDBlock* mockRPCServer::handleRequest(DDRequest req)
 									if(RPCname==id) {
 										cout << ". found request" << endl;
 										std::vector<unsigned char> buffer = pp.second;
-										DED_PUT_DATA_IN_DECODER( decoder_ptr,(unsigned char*)&buffer[0], buffer.size());
-										DED_GET_DEDBLOCK_DATA( decoder_ptr,result);
+										DED_PUT_DATA_IN_DECODER( decoder_ptr2,(unsigned char*)&buffer[0], buffer.size());
+										DED_GET_DEDBLOCK_DATA( decoder_ptr2,result);
 										bfound=true;
 										break;
 									}
