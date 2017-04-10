@@ -4,6 +4,7 @@
 #include "DDDfs.h"
 #include "DED.h"
 #include "../../thread_safe_queue.h"
+#include "Request.h"
 
 using namespace std;
 

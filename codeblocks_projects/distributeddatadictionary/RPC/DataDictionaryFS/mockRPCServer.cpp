@@ -197,30 +197,26 @@ DEDBlock* mockRPCServer::handleRequest(DDRequest req)
 							std::string RPCname="";
 							std::vector<unsigned char> value;
 							bool bfound=false;
-							if( DED_GET_LONG( decoder_ptr, "transID", transID ) == true ) {
-								cout << ".";
-								if( DED_GET_LONG( decoder_ptr, "amount", amount ) == true ) {
-									cout << ".";
-									//TODO: use fetchParametersFromDED
-									if( DED_GET_STDVECTOR( decoder_ptr, "RPCname", value ) == true ) {
-										cout << ".";
-										std::string str(value.begin(), value.end());
-										RPCname = str;
-										// check for clientID in outgoing request queue, then take the request and send it instead of below default
-										std::vector<pair<std::string, std::vector<unsigned char>>> vpair = fetchRequestFromOutgoingQueue(true);
-										for(auto pp : vpair)
-										{
-											std::string id = pp.first;
-											cout << " - request client id : " << id << endl;
-											if(RPCname==id) {
-												cout << ". found request" << endl;
-												std::vector<unsigned char> buffer = pp.second;
-												DED_PUT_DATA_IN_DECODER( decoder_ptr,(unsigned char*)&buffer[0], buffer.size());
-												DED_GET_DEDBLOCK_DATA( decoder_ptr,result);
-												bfound=true;
-												break;
-											}
-										}
+							
+							CRequest sreq;
+							auto parameterPairs = sreq.fetchParametersFromDED(decoder_ptr, {"RPCname"}, true);
+							std::vector<unsigned char> paramvalue = sreq.fetchParameter("RPCname", parameterPairs, true);
+							if(paramvalue.size() > 0) {
+								std::string str(paramvalue.begin(), paramvalue.end());
+								RPCname = str;
+								// check for clientID in outgoing request queue, then take the request and send it instead of below default
+								std::vector<pair<std::string, std::vector<unsigned char>>> vpair = fetchRequestFromOutgoingQueue(true);
+								for(auto pp : vpair)
+								{
+									std::string id = pp.first;
+									cout << " - request client id : " << id << endl;
+									if(RPCname==id) {
+										cout << ". found request" << endl;
+										std::vector<unsigned char> buffer = pp.second;
+										DED_PUT_DATA_IN_DECODER( decoder_ptr,(unsigned char*)&buffer[0], buffer.size());
+										DED_GET_DEDBLOCK_DATA( decoder_ptr,result);
+										bfound=true;
+										break;
 									}
 								}
 							}

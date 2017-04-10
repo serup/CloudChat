@@ -2088,7 +2088,7 @@ BOOST_AUTO_TEST_CASE(fetchAttributsFrom_3_RPCclients_via_virtual_DDDAdmin)
 				
 				cout << "<<< OK: after sendRequestTo (REQUESTREQUEST) - now server should send a request as reply" << endl;
 
-				// returns result from request send to client 
+				// returns result from handling the server request send to client 
 				result = client.getResultFromQueue(4000, true);
 				return result;
 			};

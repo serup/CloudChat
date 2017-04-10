@@ -4,6 +4,7 @@
  *
  */
 #include "Request.h" 
+#include "../../utils.hpp"
 
 /**
  * This is the main create a request inside a DED protocol
@@ -68,5 +69,67 @@ std::vector<pair<std::string, std::vector<unsigned char>>> CRequest::addParamete
 void CRequest::clearParameters()
 {
 	addParameter(); // clean out internal list of parameters
+}
+
+std::vector<pair<std::string, std::vector<unsigned char>>> CRequest::fetchParametersFromDED(std::unique_ptr<CDataEncoder> &decoder_ptr, std::vector<std::string> paramNames, bool verbose)
+{
+	long transID=0;
+	long amount=0;
+	int numberofelements = paramNames.size();
+	std::vector<pair<std::string, std::vector<unsigned char>>> parameterPairs;
+	if( DED_GET_LONG( decoder_ptr, "transID", transID ) == true ) { 
+		if( DED_GET_LONG( decoder_ptr, "amount", amount ) == true )
+		{
+			if(amount != numberofelements)
+				cout << "WARNING: amount of parameters received differ from what is expected " << amount << " != " << numberofelements << " - perhaps mismatch in versions of this function : " << __FILE__ << ":" << __LINE__ << endl;
+			// Traverse thru parameters
+			for(int c=0; c < numberofelements; c++)
+			{
+				std::vector<unsigned char> value;
+				pair <std::string, std::vector<unsigned char>> pp;
+				DED_GET_STDVECTOR( decoder_ptr, paramNames[c], value );
+				pp = make_pair(paramNames[c], value);
+				parameterPairs.push_back(pp); 
+				if(verbose) {
+					cout << "found in DED parameter : " << paramNames[c] << ", value : " << endl;
+					if(value.size() < 100) 
+					{
+						std::string str(value.begin(), value.end());
+						cout << str << endl;
+					}
+					else
+						CUtils::showDataBlock(true,true,value);
+				}
+			}
+		}
+	}
+	else
+		cout << "FAIL: protocol is wrong - perhaps misuse of version " << " " << __FILE__ << "[" << __LINE__ << "]" << endl;
+
+	return parameterPairs; 
+}
+
+std::vector<unsigned char> CRequest::fetchParameter(std::string name, std::vector<pair<std::string, std::vector<unsigned char>>> parameterPairs, bool verbose)
+{
+	std::vector<unsigned char> ret;
+	typedef std::vector<std::pair<std::string, std::vector<unsigned char>> > my_vector;	
+	my_vector::iterator i = std::find_if(parameterPairs.begin(), parameterPairs.end(), comp(name));
+	if (i != parameterPairs.end())
+	{
+		ret = std::move(i->second);
+		if(verbose) {
+			cout << "INFO: Fetched parameter value : ";
+			if(ret.size() < 100) {
+				std::string str(ret.begin(), ret.end());
+				cout << str << endl;
+			}
+			else
+				CUtils::showDataBlock(true,true,ret);
+		}
+	}
+	else
+		cout << "WARNING: parameter was NOT FOUND " << endl;
+
+	return ret;
 }
 
