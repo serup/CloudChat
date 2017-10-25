@@ -88,6 +88,12 @@ public class IntegrationEnvironmentSetup {
                     result = executeCommand(cmd, path);
                     assertEquals(true, result.contains("Vagrant"));
 
+                    /// if this does not work, then it could be because of download issues
+                    /// try this:
+                    ///
+                    /// C:\Users<username>.vagrant.d\tmp*
+                    /// After you delete it, you can re-run vagrant up and everything should work fine.
+                    ///
                     cmd = "vagrant up backend";
                     result = executeCommand(cmd, path);
                     if(result=="") {
