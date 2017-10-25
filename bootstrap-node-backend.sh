@@ -1,5 +1,4 @@
 #!/bin/sh
-
 # Run on VM to bootstrap Puppet Agent nodes
 
 sudo rm -rf /var/lib/puppet/ssl/*
@@ -10,9 +9,15 @@ if ps aux | grep "puppet agent" | grep -v grep 2> /dev/null
 then
     echo "Puppet Agent is already installed. Moving on..."
 else
+    echo "INSTALL PUPPET"
     sudo cp /vagrant/sources.list /etc/apt/sources.list
     sudo apt-get update
-    sudo apt-get install -yq puppet
+#    sudo apt-get install -yq puppet
+	wget https://downloads.puppetlabs.com/puppet/puppet-5.3.1.tar.gz
+	tar -xf puppet-5.3.1.tar.gz
+	cd puppet-5.3.1/
+	sudo ruby install.rb
+	puppet --version
 fi
 
 if cat /etc/puppet/puppet.conf | grep environment 2> /dev/null
