@@ -23,11 +23,22 @@ echo I am installing puppet on guest
 sudo apt-get install -yq puppet=*
 SCRIPT
 
-Vagrant.configure("2") do |config|
- # config.vm.provision "shell", path: "script.sh"
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.box = "ubuntu/zesty32"
   config.vm.provision "shell", inline: $script
 end
 
+$bootstrap = <<SCRIPT
+useradd -m vagrant --groups sudo
+echo "%vagrant ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/vagrant
+su -c "printf 'cd /home/vagrant\nsudo su vagrant' >> .bash_profile" -s /bin/sh vagrant
+SCRIPT
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+	  config.vm.box = "ubuntu/zesty32"
+	  config.vm.host_name = "backend.scanva.com"
+	  config.vm.provision "shell", inline: $bootstrap, privileged: true
+end
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
@@ -49,7 +60,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 	puppet.manifests_path = "puppet/manifests"
 	puppet.manifest_file  = "site.pp"
 	puppet.module_path = "puppet/trunk/environments/devtest/modules"
-	puppet.options = "--verbose --debug"
+	# puppet.options = "--verbose --debug"
         puppet.hiera_config_path = "puppet/hiera/node_site_config.yaml"
         puppet.working_directory = "/tmp/vagrant-puppet-3/"
       end 
@@ -74,6 +85,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       if node_name == "nifi"
         config.ssh.forward_x11 = true 
       end
+
  
       config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
       config.vm.synced_folder("puppet/hiera", "/tmp/vagrant-puppet-3/hiera")
@@ -95,3 +107,5 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
   end
 end
+
+
