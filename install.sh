@@ -548,8 +548,16 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 python-pip* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install python-pip "
-  sudo apt-fast install -yq python-pip
-  echo " - done."
+  #sudo apt-fast install -yq python-pip
+
+  sudo add-apt-repository universe
+  sudo apt update 
+  sudo apt install -yq python2
+
+  curl https://bootstrap.pypa.io/get-pip.py --output get-pip.py
+  sudo python2 get-pip.py
+  
+  echo " - done. installing python-pip"
 else
   echo "- python-pip already installed"
 fi
