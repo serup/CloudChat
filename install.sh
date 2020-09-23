@@ -56,10 +56,19 @@ mkdir -p $DOCKER_PUPPET_PATH
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 apt-fast |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install apt-fast on ubuntu, to use for speeding up apt-get install's "
-  sudo add-apt-repository ppa:saiarcot895/myppa
-  sudo apt-get update
-  sudo apt-get install -yq apt-fast  --allow-unauthenticated 
-  echo " - done."
+ # sudo add-apt-repository ppa:saiarcot895/myppa
+ # sudo apt-get update
+ # sudo apt-get install -yq apt-fast  --allow-unauthenticated
+
+ echo "deb http://ppa.launchpad.net/apt-fast/stable/ubuntu bionic main" | sudo tee -a /etc/apt/sources.list.d/apt-fast.list
+ echo "deb-src http://ppa.launchpad.net/apt-fast/stable/ubuntu bionic main" | sudo tee -a /etc/apt/sources.list.d/apt-fast.list
+ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys A2166B8DE8BDC3367D1901C11EE2FF37CA8DA16B
+ sudo apt-get update
+ sudo DEBIAN_FRONTEND=noninteractive apt-get install -y apt-fast
+ echo debconf apt-fast/maxdownloads string 16 | sudo debconf-set-selections
+ echo debconf apt-fast/dlflag boolean true | sudo debconf-set-selections
+ echo debconf apt-fast/aptmanager string apt-get | sudo debconf-set-selections
+ echo " - done."
 else
   echo "- apt-fast already installed"
 fi
