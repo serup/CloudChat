@@ -19,6 +19,15 @@ via vagrant a master and one node is created in VirtualBox and via puppet master
   run the install script - it will setup environment variables, and install needed modules for the project, used later in vagrant up
   . ./install.sh <docker image project name fx. skeleton>
   use your favorite editor to write code
+  
+  NB! IMPORTANT install script uses apt-fast to download faster - if it is not working on your system then 
+      install it by following these steps :
+      https://fossbytes.com/download-packages-faster-linux-apt-fast-command/
+      https://github.com/ilikenwf/apt-fast#installation
+      
+      You may need to manually do several steps for setting up your environment to beable to download and install the apt-fast feature, and you may need to run a fix, which ubuntu usually will ask you to do
+
+      
 ```
 **Checkin to your own branch using this setup**
  first time you checkin your branch needs to be created on gerrithub, thus make following command
