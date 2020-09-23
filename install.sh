@@ -626,8 +626,12 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 libwebkit-c* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install libwebkit-cil-dev for C# on ubuntu "
-  sudo apt-fast install -yq libwebkit-cil-dev 
-  echo " - done."
+  #sudo apt-fast install -yq libwebkit-cil-dev 
+  
+  git clone https://github.com/kupferk/webhdfs-py.git ~/.webhdfs-py
+  sudo python2 ~/.webhdfs-py/setup.py install
+  
+  echo " - done. installing libwebkitt" 
 else
   echo "- libwebkit already installed"
 fi
