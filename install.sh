@@ -326,7 +326,19 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 *brew* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install brew on ubuntu : example: brew install ctags"
-  sudo apt-fast install -yq linuxbrew-wrapper 
+
+  # sudo apt-fast install -yq linuxbrew-wrapper 
+  git clone https://github.com/Linuxbrew/brew.git ~/.linuxbrew
+  PATH="$HOME/.linuxbrew/bin:$PATH"
+  export MANPATH="$(brew --prefix)/share/man:$MANPATH"
+  export INFOPATH="$(brew --prefix)/share/info:$INFOPATH"
+  test -d ~/.linuxbrew && eval $(~/.linuxbrew/bin/brew shellenv)
+  test -d /home/linuxbrew/.linuxbrew && eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+  test -r ~/.bash_profile && echo "eval \$($(brew --prefix)/bin/brew shellenv)" >>~/.bash_profile
+  echo "eval \$($(brew --prefix)/bin/brew shellenv)" >>~/.profile
+
+  sudo apt-get install -yq gawk
+  brew install hello
   brew install ctags
   sudo apt-fast install -yq exuberant-ctags
   echo "- add to .vimrc -- Plug 'craigemery/vim-autotag'"
