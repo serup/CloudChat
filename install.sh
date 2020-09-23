@@ -104,12 +104,25 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 oracle-java* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install oracle-java on ubuntu "
-  sudo add-apt-repository -y ppa:webupd8team/java
-  sudo apt-get update
-  sudo apt-fast install -yq oracle-java8-installer
-  sudo apt-fast install -yq oracle-java8-set-default
+  #sudo add-apt-repository ppa:linuxuprising/java
+  #sudo apt-get install -yq software-properties-common  
+  #sudo add-apt-repository ppa:webupd8team/java
+  #sudo apt-get update
+  ##sudo apt-fast install -yq oracle-java8-installer
+  #sudo apt-fast install -yq oracle-java8-set-default
+  #sudo apt-fast install -yq oracle-java11-installer
+
+
+  #another way incase above is not working
+  sudo apt install default-jre              # version 2:1.11-72, or
+  sudo apt install openjdk-11-jre-headless  # version 11.0.7+10-3ubuntu1
+  sudo apt install openjdk-13-jre-headless  # version 13.0.3+3-1ubuntu2
+  sudo apt install openjdk-14-jre-headless  # version 14.0.1+7-1ubuntu1
+  sudo apt install openjdk-8-jre-headless   # version 8u252-b09-1ubuntu1
+  
+  
   java -version
-  echo " - done."
+  echo " - done.  install of java"
 else
   echo "- oracle-java already installed"
 fi
