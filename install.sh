@@ -660,6 +660,13 @@ if [ "" == "$JEKYLL_OK" ]; then
 else
   echo "- jekyll already installed"
 fi
+FFI_OK=$(gem list|grep -E "^ffi")
+if [ "" == "$FFI_OK" ]; then
+  sudo gem install ffi -v '1.13.1'
+  echo " - done."
+else
+  echo "- ffi already installed"
+fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 ruby-full* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install ruby-full "
