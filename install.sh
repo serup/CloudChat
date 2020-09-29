@@ -1039,7 +1039,7 @@ fi
 INTELLIJ_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep gini-idea)
 if [ "" == "$INTELLIJ_OK" ]; then
   echo -n "- install gini-idea puppet module"
-  puppet module install gini-idea --modulepath ./puppet/trunk/environments/devtest/modules
+  puppet module install --ignore-dependencies gini-idea --modulepath ./puppet/trunk/environments/devtest/modules
   echo " - done."
 else
   echo "- gini-idea puppet module installed"
