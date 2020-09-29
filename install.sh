@@ -345,7 +345,7 @@ else
   echo "- vim already installed - consider adding set mouse=a   ;to enable mouse handling of splits"
 fi
 
-PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 *brew* |grep "install ok installed")
+PKG_OK=$(brew --version|grep -E "^Homebrew ") 
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install brew on ubuntu : example: brew install ctags"
 
@@ -573,6 +573,8 @@ if [ "" == "$PKG_OK" ]; then
 
   curl https://bootstrap.pypa.io/get-pip.py --output get-pip.py
   sudo python2 get-pip.py
+
+  sudo apt-fast install -yq python3-pip
   
   echo " - done. installing python-pip"
 else
@@ -854,10 +856,30 @@ else
   echo "- Virtualbox guest addition installed"
 fi
 
+PUPPET_OK=$(puppet --version|grep -E "^([0-9].[0-9].[0-9])")
+if [ "" == "$PUPPET_OK" ]; then
+  echo -n "- install puppet"
+  sudo apt-fast install -yq puppet-common
+  echo " - done."
+else
+  echo "- puppet installed"
+fi
+
+
+MODULE_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep puppet-archive*)
+if [ "" == "$MODULE_OK" ]; then
+  echo -n "- install puppet-archive"
+  puppet module install puppet-archive --force --ignore-dependencies --modulepath ./puppet/trunk/environments/devtest/modules
+  echo " - done."
+else
+  echo "- puppet-archive puppet module installed"
+fi
+
+
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 puppet-co* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
    echo -n "- install puppetlabs-release "
-   sudo apt-fast install -yq puppet-common
+   #sudo apt-fast install -yq puppet-common
    wget https://apt.puppetlabs.com/puppetlabs-release-pc1-vivid.deb && \
    sudo dpkg -i puppetlabs-release-pc1-vivid.deb && \
    sudo apt-get update 
@@ -865,6 +887,17 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- puppetlabs-release installed"
 fi
+
+
+GINI_ARCHIVE_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep gini-archive)
+if [ "" == "$GINI_ARCHIVE_OK" ]; then
+  echo -n "- install gini-archive puppet module"
+  puppet module install --force --ignore-dependencies gini-archive --version 0.2.1 --modulepath ./puppet/trunk/environments/devtest/modules
+  echo " - done."
+else
+  echo "- gini-idea puppet module installed"
+fi
+
 MODULE_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep roidelapluie-gerrit*)
 if [ "" == "$MODULE_OK" ]; then
   echo -n "- install datacentred-gerrit"
@@ -1061,6 +1094,7 @@ if [ "" == "$BUILD_ESSENTIAL_OK" ]; then
 else
   echo "- initforthe-build_essential puppet module installed"
 fi
+
 INTELLIJ_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep gini-idea)
 if [ "" == "$INTELLIJ_OK" ]; then
   echo -n "- install gini-idea puppet module"
@@ -1069,6 +1103,7 @@ if [ "" == "$INTELLIJ_OK" ]; then
 else
   echo "- gini-idea puppet module installed"
 fi
+
 
 # needed a swap file for compiling inside VM  see info here : http://www.cyberciti.biz/faq/linux-add-a-swap-file-howto/
 SWAPFILE_OK=$(puppet module list --modulepath ./puppet/trunk/environments/devtest/modules | grep petems-swap_file)
