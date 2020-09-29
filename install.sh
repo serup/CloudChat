@@ -503,7 +503,11 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 monodevelop-nunit* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install monodevelop-nunit for C# on ubuntu "
-  sudo apt-fast install -yq monodevelop-nunit 
+  #sudo apt-fast install -yq monodevelop-nunit 
+  sudo apt-fast install -y apt-transport-https dirmngr
+  sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+  echo "deb https://download.mono-project.com/repo/ubuntu vs-bionic main" | sudo tee /etc/apt/sources.list.d/mono-official-vs.list
+  sudo apt update
   echo " - done."
 else
   echo "- monodevelop-nunit already installed"
