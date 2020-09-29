@@ -362,12 +362,23 @@ if [ "" == "$PKG_OK" ]; then
   sudo apt-get install -yq gawk
   brew install hello
   brew install ctags
-  sudo apt-fast install -yq exuberant-ctags
+  #sudo apt-fast install -yq exuberant-ctags
   echo "- add to .vimrc -- Plug 'craigemery/vim-autotag'"
   echo " - done."
 else
   echo "- brew already installed"
 fi
+
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 *linux-headers* |grep "ok")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- install linux-headers"
+  sudo apt upgrade --fix-missing
+  sudo apt install -yq linux-headers-4.4.0-98-generic
+  echo " - done."
+else
+  echo "- linux-headers already installed"
+fi
+
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 *exuberant-ctags* |grep "ok")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install ctags"
@@ -377,6 +388,7 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- ctags already installed"
 fi
+
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 sysstat |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install sysstat on ubuntu : example: iostat -d 1 10"
@@ -549,7 +561,7 @@ else
   echo "- monodevelop already installed"
 fi
 
-PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 python-pip* |grep "install ok installed")
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 python*-pip* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install python-pip "
   #sudo apt-fast install -yq python-pip
