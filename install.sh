@@ -566,10 +566,11 @@ else
   echo "- python-pip already installed"
 fi
 
-PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 python-fs* |grep "install ok installed")
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 python*-fs* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install python-fs "
-  sudo apt-fast install -yq python-fs
+  #sudo apt-fast install -yq python-fs
+  sudo apt-get install -y python3-fs
   echo " - done."
 else
   echo "- python-fs already installed"
