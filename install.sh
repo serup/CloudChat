@@ -369,11 +369,12 @@ else
   echo "- brew already installed"
 fi
 
-PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 *linux-headers* |grep "ok")
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 *linux-headers-generic* |grep "ok")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install linux-headers"
   sudo apt upgrade --fix-missing
-  sudo apt install -yq linux-headers-4.4.0-98-generic
+  #sudo apt install -yq linux-headers-4.4.0-98-generic
+  sudo apt install --reinstall linux-headers-generic
   echo " - done."
 else
   echo "- linux-headers already installed"
