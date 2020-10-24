@@ -414,7 +414,9 @@ if [ "" == "$PKG_OK" ]; then
 else
   echo "- nmap already installed"
 fi
-PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 eclipse |grep "install ok installed")
+
+#PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 eclipse |grep "install ok installed")
+PKG_OK=$(ls /usr/eclipse/)
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install eclipse on ubuntu "
   # sudo apt-fast install -yq eclipse 
