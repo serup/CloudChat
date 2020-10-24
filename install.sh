@@ -1096,11 +1096,13 @@ if [ "" == "$SPRINGBOOT_OK" ]; then
   echo -n "- install maven puppet module"
   puppet module install maestrodev/maven  --modulepath ./puppet/trunk/environments/devtest/modules
   echo -n "- install curl"
-  sudo apt-fast install -yq curl 
+  sudo apt-get install -yq curl 
   echo -n "- install sdkman"
-  curl -s http://get.sdkman.io | bash
+  sudo apt-get install unzip
+  sudo apt-get install zip
+  curl -s "http://get.sdkman.io" | bash
   echo -n "- init sdk"
-  source $(pwd)/.sdkman/bin/sdkman-init.sh
+  source "$HOME/.sdkman/bin/sdkman-init.sh"
   sdk version
   echo -n "- install grails"
   sdk install grails < /dev/null
