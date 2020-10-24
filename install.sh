@@ -417,9 +417,22 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 eclipse |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install eclipse on ubuntu "
-  sudo apt-fast install -yq eclipse 
+  # sudo apt-fast install -yq eclipse 
+  # echo -n "- if it does not work then try this : https://www.itzgeek.com/post/how-to-install-eclipse-ide-on-ubuntu-20-04/"
+  # echo -n "-- sudo apt install -y wget "
+  # echo -n "-- wget http://mirror.umd.edu/eclipse/technology/epp/downloads/release/2020-06/R/eclipse-java-2020-06-R-linux-gtk-x86_64.tar.gz"
+  # echo -n "-- sudo tar -zxvf eclipse-java-2020-06-R-linux-gtk-x86_64.tar.gz -C /usr/"
+  # echo -n "-- sudo ln -s /usr/eclipse/eclipse /usr/bin/eclipse"
+
+  sudo apt install -y wget
+  sudo wget http://mirror.umd.edu/eclipse/technology/epp/downloads/release/2020-06/R/eclipse-java-2020-06-R-linux-gtk-x86_64.tar.gz
+  sudo tar -zxvf eclipse-java-2020-06-R-linux-gtk-x86_64.tar.gz -C /usr/
+  sudo ln -s /usr/eclipse/eclipse /usr/bin/eclipse
+
+  echo -n " - extra info https://www.itzgeek.com/post/how-to-install-eclipse-ide-on-ubuntu-20-04/ "
+  
   echo " - done."
-  sudo bash eclipse_plugin_install.sh
+  # sudo bash eclipse_plugin_install.sh
 else
   echo "- eclipse already installed"
 fi
