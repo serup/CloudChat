@@ -446,6 +446,7 @@ fi
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 scene* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install javaFX Scene builder "
+   echo "new place for JavaFX scenebuilder https://www.oracle.com/java/technologies/javafxscenebuilder-1x-archive-downloads.html"
    echo "NB! IMPORTANT go manually in on following homepage [http://www.oracle.com/technetwork/java/javase/downloads/index-jsp-138363.html]  and press download then press the  Accept the Oracle Binary Code License Agreement for Java SE -- then paste into browser this URL:"
    echo "PLEASE manually download http://download.oracle.com/otn-pub/java/javafx_scenebuilder/2.0-b20/javafx_scenebuilder-2_0-linux-i586.deb"
    echo "then do following commands with downloaded file : "
