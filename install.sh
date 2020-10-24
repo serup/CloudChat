@@ -75,7 +75,7 @@ fi
 JQ_OK=$(dpkg --get-selections | grep -v deinstall|grep jq)
 if [ "" == "$JQ_OK" ]; then
   echo -n "- install jq - for handling json files inside batch"
-  sudo apt-fast install -yq  jq
+  sudo apt install -yq  jq
   echo " - done."
 else
   echo "- jq installed"
