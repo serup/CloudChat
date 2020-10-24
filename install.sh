@@ -58,7 +58,7 @@ if [ "" == "$PKG_OK" ]; then
   echo -n "- install apt-fast on ubuntu, to use for speeding up apt-get install's "
  # sudo add-apt-repository ppa:saiarcot895/myppa
  # sudo apt-get update
- # sudo apt-get install -yq apt-fast  --allow-unauthenticated
+  sudo apt-get install -yq apt-fast  --allow-unauthenticated
 
  echo "deb http://ppa.launchpad.net/apt-fast/stable/ubuntu bionic main" | sudo tee -a /etc/apt/sources.list.d/apt-fast.list
  echo "deb-src http://ppa.launchpad.net/apt-fast/stable/ubuntu bionic main" | sudo tee -a /etc/apt/sources.list.d/apt-fast.list
