@@ -846,6 +846,7 @@ if [ "" == "$PKG_OK" ]; then
    #sudo dpkg -i virtualbox-dkms_6.0.14-dfsg-1_all.deb
    sudo wget http://launchpadlibrarian.net/486853719/virtualbox-dkms_6.1.10-dfsg-1~ubuntu1.20.04.1_amd64.deb
    sudo dpkg -i virtualbox-dkms_6.1.10-dfsg-1~ubuntu1.20.04.1_amd64.deb
+   sudo apt install virtualbox-dkms dkms
    sudo apt-get install virtualbox-6.1
 
 
