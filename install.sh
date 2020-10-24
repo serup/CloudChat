@@ -821,13 +821,16 @@ PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 virtualbox |grep "ok")
 if [ "" == "$PKG_OK" ]; then
   echo -n "- install Virtualbox -- PARAMOUNT DO NOT HAVE SECURE BOOT ENABLED otherwise install of virtualbox will fail"
 
-   wget http://download.virtualbox.org/virtualbox/5.0.20/virtualbox-5.0_5.0.20-106931~Ubuntu~xenial_amd64.deb && \
-   sudo dpkg -i virtualbox-5.0_5.0.20-106931~Ubuntu~xenial_amd64.deb && \
-   sudo apt-get update 
-   sudo wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add -
-   sudo wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
-   sudo apt-get update
-   sudo apt-get install -yq virtualbox-5.0
+   #wget http://download.virtualbox.org/virtualbox/5.0.20/virtualbox-5.0_5.0.20-106931~Ubuntu~xenial_amd64.deb && \
+   #sudo dpkg -i virtualbox-5.0_5.0.20-106931~Ubuntu~xenial_amd64.deb && \
+   #sudo apt-get update 
+   #sudo wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add -
+   #sudo wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
+   #sudo apt-get update
+   #sudo apt-get install -yq virtualbox-5.0
+
+   sudo apt-get install -yq virtualbox-6.1
+
 else
   echo "- Virtualbox installed"
 fi
