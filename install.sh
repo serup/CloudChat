@@ -270,6 +270,18 @@ else
   echo "- libprocess library already installed"
 fi
 
+# check again and if fail, try another way
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 *libprocess-cpp-dev* |grep "install ok installed")
+if [ "" == "$PKG_OK" ]; then
+  echo -n "- > append to sources.list file the xenial libs and try again." 
+  sudo echo "deb http://hr.archive.ubuntu.com/ubuntu/ xenial main restricted" >> /etc/apt/sources.list
+  sudo echo "deb http://hr.archive.ubuntu.com/ubuntu/ xenial-updates main restricted" >> /etc/apt/sources.list
+  sudo apt-get install -yq libprocess-cpp-dev
+  echo " - done."
+else
+  echo "- libprocess library already installed"
+fi
+
 
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' 2>&1 highlight* |grep "install ok installed")
 if [ "" == "$PKG_OK" ]; then
@@ -1226,6 +1238,9 @@ if [ "" == "$VBOX_OK" ]; then
 else
   echo "- vbox installed"
 fi
+
+echo -n "Install build-essential"
+sudo apt install -yq build-essential
 
 echo "******************************************************************************************************************"
 echo "environment is now ready! you may run vagrant up and then vagrant up cloudchatmanager, vagrant up cloudchatclient"
