@@ -74,9 +74,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           id:    port[':id']
       end
 
-      if node_name == "dops.puppet.master"
-        config.vm.synced_folder puppet_source, '/etc/puppet/environments'
-      end
+      config.vm.synced_folder '.', '/vagrant', disabled: true
+#       if node_name == "dops.puppet.master"
+ #       config.vm.synced_folder puppet_source, '/etc/puppet/environments'
+ #     end
 
       if node_name == "javaservices"
         config.ssh.forward_x11 = true 
@@ -88,7 +89,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
  
       config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'"
-      config.vm.synced_folder("puppet/hiera", "/tmp/vagrant-puppet-3/hiera")
+      #config.vm.synced_folder("puppet/hiera", "/tmp/vagrant-puppet-3/hiera")
 
       config.vm.provision :shell, :path => node_values['bootstrap']
       config.vm.box = node_values['nodeOS']
