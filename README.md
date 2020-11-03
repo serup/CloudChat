@@ -7,6 +7,12 @@ via vagrant a master and one node is created in VirtualBox and via puppet master
 **Clone the gerrit repository**
 ```javascript 
   git clone ssh://serup@review.gerrithub.io:29418/serup/CloudChat && scp -p -P 29418 serup@review.gerrithub.io:hooks/commit-msg CloudChat/.git/hooks/
+    
+  or like this
+  
+  git clone "https://serup@review.gerrithub.io/a/serup/CloudChat" && (cd "CloudChat" && mkdir -p .git/hooks && curl -Lo `git rev-parse --git-dir`/hooks/commit-msg https://serup@review.gerrithub.io/tools/hooks/commit-msg; chmod +x `git rev-parse --git-dir`/hooks/commit-msg)
+  
+  NB! This will probably NOT work if your firewall is running, so close it or add a pass for the port 
   cd CloudChat/
 ```
 **Create your own branch and checkout**
