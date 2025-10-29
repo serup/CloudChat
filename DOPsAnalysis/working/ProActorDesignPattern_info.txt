@@ -1,0 +1,81 @@
+Her er et overblik over **Proactor design pattern** (som bl.a. bruges i Asio) baseret på dokumentationen + supplerende forklaringer:
+
+---
+
+## Hvad er Proactor-mønsteret?
+
+Proactor-mønsteret er et designmønster til asynkron I/O og hændelseshåndtering, der flytter detaljerne for I/O og færdiggørelseshændelser væk fra applikationslaget og ind i et bibliotek/rammeværk/OS.
+
+Kort sagt:
+
+* Applikationen (initiatoren) starter en asynkron operation (f.eks. læsning eller skrivning).
+* Operationen udføres “i baggrunden” (enten af OS eller et bibliotek).
+* Når operationen er færdig, genereres en hændelse (“completion event”) sammen med en tilknyttet **completion handler** (et callback/funktionsobjekt).
+* Et event loop (proactor) trækker hændelsen ud af køen og kører callback’en.
+
+Dette gør det muligt at opnå høj ydeevne og god skalering uden nødvendigvis at oprette mange tråde eller blokere i lange tid.
+
+---
+
+## Komponenter i Proactor-mønsteret (ifølge Asio)
+
+Ud fra Asio-dokumentationen identificeres typisk disse roller: ([think-async.com][1])
+
+| Rolle / komponent                    | Funktion / ansvar                                                                                                                                                                                           |
+| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Initiator**                        | Applikationskode, som starter asynkrone operationer, f.eks. `async_read()`, `async_write()` osv.                                                                                                            |
+| **Asynchronous Operation**           | Operationen som udføres asynkront, f.eks. læse fra en socket, skrive til disk etc.                                                                                                                          |
+| **Asynchronous Operation Processor** | Den komponent (internt i biblioteket eller OS) som faktisk håndterer I/O og udfører de asynkrone operationer; den placerer completions i køen.                                                              |
+| **Completion Event Queue**           | En kø (buffer) hvor færdiggørelseshændelser akkumuleres, indtil en event demultiplexer håndterer dem.                                                                                                       |
+| **Asynchronous Event Demultiplexer** | Den del som “venter på” at en færdiggørelseshændelse bliver klar, og returnerer den til proactor’en.                                                                                                        |
+| **Proactor**                         | Den del som konstant trækker færdiggørelseshændelser ud (ved hjælp af event demultiplexer) og dispatcher (kalder) den relevante completion handler (callback). I Asio svarer dette typisk til `io_context`. |
+| **Completion Handler**               | Callback-funktionen, som udføres, når den asynkrone operation er færdig. Den behandler resultatet (f.eks. læste data eller fejl).                                                                           |
+
+I Asio er `io_context` den centrale proactor-lignende enhed, som venter på hændelser og distribuerer callback’er. ([think-async.com][1])
+
+---
+
+## Implementeringsvariationer
+
+Proactor-mønsteret kan realiseres på forskellig måde afhængig af platform:
+
+* **I systemer med native asynkron I/O** (f.eks. Windows overlapped I/O): Biblioteket kan benytte OS-faciliteter direkte (f.eks. I/O Completion Ports). Asio bruger på Windows overlapped I/O og I/O completion ports internt for at realisere Proactor-mønsteret. ([think-async.com][1])
+* **I systemer uden native asynkron I/O**: Biblioteket kan implementere Proactor-mønsteret over et Reactor-mønster (som `select`, `epoll`, `kqueue` osv.). Dvs. når systemet indikerer, at en ressource er klar til I/O, udfører biblioteket det egentlige I/O og placerer completion-handler i køen. ([think-async.com][1])
+
+Denne hybrid tilgang gør, at Asio (og andre biblioteker) kan fungere på mange platforme med optimal ydeevne, afhængigt af, hvad systemet understøtter.
+
+---
+
+## Fordele og ulemper
+
+### Fordele
+
+* **Portabilitet**: Kan udnytte native asynkron I/O, hvis det findes; ellers falde tilbage til en reactor-baseret implementering. ([think-async.com][1])
+* **Adskillelse af tråde og konkurrence**: Applikationen behøver ikke at oprette mange tråde (f.eks. én pr. klient). I stedet kan en begrænset mængde tråde bruges til at drive I/O via proactor’en.
+* **Ydelse og skalerbarhed**: Mindre overhead ved kontekstskifte og synkronisering, især når mange forbindelser/operationer håndteres simultant.
+* **Forenklet synkronisering**: Fordi logikken kan skrives som callbacks, kan man ofte strukturere programmet sådan, at man undgår delte tilstande eller komplekse låse.
+* **Funktionel sammensætning**: Højere niveau operationer kan bygges ved at kæde lavniveau asynkrone operationer sammen (f.eks. læs header → baseret på header læs body). ([think-async.com][1])
+
+### Ulemper / udfordringer
+
+* **Kompleksitet i programlogik**: Flowet af kontrol er “inverteret” — du starter noget, og senere bliver du “kaldt tilbage” med resultatet. Det giver asynkron spaghettikode, callback-hel osv.
+* **Hukommelsesforbrug**: Buffere m.v. skal være allokeret for hele varigheden af operationer; du har ofte en buffer pr. operation. Hvis der er mange samtidige operationer, kan dette blive betydeligt.
+* **Debugging og fejlsøgning** bliver sværere generelt i asynkrone mønstre — stack traces kan være fragmenterede etc.
+
+---
+
+## Eksempelflow (forståelsesformål)
+
+For at illustrere, hvordan Proactor arbejder i praksis:
+
+1. Applikationen kalder `async_read(socket, buffer, handler)`.
+2. Biblioteket sender operationen til en asynkron proces (enten OS eller bibliotekets I/O-service).
+3. Biblioteket returnerer straks (uden at blokere).
+4. Når læsningen er færdig (data er modtaget), placeres en færdiggørelseshændelse i completion queue sammen med `handler`.
+5. `io_context.run()` (eller lignende) venter (via demultiplexer) på hændelser.
+6. Når hændelsen dukker op, trækker proactor’en den og kalder `handler(error, bytes_transferred)`.
+7. `handler` kan nu behandle data, og evt. starte nye asynkrone operationer videre (kæde).
+
+---
+
+[1]: https://think-async.com/Asio/asio-1.20.0/doc/asio/overview/core/async.html "The Proactor Design Pattern: Concurrency Without Threads"
